@@ -39,29 +39,9 @@ export function AudioPlayer({
     if (!audio) return;
 
     const handleLoadedMetadata = () => {
-      // Check if duration is valid before setting
-      if (
-        audio.duration &&
-        !isNaN(audio.duration) &&
-        isFinite(audio.duration)
-      ) {
+      // Only use file metadata if database duration is not available
+      if (!databaseDuration && audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
         setDuration(audio.duration);
-        setMetadataLoaded(true);
-        setIsLoading(false);
-      }
-    };
-
-    const handleCanPlay = () => {
-      // Fallback: try to get duration when audio can play
-      if (
-        audio.duration &&
-        !isNaN(audio.duration) &&
-        isFinite(audio.duration) &&
-        !metadataLoaded
-      ) {
-        setDuration(audio.duration);
-        setMetadataLoaded(true);
-        setIsLoading(false);
       }
     };
 
@@ -75,41 +55,21 @@ export function AudioPlayer({
     };
 
     const handleError = () => {
-      setIsLoading(false);
       console.error("Error loading audio file");
     };
 
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
-    audio.addEventListener("canplay", handleCanPlay);
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("ended", handleEnded);
     audio.addEventListener("error", handleError);
 
-    // Force load if src is already set
-    if (audio.src) {
-      audio.load();
-    }
-
-    // Timeout fallback: Stop loading after 30 seconds (for large files)
-    const loadingTimeout = setTimeout(() => {
-      if (isLoading) {
-        setIsLoading(false);
-        setMetadataLoaded(true);
-        console.warn(
-          "Audio metadata loading timeout - proceeding without duration",
-        );
-      }
-    }, 30000);
-
     return () => {
-      clearTimeout(loadingTimeout);
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
-      audio.removeEventListener("canplay", handleCanPlay);
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("ended", handleEnded);
       audio.removeEventListener("error", handleError);
     };
-  }, [metadataLoaded]);
+  }, [databaseDuration]);
 
   const togglePlayPause = () => {
     const audio = audioRef.current;
