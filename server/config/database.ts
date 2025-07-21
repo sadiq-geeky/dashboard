@@ -35,18 +35,45 @@ export async function testConnection() {
   }
 }
 
-// Helper function to execute queries
+// Helper function to execute queries with retry logic
 export async function executeQuery<T = any>(
   query: string,
   params: any[] = [],
+  retries: number = 3
 ): Promise<T[]> {
-  try {
-    const [rows] = await pool.execute(query, params);
-    return rows as T[];
-  } catch (error) {
-    console.error("Database query error:", error);
-    throw error;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const [rows] = await pool.execute(query, params);
+      return rows as T[];
+    } catch (error) {
+      console.error(`Database query error (attempt ${attempt}/${retries}):`, error);
+
+      // If it's the last attempt or not a connection error, throw the error
+      if (attempt === retries || !isConnectionError(error)) {
+        throw error;
+      }
+
+      // Wait before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+    }
   }
+
+  throw new Error("All retry attempts failed");
+}
+
+// Check if error is connection related
+function isConnectionError(error: any): boolean {
+  const connectionErrorCodes = [
+    'ECONNRESET',
+    'ECONNREFUSED',
+    'ENOTFOUND',
+    'ETIMEDOUT',
+    'PROTOCOL_CONNECTION_LOST'
+  ];
+
+  return connectionErrorCodes.some(code =>
+    error.code === code || error.message?.includes(code)
+  );
 }
 
 // Initialize database connection on startup
