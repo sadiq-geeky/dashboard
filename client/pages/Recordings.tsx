@@ -178,6 +178,17 @@ export function Recordings() {
     setCurrentPage(1);
   };
 
+  const handleDeviceChange = (value: string) => {
+    setSelectedDevice(value);
+    setCurrentPage(1);
+    setDeviceOpen(false);
+  };
+
+  const clearDeviceFilter = () => {
+    setSelectedDevice("");
+    setCurrentPage(1);
+  };
+
   const handlePlay = (recording: RecordingHistory) => {
     if (recording.status === "completed" && recording.file_name) {
       setPlayingId(recording.id);
