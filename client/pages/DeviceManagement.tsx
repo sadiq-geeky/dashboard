@@ -28,10 +28,19 @@ const createDeviceAPI = async (device: {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(device),
     });
-    if (!response.ok) throw new Error("Failed to create device");
+
+    if (!response.ok) {
+      if (response.status === 409) {
+        const errorData = await response.json();
+        alert(errorData.error || "Device with this IP address already exists");
+        return null;
+      }
+      throw new Error("Failed to create device");
+    }
     return await response.json();
   } catch (error) {
     console.error("Error creating device:", error);
+    alert("Failed to create device. Please try again.");
     return null;
   }
 };
