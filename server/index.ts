@@ -75,6 +75,7 @@ export function createServer() {
   app.get("/api/recordings/:id", getRecording);
   app.post("/api/recordings", createRecording);
   app.put("/api/recordings/:id", updateRecording);
+  app.get("/api/recordings/device-names", getDeviceNames);
 
   return app;
 }
