@@ -28,10 +28,26 @@ const createDeviceAPI = async (device: {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(device),
     });
-    if (!response.ok) throw new Error("Failed to create device");
+
+    if (!response.ok) {
+      if (response.status === 409) {
+        try {
+          const errorData = await response.json();
+          alert(
+            errorData.error || "Device with this IP address already exists",
+          );
+        } catch {
+          alert("Device with this IP address already exists");
+        }
+        return null;
+      }
+      alert("Failed to create device. Please try again.");
+      return null;
+    }
     return await response.json();
   } catch (error) {
     console.error("Error creating device:", error);
+    alert("Failed to create device. Please try again.");
     return null;
   }
 };
@@ -46,9 +62,27 @@ const updateDeviceAPI = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updates),
     });
-    return response.ok;
+
+    if (!response.ok) {
+      if (response.status === 409) {
+        try {
+          const errorData = await response.json();
+          alert(
+            errorData.error ||
+              "Another device with this IP address already exists",
+          );
+        } catch {
+          alert("Another device with this IP address already exists");
+        }
+        return false;
+      }
+      alert("Failed to update device. Please try again.");
+      return false;
+    }
+    return true;
   } catch (error) {
     console.error("Error updating device:", error);
+    alert("Failed to update device. Please try again.");
     return false;
   }
 };

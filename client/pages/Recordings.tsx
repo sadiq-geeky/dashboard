@@ -11,20 +11,38 @@ import {
   Clock,
   FileVideo,
   Filter,
+  Check,
+  ChevronsUpDown,
 } from "lucide-react";
 import { AudioPlayer } from "@/components/AudioPlayer";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 // API function to fetch recordings
 const fetchRecordings = async (
   page: number,
   limit: number,
   search?: string,
+  device?: string,
 ): Promise<PaginatedResponse<RecordingHistory>> => {
   try {
     const params = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
       ...(search && { search }),
+      ...(device && { device }),
     });
 
     const response = await fetch(`/api/recordings?${params}`);
@@ -43,6 +61,18 @@ const fetchRecordings = async (
   }
 };
 
+// API function to fetch device names
+const fetchDeviceNames = async (): Promise<string[]> => {
+  try {
+    const response = await fetch("/api/recordings/device-names");
+    if (!response.ok) throw new Error("Failed to fetch device names");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching device names:", error);
+    return [];
+  }
+};
+
 const getStatusColor = (status: RecordingHistory["status"]) => {
   switch (status) {
     case "completed":
@@ -54,6 +84,21 @@ const getStatusColor = (status: RecordingHistory["status"]) => {
   }
 };
 
+const calculateDuration = (
+  startTime: string | null,
+  endTime: string | null,
+): number | null => {
+  if (!startTime || !endTime) return null;
+
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+
+  const durationMs = end.getTime() - start.getTime();
+  return Math.floor(durationMs / 1000); // Convert to seconds
+};
+
 const formatDuration = (seconds: number | null) => {
   if (seconds == null || isNaN(seconds)) return "-";
 
@@ -61,7 +106,7 @@ const formatDuration = (seconds: number | null) => {
   const mins = Math.floor((seconds % 3600) / 60);
   const secs = seconds % 60;
 
-  const padded = (val: number) => val.toString().padStart(2, '0');
+  const padded = (val: number) => val.toString().padStart(2, "0");
 
   if (hrs > 0) {
     return `${padded(hrs)}:${padded(mins)}:${padded(secs)}`;
@@ -69,7 +114,6 @@ const formatDuration = (seconds: number | null) => {
 
   return `${padded(mins)}:${padded(secs)}`;
 };
-
 
 export function Recordings() {
   const [recordings, setRecordings] = useState<
@@ -82,6 +126,9 @@ export function Recordings() {
     totalPages: 0,
   });
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDevice, setSelectedDevice] = useState("");
+  const [deviceNames, setDeviceNames] = useState<string[]>([]);
+  const [deviceOpen, setDeviceOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [playingId, setPlayingId] = useState<string | null>(null);
@@ -94,7 +141,12 @@ export function Recordings() {
   const loadRecordings = async () => {
     setIsLoading(true);
     try {
-      const result = await fetchRecordings(currentPage, 10, searchTerm);
+      const result = await fetchRecordings(
+        currentPage,
+        10,
+        searchTerm,
+        selectedDevice,
+      );
       setRecordings(result);
     } catch (error) {
       console.error("Failed to load recordings:", error);
@@ -111,12 +163,36 @@ export function Recordings() {
     }
   };
 
+  const loadDeviceNames = async () => {
+    try {
+      const devices = await fetchDeviceNames();
+      setDeviceNames(devices);
+    } catch (error) {
+      console.error("Failed to load device names:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadDeviceNames();
+  }, []);
+
   useEffect(() => {
     loadRecordings();
-  }, [currentPage, searchTerm]);
+  }, [currentPage, searchTerm, selectedDevice]);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
+    setCurrentPage(1);
+  };
+
+  const handleDeviceChange = (value: string) => {
+    setSelectedDevice(value);
+    setCurrentPage(1);
+    setDeviceOpen(false);
+  };
+
+  const clearDeviceFilter = () => {
+    setSelectedDevice("");
     setCurrentPage(1);
   };
 
@@ -212,10 +288,58 @@ export function Recordings() {
               />
             </div>
           </div>
-          <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-            <Filter className="h-4 w-4" />
-            <span>Filters</span>
-          </button>
+          <Popover open={deviceOpen} onOpenChange={setDeviceOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={deviceOpen}
+                className="w-[200px] justify-between"
+              >
+                {selectedDevice || "Select device..."}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <Command>
+                <CommandInput placeholder="Search devices..." />
+                <CommandList>
+                  <CommandEmpty>No devices found.</CommandEmpty>
+                  <CommandGroup>
+                    <CommandItem
+                      onSelect={clearDeviceFilter}
+                      className="cursor-pointer"
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          selectedDevice === "" ? "opacity-100" : "opacity-0",
+                        )}
+                      />
+                      All devices
+                    </CommandItem>
+                    {deviceNames.map((device) => (
+                      <CommandItem
+                        key={device}
+                        onSelect={() => handleDeviceChange(device)}
+                        className="cursor-pointer"
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            selectedDevice === device
+                              ? "opacity-100"
+                              : "opacity-0",
+                          )}
+                        />
+                        {device}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
@@ -270,7 +394,14 @@ export function Recordings() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
                       <Clock className="h-4 w-4" />
-                      <span>{formatDuration(recording.duration)}</span>
+                      <span>
+                        {formatDuration(
+                          calculateDuration(
+                            recording.start_time,
+                            recording.end_time,
+                          ),
+                        )}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

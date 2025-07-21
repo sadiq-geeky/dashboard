@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 console.log("🧪 ENV DB_NAME:", process.env.DB_NAME);
 
@@ -19,6 +19,7 @@ import {
   getRecording,
   createRecording,
   updateRecording,
+  getDeviceNames,
 } from "./routes/recordings-db";
 
 // Import the PHP-equivalent heartbeat submit route
@@ -71,6 +72,7 @@ export function createServer() {
 
   // Recording routes
   app.get("/api/recordings", getRecordings);
+  app.get("/api/recordings/device-names", getDeviceNames);
   app.get("/api/recordings/:id", getRecording);
   app.post("/api/recordings", createRecording);
   app.put("/api/recordings/:id", updateRecording);

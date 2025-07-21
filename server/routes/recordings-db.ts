@@ -5,25 +5,36 @@ import { executeQuery } from "../config/database";
 // Get recordings with pagination and CNIC search
 export const getRecordings: RequestHandler = async (req, res) => {
   try {
-    const { page = "1", limit = "10", search } = req.query;
+    const { page = "1", limit = "10", search, device } = req.query;
 
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    // Build WHERE clause for CNIC search
+    // Build WHERE clause for CNIC search and device filtering
     let whereClause = "";
     let queryParams: any[] = [];
+    const conditions: string[] = [];
 
     if (search) {
-      whereClause = "WHERE cnic LIKE ?";
+      conditions.push("cnic LIKE ?");
       queryParams.push(`%${search}%`);
+    }
+
+    if (device) {
+      conditions.push("COALESCE(dm.device_name, rh.ip_address) = ?");
+      queryParams.push(device);
+    }
+
+    if (conditions.length > 0) {
+      whereClause = `WHERE ${conditions.join(" AND ")}`;
     }
 
     // Get total count
     const countQuery = `
-      SELECT COUNT(*) as total 
-      FROM recording_history 
+      SELECT COUNT(*) as total
+      FROM recording_history rh
+      LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
       ${whereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
@@ -169,5 +180,26 @@ export const updateRecording: RequestHandler = async (req, res) => {
   } catch (error) {
     console.error("Error updating recording:", error);
     res.status(500).json({ error: "Failed to update recording" });
+  }
+};
+
+// Get unique device names for filtering
+export const getDeviceNames: RequestHandler = async (req, res) => {
+  try {
+    const query = `
+      SELECT DISTINCT COALESCE(dm.device_name, rh.ip_address) AS device_name
+      FROM recording_history rh
+      LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
+      WHERE COALESCE(dm.device_name, rh.ip_address) IS NOT NULL
+      ORDER BY device_name ASC
+    `;
+
+    const devices = await executeQuery<{ device_name: string }>(query);
+    const deviceNames = devices.map((d) => d.device_name);
+
+    res.json(deviceNames);
+  } catch (error) {
+    console.error("Error fetching device names:", error);
+    res.status(500).json({ error: "Failed to fetch device names" });
   }
 };

@@ -26,7 +26,7 @@ const navigation = [
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const location = useLocation();
 
   return (
@@ -85,11 +85,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           sidebarCollapsed ? "lg:w-16" : "lg:w-72",
         )}
       >
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white pb-4 relative">
+        <div className="flex grow flex-col gap-y-5 border-r border-gray-200 bg-white pb-4 relative">
           {/* Collapse Toggle Button */}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="absolute -right-3 top-20 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm hover:bg-gray-50 transition-colors"
+            className="absolute -right-3 top-6 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 bg-white shadow-md hover:bg-gray-50 hover:shadow-lg transition-all duration-200"
           >
             {sidebarCollapsed ? (
               <ChevronRight className="h-4 w-4 text-gray-600" />
@@ -116,13 +116,19 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           <nav
             className={cn(
-              "flex flex-1 flex-col",
+              "flex flex-1 flex-col mt-4",
               sidebarCollapsed ? "px-2" : "px-6",
             )}
           >
-            <ul role="list" className="flex flex-1 flex-col gap-y-7">
+            <ul role="list" className="flex flex-1 flex-col">
               <li>
-                <ul role="list" className="-mx-2 space-y-1">
+                <ul
+                  role="list"
+                  className={cn(
+                    "space-y-2",
+                    sidebarCollapsed ? "mx-0" : "-mx-2",
+                  )}
+                >
                   {navigation.map((item) => {
                     const isActive = location.pathname === item.href;
                     return (
@@ -130,11 +136,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                         <Link
                           to={item.href}
                           className={cn(
-                            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-colors",
+                            "group flex gap-x-3 rounded-md p-3 text-sm font-semibold leading-6 transition-all duration-200",
                             isActive
-                              ? "bg-primary text-primary-foreground"
+                              ? "bg-primary text-primary-foreground shadow-sm"
                               : "text-gray-700 hover:bg-gray-50 hover:text-primary",
-                            sidebarCollapsed && "justify-center",
+                            sidebarCollapsed && "justify-center p-2 mx-1",
                           )}
                           title={sidebarCollapsed ? item.name : undefined}
                         >
@@ -146,7 +152,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                                 : "text-gray-400 group-hover:text-primary",
                             )}
                           />
-                          {!sidebarCollapsed && item.name}
+                          {!sidebarCollapsed && (
+                            <span className="truncate">{item.name}</span>
+                          )}
                         </Link>
                       </li>
                     );
