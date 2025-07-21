@@ -175,16 +175,8 @@ export function AudioPlayer({
         {/* Audio Element */}
         <audio ref={audioRef} src={audioUrl} preload="none" />
 
-        {/* Loading State */}
-        {(isLoading || !metadataLoaded) && (
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-2 text-sm text-gray-500">Loading audio...</p>
-          </div>
-        )}
-
-        {/* Player Controls */}
-        {!isLoading && metadataLoaded && (
+        {/* Player Controls - Always show since we use database metadata */}
+        {(
           <div className="space-y-4">
             {/* Progress Bar */}
             <div className="space-y-2">
