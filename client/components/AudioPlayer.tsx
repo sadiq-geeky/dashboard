@@ -173,7 +173,7 @@ export function AudioPlayer({
         </div>
 
         {/* Audio Element */}
-        <audio ref={audioRef} src={audioUrl} preload="metadata" />
+        <audio ref={audioRef} src={audioUrl} preload="none" />
 
         {/* Loading State */}
         {(isLoading || !metadataLoaded) && (
