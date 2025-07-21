@@ -166,8 +166,12 @@ export function Recordings() {
   };
 
   useEffect(() => {
+    loadDeviceNames();
+  }, []);
+
+  useEffect(() => {
     loadRecordings();
-  }, [currentPage, searchTerm]);
+  }, [currentPage, searchTerm, selectedDevice]);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
