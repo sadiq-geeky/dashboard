@@ -96,7 +96,7 @@ export function AudioPlayer({
 
   const skip = (seconds: number) => {
     const audio = audioRef.current;
-    if (!audio || !duration || !metadataLoaded) return;
+    if (!audio || !duration) return;
 
     const newTime = Math.max(0, Math.min(duration, currentTime + seconds));
     audio.currentTime = newTime;
