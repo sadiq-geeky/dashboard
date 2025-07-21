@@ -281,10 +281,56 @@ export function Recordings() {
               />
             </div>
           </div>
-          <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-            <Filter className="h-4 w-4" />
-            <span>Filters</span>
-          </button>
+          <Popover open={deviceOpen} onOpenChange={setDeviceOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={deviceOpen}
+                className="w-[200px] justify-between"
+              >
+                {selectedDevice || "Select device..."}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <Command>
+                <CommandInput placeholder="Search devices..." />
+                <CommandList>
+                  <CommandEmpty>No devices found.</CommandEmpty>
+                  <CommandGroup>
+                    <CommandItem
+                      onSelect={clearDeviceFilter}
+                      className="cursor-pointer"
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          selectedDevice === "" ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      All devices
+                    </CommandItem>
+                    {deviceNames.map((device) => (
+                      <CommandItem
+                        key={device}
+                        onSelect={() => handleDeviceChange(device)}
+                        className="cursor-pointer"
+                      >
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            selectedDevice === device ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                        {device}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
