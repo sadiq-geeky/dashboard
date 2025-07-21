@@ -31,8 +31,8 @@ export function AudioPlayer({
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [isLoading, setIsLoading] = useState(!databaseDuration);
-  const [metadataLoaded, setMetadataLoaded] = useState(!!databaseDuration);
+  const [isLoading, setIsLoading] = useState(false);
+  const [metadataLoaded, setMetadataLoaded] = useState(true);
 
   useEffect(() => {
     const audio = audioRef.current;
