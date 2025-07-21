@@ -108,11 +108,11 @@ export const uploadVoice: RequestHandler = async (req, res) => {
     });
   } catch (error) {
     console.error("Error uploading voice:", error);
-    
+
     if (error instanceof Error && error.message.includes("Only MP3 and WAV")) {
       return res.status(400).json({ error: error.message });
     }
-    
+
     res.status(500).json({ error: "Failed to upload voice recording" });
   }
 };
