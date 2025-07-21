@@ -197,6 +197,8 @@ export function Recordings() {
   };
 
   const handlePlay = (recording: RecordingHistory) => {
+    console.log("handlePlay recording:", recording);
+    console.log("duration_seconds:", recording.duration_seconds);
     if (recording.status === "completed" && recording.file_name) {
       setPlayingId(recording.id);
 
