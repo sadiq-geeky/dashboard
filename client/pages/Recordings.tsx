@@ -282,7 +282,7 @@ export function Recordings() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
                       <Clock className="h-4 w-4" />
-                      <span>{formatDuration(recording.duration)}</span>
+                      <span>{formatDuration(calculateDuration(recording.start_time, recording.end_time))}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
