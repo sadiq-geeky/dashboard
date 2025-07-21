@@ -31,11 +31,16 @@ const createDeviceAPI = async (device: {
 
     if (!response.ok) {
       if (response.status === 409) {
-        const errorData = await response.json();
-        alert(errorData.error || "Device with this IP address already exists");
+        try {
+          const errorData = await response.json();
+          alert(errorData.error || "Device with this IP address already exists");
+        } catch {
+          alert("Device with this IP address already exists");
+        }
         return null;
       }
-      throw new Error("Failed to create device");
+      alert("Failed to create device. Please try again.");
+      return null;
     }
     return await response.json();
   } catch (error) {
