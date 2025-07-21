@@ -8,33 +8,37 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
   try {
     // Query the actual heartbeat table
     const query = `
-      SELECT 
-  COALESCE(dm.device_name, ranked.ip_address) AS device_name,
-  ranked.last_seen,
-  ranked.status
-FROM (
-  SELECT 
-    ip_address,
-    created_on AS last_seen,
-    CASE 
-      WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 5 THEN 'online'
-      WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 15 THEN 'problematic'
-      ELSE 'offline'
-    END AS status,
-    ROW_NUMBER() OVER (PARTITION BY ip_address ORDER BY created_on DESC) AS row_num
-  FROM recording_heartbeat
-) AS ranked
-LEFT JOIN device_mappings dm ON dm.ip_address = ranked.ip_address
-WHERE ranked.row_num = 1
-ORDER BY ranked.last_seen DESC;
-
+      SELECT
+        COALESCE(dm.device_name, ranked.ip_address) AS device_name,
+        ranked.last_seen,
+        ranked.status
+      FROM (
+        SELECT
+          ip_address,
+          created_on AS last_seen,
+          CASE
+            WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 5 THEN 'online'
+            WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 15 THEN 'problematic'
+            ELSE 'offline'
+          END AS status,
+          ROW_NUMBER() OVER (PARTITION BY ip_address ORDER BY created_on DESC) AS row_num
+        FROM recording_heartbeat
+      ) AS ranked
+      LEFT JOIN device_mappings dm ON dm.ip_address = ranked.ip_address
+      WHERE ranked.row_num = 1
+      ORDER BY ranked.last_seen DESC
     `;
 
     const heartbeats = await executeQuery<HeartbeatRecord>(query);
     res.json(heartbeats);
   } catch (error) {
     console.error("Error fetching heartbeats:", error);
-    res.status(500).json({ error: "Failed to fetch heartbeats" });
+    console.error("Query failed:", query);
+    res.status(500).json({
+      error: "Failed to fetch heartbeats",
+      details:
+        process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
 };
 
@@ -44,9 +48,7 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
     const { ip_address } = req.body;
 
     if (!ip_address) {
-      return res
-        .status(400)
-        .json({ error: "IP address is required" });
+      return res.status(400).json({ error: "IP address is required" });
     }
     const uuid = uuidv4(); // Generate a new UUID
     // Insert heartbeat into database
@@ -59,7 +61,7 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Heartbeat recorded"
+      message: "Heartbeat recorded",
     });
   } catch (error) {
     console.error("Error recording heartbeat:", error);

@@ -31,37 +31,22 @@ export function AudioPlayer({
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [isLoading, setIsLoading] = useState(!databaseDuration);
-  const [metadataLoaded, setMetadataLoaded] = useState(!!databaseDuration);
+  const [isLoading, setIsLoading] = useState(false);
+  const [metadataLoaded, setMetadataLoaded] = useState(true);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const handleLoadedMetadata = () => {
-      // Check if duration is valid before setting
+      // Only use file metadata if database duration is not available
       if (
+        !databaseDuration &&
         audio.duration &&
         !isNaN(audio.duration) &&
         isFinite(audio.duration)
       ) {
         setDuration(audio.duration);
-        setMetadataLoaded(true);
-        setIsLoading(false);
-      }
-    };
-
-    const handleCanPlay = () => {
-      // Fallback: try to get duration when audio can play
-      if (
-        audio.duration &&
-        !isNaN(audio.duration) &&
-        isFinite(audio.duration) &&
-        !metadataLoaded
-      ) {
-        setDuration(audio.duration);
-        setMetadataLoaded(true);
-        setIsLoading(false);
       }
     };
 
@@ -75,41 +60,21 @@ export function AudioPlayer({
     };
 
     const handleError = () => {
-      setIsLoading(false);
       console.error("Error loading audio file");
     };
 
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
-    audio.addEventListener("canplay", handleCanPlay);
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("ended", handleEnded);
     audio.addEventListener("error", handleError);
 
-    // Force load if src is already set
-    if (audio.src) {
-      audio.load();
-    }
-
-    // Timeout fallback: Stop loading after 30 seconds (for large files)
-    const loadingTimeout = setTimeout(() => {
-      if (isLoading) {
-        setIsLoading(false);
-        setMetadataLoaded(true);
-        console.warn(
-          "Audio metadata loading timeout - proceeding without duration",
-        );
-      }
-    }, 30000);
-
     return () => {
-      clearTimeout(loadingTimeout);
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
-      audio.removeEventListener("canplay", handleCanPlay);
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("ended", handleEnded);
       audio.removeEventListener("error", handleError);
     };
-  }, [metadataLoaded]);
+  }, [databaseDuration]);
 
   const togglePlayPause = () => {
     const audio = audioRef.current;
@@ -125,7 +90,7 @@ export function AudioPlayer({
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
-    if (!audio || !duration || !metadataLoaded) return;
+    if (!audio || !duration) return;
 
     const newTime = parseFloat(e.target.value);
     if (isNaN(newTime)) return;
@@ -136,7 +101,7 @@ export function AudioPlayer({
 
   const skip = (seconds: number) => {
     const audio = audioRef.current;
-    if (!audio || !duration || !metadataLoaded) return;
+    if (!audio || !duration) return;
 
     const newTime = Math.max(0, Math.min(duration, currentTime + seconds));
     audio.currentTime = newTime;
@@ -193,8 +158,7 @@ export function AudioPlayer({
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const progress =
-    duration > 0 && metadataLoaded ? (currentTime / duration) * 100 : 0;
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -213,18 +177,10 @@ export function AudioPlayer({
         </div>
 
         {/* Audio Element */}
-        <audio ref={audioRef} src={audioUrl} preload="metadata" />
+        <audio ref={audioRef} src={audioUrl} preload="none" />
 
-        {/* Loading State */}
-        {(isLoading || !metadataLoaded) && (
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-2 text-sm text-gray-500">Loading audio...</p>
-          </div>
-        )}
-
-        {/* Player Controls */}
-        {!isLoading && metadataLoaded && (
+        {/* Player Controls - Always show since we use database metadata */}
+        {
           <div className="space-y-4">
             {/* Progress Bar */}
             <div className="space-y-2">
@@ -347,7 +303,7 @@ export function AudioPlayer({
                 ` Adjusted Duration: ${formatTime(duration / playbackRate)}`}
             </div>
           </div>
-        )}
+        }
       </div>
 
       <style>{`
