@@ -181,3 +181,24 @@ export const updateRecording: RequestHandler = async (req, res) => {
     res.status(500).json({ error: "Failed to update recording" });
   }
 };
+
+// Get unique device names for filtering
+export const getDeviceNames: RequestHandler = async (req, res) => {
+  try {
+    const query = `
+      SELECT DISTINCT COALESCE(dm.device_name, rh.ip_address) AS device_name
+      FROM recording_history rh
+      LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
+      WHERE COALESCE(dm.device_name, rh.ip_address) IS NOT NULL
+      ORDER BY device_name ASC
+    `;
+
+    const devices = await executeQuery<{ device_name: string }>(query);
+    const deviceNames = devices.map(d => d.device_name);
+
+    res.json(deviceNames);
+  } catch (error) {
+    console.error("Error fetching device names:", error);
+    res.status(500).json({ error: "Failed to fetch device names" });
+  }
+};
