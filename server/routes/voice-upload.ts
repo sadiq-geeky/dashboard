@@ -12,20 +12,6 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Logging function to match PHP behavior
-function logRequest(status: string, data: any = {}, error?: string) {
-  const log = {
-    timestamp: new Date().toISOString().slice(0, 19).replace("T", " "),
-    ip_address: "SERVER", // Will be populated from request
-    status,
-    data,
-    ...(error && { error }),
-  };
-
-  const logPath = path.join(process.cwd(), "upload_log.txt");
-  fs.appendFileSync(logPath, JSON.stringify(log) + "\n");
-}
-
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -61,71 +47,43 @@ const upload = multer({
   },
 });
 
-// Generate UUID v4 (matches PHP function)
-function generateUUIDv4(): string {
-  return uuidv4();
-}
-
-// Voice upload route - matches your PHP code exactly
+// Upload voice recording
 export const uploadVoice: RequestHandler = async (req, res) => {
-  // Set JSON content type
-  res.setHeader("Content-Type", "application/json");
-
-  let response = { success: false } as any;
-  const clientIP = req.ip || req.connection.remoteAddress || "UNKNOWN";
-
-  // Check request method
-  if (req.method !== "POST") {
-    const error = "Only POST method is allowed";
-    logRequest("failed", {}, error);
-    response.error = error;
-    return res.json(response);
-  }
-
   try {
-    // Get and validate parameters from form data
     const { ip_address, start_time, end_time, cnic } = req.body;
     const file = req.file;
 
-    // Check for missing parameters
-    const missing = [];
-    if (!ip_address || ip_address.trim() === "") missing.push("ip_address");
-    if (!start_time) missing.push("start_time");
-    if (!end_time) missing.push("end_time");
-    if (!cnic) missing.push("cnic");
-    if (!file) missing.push("mp3 file");
-
-    if (missing.length > 0) {
-      const error = `Missing required parameter(s): ${missing.join(", ")}`;
-      logRequest("failed", req.body, error);
-      response.error = error;
-      return res.json(response);
+    // Validate required parameters
+    if (!ip_address?.trim()) {
+      return res.status(400).json({ error: "IP address is required" });
+    }
+    if (!start_time) {
+      return res.status(400).json({ error: "Start time is required" });
+    }
+    if (!end_time) {
+      return res.status(400).json({ error: "End time is required" });
+    }
+    if (!cnic) {
+      return res.status(400).json({ error: "CNIC is required" });
+    }
+    if (!file) {
+      return res.status(400).json({ error: "Audio file is required" });
     }
 
-    // File validation is handled by multer fileFilter
-    const newFilename = file.filename;
-    const filePath = req.file.path;
-    const fileSizeBytes = req.file.size;
-    const mimeType = req.file.mimetype;
-
-    const metadata = await parseFile(filePath);
-
+    // Parse audio metadata
+    const metadata = await parseFile(file.path);
     const durationSeconds = metadata.format.duration || 0;
     const audioBitrate = metadata.format.bitrate || 0;
     const sampleRate = metadata.format.sampleRate || 0;
-    const audioFormat = metadata.format.container || mimeType;
+    const audioFormat = metadata.format.container || file.mimetype;
 
-
-
-    // Generate UUID and timestamp
-    const id = generateUUIDv4();
-    const createdOn = new Date().toISOString().slice(0, 19).replace("T", " ");
-
-    // Insert into database
+    // Generate UUID and insert into database
+    const id = uuidv4();
     const query = `
       INSERT INTO recording_history 
-      (id, cnic, start_time, end_time, file_name, ip_address, CREATED_ON, duration_seconds, audio_bitrate, sample_rate, audio_format, file_size_bytes) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, cnic, start_time, end_time, file_name, ip_address, CREATED_ON, 
+       duration_seconds, audio_bitrate, sample_rate, audio_format, file_size_bytes) 
+      VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)
     `;
 
     await executeQuery(query, [
@@ -133,71 +91,38 @@ export const uploadVoice: RequestHandler = async (req, res) => {
       cnic,
       start_time,
       end_time,
-      newFilename,
+      file.filename,
       ip_address.trim(),
-      createdOn,
       durationSeconds,
       audioBitrate,
       sampleRate,
       audioFormat,
-      fileSizeBytes,
+      file.size,
     ]);
 
-    // Log success
-    const logEntry = {
+    res.status(201).json({
+      success: true,
       id,
-      ip_address: ip_address.trim(),
-      start_time,
-      end_time,
-      cnic,
-      file_name: newFilename,
-      uploaded_at: createdOn,
-      duration_seconds: durationSeconds,
-      audio_bitrate: audioBitrate,
-      sample_rate: sampleRate,
-      audio_format: audioFormat,
-      file_size_bytes: fileSizeBytes,
-      client_ip: clientIP,
-      status: "success",
       message: "File uploaded successfully",
-      playback_url: `/api/audio/${newFilename}`, // For UI playback
-    };
-
-    logRequest("success", logEntry);
-
-    // Success response
-    response.success = true;
-    response.playback_url = `/api/audio/${newFilename}`; // For UI playback
-
-    res.json(response);
+      playback_url: `/api/audio/${file.filename}`,
+    });
   } catch (error) {
-    console.error("Error in uploadVoice:", error);
+    console.error("Error uploading voice:", error);
 
-    let errorMessage = "Unexpected server error occurred.";
-    if (error instanceof Error) {
-      if (error.message.includes("Only MP3 and WAV")) {
-        errorMessage = error.message;
-      } else {
-        errorMessage = `Insert failed: ${error.message}`;
-      }
+    if (error instanceof Error && error.message.includes("Only MP3 and WAV")) {
+      return res.status(400).json({ error: error.message });
     }
 
-    logRequest("failed", req.body, errorMessage);
-    response.error = errorMessage;
-    res.json(response);
+    res.status(500).json({ error: "Failed to upload voice recording" });
   }
 };
 
-// Middleware for handling multer upload
-export const uploadMiddleware = upload.single("mp3");
-
-// Route to serve audio files for playback
+// Serve audio files for playback
 export const serveAudio: RequestHandler = (req, res) => {
   try {
-    const filename = req.params.filename;
+    const { filename } = req.params;
     const filepath = path.join(uploadDir, filename);
 
-    // Check if file exists
     if (!fs.existsSync(filepath)) {
       return res.status(404).json({ error: "Audio file not found" });
     }
@@ -217,3 +142,6 @@ export const serveAudio: RequestHandler = (req, res) => {
     res.status(500).json({ error: "Failed to serve audio file" });
   }
 };
+
+// Middleware for handling multer upload
+export const uploadMiddleware = upload.single("mp3");
