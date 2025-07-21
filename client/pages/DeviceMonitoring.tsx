@@ -13,13 +13,29 @@ import {
 // Fetch heartbeats from API
 const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
   try {
-    const response = await fetch("/api/heartbeats");
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+    const response = await fetch("/api/heartbeats", {
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      throw new Error("Failed to fetch heartbeats");
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch heartbeats: ${response.status} ${errorText}`);
     }
+
     return await response.json();
   } catch (error) {
     console.error("Error fetching heartbeats:", error);
+    if (error.name === 'AbortError') {
+      console.error("Request timed out after 10 seconds");
+    }
     return [];
   }
 };
