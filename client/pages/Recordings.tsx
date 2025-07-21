@@ -124,6 +124,9 @@ export function Recordings() {
     totalPages: 0,
   });
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDevice, setSelectedDevice] = useState("");
+  const [deviceNames, setDeviceNames] = useState<string[]>([]);
+  const [deviceOpen, setDeviceOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [playingId, setPlayingId] = useState<string | null>(null);
