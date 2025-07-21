@@ -5,19 +5,29 @@ import { executeQuery } from "../config/database";
 // Get recordings with pagination and CNIC search
 export const getRecordings: RequestHandler = async (req, res) => {
   try {
-    const { page = "1", limit = "10", search } = req.query;
+    const { page = "1", limit = "10", search, device } = req.query;
 
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    // Build WHERE clause for CNIC search
+    // Build WHERE clause for CNIC search and device filtering
     let whereClause = "";
     let queryParams: any[] = [];
+    const conditions: string[] = [];
 
     if (search) {
-      whereClause = "WHERE cnic LIKE ?";
+      conditions.push("cnic LIKE ?");
       queryParams.push(`%${search}%`);
+    }
+
+    if (device) {
+      conditions.push("COALESCE(dm.device_name, rh.ip_address) = ?");
+      queryParams.push(device);
+    }
+
+    if (conditions.length > 0) {
+      whereClause = `WHERE ${conditions.join(" AND ")}`;
     }
 
     // Get total count
