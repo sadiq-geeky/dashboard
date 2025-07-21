@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 console.log("🧪 ENV DB_NAME:", process.env.DB_NAME);
 

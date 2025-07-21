@@ -33,7 +33,9 @@ const createDeviceAPI = async (device: {
       if (response.status === 409) {
         try {
           const errorData = await response.json();
-          alert(errorData.error || "Device with this IP address already exists");
+          alert(
+            errorData.error || "Device with this IP address already exists",
+          );
         } catch {
           alert("Device with this IP address already exists");
         }
@@ -65,7 +67,10 @@ const updateDeviceAPI = async (
       if (response.status === 409) {
         try {
           const errorData = await response.json();
-          alert(errorData.error || "Another device with this IP address already exists");
+          alert(
+            errorData.error ||
+              "Another device with this IP address already exists",
+          );
         } catch {
           alert("Another device with this IP address already exists");
         }

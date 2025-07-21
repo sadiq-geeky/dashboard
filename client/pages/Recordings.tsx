@@ -84,7 +84,10 @@ const getStatusColor = (status: RecordingHistory["status"]) => {
   }
 };
 
-const calculateDuration = (startTime: string | null, endTime: string | null): number | null => {
+const calculateDuration = (
+  startTime: string | null,
+  endTime: string | null,
+): number | null => {
   if (!startTime || !endTime) return null;
 
   const start = new Date(startTime);
@@ -103,7 +106,7 @@ const formatDuration = (seconds: number | null) => {
   const mins = Math.floor((seconds % 3600) / 60);
   const secs = seconds % 60;
 
-  const padded = (val: number) => val.toString().padStart(2, '0');
+  const padded = (val: number) => val.toString().padStart(2, "0");
 
   if (hrs > 0) {
     return `${padded(hrs)}:${padded(mins)}:${padded(secs)}`;
@@ -111,7 +114,6 @@ const formatDuration = (seconds: number | null) => {
 
   return `${padded(mins)}:${padded(secs)}`;
 };
-
 
 export function Recordings() {
   const [recordings, setRecordings] = useState<
@@ -139,7 +141,12 @@ export function Recordings() {
   const loadRecordings = async () => {
     setIsLoading(true);
     try {
-      const result = await fetchRecordings(currentPage, 10, searchTerm, selectedDevice);
+      const result = await fetchRecordings(
+        currentPage,
+        10,
+        searchTerm,
+        selectedDevice,
+      );
       setRecordings(result);
     } catch (error) {
       console.error("Failed to load recordings:", error);
@@ -306,7 +313,7 @@ export function Recordings() {
                       <Check
                         className={cn(
                           "mr-2 h-4 w-4",
-                          selectedDevice === "" ? "opacity-100" : "opacity-0"
+                          selectedDevice === "" ? "opacity-100" : "opacity-0",
                         )}
                       />
                       All devices
@@ -320,7 +327,9 @@ export function Recordings() {
                         <Check
                           className={cn(
                             "mr-2 h-4 w-4",
-                            selectedDevice === device ? "opacity-100" : "opacity-0"
+                            selectedDevice === device
+                              ? "opacity-100"
+                              : "opacity-0",
                           )}
                         />
                         {device}
@@ -385,7 +394,14 @@ export function Recordings() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
                       <Clock className="h-4 w-4" />
-                      <span>{formatDuration(calculateDuration(recording.start_time, recording.end_time))}</span>
+                      <span>
+                        {formatDuration(
+                          calculateDuration(
+                            recording.start_time,
+                            recording.end_time,
+                          ),
+                        )}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

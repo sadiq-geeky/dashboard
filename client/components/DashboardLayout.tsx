@@ -122,7 +122,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           >
             <ul role="list" className="flex flex-1 flex-col">
               <li>
-                <ul role="list" className={cn("space-y-2", sidebarCollapsed ? "mx-0" : "-mx-2")}>
+                <ul
+                  role="list"
+                  className={cn(
+                    "space-y-2",
+                    sidebarCollapsed ? "mx-0" : "-mx-2",
+                  )}
+                >
                   {navigation.map((item) => {
                     const isActive = location.pathname === item.href;
                     return (

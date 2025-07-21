@@ -195,7 +195,7 @@ export const getDeviceNames: RequestHandler = async (req, res) => {
     `;
 
     const devices = await executeQuery<{ device_name: string }>(query);
-    const deviceNames = devices.map(d => d.device_name);
+    const deviceNames = devices.map((d) => d.device_name);
 
     res.json(deviceNames);
   } catch (error) {
