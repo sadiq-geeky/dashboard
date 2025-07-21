@@ -1,0 +1,173 @@
+import { RequestHandler } from "express";
+import { RecordingHistory, PaginatedResponse } from "@shared/api";
+import { executeQuery } from "../config/database";
+
+// Get recordings with pagination and CNIC search
+export const getRecordings: RequestHandler = async (req, res) => {
+  try {
+    const { page = "1", limit = "10", search } = req.query;
+
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const offset = (pageNum - 1) * limitNum;
+
+    // Build WHERE clause for CNIC search
+    let whereClause = "";
+    let queryParams: any[] = [];
+
+    if (search) {
+      whereClause = "WHERE cnic LIKE ?";
+      queryParams.push(`%${search}%`);
+    }
+
+    // Get total count
+    const countQuery = `
+      SELECT COUNT(*) as total 
+      FROM recording_history 
+      ${whereClause}
+    `;
+    const [countResult] = await executeQuery<{ total: number }>(
+      countQuery,
+      queryParams,
+    );
+    const total = countResult.total;
+
+    // Get paginated results
+    const dataQuery = `
+      SELECT 
+    rh.id,
+    rh.cnic,
+    rh.start_time,
+    rh.end_time,
+    rh.file_name,
+    rh.CREATED_ON AS created_on,
+    rh.ip_address,
+    COALESCE(dm.device_name, rh.ip_address) AS device_name,
+    CASE 
+        WHEN rh.end_time IS NOT NULL THEN 
+            TIMESTAMPDIFF(SECOND, rh.start_time, rh.end_time)
+        ELSE NULL
+    END AS duration,
+    CASE 
+        WHEN rh.end_time IS NOT NULL AND rh.file_name IS NOT NULL THEN 'completed'
+        WHEN rh.start_time IS NOT NULL AND rh.end_time IS NULL THEN 'in_progress'
+        ELSE 'failed'
+    END AS status
+FROM recording_history rh
+LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
+      ${whereClause}
+      ORDER BY rh.CREATED_ON DESC
+      LIMIT ${limitNum} OFFSET ${offset}
+    `;
+
+    const recordings = await executeQuery<RecordingHistory>(
+      dataQuery,
+      queryParams,
+    );
+
+    const totalPages = Math.ceil(total / limitNum);
+
+    const response: PaginatedResponse<RecordingHistory> = {
+      data: recordings,
+      total,
+      page: pageNum,
+      limit: limitNum,
+      totalPages,
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error("Error fetching recordings:", error);
+    res.status(500).json({ error: "Failed to fetch recordings" });
+  }
+};
+
+// Get single recording by ID
+export const getRecording: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const query = `
+      SELECT 
+        id,
+        cnic,
+        start_time,
+        end_time,
+        file_name,
+        CREATED_ON as created_on,
+        ip_address,
+        CASE 
+          WHEN end_time IS NOT NULL THEN TIMESTAMPDIFF(MINUTE, start_time, end_time)
+          ELSE NULL
+        END as duration,
+        CASE 
+          WHEN end_time IS NOT NULL AND file_name IS NOT NULL THEN 'completed'
+          WHEN start_time IS NOT NULL AND end_time IS NULL THEN 'in_progress'
+          ELSE 'failed'
+        END as status
+      FROM recording_history 
+      WHERE id = ?
+    `;
+
+    const recordings = await executeQuery<RecordingHistory>(query, [id]);
+
+    if (recordings.length === 0) {
+      return res.status(404).json({ error: "Recording not found" });
+    }
+
+    res.json(recordings[0]);
+  } catch (error) {
+    console.error("Error fetching recording:", error);
+    res.status(500).json({ error: "Failed to fetch recording" });
+  }
+};
+
+// Create new recording entry
+export const createRecording: RequestHandler = async (req, res) => {
+  try {
+    const { cnic, ip_address, file_name } = req.body;
+
+    const recordingId = `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    const query = `
+      INSERT INTO recording_history 
+      (id, cnic, start_time, file_name, CREATED_ON, ip_address) 
+      VALUES (?, ?, NOW(), ?, NOW(), ?)
+    `;
+
+    await executeQuery(query, [recordingId, cnic, file_name, ip_address]);
+
+    res.status(201).json({
+      success: true,
+      recording_id: recordingId,
+      message: "Recording started",
+    });
+  } catch (error) {
+    console.error("Error creating recording:", error);
+    res.status(500).json({ error: "Failed to create recording" });
+  }
+};
+
+// Update recording end time
+export const updateRecording: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { end_time } = req.body;
+
+    const query = `
+      UPDATE recording_history 
+      SET end_time = ? 
+      WHERE id = ?
+    `;
+
+    await executeQuery(query, [end_time || new Date(), id]);
+
+    res.json({
+      success: true,
+      message: "Recording updated",
+    });
+  } catch (error) {
+    console.error("Error updating recording:", error);
+    res.status(500).json({ error: "Failed to update recording" });
+  }
+};
