@@ -85,7 +85,7 @@ export function AudioPlayer({
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
-    if (!audio || !duration || !metadataLoaded) return;
+    if (!audio || !duration) return;
 
     const newTime = parseFloat(e.target.value);
     if (isNaN(newTime)) return;
