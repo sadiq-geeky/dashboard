@@ -85,11 +85,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           sidebarCollapsed ? "lg:w-16" : "lg:w-72",
         )}
       >
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white pb-4 relative">
+        <div className="flex grow flex-col gap-y-5 border-r border-gray-200 bg-white pb-4 relative">
           {/* Collapse Toggle Button */}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="absolute -right-3 top-20 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white shadow-sm hover:bg-gray-50 transition-colors"
+            className="absolute -right-3 top-6 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 bg-white shadow-md hover:bg-gray-50 hover:shadow-lg transition-all duration-200"
           >
             {sidebarCollapsed ? (
               <ChevronRight className="h-4 w-4 text-gray-600" />
