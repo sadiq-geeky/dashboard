@@ -19,12 +19,14 @@ const fetchRecordings = async (
   page: number,
   limit: number,
   search?: string,
+  device?: string,
 ): Promise<PaginatedResponse<RecordingHistory>> => {
   try {
     const params = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
       ...(search && { search }),
+      ...(device && { device }),
     });
 
     const response = await fetch(`/api/recordings?${params}`);
@@ -40,6 +42,18 @@ const fetchRecordings = async (
       limit,
       totalPages: 0,
     };
+  }
+};
+
+// API function to fetch device names
+const fetchDeviceNames = async (): Promise<string[]> => {
+  try {
+    const response = await fetch("/api/recordings/device-names");
+    if (!response.ok) throw new Error("Failed to fetch device names");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching device names:", error);
+    return [];
   }
 };
 
