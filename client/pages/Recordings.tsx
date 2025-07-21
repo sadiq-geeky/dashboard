@@ -139,7 +139,7 @@ export function Recordings() {
   const loadRecordings = async () => {
     setIsLoading(true);
     try {
-      const result = await fetchRecordings(currentPage, 10, searchTerm);
+      const result = await fetchRecordings(currentPage, 10, searchTerm, selectedDevice);
       setRecordings(result);
     } catch (error) {
       console.error("Failed to load recordings:", error);
@@ -153,6 +153,15 @@ export function Recordings() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadDeviceNames = async () => {
+    try {
+      const devices = await fetchDeviceNames();
+      setDeviceNames(devices);
+    } catch (error) {
+      console.error("Failed to load device names:", error);
     }
   };
 
