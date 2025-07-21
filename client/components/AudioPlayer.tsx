@@ -24,6 +24,7 @@ export function AudioPlayer({
   onClose,
   databaseDuration,
 }: AudioPlayerProps) {
+  console.log("AudioPlayer databaseDuration:", databaseDuration);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
