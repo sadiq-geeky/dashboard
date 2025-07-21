@@ -8,33 +8,36 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
   try {
     // Query the actual heartbeat table
     const query = `
-      SELECT 
-  COALESCE(dm.device_name, ranked.ip_address) AS device_name,
-  ranked.last_seen,
-  ranked.status
-FROM (
-  SELECT 
-    ip_address,
-    created_on AS last_seen,
-    CASE 
-      WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 5 THEN 'online'
-      WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 15 THEN 'problematic'
-      ELSE 'offline'
-    END AS status,
-    ROW_NUMBER() OVER (PARTITION BY ip_address ORDER BY created_on DESC) AS row_num
-  FROM recording_heartbeat
-) AS ranked
-LEFT JOIN device_mappings dm ON dm.ip_address = ranked.ip_address
-WHERE ranked.row_num = 1
-ORDER BY ranked.last_seen DESC;
-
+      SELECT
+        COALESCE(dm.device_name, ranked.ip_address) AS device_name,
+        ranked.last_seen,
+        ranked.status
+      FROM (
+        SELECT
+          ip_address,
+          created_on AS last_seen,
+          CASE
+            WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 5 THEN 'online'
+            WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 15 THEN 'problematic'
+            ELSE 'offline'
+          END AS status,
+          ROW_NUMBER() OVER (PARTITION BY ip_address ORDER BY created_on DESC) AS row_num
+        FROM recording_heartbeat
+      ) AS ranked
+      LEFT JOIN device_mappings dm ON dm.ip_address = ranked.ip_address
+      WHERE ranked.row_num = 1
+      ORDER BY ranked.last_seen DESC
     `;
 
     const heartbeats = await executeQuery<HeartbeatRecord>(query);
     res.json(heartbeats);
   } catch (error) {
     console.error("Error fetching heartbeats:", error);
-    res.status(500).json({ error: "Failed to fetch heartbeats" });
+    console.error("Query failed:", query);
+    res.status(500).json({
+      error: "Failed to fetch heartbeats",
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
