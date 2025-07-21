@@ -55,9 +55,19 @@ const updateDeviceAPI = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updates),
     });
-    return response.ok;
+
+    if (!response.ok) {
+      if (response.status === 409) {
+        const errorData = await response.json();
+        alert(errorData.error || "Another device with this IP address already exists");
+        return false;
+      }
+      throw new Error("Failed to update device");
+    }
+    return true;
   } catch (error) {
     console.error("Error updating device:", error);
+    alert("Failed to update device. Please try again.");
     return false;
   }
 };
