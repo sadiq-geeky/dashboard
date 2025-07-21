@@ -54,6 +54,18 @@ const getStatusColor = (status: RecordingHistory["status"]) => {
   }
 };
 
+const calculateDuration = (startTime: string | null, endTime: string | null): number | null => {
+  if (!startTime || !endTime) return null;
+
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+
+  const durationMs = end.getTime() - start.getTime();
+  return Math.floor(durationMs / 1000); // Convert to seconds
+};
+
 const formatDuration = (seconds: number | null) => {
   if (seconds == null || isNaN(seconds)) return "-";
 
