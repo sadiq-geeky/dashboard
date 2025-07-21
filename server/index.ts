@@ -72,10 +72,10 @@ export function createServer() {
 
   // Recording routes
   app.get("/api/recordings", getRecordings);
+  app.get("/api/recordings/device-names", getDeviceNames);
   app.get("/api/recordings/:id", getRecording);
   app.post("/api/recordings", createRecording);
   app.put("/api/recordings/:id", updateRecording);
-  app.get("/api/recordings/device-names", getDeviceNames);
 
   return app;
 }
