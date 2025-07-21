@@ -8,9 +8,7 @@ export const submitHeartbeat: RequestHandler = async (req, res) => {
     const { ip_address } = req.body;
 
     if (!ip_address) {
-      return res
-        .status(400)
-        .json({ error: "IP address is required" });
+      return res.status(400).json({ error: "IP address is required" });
     }
 
     const uuid = uuidv4();
@@ -28,8 +26,8 @@ export const submitHeartbeat: RequestHandler = async (req, res) => {
       message: "Heartbeat recorded",
       data: {
         uuid,
-        ip_address
-      }
+        ip_address,
+      },
     });
   } catch (error) {
     console.error("Error recording heartbeat:", error);

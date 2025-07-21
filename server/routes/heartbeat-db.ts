@@ -36,7 +36,8 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
     console.error("Query failed:", query);
     res.status(500).json({
       error: "Failed to fetch heartbeats",
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      details:
+        process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };
@@ -47,9 +48,7 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
     const { ip_address } = req.body;
 
     if (!ip_address) {
-      return res
-        .status(400)
-        .json({ error: "IP address is required" });
+      return res.status(400).json({ error: "IP address is required" });
     }
     const uuid = uuidv4(); // Generate a new UUID
     // Insert heartbeat into database
@@ -62,7 +61,7 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Heartbeat recorded"
+      message: "Heartbeat recorded",
     });
   } catch (error) {
     console.error("Error recording heartbeat:", error);

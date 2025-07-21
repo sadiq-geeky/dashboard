@@ -40,7 +40,12 @@ export function AudioPlayer({
 
     const handleLoadedMetadata = () => {
       // Only use file metadata if database duration is not available
-      if (!databaseDuration && audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
+      if (
+        !databaseDuration &&
+        audio.duration &&
+        !isNaN(audio.duration) &&
+        isFinite(audio.duration)
+      ) {
         setDuration(audio.duration);
       }
     };
@@ -175,7 +180,7 @@ export function AudioPlayer({
         <audio ref={audioRef} src={audioUrl} preload="none" />
 
         {/* Player Controls - Always show since we use database metadata */}
-        {(
+        {
           <div className="space-y-4">
             {/* Progress Bar */}
             <div className="space-y-2">
@@ -298,7 +303,7 @@ export function AudioPlayer({
                 ` Adjusted Duration: ${formatTime(duration / playbackRate)}`}
             </div>
           </div>
-        )}
+        }
       </div>
 
       <style>{`
