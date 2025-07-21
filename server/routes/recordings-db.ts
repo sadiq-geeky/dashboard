@@ -32,8 +32,9 @@ export const getRecordings: RequestHandler = async (req, res) => {
 
     // Get total count
     const countQuery = `
-      SELECT COUNT(*) as total 
-      FROM recording_history 
+      SELECT COUNT(*) as total
+      FROM recording_history rh
+      LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
       ${whereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
