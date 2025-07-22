@@ -59,11 +59,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
             TIMESTAMPDIFF(SECOND, rh.start_time, rh.end_time)
         ELSE NULL
     END AS duration,
-    CASE
-        WHEN rh.end_time IS NOT NULL THEN
-            TIMESTAMPDIFF(SECOND, rh.start_time, rh.end_time)
-        ELSE NULL
-    END AS duration_seconds,
+    duration_seconds,
     CASE
         WHEN rh.end_time IS NOT NULL AND rh.file_name IS NOT NULL THEN 'completed'
         WHEN rh.start_time IS NOT NULL AND rh.end_time IS NULL THEN 'in_progress'
@@ -113,13 +109,11 @@ export const getRecording: RequestHandler = async (req, res) => {
         CREATED_ON as created_on,
         ip_address,
         CASE
-          WHEN end_time IS NOT NULL THEN TIMESTAMPDIFF(SECOND, start_time, end_time)
-          ELSE NULL
-        END as duration,
-        CASE
-          WHEN end_time IS NOT NULL THEN TIMESTAMPDIFF(SECOND, start_time, end_time)
-          ELSE NULL
-        END as duration_seconds,
+        WHEN rh.end_time IS NOT NULL THEN
+            TIMESTAMPDIFF(SECOND, rh.start_time, rh.end_time)
+        ELSE NULL
+    END AS duration,
+    duration_seconds,
         CASE
           WHEN end_time IS NOT NULL AND file_name IS NOT NULL THEN 'completed'
           WHEN start_time IS NOT NULL AND end_time IS NULL THEN 'in_progress'
