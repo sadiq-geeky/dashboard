@@ -383,16 +383,20 @@ export function Recordings() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {recording.cnic || "-"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
                       <Calendar className="h-4 w-4" />
                       <span>
-                        {recording.start_time
-                          ? new Date(recording.start_time).toLocaleString()
-                          : "-"}
+                      {recording.start_time
+                        ? new Date(
+                          new Date(recording.start_time).getTime() +
+                          (new Date(recording.start_time).getTimezoneOffset() * 60000)
+                        ).toLocaleString()
+                        : "-"}
+                      {" "}
                       </span>
                     </div>
-                  </td>
+                    </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
                       <Clock className="h-4 w-4" />
