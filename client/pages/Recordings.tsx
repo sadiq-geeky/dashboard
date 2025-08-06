@@ -29,6 +29,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useAuth } from "../contexts/AuthContext";
+import { Header } from "../components/Header";
 
 // API function to fetch recordings
 const fetchRecordings = async (
