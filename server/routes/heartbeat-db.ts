@@ -9,8 +9,8 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
     // Query the heartbeat table with device and branch info
     const query = `
       SELECT
-        COALESCE(b.branch_address, h.ip_address) AS branch_name,
-        COALESCE(b.branch_code, 'N/A') AS branch_code,
+        COALESCE(b.branch_address, h.mac_address) AS branch_name,
+        COALESCE(b.branch_code, ip_address) AS branch_code,
         h.last_seen,
         CASE
           WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 5 THEN 'online'
@@ -19,13 +19,12 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
         END AS status
       FROM (
         SELECT
-          ip_address,
           mac_address,
           MAX(created_on) as last_seen
-        FROM heartbeat
-        GROUP BY ip_address, mac_address
+        FROM heartbeat WHERE mac_address IS NOT NULL
+        GROUP BY mac_address
       ) h
-      LEFT JOIN devices d ON d.device_mac = h.mac_address OR d.ip_address = h.ip_address
+      LEFT JOIN devices d ON d.device_mac = h.mac_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
       ORDER BY h.last_seen DESC
