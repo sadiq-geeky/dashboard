@@ -980,23 +980,6 @@ export function ExactDashboard() {
         )}
       </div>
 
-      {/* Add Contact Modal */}
-      <AddContactModal
-        isOpen={isAddContactModalOpen}
-        onClose={() => setIsAddContactModalOpen(false)}
-        onContactAdded={handleContactAdded}
-      />
-
-      {/* Edit Contact Modal */}
-      <EditContactModal
-        isOpen={isEditContactModalOpen}
-        onClose={() => {
-          setIsEditContactModalOpen(false);
-          setEditingContact(null);
-        }}
-        onContactUpdated={handleContactUpdated}
-        contact={editingContact}
-      />
     </div>
   );
 }
