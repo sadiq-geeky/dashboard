@@ -15,6 +15,8 @@ import {
   ComposedChart,
   Area,
   AreaChart,
+  ScatterChart,
+  Scatter,
 } from "recharts";
 import { MessageSquare, Users, Building2, Calendar, RefreshCw, TrendingUp } from "lucide-react";
 
