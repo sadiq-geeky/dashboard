@@ -65,7 +65,12 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
     `;
 
     // Execute all queries in parallel
-    const [dailyRecordings, recordingsByStatus, recordingsByBranch, totalStatsResult] = await Promise.all([
+    const [
+      dailyRecordings,
+      recordingsByStatus,
+      recordingsByBranch,
+      totalStatsResult,
+    ] = await Promise.all([
       executeQuery<{ date: string; count: number }>(dailyRecordingsQuery),
       executeQuery<{ status: string; count: number }>(statusQuery),
       executeQuery<{ branch_name: string; count: number }>(branchQuery),
@@ -85,16 +90,16 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
     };
 
     const analytics: RecordingAnalytics = {
-      dailyRecordings: dailyRecordings.map(row => ({
+      dailyRecordings: dailyRecordings.map((row) => ({
         date: row.date,
         count: row.count,
       })),
-      recordingsByStatus: recordingsByStatus.map(row => ({
+      recordingsByStatus: recordingsByStatus.map((row) => ({
         status: row.status,
         count: row.count,
       })),
-      recordingsByBranch: recordingsByBranch.map(row => ({
-        branch_name: row.branch_name || 'Unknown Branch',
+      recordingsByBranch: recordingsByBranch.map((row) => ({
+        branch_name: row.branch_name || "Unknown Branch",
         count: row.count,
       })),
       totalStats: {

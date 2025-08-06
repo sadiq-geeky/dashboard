@@ -1,14 +1,16 @@
 import "./global.css";
 
 // Comprehensive suppression of Recharts defaultProps warnings
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   // Try to suppress React DevTools warnings
-  (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__?.onCommitFiberRoot?.((id: any, root: any, priorityLevel: any) => {
-    // Suppress during Recharts rendering
-  });
+  (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__?.onCommitFiberRoot?.(
+    (id: any, root: any, priorityLevel: any) => {
+      // Suppress during Recharts rendering
+    },
+  );
 
   // Set environment flag to reduce React warnings in development
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === "development") {
     (window as any).__SUPPRESS_DEV_WARNINGS__ = true;
   }
   // Override console methods
@@ -18,27 +20,29 @@ if (typeof window !== 'undefined') {
 
   const shouldSuppressMessage = (message: string) => {
     return (
-      message.includes('defaultProps will be removed from function components') ||
-      message.includes('Support for defaultProps will be removed') ||
-      (message.includes('XAxis') && message.includes('defaultProps')) ||
-      (message.includes('YAxis') && message.includes('defaultProps'))
+      message.includes(
+        "defaultProps will be removed from function components",
+      ) ||
+      message.includes("Support for defaultProps will be removed") ||
+      (message.includes("XAxis") && message.includes("defaultProps")) ||
+      (message.includes("YAxis") && message.includes("defaultProps"))
     );
   };
 
   console.warn = (...args) => {
-    const message = args.map(arg => String(arg)).join(' ');
+    const message = args.map((arg) => String(arg)).join(" ");
     if (shouldSuppressMessage(message)) return;
     originalWarn.apply(console, args);
   };
 
   console.error = (...args) => {
-    const message = args.map(arg => String(arg)).join(' ');
+    const message = args.map((arg) => String(arg)).join(" ");
     if (shouldSuppressMessage(message)) return;
     originalError.apply(console, args);
   };
 
   console.log = (...args) => {
-    const message = args.map(arg => String(arg)).join(' ');
+    const message = args.map((arg) => String(arg)).join(" ");
     if (shouldSuppressMessage(message)) return;
     originalLog.apply(console, args);
   };
@@ -46,7 +50,7 @@ if (typeof window !== 'undefined') {
   // Also suppress React's internal warning system
   const originalConsoleWarn = window.console.warn;
   window.console.warn = (...args) => {
-    const message = args.map(arg => String(arg)).join(' ');
+    const message = args.map((arg) => String(arg)).join(" ");
     if (shouldSuppressMessage(message)) return;
     originalConsoleWarn.apply(window.console, args);
   };

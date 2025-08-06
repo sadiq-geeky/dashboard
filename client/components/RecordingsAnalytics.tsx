@@ -13,13 +13,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import {
-  TrendingUp,
-  Users,
-  Clock,
-  CheckCircle,
-  RefreshCw,
-} from "lucide-react";
+import { TrendingUp, Users, Clock, CheckCircle, RefreshCw } from "lucide-react";
 
 interface RecordingAnalytics {
   dailyRecordings: Array<{ date: string; count: number }>;
@@ -53,7 +47,7 @@ export function RecordingsAnalytics() {
       setLoading(true);
       setError(null);
       const response = await fetch("/api/analytics/recordings");
-      
+
       if (!response.ok) {
         throw new Error("Failed to fetch analytics");
       }
@@ -118,14 +112,21 @@ export function RecordingsAnalytics() {
     );
   }
 
-  const { totalStats, dailyRecordings, recordingsByStatus, recordingsByBranch } = analytics;
+  const {
+    totalStats,
+    dailyRecordings,
+    recordingsByStatus,
+    recordingsByBranch,
+  } = analytics;
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Analytics Dashboard
+          </h1>
           <p className="text-gray-600">Recording statistics and insights</p>
         </div>
         <button
@@ -145,8 +146,12 @@ export function RecordingsAnalytics() {
               <TrendingUp className="h-6 w-6 text-blue-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Total Recordings</p>
-              <p className="text-2xl font-bold text-gray-900">{totalStats.totalRecordings.toLocaleString()}</p>
+              <p className="text-sm font-medium text-gray-500">
+                Total Recordings
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                {totalStats.totalRecordings.toLocaleString()}
+              </p>
             </div>
           </div>
         </div>
@@ -158,7 +163,9 @@ export function RecordingsAnalytics() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Completed</p>
-              <p className="text-2xl font-bold text-gray-900">{totalStats.completedRecordings.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {totalStats.completedRecordings.toLocaleString()}
+              </p>
             </div>
           </div>
         </div>
@@ -170,7 +177,9 @@ export function RecordingsAnalytics() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Avg Duration</p>
-              <p className="text-2xl font-bold text-gray-900">{formatDuration(totalStats.avgDuration)}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {formatDuration(totalStats.avgDuration)}
+              </p>
             </div>
           </div>
         </div>
@@ -182,7 +191,9 @@ export function RecordingsAnalytics() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Today</p>
-              <p className="text-2xl font-bold text-gray-900">{totalStats.todayRecordings.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {totalStats.todayRecordings.toLocaleString()}
+              </p>
             </div>
           </div>
         </div>
@@ -192,7 +203,9 @@ export function RecordingsAnalytics() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Daily Recordings Trend */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Recordings (Last 30 Days)</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Daily Recordings (Last 30 Days)
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart
               data={dailyRecordings.reverse()}
@@ -240,7 +253,9 @@ export function RecordingsAnalytics() {
 
         {/* Recordings by Status */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recordings by Status</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Recordings by Status
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <Pie
@@ -248,13 +263,18 @@ export function RecordingsAnalytics() {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ status, percent }) => `${status}: ${(percent * 100).toFixed(0)}%`}
+                label={({ status, percent }) =>
+                  `${status}: ${(percent * 100).toFixed(0)}%`
+                }
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="count"
               >
                 {recordingsByStatus.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={STATUS_COLORS[index % STATUS_COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={STATUS_COLORS[index % STATUS_COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip formatter={(value: number) => [value, "Recordings"]} />
@@ -265,7 +285,9 @@ export function RecordingsAnalytics() {
 
       {/* Recordings by Branch */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recordings by Branch (Top 10)</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Recordings by Branch (Top 10)
+        </h3>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart
             data={recordingsByBranch}
@@ -305,27 +327,38 @@ export function RecordingsAnalytics() {
 
       {/* Additional Insights */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Insights</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Key Insights
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">Success Rate</p>
             <p className="text-xl font-bold text-green-600">
-              {totalStats.totalRecordings > 0 
-                ? ((totalStats.completedRecordings / totalStats.totalRecordings) * 100).toFixed(1)
-                : 0}%
+              {totalStats.totalRecordings > 0
+                ? (
+                    (totalStats.completedRecordings /
+                      totalStats.totalRecordings) *
+                    100
+                  ).toFixed(1)
+                : 0}
+              %
             </p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">Active Branches</p>
-            <p className="text-xl font-bold text-blue-600">{recordingsByBranch.length}</p>
+            <p className="text-xl font-bold text-blue-600">
+              {recordingsByBranch.length}
+            </p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">Peak Recording Day</p>
             <p className="text-xl font-bold text-purple-600">
-              {dailyRecordings.length > 0 
-                ? formatDate(dailyRecordings.reduce((max, current) => 
-                    current.count > max.count ? current : max
-                  ).date)
+              {dailyRecordings.length > 0
+                ? formatDate(
+                    dailyRecordings.reduce((max, current) =>
+                      current.count > max.count ? current : max,
+                    ).date,
+                  )
                 : "N/A"}
             </p>
           </div>
