@@ -308,7 +308,7 @@ export function ConversationAnalytics() {
             Daily Conversations (Last 30 Days)
           </h3>
           <ResponsiveContainer width="100%" height={300}>
-            <AreaChart
+            <ScatterChart
               data={dailyConversationsLastMonth.reverse()}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
@@ -316,21 +316,18 @@ export function ConversationAnalytics() {
               <XAxis
                 dataKey="date"
                 tickFormatter={formatDate}
+                type="category"
               />
-              <YAxis />
+              <YAxis dataKey="count" type="number" />
               <Tooltip
                 labelFormatter={(label) => formatDate(label)}
                 formatter={(value: number) => [value, "Conversations"]}
               />
-              <Area
-                type="monotone"
+              <Scatter
                 dataKey="count"
-                stroke={COLORS.success}
                 fill={COLORS.success}
-                fillOpacity={0.3}
-                strokeWidth={2}
               />
-            </AreaChart>
+            </ScatterChart>
           </ResponsiveContainer>
         </div>
 
