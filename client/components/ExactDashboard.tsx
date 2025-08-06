@@ -190,7 +190,7 @@ export function ExactDashboard() {
                       Branch No
                     </th>
                     <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Recording No
+                      CNIC
                     </th>
                     <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Timestamp
@@ -318,7 +318,7 @@ export function ExactDashboard() {
               </div>
 
               <button className="w-full mt-4 py-2 text-sm text-blue-600 hover:text-blue-700">
-                View all logs ���
+                View all logs →
               </button>
             </div>
           </div>
