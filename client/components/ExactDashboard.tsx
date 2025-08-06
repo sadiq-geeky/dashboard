@@ -10,7 +10,7 @@ import { ConversationAnalytics } from "./ConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "./Header";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Search,
   Filter,
@@ -177,7 +177,16 @@ const getStatusIcon = (status: HeartbeatRecord["status"]) => {
 export function ExactDashboard() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("home");
+  const location = useLocation();
+
+  // Initialize activeTab based on URL parameters
+  const getInitialTab = () => {
+    const urlParams = new URLSearchParams(location.search);
+    const tab = urlParams.get('tab');
+    return tab || "home";
+  };
+
+  const [activeTab, setActiveTab] = useState(getInitialTab);
   const [analyticsSubTab, setAnalyticsSubTab] = useState("recordings");
   const [recordings, setRecordings] = useState<RecordingHistory[]>([]);
   const [filteredRecordings, setFilteredRecordings] = useState<
