@@ -2,6 +2,15 @@ import "./global.css";
 
 // Comprehensive suppression of Recharts defaultProps warnings
 if (typeof window !== 'undefined') {
+  // Try to suppress React DevTools warnings
+  (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__?.onCommitFiberRoot?.((id: any, root: any, priorityLevel: any) => {
+    // Suppress during Recharts rendering
+  });
+
+  // Set environment flag to reduce React warnings in development
+  if (process.env.NODE_ENV === 'development') {
+    (window as any).__SUPPRESS_DEV_WARNINGS__ = true;
+  }
   // Override console methods
   const originalWarn = console.warn;
   const originalError = console.error;
