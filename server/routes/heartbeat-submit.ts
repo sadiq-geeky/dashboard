@@ -15,7 +15,7 @@ export const submitHeartbeat: RequestHandler = async (req, res) => {
 
     // Insert heartbeat into database
     const query = `
-      INSERT INTO recording_heartbeat (uuid, ip_address, created_on)
+      INSERT INTO heartbeat (uuid, ip_address, created_on)
       VALUES (?, ?, NOW())
     `;
 
