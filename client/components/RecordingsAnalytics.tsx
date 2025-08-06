@@ -242,7 +242,7 @@ export function RecordingsAnalytics() {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Recordings by Status</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
+            <PieChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <Pie
                 data={recordingsByStatus}
                 cx="50%"
