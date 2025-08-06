@@ -32,6 +32,7 @@ import { ExactDashboard } from "./components/ExactDashboard";
 import { DeviceManagement } from "./pages/DeviceManagement";
 import { Recordings } from "./pages/Recordings";
 import { ConversationAnalytics } from "./pages/ConversationAnalytics";
+import { UserManagement } from "./pages/UserManagement";
 import { Login } from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
