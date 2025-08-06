@@ -288,7 +288,7 @@ export function UserManagement() {
                       Contact Info
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Branch
+                      Department
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Role
@@ -333,10 +333,10 @@ export function UserManagement() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          {user.branch_id}
+                          {user.department || "N/A"}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {user.branch_city}
+                          {user.designation || "N/A"}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
