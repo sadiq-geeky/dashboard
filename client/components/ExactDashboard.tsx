@@ -249,23 +249,27 @@ export function ExactDashboard() {
                   Showing {startIndex + 1}-{Math.min(endIndex, filteredRecordings.length)} of {filteredRecordings.length} items
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="flex space-x-1">
-                    {[1, 2, 3, 4].map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={cn(
-                          "w-6 h-6 flex items-center justify-center rounded text-sm",
-                          currentPage === page
-                            ? "bg-blue-100 text-blue-600"
-                            : "text-gray-500 hover:bg-gray-100"
-                        )}
-                      >
-                        {page}
-                      </button>
-                    ))}
-                  </div>
-                  <span className="text-sm text-gray-500">/ {Math.ceil(filteredRecordings.length / itemsPerPage)}</span>
+                  {totalPages > 1 && (
+                    <>
+                      <div className="flex space-x-1">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={cn(
+                              "w-6 h-6 flex items-center justify-center rounded text-sm",
+                              currentPage === page
+                                ? "bg-blue-100 text-blue-600"
+                                : "text-gray-500 hover:bg-gray-100"
+                            )}
+                          >
+                            {page}
+                          </button>
+                        ))}
+                      </div>
+                      <span className="text-sm text-gray-500">/ {totalPages}</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
