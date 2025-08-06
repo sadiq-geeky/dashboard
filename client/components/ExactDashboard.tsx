@@ -184,22 +184,22 @@ export function ExactDashboard() {
                 <thead>
                   <tr className="border-b border-gray-200">
                     <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
+                      S.no
                     </th>
                     <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Company
+                      Branch No
                     </th>
                     <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Email
+                      Recording No
                     </th>
                     <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Phone
+                      Timestamp
                     </th>
                     <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Country
+                      Duration
                     </th>
                     <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
+                      Branch Address
                     </th>
                     <th className="w-10"></th>
                   </tr>
