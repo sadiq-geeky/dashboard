@@ -101,23 +101,22 @@ export const getDailyConversationsLastMonth: RequestHandler = async (req, res) =
 export const getUniqueCnicsByMonth: RequestHandler = async (req, res) => {
   try {
     const query = `
-      SELECT 
-        DATE_FORMAT(rh.CREATED_ON, '%Y-%m') as month,
-        COUNT(DISTINCT rh.cnic) as unique_cnic_count
-      FROM recording_history rh
-      WHERE rh.cnic IS NOT NULL 
-        AND rh.cnic != ''
-        AND rh.CREATED_ON >= DATE_SUB(CURRENT_DATE, INTERVAL 12 MONTH)
-      GROUP BY DATE_FORMAT(rh.CREATED_ON, '%Y-%m')
-      ORDER BY month DESC
+      SELECT
+        COUNT(DISTINCT REPLACE(r.cnic, '-', '')) AS unique_cnic_count
+      FROM recording_history r
+      WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
     `;
 
     const result = await executeQuery<{
-      month: string;
       unique_cnic_count: number;
     }>(query);
 
-    res.json(result);
+    const response = {
+      month: new Date().toISOString().slice(0, 7), // Current month
+      unique_cnic_count: result[0]?.unique_cnic_count || 0
+    };
+
+    res.json([response]);
   } catch (error) {
     console.error("Error fetching unique CNICs by month:", error);
     res.status(500).json({ error: "Failed to fetch unique CNICs by month" });
