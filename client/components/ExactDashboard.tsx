@@ -99,6 +99,12 @@ export function ExactDashboard() {
     return `${diffHours} hours ago`;
   };
 
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredRecordings.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentRecordings = filteredRecordings.slice(startIndex, endIndex);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Navigation - matches the exact design */}
