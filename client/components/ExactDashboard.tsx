@@ -124,6 +124,85 @@ export function ExactDashboard() {
     return `${diffHours} hours ago`;
   };
 
+  // Audio control functions
+  const playAudio = () => {
+    if (audioRef && selectedRecording?.file_name) {
+      audioRef.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const pauseAudio = () => {
+    if (audioRef) {
+      audioRef.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const resetAudio = () => {
+    if (audioRef) {
+      audioRef.currentTime = 0;
+      setCurrentTime(0);
+    }
+  };
+
+  const skipBack = () => {
+    if (audioRef) {
+      audioRef.currentTime = Math.max(0, audioRef.currentTime - 10);
+    }
+  };
+
+  const downloadAudio = () => {
+    if (selectedRecording?.file_name) {
+      const link = document.createElement('a');
+      link.href = `/api/audio/${selectedRecording.file_name}`;
+      link.download = selectedRecording.file_name;
+      link.click();
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Initialize audio when recording is selected
+  useEffect(() => {
+    if (selectedRecording?.file_name) {
+      const audio = new Audio(`/api/audio/${selectedRecording.file_name}`);
+
+      audio.addEventListener('loadedmetadata', () => {
+        setDuration(audio.duration);
+      });
+
+      audio.addEventListener('timeupdate', () => {
+        setCurrentTime(audio.currentTime);
+      });
+
+      audio.addEventListener('ended', () => {
+        setIsPlaying(false);
+        setCurrentTime(0);
+      });
+
+      setAudioRef(audio);
+      setCurrentTime(0);
+      setIsPlaying(false);
+
+      return () => {
+        audio.pause();
+        audio.removeEventListener('loadedmetadata', () => {});
+        audio.removeEventListener('timeupdate', () => {});
+        audio.removeEventListener('ended', () => {});
+      };
+    } else {
+      setAudioRef(null);
+      setCurrentTime(0);
+      setDuration(0);
+      setIsPlaying(false);
+    }
+  }, [selectedRecording]);
+
   // Calculate pagination
   const totalPages = Math.ceil(filteredRecordings.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
