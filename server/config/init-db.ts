@@ -138,6 +138,39 @@ export async function initializeTables() {
     await executeQuery(createRecordingHistoryTable);
     console.log("✅ Recording history table created/verified successfully");
 
+    // Create users table if it doesn't exist
+    const createUsersTable = `
+      CREATE TABLE IF NOT EXISTS users (
+        uuid VARCHAR(36) PRIMARY KEY,
+        emp_name VARCHAR(255),
+        device_mac VARCHAR(17),
+        branch_id VARCHAR(50),
+        branch_city VARCHAR(100),
+        branch_address TEXT,
+        gender ENUM('Male', 'Female', 'Other'),
+        date_of_birth DATE,
+        cnic VARCHAR(15),
+        phone_no VARCHAR(20),
+        designation VARCHAR(100),
+        department VARCHAR(100),
+        joining_date DATE,
+        email_id VARCHAR(255),
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        role ENUM('admin', 'user') DEFAULT 'user',
+        is_active BOOLEAN DEFAULT true,
+        created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_username (username),
+        INDEX idx_branch_id (branch_id),
+        INDEX idx_role (role),
+        INDEX idx_is_active (is_active)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `;
+
+    await executeQuery(createUsersTable);
+    console.log("✅ Users table created/verified successfully");
+
     // Add device_mac column to existing tables if it doesn't exist
     try {
       await executeQuery(
