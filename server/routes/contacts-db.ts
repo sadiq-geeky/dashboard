@@ -23,26 +23,28 @@ export interface Contact {
 // Get all contacts
 export const getContacts: RequestHandler = async (req, res) => {
   try {
-    const { limit = 50, page = 1, search } = req.query;
-    const offset = (Number(page) - 1) * Number(limit);
+    const { limit = "50", page = "1", search } = req.query;
+    const limitNum = parseInt(limit as string, 10);
+    const pageNum = parseInt(page as string, 10);
+    const offset = (pageNum - 1) * limitNum;
 
     let query = `
-      SELECT uuid, emp_name, device_mac, branch_id, branch_address, gender, 
-             date_of_birth, cnic, phone_no, designation, department, 
+      SELECT uuid, emp_name, device_mac, branch_id, branch_address, gender,
+             date_of_birth, cnic, phone_no, designation, department,
              joining_date, email_id, created_on, updated_on
       FROM contacts
     `;
 
     const queryParams: any[] = [];
 
-    if (search) {
+    if (search && typeof search === 'string' && search.trim()) {
       query += ` WHERE emp_name LIKE ? OR cnic LIKE ? OR phone_no LIKE ? OR email_id LIKE ?`;
-      const searchTerm = `%${search}%`;
+      const searchTerm = `%${search.trim()}%`;
       queryParams.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
 
     query += ` ORDER BY created_on DESC LIMIT ? OFFSET ?`;
-    queryParams.push(Number(limit), offset);
+    queryParams.push(limitNum, offset);
 
     const contacts = await executeQuery<Contact>(query, queryParams);
 
@@ -50,23 +52,21 @@ export const getContacts: RequestHandler = async (req, res) => {
     let countQuery = `SELECT COUNT(*) as total FROM contacts`;
     const countParams: any[] = [];
 
-    if (search) {
+    if (search && typeof search === 'string' && search.trim()) {
       countQuery += ` WHERE emp_name LIKE ? OR cnic LIKE ? OR phone_no LIKE ? OR email_id LIKE ?`;
-      const searchTerm = `%${search}%`;
+      const searchTerm = `%${search.trim()}%`;
       countParams.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
 
-    const [{ total }] = await executeQuery<{ total: number }>(
-      countQuery,
-      countParams,
-    );
+    const countResult = await executeQuery<{ total: number }>(countQuery, countParams);
+    const total = countResult[0]?.total || 0;
 
     res.json({
       data: contacts,
       total,
-      page: Number(page),
-      limit: Number(limit),
-      totalPages: Math.ceil(total / Number(limit)),
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(total / limitNum),
     });
   } catch (error) {
     console.error("Error fetching contacts:", error);
