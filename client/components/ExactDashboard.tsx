@@ -82,8 +82,8 @@ const fetchRecordings = async (retries = 2): Promise<RecordingHistory[]> => {
   }
 };
 
-// Fetch heartbeats from API
-const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
+// Fetch heartbeats from API with retry logic
+const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -110,6 +110,14 @@ const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
     if (error.name === "AbortError") {
       console.error("Request timed out after 10 seconds");
     }
+
+    // Retry logic for development
+    if (retries > 0 && (error.name === "TypeError" || error.message?.includes("Failed to fetch"))) {
+      console.log(`Retrying heartbeats fetch, ${retries} attempts remaining...`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return fetchHeartbeats(retries - 1);
+    }
+
     return [];
   }
 };
