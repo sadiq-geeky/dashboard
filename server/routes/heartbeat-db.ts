@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 // Get heartbeats with status calculation
 export const getHeartbeats: RequestHandler = async (req, res) => {
   try {
-    // Query the recording_heartbeat table
+    // Query the heartbeat table
     const query = `
       SELECT
         COALESCE(c.branch_address, h.ip_address) AS branch_name,
@@ -22,7 +22,7 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
           ip_address,
           mac_address,
           MAX(created_on) as last_seen
-        FROM recording_heartbeat
+        FROM heartbeat
         GROUP BY ip_address, mac_address
       ) h
       LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_0900_ai_ci = h.mac_address COLLATE utf8mb4_0900_ai_ci
@@ -52,7 +52,7 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
     const uuid = uuidv4(); // Generate a new UUID
     // Insert heartbeat into database
     const query = `
-      INSERT INTO recording_heartbeat (uuid, ip_address, mac_address, created_on)
+      INSERT INTO heartbeat (uuid, ip_address, mac_address, created_on)
       VALUES (?, ?, ?, NOW())
     `;
 
@@ -79,7 +79,7 @@ export const getDeviceStatus: RequestHandler = async (req, res) => {
         SUM(CASE WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) > 15 THEN 1 ELSE 0 END) as offline
       FROM (
         SELECT ip_address, mac_address, MAX(created_on) as created_on
-        FROM recording_heartbeat
+        FROM heartbeat
         GROUP BY ip_address, mac_address
       ) latest_heartbeats
     `;
