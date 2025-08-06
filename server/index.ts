@@ -89,11 +89,20 @@ export function createServer() {
   // Audio file serving route for playback
   app.get("/api/audio/:filename", serveAudio);
 
+  // Branch management routes
+  app.get("/api/branches", getBranches);
+  app.get("/api/branches/:id", getBranch);
+  app.post("/api/branches", createBranch);
+  app.put("/api/branches/:id", updateBranch);
+  app.delete("/api/branches/:id", deleteBranch);
+
   // Device management routes
   app.get("/api/devices", getDevices);
+  app.get("/api/devices/:id", getDevice);
   app.post("/api/devices", createDevice);
   app.put("/api/devices/:id", updateDevice);
   app.delete("/api/devices/:id", deleteDevice);
+  app.get("/api/branches/:branch_id/devices", getDevicesByBranch);
 
   // Recording routes
   app.get("/api/recordings", getRecordings);
@@ -101,12 +110,6 @@ export function createServer() {
   app.get("/api/recordings/:id", getRecording);
   app.post("/api/recordings", createRecording);
   app.put("/api/recordings/:id", updateRecording);
-
-  // Contacts routes
-  app.get("/api/contacts", getContacts);
-  app.post("/api/contacts", createContact);
-  app.put("/api/contacts/:uuid", updateContact);
-  app.delete("/api/contacts/:uuid", deleteContact);
 
   // Analytics routes
   app.get("/api/analytics/recordings", getRecordingsAnalytics);
