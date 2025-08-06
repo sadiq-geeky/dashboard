@@ -50,37 +50,38 @@ const fetchRecordings = async (): Promise<RecordingHistory[]> => {
 };
 
 export function ExactDashboard() {
-  const [devices, setDevices] = useState<HeartbeatRecord[]>([]);
-  const [filteredDevices, setFilteredDevices] = useState<HeartbeatRecord[]>([]);
+  const [recordings, setRecordings] = useState<RecordingHistory[]>([]);
+  const [filteredRecordings, setFilteredRecordings] = useState<RecordingHistory[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDevice, setSelectedDevice] = useState<HeartbeatRecord | null>(null);
+  const [selectedRecording, setSelectedRecording] = useState<RecordingHistory | null>(null);
 
-  const loadDevices = async () => {
+  const loadRecordings = async () => {
     try {
-      const heartbeats = await fetchHeartbeats();
-      setDevices(heartbeats);
-      setFilteredDevices(heartbeats);
+      const recordingData = await fetchRecordings();
+      setRecordings(recordingData);
+      setFilteredRecordings(recordingData);
     } catch (error) {
-      console.error("Failed to load devices:", error);
+      console.error("Failed to load recordings:", error);
     }
   };
 
   useEffect(() => {
-    loadDevices();
-    const interval = setInterval(loadDevices, 30000);
+    loadRecordings();
+    const interval = setInterval(loadRecordings, 30000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     if (searchQuery) {
-      const filtered = devices.filter(device =>
-        device.device_name?.toLowerCase().includes(searchQuery.toLowerCase())
+      const filtered = recordings.filter(recording =>
+        recording.cnic?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        recording.device_name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setFilteredDevices(filtered);
+      setFilteredRecordings(filtered);
     } else {
-      setFilteredDevices(devices);
+      setFilteredRecordings(recordings);
     }
-  }, [searchQuery, devices]);
+  }, [searchQuery, recordings]);
 
   const formatLastSeen = (dateString: string) => {
     const date = new Date(dateString);
