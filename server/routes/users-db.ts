@@ -40,9 +40,8 @@ export const getUsers: RequestHandler = async (req, res) => {
     const offset = (pageNum - 1) * limitNum;
 
     let query = `
-      SELECT uuid, emp_name, device_mac, branch_id, branch_city, branch_address, gender,
-             date_of_birth, cnic, phone_no, designation, department,
-             joining_date, email_id, username, role, is_active, created_on, updated_on
+      SELECT uuid, emp_name, gender, date_of_birth, cnic, phone_no, designation, department,
+             joining_date, email_id, username, role, is_active, created_on, updated_on, created_by, updated_by
       FROM users
     `;
 
