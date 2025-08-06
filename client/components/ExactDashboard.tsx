@@ -217,7 +217,7 @@ export function ExactDashboard() {
                         {recording.duration ? `${Math.floor(recording.duration / 60)}:${String(recording.duration % 60).padStart(2, '0')}` : '-'}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-500">
-                        {recording.device_name ? `Floor Plaza, Blue Area` : recording.ip_address}
+                        NA
                       </td>
                       <td className="py-3 px-4">
                         <button className="text-gray-400 hover:text-gray-600">
