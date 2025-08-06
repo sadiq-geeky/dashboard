@@ -279,6 +279,67 @@ export function ExactDashboard() {
         {/* Right Sidebar */}
         <div className="w-80 bg-white border-l border-gray-200">
           <div className="p-6">
+            {/* Audio Player Section */}
+            {selectedRecording && (
+              <div className="mb-8">
+                <h2 className="text-lg font-medium text-gray-900 mb-4">
+                  Recording {selectedRecording.id?.slice(-5) || '43543'}
+                </h2>
+
+                {/* Audio Player */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  {/* Progress Bar */}
+                  <div className="mb-4">
+                    <div className="flex justify-between text-xs text-gray-500 mb-2">
+                      <span>1:56</span>
+                      <span>{selectedRecording.duration ? `${Math.floor(selectedRecording.duration / 60)}:${String(selectedRecording.duration % 60).padStart(2, '0')}` : '3:21'}</span>
+                    </div>
+                    <div className="relative">
+                      <div className="w-full h-2 bg-gray-200 rounded-full">
+                        <div className="h-2 bg-blue-500 rounded-full" style={{ width: '60%' }}>
+                          <div className="absolute right-0 top-0 w-3 h-3 bg-blue-500 rounded-full -mt-0.5 -mr-1.5"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Audio Controls */}
+                  <div className="flex items-center justify-center space-x-4">
+                    <button className="p-2 text-gray-600 hover:text-gray-800">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </button>
+                    <button className="p-2 text-gray-600 hover:text-gray-800">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                      </svg>
+                    </button>
+                    <button className="p-2 text-gray-600 hover:text-gray-800">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+                      </svg>
+                    </button>
+                    <button className="p-2 text-gray-600 hover:text-gray-800">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                    </button>
+                    <button className="p-2 text-gray-600 hover:text-gray-800">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/>
+                      </svg>
+                    </button>
+                    <button className="p-2 text-gray-600 hover:text-gray-800">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Customer Profile Section */}
             <div className="mb-8">
               <h2 className="text-lg font-medium text-gray-900 mb-4">Customer Profile</h2>
