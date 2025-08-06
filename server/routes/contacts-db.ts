@@ -105,6 +105,7 @@ export const createContact: RequestHandler = async (req, res) => {
       designation,
       department,
       branch_id,
+      branch_city,
       gender,
       date_of_birth,
       joining_date,
