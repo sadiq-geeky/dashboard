@@ -79,6 +79,30 @@ export function DeviceManagement() {
     notes: "",
   });
 
+  const fixDevicesTable = async () => {
+    try {
+      console.log("🔧 Attempting to fix devices table...");
+      const response = await fetch('/api/fix-devices-table', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fix devices table');
+      }
+
+      const result = await response.json();
+      console.log("✅ Devices table fixed:", result.message);
+      return true;
+    } catch (error) {
+      console.error("❌ Error fixing devices table:", error);
+      return false;
+    }
+  };
+
   const fetchDevices = async () => {
     try {
       setLoading(true);
@@ -89,14 +113,34 @@ export function DeviceManagement() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`HTTP Error ${response.status}:`, errorText);
+
+        // If it's a table structure error, try to fix it
+        if (errorText.includes('Unknown column') || errorText.includes('branch_id')) {
+          console.log('🔧 Detected table structure issue, attempting fix...');
+          const fixed = await fixDevicesTable();
+          if (fixed) {
+            // Retry the fetch after fixing
+            console.log('🔄 Retrying fetch after table fix...');
+            const retryResponse = await fetch(
+              `/api/devices?limit=50&search=${encodeURIComponent(searchQuery)}`,
+            );
+            if (retryResponse.ok) {
+              const retryData = await retryResponse.json();
+              console.log('✅ Devices fetched successfully after fix:', retryData);
+              setDevices(retryData.data || []);
+              return;
+            }
+          }
+        }
+
         throw new Error(`Failed to fetch devices: ${response.status} ${errorText}`);
       }
 
       const data = await response.json();
-      console.log('Devices fetched successfully:', data);
+      console.log('✅ Devices fetched successfully:', data);
       setDevices(data.data || []);
     } catch (error) {
-      console.error("Error fetching devices:", error);
+      console.error("❌ Error fetching devices:", error);
       // Set empty array on error to prevent crashes
       setDevices([]);
     } finally {
