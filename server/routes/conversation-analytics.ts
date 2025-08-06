@@ -32,7 +32,7 @@ export const getConversationsByBranch: RequestHandler = async (req, res) => {
         c.branch_id,
         COALESCE(MAX(c.branch_address), 'Unknown Branch') as branch_name,
         COUNT(r.id) AS count
-      FROM recording_history r
+      FROM recordings r
       JOIN contacts c
         ON r.mac_address COLLATE utf8mb4_0900_ai_ci = c.device_mac COLLATE utf8mb4_0900_ai_ci
       GROUP BY c.branch_id
@@ -60,7 +60,7 @@ export const getConversationsByCity: RequestHandler = async (req, res) => {
         c.branch_city as city,
         COUNT(r.id) AS count,
         COUNT(DISTINCT c.branch_id) as branch_count
-      FROM recording_history r
+      FROM recordings r
       JOIN contacts c
         ON r.mac_address COLLATE utf8mb4_0900_ai_ci = c.device_mac COLLATE utf8mb4_0900_ai_ci
       WHERE c.branch_city IS NOT NULL
@@ -91,7 +91,7 @@ export const getDailyConversationsLastMonth: RequestHandler = async (
       SELECT
         DATE(r.start_time) AS date,
         COUNT(r.id) AS count
-      FROM recording_history r
+      FROM recordings r
       WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
       GROUP BY DATE(r.start_time)
       ORDER BY date
@@ -115,7 +115,7 @@ export const getUniqueCnicsByMonth: RequestHandler = async (req, res) => {
     const query = `
       SELECT
         COUNT(DISTINCT REPLACE(r.cnic, '-', '')) AS unique_cnic_count
-      FROM recording_history r
+      FROM recordings r
       WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
     `;
 
@@ -144,7 +144,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
         c.branch_id,
         COALESCE(MAX(c.branch_address), 'Unknown Branch') as branch_name,
         COUNT(r.id) AS count
-      FROM recording_history r
+      FROM recordings r
       JOIN contacts c
         ON r.mac_address COLLATE utf8mb4_0900_ai_ci = c.device_mac COLLATE utf8mb4_0900_ai_ci
       GROUP BY c.branch_id
@@ -157,7 +157,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
         c.branch_city as city,
         COUNT(r.id) AS count,
         COUNT(DISTINCT c.branch_id) as branch_count
-      FROM recording_history r
+      FROM recordings r
       JOIN contacts c
         ON r.mac_address COLLATE utf8mb4_0900_ai_ci = c.device_mac COLLATE utf8mb4_0900_ai_ci
       WHERE c.branch_city IS NOT NULL
@@ -170,7 +170,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
       SELECT
         DATE(r.start_time) AS date,
         COUNT(r.id) AS count
-      FROM recording_history r
+      FROM recordings r
       WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
       GROUP BY DATE(r.start_time)
       ORDER BY date
@@ -180,7 +180,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
     const cnicQuery = `
       SELECT
         COUNT(DISTINCT REPLACE(r.cnic, '-', '')) AS unique_cnic_count
-      FROM recording_history r
+      FROM recordings r
       WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
     `;
 
@@ -191,7 +191,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
         COUNT(DISTINCT REPLACE(r.cnic, '-', '')) as uniqueCustomers,
         COUNT(DISTINCT c.branch_id) as activeBranches,
         SUM(CASE WHEN DATE(r.start_time) = CURDATE() THEN 1 ELSE 0 END) as todayConversations
-      FROM recording_history r
+      FROM recordings r
       LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_0900_ai_ci = r.mac_address COLLATE utf8mb4_0900_ai_ci
       WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
     `;

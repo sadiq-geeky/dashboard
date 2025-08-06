@@ -58,7 +58,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
     // Get total count (simplified to avoid collation issues)
     const countQuery = `
       SELECT COUNT(*) as total
-      FROM recording_history rh
+      FROM recordings rh
       ${countWhereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
@@ -89,7 +89,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
         WHEN rh.start_time IS NOT NULL AND rh.end_time IS NULL THEN 'in_progress'
         ELSE 'failed'
     END AS status
-FROM recording_history rh
+FROM recordings rh
 LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_0900_ai_ci = rh.mac_address COLLATE utf8mb4_0900_ai_ci
       ${whereClause}
       ORDER BY rh.CREATED_ON DESC
@@ -143,7 +143,7 @@ export const getRecording: RequestHandler = async (req, res) => {
           WHEN start_time IS NOT NULL AND end_time IS NULL THEN 'in_progress'
           ELSE 'failed'
         END as status
-      FROM recording_history
+      FROM recordings
       WHERE id = ?
     `;
 
@@ -168,7 +168,7 @@ export const createRecording: RequestHandler = async (req, res) => {
     const recordingId = `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     const query = `
-      INSERT INTO recording_history 
+      INSERT INTO recordings 
       (id, cnic, start_time, file_name, CREATED_ON, ip_address) 
       VALUES (?, ?, NOW(), ?, NOW(), ?)
     `;
@@ -193,7 +193,7 @@ export const updateRecording: RequestHandler = async (req, res) => {
     const { end_time } = req.body;
 
     const query = `
-      UPDATE recording_history 
+      UPDATE recordings 
       SET end_time = ? 
       WHERE id = ?
     `;
@@ -215,7 +215,7 @@ export const getDeviceNames: RequestHandler = async (req, res) => {
   try {
     const query = `
       SELECT DISTINCT rh.ip_address AS device_name
-      FROM recording_history rh
+      FROM recordings rh
       WHERE rh.ip_address IS NOT NULL
       ORDER BY device_name ASC
     `;

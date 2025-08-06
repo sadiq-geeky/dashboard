@@ -22,7 +22,7 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
       SELECT 
         DATE(rh.CREATED_ON) as date,
         COUNT(*) as count
-      FROM recording_history rh
+      FROM recordings rh
       WHERE rh.CREATED_ON >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
       GROUP BY DATE(rh.CREATED_ON)
       ORDER BY date DESC
@@ -38,7 +38,7 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
           ELSE 'failed'
         END AS status,
         COUNT(*) as count
-      FROM recording_history rh
+      FROM recordings rh
       GROUP BY status
     `;
 
@@ -47,7 +47,7 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
       SELECT
         COALESCE(c.branch_address, 'Unknown Branch') as branch_name,
         COUNT(*) as count
-      FROM recording_history rh
+      FROM recordings rh
       LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_0900_ai_ci = rh.mac_address COLLATE utf8mb4_0900_ai_ci
       GROUP BY c.branch_address
       ORDER BY count DESC
@@ -61,7 +61,7 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
         SUM(CASE WHEN rh.end_time IS NOT NULL AND rh.file_name IS NOT NULL THEN 1 ELSE 0 END) as completedRecordings,
         AVG(CASE WHEN rh.end_time IS NOT NULL THEN TIMESTAMPDIFF(SECOND, rh.start_time, rh.end_time) ELSE NULL END) as avgDuration,
         SUM(CASE WHEN DATE(rh.CREATED_ON) = CURDATE() THEN 1 ELSE 0 END) as todayRecordings
-      FROM recording_history rh
+      FROM recordings rh
     `;
 
     // Execute all queries in parallel
