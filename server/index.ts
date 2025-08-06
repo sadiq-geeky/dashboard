@@ -104,28 +104,6 @@ export function createServer() {
   app.delete("/api/devices/:id", deleteDevice);
   app.get("/api/branches/:branch_id/devices", getDevicesByBranch);
 
-  // Database fix routes
-  app.post("/api/fix-devices-table", async (req, res) => {
-    try {
-      const { fixDevicesTable } = await import('./fix-devices-table.js');
-      await fixDevicesTable();
-      res.json({ success: true, message: "Devices table fixed successfully" });
-    } catch (error) {
-      console.error("Error fixing devices table:", error);
-      res.status(500).json({ error: "Failed to fix devices table", details: error.message });
-    }
-  });
-
-  app.post("/api/migrate-users-table", async (req, res) => {
-    try {
-      const { migrateUsersTable } = await import('./migrate-users-table.js');
-      await migrateUsersTable();
-      res.json({ success: true, message: "Users table migrated successfully" });
-    } catch (error) {
-      console.error("Error migrating users table:", error);
-      res.status(500).json({ error: "Failed to migrate users table", details: error.message });
-    }
-  });
 
   // Recording routes
   app.get("/api/recordings", getRecordings);
