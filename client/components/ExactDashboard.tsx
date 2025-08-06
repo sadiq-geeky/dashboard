@@ -83,7 +83,13 @@ export function ExactDashboard() {
     } else {
       setFilteredRecordings(recordings);
     }
-  }, [searchQuery, recordings]);
+
+    // Reset to page 1 if current page exceeds available pages
+    const totalPages = Math.ceil((searchQuery ? filteredRecordings.length : recordings.length) / itemsPerPage);
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [searchQuery, recordings, currentPage, itemsPerPage]);
 
   const formatLastSeen = (dateString: string) => {
     const date = new Date(dateString);
