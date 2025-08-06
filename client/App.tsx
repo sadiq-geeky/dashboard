@@ -30,6 +30,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ExactDashboard } from "./components/ExactDashboard";
 import { DeviceManagement } from "./pages/DeviceManagement";
+import { BranchManagement } from "./pages/BranchManagement";
 import { Recordings } from "./pages/Recordings";
 import { ConversationAnalytics } from "./pages/ConversationAnalytics";
 import { UserManagement } from "./pages/UserManagement";
