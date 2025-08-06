@@ -1,4 +1,14 @@
 import React, { useState, useEffect } from "react";
+
+// Suppress Recharts defaultProps warnings temporarily
+const originalWarn = console.warn;
+console.warn = (...args) => {
+  if (args[0]?.includes?.('defaultProps will be removed from function components') &&
+      (args[0]?.includes?.('XAxis') || args[0]?.includes?.('YAxis'))) {
+    return; // Suppress this specific warning
+  }
+  originalWarn.apply(console, args);
+};
 import {
   BarChart,
   Bar,
