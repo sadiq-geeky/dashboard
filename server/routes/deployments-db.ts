@@ -33,9 +33,9 @@ export const getDeployments: RequestHandler = async (req, res) => {
         u.role,
         u.emp_name
       FROM link_device_branch_user ldbu
-      LEFT JOIN devices d ON d.id = ldbu.device_id
-      LEFT JOIN branches b ON b.id = ldbu.branch_id
-      LEFT JOIN users u ON u.uuid = ldbu.user_id
+      LEFT JOIN devices d ON d.id COLLATE utf8mb4_0900_ai_ci = ldbu.device_id COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN users u ON u.uuid COLLATE utf8mb4_0900_ai_ci = ldbu.user_id COLLATE utf8mb4_0900_ai_ci
       ORDER BY ldbu.created_on DESC
     `;
 
@@ -214,9 +214,9 @@ export const getDeployment: RequestHandler = async (req, res) => {
         u.role,
         u.emp_name
       FROM link_device_branch_user ldbu
-      LEFT JOIN devices d ON d.id = ldbu.device_id
-      LEFT JOIN branches b ON b.id = ldbu.branch_id
-      LEFT JOIN users u ON u.uuid = ldbu.user_id
+      LEFT JOIN devices d ON d.id COLLATE utf8mb4_0900_ai_ci = ldbu.device_id COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN users u ON u.uuid COLLATE utf8mb4_0900_ai_ci = ldbu.user_id COLLATE utf8mb4_0900_ai_ci
       WHERE ldbu.uuid = ?
     `;
 
