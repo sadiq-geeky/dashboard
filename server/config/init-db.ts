@@ -227,6 +227,14 @@ export async function initializeTables() {
       }
     }
 
+    // Create default admin user if none exists
+    try {
+      const { createDefaultAdmin } = await import("./create-admin");
+      await createDefaultAdmin();
+    } catch (error) {
+      console.error("❌ Error creating default admin user:", error);
+    }
+
     console.log("🚀 All database tables initialized successfully");
   } catch (error) {
     console.error("❌ Error initializing database tables:", error);
