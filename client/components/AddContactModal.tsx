@@ -130,13 +130,14 @@ export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactM
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number
+                Phone Number *
               </label>
               <input
                 type="tel"
                 name="phone_no"
                 value={formData.phone_no}
                 onChange={handleInputChange}
+                required
                 placeholder="0321-1234567"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -144,13 +145,14 @@ export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactM
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email ID
+                Email ID *
               </label>
               <input
                 type="email"
                 name="email_id"
                 value={formData.email_id}
                 onChange={handleInputChange}
+                required
                 placeholder="employee@company.com"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -158,13 +160,14 @@ export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactM
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Designation
+                Designation *
               </label>
               <input
                 type="text"
                 name="designation"
                 value={formData.designation}
                 onChange={handleInputChange}
+                required
                 placeholder="Manager, Officer, etc."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -172,13 +175,14 @@ export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactM
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Department
+                Department *
               </label>
               <input
                 type="text"
                 name="department"
                 value={formData.department}
                 onChange={handleInputChange}
+                required
                 placeholder="IT, HR, Finance, etc."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -186,13 +190,14 @@ export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactM
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Branch ID
+                Branch ID *
               </label>
               <input
                 type="text"
                 name="branch_id"
                 value={formData.branch_id}
                 onChange={handleInputChange}
+                required
                 placeholder="Branch code or ID"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -200,12 +205,13 @@ export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactM
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Gender
+                Gender *
               </label>
               <select
                 name="gender"
                 value={formData.gender}
                 onChange={handleInputChange}
+                required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select Gender</option>
@@ -217,39 +223,42 @@ export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactM
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Date of Birth
+                Date of Birth *
               </label>
               <input
                 type="date"
                 name="date_of_birth"
                 value={formData.date_of_birth}
                 onChange={handleInputChange}
+                required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Joining Date
+                Joining Date *
               </label>
               <input
                 type="date"
                 name="joining_date"
                 value={formData.joining_date}
                 onChange={handleInputChange}
+                required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Device MAC Address
+                Device MAC Address *
               </label>
               <input
                 type="text"
                 name="device_mac"
                 value={formData.device_mac}
                 onChange={handleInputChange}
+                required
                 placeholder="AA:BB:CC:DD:EE:FF"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
@@ -257,12 +266,13 @@ export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactM
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Branch Address
+                Branch Address *
               </label>
               <textarea
                 name="branch_address"
                 value={formData.branch_address}
                 onChange={handleInputChange}
+                required
                 rows={3}
                 placeholder="Full branch address"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
