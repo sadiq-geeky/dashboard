@@ -79,47 +79,6 @@ export function DeviceManagement() {
     notes: "",
   });
 
-  const fixDevicesTable = async () => {
-    try {
-      console.log("🔧 Attempting to fix devices table...");
-      const response = await fetch('/api/fix-devices-table', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      // Read response once and handle both success and error cases
-      const responseText = await response.text();
-
-      if (!response.ok) {
-        let errorMessage = 'Failed to fix devices table';
-        try {
-          const errorData = JSON.parse(responseText);
-          errorMessage = errorData.error || errorMessage;
-        } catch {
-          // If response is not JSON, use the text as error message
-          errorMessage = responseText || errorMessage;
-        }
-        throw new Error(errorMessage);
-      }
-
-      let result;
-      try {
-        result = JSON.parse(responseText);
-      } catch {
-        // If response is not JSON, assume success
-        result = { message: 'Devices table fixed successfully' };
-      }
-
-      console.log("✅ Devices table fixed:", result.message);
-      return true;
-    } catch (error) {
-      console.error("❌ Error fixing devices table:", error);
-      return false;
-    }
-  };
-
   const fetchDevices = async () => {
     try {
       setLoading(true);
