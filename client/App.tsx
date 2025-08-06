@@ -58,6 +58,16 @@ const App = () => (
                 <Recordings />
               </ProtectedRoute>
             } />
+            <Route path="/branch-management" element={
+              <ProtectedRoute adminOnly>
+                <BranchManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/device-management" element={
+              <ProtectedRoute adminOnly>
+                <DeviceManagement />
+              </ProtectedRoute>
+            } />
             <Route path="/devices" element={
               <ProtectedRoute adminOnly>
                 <DeviceManagement />
