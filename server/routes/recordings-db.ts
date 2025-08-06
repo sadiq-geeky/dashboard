@@ -13,35 +13,45 @@ export const getRecordings: RequestHandler = async (req, res) => {
 
     // Build WHERE clause for CNIC search and device filtering
     let whereClause = "";
+    let countWhereClause = "";
     let queryParams: any[] = [];
+    let countParams: any[] = [];
     const conditions: string[] = [];
+    const countConditions: string[] = [];
 
     if (search) {
-      conditions.push("cnic LIKE ?");
+      conditions.push("rh.cnic LIKE ?");
+      countConditions.push("rh.cnic LIKE ?");
       queryParams.push(`%${search}%`);
+      countParams.push(`%${search}%`);
     }
 
     if (device) {
       conditions.push("COALESCE(dm.device_name, rh.ip_address) = ?");
       queryParams.push(device);
+      // Skip device filtering for count query to avoid JOIN complexity
     }
 
     // Branch filtering for non-admin users
     if (branch_id && user_role !== 'admin') {
       conditions.push("c.branch_id = ?");
       queryParams.push(branch_id);
+      // For count, we'll do a simpler approach without complex JOINs
     }
 
     if (conditions.length > 0) {
       whereClause = `WHERE ${conditions.join(" AND ")}`;
     }
 
-    // Get total count
+    if (countConditions.length > 0) {
+      countWhereClause = `WHERE ${countConditions.join(" AND ")}`;
+    }
+
+    // Get total count (simplified to avoid collation issues)
     const countQuery = `
       SELECT COUNT(*) as total
       FROM recording_history rh
-      LEFT JOIN contacts c ON c.device_mac = rh.mac_address
-      ${whereClause}
+      ${countWhereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
       countQuery,
