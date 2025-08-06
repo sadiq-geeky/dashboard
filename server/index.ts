@@ -104,7 +104,6 @@ export function createServer() {
   app.delete("/api/devices/:id", deleteDevice);
   app.get("/api/branches/:branch_id/devices", getDevicesByBranch);
 
-
   // Recording routes
   app.get("/api/recordings", getRecordings);
   app.get("/api/recordings/device-names", getDeviceNames);

@@ -9,14 +9,16 @@ export async function initializeTables() {
       const existingAdmin = await executeQuery<{ uuid: string }>(
         `SELECT uuid FROM users WHERE role = 'admin' LIMIT 1`,
       );
-      
+
       if (existingAdmin.length === 0) {
         console.log("⚠️  No admin user found in database");
       } else {
         console.log("✅ Admin user exists");
       }
     } catch (error) {
-      console.log("⚠️  Could not check admin user existence - tables may not exist");
+      console.log(
+        "⚠️  Could not check admin user existence - tables may not exist",
+      );
     }
 
     // Check if branches exist
@@ -24,7 +26,9 @@ export async function initializeTables() {
       const branchCount = await executeQuery<{ count: number }>(
         "SELECT COUNT(*) as count FROM branches",
       );
-      console.log(`✅ Found ${branchCount[0]?.count || 0} branches in database`);
+      console.log(
+        `✅ Found ${branchCount[0]?.count || 0} branches in database`,
+      );
     } catch (error) {
       console.log("⚠️  Could not check branches table - may not exist");
     }

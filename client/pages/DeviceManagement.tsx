@@ -89,11 +89,13 @@ export function DeviceManagement() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`HTTP Error ${response.status}:`, errorText);
-        throw new Error(`Failed to fetch devices: ${response.status} ${errorText}`);
+        throw new Error(
+          `Failed to fetch devices: ${response.status} ${errorText}`,
+        );
       }
 
       const data = await response.json();
-      console.log('✅ Devices fetched successfully:', data);
+      console.log("✅ Devices fetched successfully:", data);
       setDevices(data.data || []);
     } catch (error) {
       console.error("❌ Error fetching devices:", error);
@@ -238,18 +240,24 @@ export function DeviceManagement() {
       <Header />
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200" style={{display: "flex", flexDirection: "column"}}>
-        <div className="flex items-center justify-between h-16 px-6" style={{margin: "0 auto"}}>
+      <div
+        className="bg-white border-b border-gray-200"
+        style={{ display: "flex", flexDirection: "column" }}
+      >
+        <div
+          className="flex items-center justify-between h-16 px-6"
+          style={{ margin: "0 auto" }}
+        >
           <div className="flex items-center space-x-1">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
               className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
             >
               <Grid3X3 className="w-5 h-5 mb-1" />
               <span className="text-xs">Home</span>
             </button>
             <button
-              onClick={() => navigate('/?tab=device-status')}
+              onClick={() => navigate("/?tab=device-status")}
               className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
             >
               <BarChart3 className="w-5 h-5 mb-1" />
@@ -260,7 +268,7 @@ export function DeviceManagement() {
               <span className="text-xs">Live Conversation</span>
             </button>
             <button
-              onClick={() => navigate('/branch-management')}
+              onClick={() => navigate("/branch-management")}
               className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
             >
               <Building2 className="w-5 h-5 mb-1" />
@@ -271,14 +279,14 @@ export function DeviceManagement() {
               <span className="text-xs">Devices</span>
             </button>
             <button
-              onClick={() => navigate('/?tab=analytics')}
+              onClick={() => navigate("/?tab=analytics")}
               className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
             >
               <BarChart3 className="w-5 h-5 mb-1" />
               <span className="text-xs">Analytics</span>
             </button>
             <button
-              onClick={() => navigate('/user-management')}
+              onClick={() => navigate("/user-management")}
               className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
             >
               <Users className="w-5 h-5 mb-1" />
@@ -293,7 +301,7 @@ export function DeviceManagement() {
         </div>
       </div>
 
-      <div className="px-6 py-6 pt-1" style={{padding: "24px 24px 5px"}}>
+      <div className="px-6 py-6 pt-1" style={{ padding: "24px 24px 5px" }}>
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
