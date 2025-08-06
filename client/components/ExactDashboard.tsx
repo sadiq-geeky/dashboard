@@ -501,16 +501,20 @@ export function ExactDashboard() {
             </button>
             {isAdmin() && (
               <button
-                onClick={() => setActiveTab("contact-list")}
-                className={cn(
-                  "flex flex-col items-center p-3 rounded-md",
-                  activeTab === "contact-list"
-                    ? "text-gray-700 bg-white border border-gray-300"
-                    : "text-gray-500 hover:bg-gray-100",
-                )}
+                onClick={() => window.location.href = '/branch-management'}
+                className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
-                <Users className="w-5 h-5 mb-1" />
-                <span className="text-xs">Contact List</span>
+                <Building2 className="w-5 h-5 mb-1" />
+                <span className="text-xs">Branches</span>
+              </button>
+            )}
+            {isAdmin() && (
+              <button
+                onClick={() => window.location.href = '/device-management'}
+                className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              >
+                <Monitor className="w-5 h-5 mb-1" />
+                <span className="text-xs">Devices</span>
               </button>
             )}
             {isAdmin() && (
