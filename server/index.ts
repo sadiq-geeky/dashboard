@@ -31,6 +31,12 @@ import {
   uploadMiddleware,
   serveAudio,
 } from "./routes/voice-upload";
+import {
+  getContacts,
+  createContact,
+  updateContact,
+  deleteContact,
+} from "./routes/contacts-db";
 
 export function createServer() {
   const app = express();
