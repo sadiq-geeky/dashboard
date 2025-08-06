@@ -19,23 +19,21 @@ export interface ConversationAnalytics {
 export const getConversationsByBranch: RequestHandler = async (req, res) => {
   try {
     const query = `
-      SELECT 
+      SELECT
         c.branch_id,
         COALESCE(c.branch_address, 'Unknown Branch') as branch_name,
-        COUNT(rh.id) as count,
-        DATE_FORMAT(rh.CREATED_ON, '%Y-%m') as month
-      FROM recording_history rh
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = rh.device_mac COLLATE utf8mb4_unicode_ci
-      WHERE rh.CREATED_ON >= DATE_SUB(CURRENT_DATE, INTERVAL 12 MONTH)
-      GROUP BY c.branch_id, c.branch_address, DATE_FORMAT(rh.CREATED_ON, '%Y-%m')
-      ORDER BY month DESC, count DESC
+        COUNT(r.id) AS count
+      FROM recording_history r
+      JOIN contacts c
+        ON r.mac_address COLLATE utf8mb4_unicode_ci = c.device_mac COLLATE utf8mb4_unicode_ci
+      GROUP BY c.branch_id
+      ORDER BY count DESC
     `;
 
     const result = await executeQuery<{
       branch_id: string;
       branch_name: string;
       count: number;
-      month: string;
     }>(query);
 
     res.json(result);
