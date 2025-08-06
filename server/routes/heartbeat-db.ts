@@ -72,15 +72,15 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
 export const getDeviceStatus: RequestHandler = async (req, res) => {
   try {
     const query = `
-      SELECT 
+      SELECT
         COUNT(*) as total,
         SUM(CASE WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 5 THEN 1 ELSE 0 END) as online,
         SUM(CASE WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) BETWEEN 6 AND 15 THEN 1 ELSE 0 END) as problematic,
         SUM(CASE WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) > 15 THEN 1 ELSE 0 END) as offline
       FROM (
-        SELECT uuid, MAX(created_on) as created_on
-        FROM recording_heartbeat 
-        GROUP BY uuid
+        SELECT ip_address, mac_address, MAX(created_on) as created_on
+        FROM recording_heartbeat
+        GROUP BY ip_address, mac_address
       ) latest_heartbeats
     `;
 
