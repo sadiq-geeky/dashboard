@@ -144,6 +144,19 @@ export function ExactDashboard() {
     }
   };
 
+  const loadDevices = async () => {
+    setIsRefreshing(true);
+    try {
+      const heartbeats = await fetchHeartbeats();
+      setDevices(heartbeats);
+      setLastUpdate(new Date());
+    } catch (error) {
+      console.error("Failed to load devices:", error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   useEffect(() => {
     loadRecordings();
     const interval = setInterval(loadRecordings, 30000);
