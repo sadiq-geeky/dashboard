@@ -20,7 +20,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<ModernDashboard />} />
+          <Route path="/" element={<ExactDashboard />} />
           <Route path="/recordings" element={<Recordings />} />
           <Route path="/devices" element={<DeviceManagement />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
