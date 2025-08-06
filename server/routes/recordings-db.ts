@@ -76,28 +76,25 @@ export const getRecordings: RequestHandler = async (req, res) => {
         rh.end_time,
         rh.file_name,
         rh.CREATED_ON AS created_on,
-        COALESCE(b.branch_code, 'N/A') AS branch_no,
-        COALESCE(b.branch_address, 'NA') AS branch_address,
+        COALESCE(b.branch_code, rh.mac_address) AS branch_no,
+        COALESCE(b.branch_address, rh.mac_address) AS branch_address,
         CASE
-            WHEN rh.end_time IS NOT NULL THEN
-                TIMESTAMPDIFF(SECOND, rh.start_time, rh.end_time)
-            ELSE NULL
+          WHEN rh.end_time IS NOT NULL THEN
+            TIMESTAMPDIFF(SECOND, rh.start_time, rh.end_time)
+          ELSE NULL
         END AS duration,
         duration_seconds,
         CASE
-            WHEN rh.end_time IS NOT NULL AND rh.file_name IS NOT NULL THEN 'completed'
-            WHEN rh.start_time IS NOT NULL AND rh.end_time IS NULL THEN 'in_progress'
-            ELSE 'failed'
+          WHEN rh.end_time IS NOT NULL AND rh.file_name IS NOT NULL THEN 'completed'
+          WHEN rh.start_time IS NOT NULL AND rh.end_time IS NULL THEN 'in_progress'
+          ELSE 'failed'
         END AS status
       FROM recordings rh
-      LEFT JOIN devices d ON (d.device_mac = rh.mac_address)
-                          OR (d.ip_address = rh.ip_address)
-                          OR (REPLACE(d.device_mac, ':', '-') = REPLACE(rh.mac_address, ':', '-'))
-                          OR (REPLACE(d.device_mac, '-', ':') = REPLACE(rh.mac_address, '-', ':'))
+      LEFT JOIN devices d ON d.device_mac = rh.mac_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
       ${whereClause}
-      ORDER BY rh.CREATED_ON DESC
+      ORDER BY start_time DESC
       LIMIT ${limitNum} OFFSET ${offset}
     `;
 
