@@ -11,6 +11,7 @@ export async function initializeTables() {
         emp_name VARCHAR(255),
         device_mac VARCHAR(17),
         branch_id VARCHAR(50),
+        branch_city VARCHAR(100),
         branch_address TEXT,
         gender ENUM('Male', 'Female', 'Other'),
         date_of_birth DATE,
