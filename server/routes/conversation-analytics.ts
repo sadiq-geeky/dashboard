@@ -214,12 +214,14 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
       todayConversations: 0,
     };
 
+    const uniqueCnicCount = uniqueCnicResult[0]?.unique_cnic_count || 0;
+
     const analytics: ConversationAnalytics = {
       conversationsByBranch: conversationsByBranch.map((row) => ({
         branch_id: row.branch_id || 'unknown',
         branch_name: row.branch_name || "Unknown Branch",
         count: row.count,
-        month: row.month,
+        month: new Date().toISOString().slice(0, 7), // Current month as default
       })),
       conversationsByCity: conversationsByCity.map((row) => ({
         city: row.city || "Unknown City",
@@ -230,13 +232,15 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
         date: row.date,
         count: row.count,
       })),
-      uniqueCnicsByMonth: uniqueCnicsByMonth.map((row) => ({
-        month: row.month,
-        unique_cnic_count: row.unique_cnic_count,
-      })),
+      uniqueCnicsByMonth: [
+        {
+          month: new Date().toISOString().slice(0, 7), // Current month
+          unique_cnic_count: uniqueCnicCount,
+        }
+      ],
       totalStats: {
         totalConversations: totalStats.totalConversations,
-        uniqueCustomers: totalStats.uniqueCustomers,
+        uniqueCustomers: uniqueCnicCount, // Use the actual unique CNIC count
         activeBranches: totalStats.activeBranches,
         todayConversations: totalStats.todayConversations,
       },
