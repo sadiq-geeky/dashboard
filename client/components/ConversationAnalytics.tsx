@@ -337,28 +337,26 @@ export function ConversationAnalytics() {
             Unique Customers Per Month
           </h3>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart
+            <BarChart
               data={uniqueCnicsByMonth.reverse()}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              layout="horizontal"
+              margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
+              <XAxis type="number" />
+              <YAxis
                 dataKey="month"
+                type="category"
                 tickFormatter={formatMonth}
+                width={70}
+                tick={{ fontSize: 11 }}
               />
-              <YAxis />
               <Tooltip
                 labelFormatter={(label) => formatMonth(label)}
                 formatter={(value: number) => [value, "Unique Customers"]}
               />
-              <Line
-                type="monotone"
-                dataKey="unique_cnic_count"
-                stroke={COLORS.secondary}
-                strokeWidth={3}
-                dot={{ fill: COLORS.secondary, strokeWidth: 2, r: 5 }}
-              />
-            </LineChart>
+              <Bar dataKey="unique_cnic_count" fill={COLORS.info} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
