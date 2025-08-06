@@ -41,17 +41,24 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-blue-100">
-            <Lock className="h-6 w-6 text-blue-600" />
+          <div className="mx-auto h-20 w-20 flex items-center justify-center">
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F7967a1920bbf4ce0ae781c5d84b92543%2F0958e94a3cce420e957ba5a524dc2794?format=webp&width=800"
+              alt="Bank Alfalah Logo"
+              className="h-16 w-auto object-contain"
+            />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            CRM Dashboard - Voice Recording System
+            Voice Recording System
+          </p>
+          <p className="mt-1 text-center text-xs text-gray-500">
+            Powered by SE TECH (Pvt.) Ltd.
           </p>
         </div>
 
