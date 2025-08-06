@@ -45,6 +45,14 @@ import {
   getDailyConversationsLastMonth,
   getUniqueCnicsByMonth,
 } from "./routes/conversation-analytics";
+import {
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  loginUser,
+  getUserProfile,
+} from "./routes/users-db";
 
 export function createServer() {
   const app = express();
