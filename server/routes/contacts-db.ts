@@ -94,10 +94,35 @@ export const createContact: RequestHandler = async (req, res) => {
       email_id,
     } = req.body;
 
-    if (!emp_name || !cnic) {
+    // Validate required fields
+    const requiredFields = {
+      emp_name,
+      cnic,
+      phone_no,
+      email_id,
+      designation,
+      department,
+      branch_id,
+      gender,
+      date_of_birth,
+      joining_date,
+      device_mac,
+      branch_address,
+    };
+
+    const missingFields = Object.entries(requiredFields)
+      .filter(
+        ([key, value]) =>
+          !value || (typeof value === "string" && value.trim() === ""),
+      )
+      .map(([key]) => key.replace("_", " "));
+
+    if (missingFields.length > 0) {
       return res
         .status(400)
-        .json({ error: "Employee name and CNIC are required" });
+        .json({
+          error: `The following fields are required: ${missingFields.join(", ")}`,
+        });
     }
 
     const uuid = uuidv4();

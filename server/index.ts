@@ -37,6 +37,7 @@ import {
   updateContact,
   deleteContact,
 } from "./routes/contacts-db";
+import { getRecordingsAnalytics } from "./routes/analytics-db";
 
 export function createServer() {
   const app = express();
@@ -88,6 +89,9 @@ export function createServer() {
   app.post("/api/contacts", createContact);
   app.put("/api/contacts/:uuid", updateContact);
   app.delete("/api/contacts/:uuid", deleteContact);
+
+  // Analytics routes
+  app.get("/api/analytics/recordings", getRecordingsAnalytics);
 
   return app;
 }

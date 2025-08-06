@@ -1,5 +1,25 @@
 import "./global.css";
 
+// Simple Recharts warning suppression
+if (
+  typeof window !== "undefined" &&
+  !(window as any).__WARNING_SUPPRESSION_SETUP__
+) {
+  (window as any).__WARNING_SUPPRESSION_SETUP__ = true;
+
+  const originalWarn = console.warn;
+  console.warn = (...args) => {
+    const message = String(args[0] || "");
+    if (
+      message.includes("defaultProps will be removed") &&
+      (message.includes("XAxis") || message.includes("YAxis"))
+    ) {
+      return; // Suppress specific Recharts warnings
+    }
+    originalWarn.apply(console, args);
+  };
+}
+
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -31,4 +51,9 @@ const App = () => (
   </QueryClientProvider>
 );
 
-createRoot(document.getElementById("root")!).render(<App />);
+// Prevent multiple root creation
+const rootElement = document.getElementById("root")!;
+if (!rootElement.hasAttribute("data-root-created")) {
+  rootElement.setAttribute("data-root-created", "true");
+  createRoot(rootElement).render(<App />);
+}

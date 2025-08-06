@@ -6,6 +6,10 @@ import {
   Contact,
 } from "@shared/api";
 import { cn } from "@/lib/utils";
+import { AddContactModal } from "./AddContactModal";
+import { EditContactModal } from "./EditContactModal";
+import { RecordingsAnalytics } from "./RecordingsAnalytics";
+import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
 import {
   Search,
   Filter,
@@ -37,8 +41,8 @@ import {
   Trash2,
 } from "lucide-react";
 
-// Fetch recordings from API
-const fetchRecordings = async (): Promise<RecordingHistory[]> => {
+// Fetch recordings from API with retry logic
+const fetchRecordings = async (retries = 2): Promise<RecordingHistory[]> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -66,12 +70,25 @@ const fetchRecordings = async (): Promise<RecordingHistory[]> => {
     if (error.name === "AbortError") {
       console.error("Request timed out after 10 seconds");
     }
+
+    // Retry logic for development
+    if (
+      retries > 0 &&
+      (error.name === "TypeError" || error.message?.includes("Failed to fetch"))
+    ) {
+      console.log(
+        `Retrying recordings fetch, ${retries} attempts remaining...`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return fetchRecordings(retries - 1);
+    }
+
     return [];
   }
 };
 
-// Fetch heartbeats from API
-const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
+// Fetch heartbeats from API with retry logic
+const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -98,13 +115,27 @@ const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
     if (error.name === "AbortError") {
       console.error("Request timed out after 10 seconds");
     }
+
+    // Retry logic for development
+    if (
+      retries > 0 &&
+      (error.name === "TypeError" || error.message?.includes("Failed to fetch"))
+    ) {
+      console.log(
+        `Retrying heartbeats fetch, ${retries} attempts remaining...`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return fetchHeartbeats(retries - 1);
+    }
+
     return [];
   }
 };
 
-// Fetch contacts from API
+// Fetch contacts from API with retry logic
 const fetchContacts = async (
   search?: string,
+  retries = 2,
 ): Promise<PaginatedResponse<Contact>> => {
   try {
     const controller = new AbortController();
@@ -136,6 +167,17 @@ const fetchContacts = async (
     if (error.name === "AbortError") {
       console.error("Request timed out after 10 seconds");
     }
+
+    // Retry logic for development
+    if (
+      retries > 0 &&
+      (error.name === "TypeError" || error.message?.includes("Failed to fetch"))
+    ) {
+      console.log(`Retrying contacts fetch, ${retries} attempts remaining...`);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return fetchContacts(search, retries - 1);
+    }
+
     return { data: [], total: 0, page: 1, limit: 50, totalPages: 0 };
   }
 };
@@ -182,6 +224,9 @@ export function ExactDashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
+  const [isEditContactModalOpen, setIsEditContactModalOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const itemsPerPage = 5;
 
   const loadRecordings = async () => {
@@ -215,6 +260,20 @@ export function ExactDashboard() {
     } catch (error) {
       console.error("Failed to load contacts:", error);
     }
+  };
+
+  const handleContactAdded = () => {
+    loadContacts();
+  };
+
+  const handleEditContact = (contact: Contact) => {
+    setEditingContact(contact);
+    setIsEditContactModalOpen(true);
+  };
+
+  const handleContactUpdated = () => {
+    loadContacts();
+    setEditingContact(null);
   };
 
   useEffect(() => {
@@ -428,7 +487,15 @@ export function ExactDashboard() {
               <Users className="w-5 h-5 mb-1" />
               <span className="text-xs">Contact List</span>
             </button>
-            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
+            <button
+              onClick={() => setActiveTab("analytics")}
+              className={cn(
+                "flex flex-col items-center p-3 rounded-md",
+                activeTab === "analytics"
+                  ? "text-gray-700 bg-white border border-gray-300"
+                  : "text-gray-500 hover:bg-gray-100",
+              )}
+            >
               <BarChart3 className="w-5 h-5 mb-1" />
               <span className="text-xs">Analytics</span>
             </button>
@@ -521,7 +588,9 @@ export function ExactDashboard() {
                             {startIndex + index + 1}
                           </td>
                           <td className="py-2 px-2 text-xs text-gray-500">
-                            {recording.device_name || recording.ip_address}
+                            {recording.branch_no ||
+                              recording.device_name ||
+                              recording.ip_address}
                           </td>
                           <td className="py-2 px-2 text-xs text-gray-500">
                             {recording.cnic || recording.file_name || "-"}
@@ -537,7 +606,7 @@ export function ExactDashboard() {
                               : "-"}
                           </td>
                           <td className="py-2 px-2 text-xs text-gray-500">
-                            NA
+                            {recording.branch_address || "NA"}
                           </td>
                           <td className="py-2 px-2">
                             <button className="text-gray-400 hover:text-gray-600">
@@ -704,7 +773,10 @@ export function ExactDashboard() {
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Device Name
+                            Branch Name
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Branch Code
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Status
@@ -717,11 +789,14 @@ export function ExactDashboard() {
                       <tbody className="bg-white divide-y divide-gray-200">
                         {devices.map((device, index) => (
                           <tr
-                            key={device.device_name || `device-${index}`}
+                            key={device.branch_name || `device-${index}`}
                             className="hover:bg-gray-50"
                           >
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {device.device_name}
+                              {device.branch_name}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {device.branch_code}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span
@@ -772,7 +847,10 @@ export function ExactDashboard() {
                       Manage employee contacts and information
                     </p>
                   </div>
-                  <button className="flex items-center space-x-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 transition-colors">
+                  <button
+                    onClick={() => setIsAddContactModalOpen(true)}
+                    className="flex items-center space-x-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 transition-colors"
+                  >
                     <Plus className="h-4 w-4" />
                     <span>Add Contact</span>
                   </button>
@@ -867,7 +945,10 @@ export function ExactDashboard() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               <div className="flex items-center space-x-2">
-                                <button className="text-blue-600 hover:text-blue-900">
+                                <button
+                                  onClick={() => handleEditContact(contact)}
+                                  className="text-blue-600 hover:text-blue-900"
+                                >
                                   <Edit2 className="w-4 h-4" />
                                 </button>
                                 <button className="text-red-600 hover:text-red-900">
@@ -895,6 +976,14 @@ export function ExactDashboard() {
                     </div>
                   )}
                 </div>
+              </>
+            )}
+
+            {activeTab === "analytics" && (
+              <>
+                <WarningSuppressionWrapper>
+                  <RecordingsAnalytics />
+                </WarningSuppressionWrapper>
               </>
             )}
           </div>
@@ -1049,6 +1138,24 @@ export function ExactDashboard() {
           </div>
         )}
       </div>
+
+      {/* Add Contact Modal */}
+      <AddContactModal
+        isOpen={isAddContactModalOpen}
+        onClose={() => setIsAddContactModalOpen(false)}
+        onContactAdded={handleContactAdded}
+      />
+
+      {/* Edit Contact Modal */}
+      <EditContactModal
+        isOpen={isEditContactModalOpen}
+        onClose={() => {
+          setIsEditContactModalOpen(false);
+          setEditingContact(null);
+        }}
+        onContactUpdated={handleContactUpdated}
+        contact={editingContact}
+      />
     </div>
   );
 }

@@ -13,7 +13,8 @@ export interface DemoResponse {
 
 // Device Heartbeat Types
 export interface HeartbeatRecord {
-  device_name: string;
+  branch_name: string;
+  branch_code: string;
   status: "online" | "problematic" | "offline";
   last_seen: string;
 }
@@ -34,6 +35,8 @@ export interface RecordingHistory {
   file_name: string | null;
   created_on: string | null;
   device_name: string | null;
+  branch_no?: string | null;
+  branch_address?: string | null;
   duration?: number;
   duration_seconds?: number;
   status: "completed" | "in_progress" | "failed";

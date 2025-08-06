@@ -9,12 +9,14 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
     // Query the actual heartbeat table
     const query = `
       SELECT
-        COALESCE(dm.device_name, ranked.ip_address) AS device_name,
+        COALESCE(c.branch_address, COALESCE(dm.device_name, ranked.ip_address)) AS branch_name,
+        COALESCE(c.branch_id, 'N/A') AS branch_code,
         ranked.last_seen,
         ranked.status
       FROM (
         SELECT
           ip_address,
+          mac_address,
           created_on AS last_seen,
           CASE
             WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 5 THEN 'online'
@@ -25,6 +27,7 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
         FROM recording_heartbeat
       ) AS ranked
       LEFT JOIN device_mappings dm ON dm.ip_address = ranked.ip_address
+      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = ranked.mac_address COLLATE utf8mb4_unicode_ci
       WHERE ranked.row_num = 1
       ORDER BY ranked.last_seen DESC
     `;
