@@ -213,6 +213,7 @@ export function ExactDashboard() {
   useEffect(() => {
     loadRecordings();
     loadDevices();
+    loadContacts();
     const recordingsInterval = setInterval(loadRecordings, 30000);
     const devicesInterval = setInterval(loadDevices, 30000);
     return () => {
@@ -220,6 +221,13 @@ export function ExactDashboard() {
       clearInterval(devicesInterval);
     };
   }, []);
+
+  // Contact search effect
+  useEffect(() => {
+    if (activeTab === "contact-list") {
+      loadContacts();
+    }
+  }, [contactSearch, activeTab]);
 
   // Device status counts
   const onlineCount = devices.filter((d) => d.status === "online").length;
