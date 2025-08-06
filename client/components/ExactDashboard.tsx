@@ -329,7 +329,7 @@ export function ExactDashboard() {
             )}
 
             {/* Customer Profile Section */}
-            <div className="mb-8">
+            <div className="mb-6 pb-6 border-b border-gray-200">
               <h2 className="text-lg font-medium text-gray-900 mb-4">Customer Profile</h2>
               {selectedRecording ? (
                 <div className="space-y-4">
