@@ -556,7 +556,7 @@ export function ExactDashboard() {
                               : "-"}
                           </td>
                           <td className="py-2 px-2 text-xs text-gray-500">
-                            NA
+                            {recording.branch_address || "NA"}
                           </td>
                           <td className="py-2 px-2">
                             <button className="text-gray-400 hover:text-gray-600">
