@@ -129,68 +129,62 @@ export const getUniqueCnicsByMonth: RequestHandler = async (req, res) => {
 // Get complete conversation analytics
 export const getConversationAnalytics: RequestHandler = async (req, res) => {
   try {
-    // Conversations by branch with months
+    // Conversations by branch - using exact user query
     const branchQuery = `
-      SELECT 
+      SELECT
         c.branch_id,
         COALESCE(c.branch_address, 'Unknown Branch') as branch_name,
-        COUNT(rh.id) as count,
-        DATE_FORMAT(rh.CREATED_ON, '%Y-%m') as month
-      FROM recording_history rh
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = rh.device_mac COLLATE utf8mb4_unicode_ci
-      WHERE rh.CREATED_ON >= DATE_SUB(CURRENT_DATE, INTERVAL 12 MONTH)
-      GROUP BY c.branch_id, c.branch_address, DATE_FORMAT(rh.CREATED_ON, '%Y-%m')
-      ORDER BY month DESC, count DESC
-    `;
-
-    // Conversations by city
-    const cityQuery = `
-      SELECT 
-        TRIM(SUBSTRING_INDEX(COALESCE(c.branch_address, 'Unknown'), ',', -1)) as city,
-        COUNT(rh.id) as count,
-        COUNT(DISTINCT c.branch_id) as branch_count
-      FROM recording_history rh
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = rh.device_mac COLLATE utf8mb4_unicode_ci
-      WHERE rh.CREATED_ON >= DATE_SUB(CURRENT_DATE, INTERVAL 6 MONTH)
-      GROUP BY city
+        COUNT(r.id) AS count
+      FROM recording_history r
+      JOIN contacts c
+        ON r.mac_address COLLATE utf8mb4_unicode_ci = c.device_mac COLLATE utf8mb4_unicode_ci
+      GROUP BY c.branch_id
       ORDER BY count DESC
-      LIMIT 15
     `;
 
-    // Daily conversations last month
+    // Conversations by city - using exact user query
+    const cityQuery = `
+      SELECT
+        c.branch_city as city,
+        COUNT(r.id) AS count,
+        COUNT(DISTINCT c.branch_id) as branch_count
+      FROM recording_history r
+      JOIN contacts c
+        ON r.mac_address COLLATE utf8mb4_unicode_ci = c.device_mac COLLATE utf8mb4_unicode_ci
+      WHERE c.branch_city IS NOT NULL
+      GROUP BY c.branch_city
+      ORDER BY count DESC
+    `;
+
+    // Daily conversations last month - using exact user query
     const dailyQuery = `
-      SELECT 
-        DATE(rh.CREATED_ON) as date,
-        COUNT(rh.id) as count
-      FROM recording_history rh
-      WHERE rh.CREATED_ON >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
-      GROUP BY DATE(rh.CREATED_ON)
-      ORDER BY date ASC
+      SELECT
+        DATE(r.start_time) AS date,
+        COUNT(r.id) AS count
+      FROM recording_history r
+      WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+      GROUP BY DATE(r.start_time)
+      ORDER BY date
     `;
 
-    // Unique CNICs by month
+    // Unique CNICs count - using exact user query
     const cnicQuery = `
-      SELECT 
-        DATE_FORMAT(rh.CREATED_ON, '%Y-%m') as month,
-        COUNT(DISTINCT rh.cnic) as unique_cnic_count
-      FROM recording_history rh
-      WHERE rh.cnic IS NOT NULL 
-        AND rh.cnic != ''
-        AND rh.CREATED_ON >= DATE_SUB(CURRENT_DATE, INTERVAL 12 MONTH)
-      GROUP BY DATE_FORMAT(rh.CREATED_ON, '%Y-%m')
-      ORDER BY month DESC
+      SELECT
+        COUNT(DISTINCT REPLACE(r.cnic, '-', '')) AS unique_cnic_count
+      FROM recording_history r
+      WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
     `;
 
     // Total statistics
     const totalStatsQuery = `
-      SELECT 
+      SELECT
         COUNT(*) as totalConversations,
-        COUNT(DISTINCT rh.cnic) as uniqueCustomers,
+        COUNT(DISTINCT REPLACE(r.cnic, '-', '')) as uniqueCustomers,
         COUNT(DISTINCT c.branch_id) as activeBranches,
-        SUM(CASE WHEN DATE(rh.CREATED_ON) = CURDATE() THEN 1 ELSE 0 END) as todayConversations
-      FROM recording_history rh
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = rh.device_mac COLLATE utf8mb4_unicode_ci
-      WHERE rh.CREATED_ON >= DATE_SUB(CURRENT_DATE, INTERVAL 12 MONTH)
+        SUM(CASE WHEN DATE(r.start_time) = CURDATE() THEN 1 ELSE 0 END) as todayConversations
+      FROM recording_history r
+      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = r.mac_address COLLATE utf8mb4_unicode_ci
+      WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
     `;
 
     // Execute all queries in parallel
