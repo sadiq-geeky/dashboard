@@ -215,7 +215,7 @@ export function ExactDashboard() {
                 <tbody>
                   {currentRecordings.map((recording, index) => (
                     <tr key={recording.id} className="border-b border-gray-100 hover:bg-gray-50" onClick={() => setSelectedRecording(recording)}>
-                      <td className="py-3 px-4 text-sm text-gray-900">{index + 1}</td>
+                      <td className="py-3 px-4 text-sm text-gray-900">{startIndex + index + 1}</td>
                       <td className="py-3 px-4 text-sm text-gray-500">{recording.device_name || recording.ip_address}</td>
                       <td className="py-3 px-4 text-sm text-gray-500">{recording.cnic || recording.file_name || '-'}</td>
                       <td className="py-3 px-4 text-sm text-gray-500">
