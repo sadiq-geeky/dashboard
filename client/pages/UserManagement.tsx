@@ -186,36 +186,13 @@ export function UserManagement() {
               Manage system users and their permissions
             </p>
           </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={async () => {
-                try {
-                  const response = await fetch('/api/migrate-users-table', { method: 'POST' });
-                  const result = await response.json();
-                  if (response.ok) {
-                    alert('Users table migrated successfully!');
-                    loadUsers();
-                  } else {
-                    alert('Migration failed: ' + result.error);
-                  }
-                } catch (error) {
-                  alert('Migration failed: ' + error.message);
-                }
-              }}
-              className="flex items-center space-x-2 px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition-colors"
-              title="Fix users table schema"
-            >
-              <RefreshCw className="h-4 w-4" />
-              <span>Fix DB</span>
-            </button>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add User</span>
-            </button>
-          </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add User</span>
+          </button>
         </div>
 
         {/* Search */}
