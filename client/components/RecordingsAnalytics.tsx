@@ -267,12 +267,22 @@ export function RecordingsAnalytics() {
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Recordings by Branch (Top 10)</h3>
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={recordingsByBranch} layout="horizontal">
+          <BarChart
+            data={recordingsByBranch}
+            layout="horizontal"
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               type="number"
               axisLine={true}
               tickLine={true}
+              tick={true}
+              mirror={false}
+              reversed={false}
+              allowDataOverflow={false}
+              allowDecimals={true}
+              allowDuplicatedCategory={true}
             />
             <YAxis
               dataKey="branch_name"
@@ -281,6 +291,11 @@ export function RecordingsAnalytics() {
               tick={{ fontSize: 12 }}
               axisLine={true}
               tickLine={true}
+              mirror={false}
+              reversed={false}
+              allowDataOverflow={false}
+              allowDecimals={true}
+              allowDuplicatedCategory={true}
             />
             <Tooltip formatter={(value: number) => [value, "Recordings"]} />
             <Bar dataKey="count" fill={COLORS.secondary} />
