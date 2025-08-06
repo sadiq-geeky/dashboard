@@ -34,8 +34,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
     const countQuery = `
       SELECT COUNT(*) as total
       FROM recording_history rh
-      LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
-      LEFT JOIN contacts c ON dm.mac_address COLLATE utf8mb4_unicode_ci = c.device_mac COLLATE utf8mb4_unicode_ci
+      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = rh.mac_address COLLATE utf8mb4_unicode_ci
       ${whereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
@@ -53,9 +52,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
     rh.end_time,
     rh.file_name,
     rh.CREATED_ON AS created_on,
-    rh.ip_address,
-    COALESCE(dm.device_name, rh.ip_address) AS device_name,
-    COALESCE(c.branch_id, COALESCE(dm.device_name, rh.ip_address)) AS branch_no,
+    c.branch_id AS branch_no,
     COALESCE(c.branch_address, 'NA') AS branch_address,
     CASE
         WHEN rh.end_time IS NOT NULL THEN
@@ -69,8 +66,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
         ELSE 'failed'
     END AS status
 FROM recording_history rh
-LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
-LEFT JOIN contacts c ON dm.mac_address COLLATE utf8mb4_unicode_ci = c.device_mac COLLATE utf8mb4_unicode_ci
+LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = rh.mac_address COLLATE utf8mb4_unicode_ci
       ${whereClause}
       ORDER BY rh.CREATED_ON DESC
       LIMIT ${limitNum} OFFSET ${offset}
