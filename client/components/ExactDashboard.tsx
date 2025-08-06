@@ -208,7 +208,23 @@ export function ExactDashboard() {
 
     const diffHours = Math.floor(diffMinutes / 60);
     if (diffHours === 1) return "1 hour ago";
-    return `${diffHours} hours ago`;
+    if (diffHours < 24) return `${diffHours} hours ago`;
+
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return "1 day ago";
+    if (diffDays < 7) return `${diffDays} days ago`;
+
+    const diffWeeks = Math.floor(diffDays / 7);
+    if (diffWeeks === 1) return "1 week ago";
+    if (diffWeeks < 4) return `${diffWeeks} weeks ago`;
+
+    const diffMonths = Math.floor(diffDays / 30);
+    if (diffMonths === 1) return "1 month ago";
+    if (diffMonths < 12) return `${diffMonths} months ago`;
+
+    const diffYears = Math.floor(diffDays / 365);
+    if (diffYears === 1) return "1 year ago";
+    return `${diffYears} years ago`;
   };
 
   // Audio control functions
