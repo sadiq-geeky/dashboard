@@ -242,13 +242,34 @@ export const uploadVoice: RequestHandler = async (req, res) => {
 
 // Serve audio files for playback
 export const serveAudio: RequestHandler = (req, res) => {
+  const startTime = Date.now();
+  const requestId = uuidv4();
+  const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
+  const userAgent = req.get('User-Agent') || 'unknown';
+  const { filename } = req.params;
+
+  voiceLogger.info("voice-upload", "serve_audio_request", {
+    request_id: requestId,
+    ip_address: clientIp,
+    user_agent: userAgent,
+    file_name: filename,
+  });
+
   try {
-    const { filename } = req.params;
     const filepath = path.join(uploadDir, filename);
 
     if (!fs.existsSync(filepath)) {
+      voiceLogger.warn("voice-upload", "audio_file_not_found", {
+        request_id: requestId,
+        ip_address: clientIp,
+        file_name: filename,
+        details: { file_path: filepath },
+      });
       return res.status(404).json({ error: "Audio file not found" });
     }
+
+    // Get file stats for logging
+    const stats = fs.statSync(filepath);
 
     // Set appropriate headers for audio streaming
     const extension = path.extname(filename).toLowerCase();
@@ -257,10 +278,62 @@ export const serveAudio: RequestHandler = (req, res) => {
     res.setHeader("Content-Type", mimeType);
     res.setHeader("Accept-Ranges", "bytes");
 
+    voiceLogger.info("voice-upload", "audio_streaming_start", {
+      request_id: requestId,
+      ip_address: clientIp,
+      file_name: filename,
+      file_size: stats.size,
+      details: {
+        mime_type: mimeType,
+        file_extension: extension,
+        file_path: filepath,
+      },
+    });
+
     // Stream the file
     const stream = fs.createReadStream(filepath);
+
+    stream.on('end', () => {
+      const duration = Date.now() - startTime;
+      voiceLogger.info("voice-upload", "audio_streaming_success", {
+        request_id: requestId,
+        ip_address: clientIp,
+        file_name: filename,
+        file_size: stats.size,
+        duration_ms: duration,
+      });
+    });
+
+    stream.on('error', (streamError) => {
+      const duration = Date.now() - startTime;
+      voiceLogger.error("voice-upload", "audio_streaming_error", streamError.message, {
+        request_id: requestId,
+        ip_address: clientIp,
+        file_name: filename,
+        duration_ms: duration,
+        details: {
+          error_stack: streamError.stack,
+          stream_error: true,
+        },
+      });
+    });
+
     stream.pipe(res);
   } catch (error) {
+    const duration = Date.now() - startTime;
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    voiceLogger.error("voice-upload", "serve_audio_error", errorMessage, {
+      request_id: requestId,
+      ip_address: clientIp,
+      file_name: filename,
+      duration_ms: duration,
+      details: {
+        error_stack: error instanceof Error ? error.stack : undefined,
+        general_error: true,
+      },
+    });
+
     console.error("Error serving audio:", error);
     res.status(500).json({ error: "Failed to serve audio file" });
   }
