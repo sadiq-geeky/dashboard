@@ -9,12 +9,6 @@ import { initializeDatabase } from "./config/database";
 // Production database routes only
 import { getHeartbeats, postHeartbeat } from "./routes/heartbeat-db";
 import {
-  getDevices,
-  createDevice,
-  updateDevice,
-  deleteDevice,
-} from "./routes/devices-db";
-import {
   getRecordings,
   getRecording,
   createRecording,
@@ -32,11 +26,20 @@ import {
   serveAudio,
 } from "./routes/voice-upload";
 import {
-  getContacts,
-  createContact,
-  updateContact,
-  deleteContact,
-} from "./routes/contacts-db";
+  getBranches,
+  getBranch,
+  createBranch,
+  updateBranch,
+  deleteBranch,
+} from "./routes/branches-db";
+import {
+  getDevices,
+  getDevice,
+  createDevice,
+  updateDevice,
+  deleteDevice,
+  getDevicesByBranch,
+} from "./routes/devices-db";
 import { getRecordingsAnalytics } from "./routes/analytics-db";
 import {
   getConversationAnalytics,
