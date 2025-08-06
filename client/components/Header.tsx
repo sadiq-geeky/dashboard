@@ -77,9 +77,9 @@ export function Header() {
                     <p className="text-xs text-gray-500">@{user.username}</p>
                     <div className="flex items-center space-x-1 mt-1">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                        isAdmin() 
-                          ? 'bg-red-100 text-red-800' 
-                          : 'bg-blue-100 text-blue-800'
+                        isAdmin()
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-gray-100 text-gray-800'
                       }`}>
                         {isAdmin() ? (
                           <>
