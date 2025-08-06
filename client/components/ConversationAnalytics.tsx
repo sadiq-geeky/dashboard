@@ -242,18 +242,18 @@ export function ConversationAnalytics() {
           <ResponsiveContainer width="100%" height={400}>
             <BarChart
               data={processedBranchData}
-              layout="horizontal"
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              margin={{ top: 5, right: 30, left: 20, bottom: 50 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis 
-                dataKey="branch_name" 
-                type="category" 
-                width={150}
-                tick={{ fontSize: 11 }}
+              <XAxis
+                dataKey="branch_name"
+                angle={-45}
+                textAnchor="end"
+                height={80}
+                tick={{ fontSize: 10 }}
               />
-              <Tooltip 
+              <YAxis />
+              <Tooltip
                 formatter={(value: number) => [value, "Conversations"]}
                 labelFormatter={(label) => `Branch: ${label}`}
               />
