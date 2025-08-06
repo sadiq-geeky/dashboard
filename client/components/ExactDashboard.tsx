@@ -232,7 +232,7 @@ export function ExactDashboard() {
               {/* Footer */}
               <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
                 <div className="text-sm text-gray-500">
-                  1-{Math.max(5, filteredDevices.length)} of {Math.max(25, filteredDevices.length)}
+                  {filteredRecordings.length} items
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="flex space-x-1">
