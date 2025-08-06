@@ -86,6 +86,22 @@ export async function initializeTables() {
     await executeQuery(createHeartbeatsTable);
     console.log("✅ Heartbeats table created/verified successfully");
 
+    // Create recording_heartbeat table for compatibility
+    const createRecordingHeartbeatTable = `
+      CREATE TABLE IF NOT EXISTS recording_heartbeat (
+        uuid VARCHAR(36) PRIMARY KEY,
+        ip_address VARCHAR(45) NOT NULL,
+        mac_address VARCHAR(17),
+        created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_ip_address (ip_address),
+        INDEX idx_mac_address (mac_address),
+        INDEX idx_created_on (created_on)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `;
+
+    await executeQuery(createRecordingHeartbeatTable);
+    console.log("✅ Recording heartbeat table created/verified successfully");
+
     // Create recordings table if it doesn't exist
     const createRecordingsTable = `
       CREATE TABLE IF NOT EXISTS recordings (
