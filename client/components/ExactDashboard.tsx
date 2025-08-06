@@ -228,6 +228,15 @@ export function ExactDashboard() {
     }
   };
 
+  // Handle URL parameter changes for tab switching
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const tab = urlParams.get('tab');
+    if (tab && tab !== activeTab) {
+      setActiveTab(tab);
+    }
+  }, [location.search, activeTab]);
+
   useEffect(() => {
     loadRecordings();
     loadDevices();
