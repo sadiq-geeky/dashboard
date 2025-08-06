@@ -47,16 +47,16 @@ export const getConversationsByBranch: RequestHandler = async (req, res) => {
 export const getConversationsByCity: RequestHandler = async (req, res) => {
   try {
     const query = `
-      SELECT 
-        SUBSTRING_INDEX(COALESCE(c.branch_address, 'Unknown'), ',', -1) as city,
-        COUNT(rh.id) as count,
+      SELECT
+        c.branch_city as city,
+        COUNT(r.id) AS count,
         COUNT(DISTINCT c.branch_id) as branch_count
-      FROM recording_history rh
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = rh.device_mac COLLATE utf8mb4_unicode_ci
-      WHERE rh.CREATED_ON >= DATE_SUB(CURRENT_DATE, INTERVAL 6 MONTH)
-      GROUP BY city
+      FROM recording_history r
+      JOIN contacts c
+        ON r.mac_address COLLATE utf8mb4_unicode_ci = c.device_mac COLLATE utf8mb4_unicode_ci
+      WHERE c.branch_city IS NOT NULL
+      GROUP BY c.branch_city
       ORDER BY count DESC
-      LIMIT 15
     `;
 
     const result = await executeQuery<{
