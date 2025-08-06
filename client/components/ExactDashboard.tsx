@@ -101,23 +101,29 @@ export function ExactDashboard() {
       <div className="bg-white border-b border-gray-200">
         <div className="flex items-center justify-between h-16 px-6">
           <div className="flex items-center space-x-1">
-            <button className="p-2 text-gray-700 hover:bg-gray-100 rounded-md">
-              <Grid3X3 className="w-5 h-5" />
+            <button className="flex flex-col items-center p-3 text-gray-700 hover:bg-gray-100 rounded-md border border-gray-300 bg-white">
+              <Grid3X3 className="w-5 h-5 mb-1" />
+              <span className="text-xs">Home</span>
             </button>
-            <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-md">
-              <BarChart3 className="w-5 h-5" />
+            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
+              <BarChart3 className="w-5 h-5 mb-1" />
+              <span className="text-xs">Device Status</span>
             </button>
-            <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-md">
-              <Calendar className="w-5 h-5" />
+            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
+              <MessageSquare className="w-5 h-5 mb-1" />
+              <span className="text-xs">Live Conversation</span>
             </button>
-            <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-md">
-              <Settings className="w-5 h-5" />
+            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
+              <Settings className="w-5 h-5 mb-1" />
+              <span className="text-xs">Contact List</span>
             </button>
-            <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-md">
-              <Mail className="w-5 h-5" />
+            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
+              <BarChart3 className="w-5 h-5 mb-1" />
+              <span className="text-xs">Analytics</span>
             </button>
-            <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-md">
-              <MessageSquare className="w-5 h-5" />
+            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
+              <Mail className="w-5 h-5 mb-1" />
+              <span className="text-xs">Complaints</span>
             </button>
           </div>
           
