@@ -24,18 +24,22 @@ import {
 interface User {
   uuid: string;
   emp_name: string | null;
-  username: string;
+  gender: string | null;
+  date_of_birth: string | null;
   cnic: string | null;
   phone_no: string | null;
-  email_id: string | null;
   designation: string | null;
   department: string | null;
-  branch_id: string | null;
-  branch_city: string | null;
-  branch_address: string | null;
+  joining_date: string | null;
+  email_id: string | null;
+  username: string;
+  password_hash?: string;
   role: "admin" | "user";
   is_active: boolean;
   created_on: string | null;
+  updated_on: string | null;
+  created_by: string | null;
+  updated_by: string | null;
 }
 
 export function UserManagement() {
