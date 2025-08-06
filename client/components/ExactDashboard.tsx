@@ -219,6 +219,10 @@ export function ExactDashboard() {
     }
   };
 
+  const handleContactAdded = () => {
+    loadContacts();
+  };
+
   useEffect(() => {
     loadRecordings();
     loadDevices();
