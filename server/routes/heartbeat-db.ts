@@ -6,10 +6,10 @@ import { v4 as uuidv4 } from "uuid";
 // Get heartbeats with status calculation
 export const getHeartbeats: RequestHandler = async (req, res) => {
   try {
-    // Query the actual heartbeat table
+    // Query the recording_heartbeat table
     const query = `
       SELECT
-        COALESCE(c.branch_address, COALESCE(dm.device_name, h.device_name, h.ip_address)) AS branch_name,
+        COALESCE(c.branch_address, h.ip_address) AS branch_name,
         COALESCE(c.branch_id, 'N/A') AS branch_code,
         h.last_seen,
         CASE
@@ -19,14 +19,13 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
         END AS status
       FROM (
         SELECT
-          device_name,
           ip_address,
-          MAX(last_seen) as last_seen
-        FROM heartbeats
-        GROUP BY device_name, ip_address
+          mac_address,
+          MAX(created_on) as last_seen
+        FROM recording_heartbeat
+        GROUP BY ip_address, mac_address
       ) h
-      LEFT JOIN device_mappings dm ON dm.ip_address = h.ip_address OR dm.device_name = h.device_name
-      LEFT JOIN contacts c ON c.device_mac = dm.device_mac
+      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_0900_ai_ci = h.mac_address COLLATE utf8mb4_0900_ai_ci
       ORDER BY h.last_seen DESC
     `;
 
