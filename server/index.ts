@@ -90,5 +90,8 @@ export function createServer() {
   app.put("/api/contacts/:uuid", updateContact);
   app.delete("/api/contacts/:uuid", deleteContact);
 
+  // Analytics routes
+  app.get("/api/analytics/recordings", getRecordingsAnalytics);
+
   return app;
 }
