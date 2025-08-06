@@ -56,6 +56,13 @@ import {
   loginUser,
   getUserProfile,
 } from "./routes/users-db";
+import {
+  getDeployments,
+  createDeployment,
+  deleteDeployment,
+  getDeployment,
+  updateDeployment,
+} from "./routes/deployments-db";
 
 export function createServer() {
   const app = express();
