@@ -31,7 +31,7 @@ export const getDeployments: RequestHandler = async (req, res) => {
         u.username,
         u.email_id,
         u.role,
-        u.full_name
+        u.emp_name
       FROM link_device_branch_user ldbu
       LEFT JOIN devices d ON d.id = ldbu.device_id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
@@ -212,7 +212,7 @@ export const getDeployment: RequestHandler = async (req, res) => {
         u.username,
         u.email_id,
         u.role,
-        u.full_name
+        u.emp_name
       FROM link_device_branch_user ldbu
       LEFT JOIN devices d ON d.id = ldbu.device_id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
