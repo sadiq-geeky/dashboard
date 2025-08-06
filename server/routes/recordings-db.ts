@@ -90,7 +90,10 @@ export const getRecordings: RequestHandler = async (req, res) => {
             ELSE 'failed'
         END AS status
       FROM recordings rh
-      LEFT JOIN devices d ON d.device_mac = rh.mac_address OR d.ip_address = rh.ip_address
+      LEFT JOIN devices d ON (d.device_mac = rh.mac_address)
+                          OR (d.ip_address = rh.ip_address)
+                          OR (REPLACE(d.device_mac, ':', '-') = REPLACE(rh.mac_address, ':', '-'))
+                          OR (REPLACE(d.device_mac, '-', ':') = REPLACE(rh.mac_address, '-', ':'))
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
       ${whereClause}
