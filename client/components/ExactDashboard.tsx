@@ -159,9 +159,19 @@ export function ExactDashboard() {
 
   useEffect(() => {
     loadRecordings();
-    const interval = setInterval(loadRecordings, 30000);
-    return () => clearInterval(interval);
+    loadDevices();
+    const recordingsInterval = setInterval(loadRecordings, 30000);
+    const devicesInterval = setInterval(loadDevices, 30000);
+    return () => {
+      clearInterval(recordingsInterval);
+      clearInterval(devicesInterval);
+    };
   }, []);
+
+  // Device status counts
+  const onlineCount = devices.filter((d) => d.status === "online").length;
+  const problematicCount = devices.filter((d) => d.status === "problematic").length;
+  const offlineCount = devices.filter((d) => d.status === "offline").length;
 
   useEffect(() => {
     if (searchQuery) {
