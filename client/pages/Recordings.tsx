@@ -154,6 +154,7 @@ export function Recordings() {
       const result = await fetchRecordings(
         currentPage,
         10,
+        user,
         searchTerm,
         selectedDevice,
       );
