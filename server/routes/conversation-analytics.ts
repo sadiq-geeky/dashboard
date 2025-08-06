@@ -130,7 +130,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
     const branchQuery = `
       SELECT
         c.branch_id,
-        COALESCE(c.branch_address, 'Unknown Branch') as branch_name,
+        COALESCE(MAX(c.branch_address), 'Unknown Branch') as branch_name,
         COUNT(r.id) AS count
       FROM recording_history r
       JOIN contacts c
