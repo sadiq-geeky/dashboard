@@ -72,7 +72,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
         ELSE 'failed'
     END AS status
 FROM recording_history rh
-LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = rh.mac_address COLLATE utf8mb4_unicode_ci
+LEFT JOIN contacts c ON CONVERT(c.device_mac USING utf8mb4) COLLATE utf8mb4_unicode_ci = CONVERT(rh.mac_address USING utf8mb4) COLLATE utf8mb4_unicode_ci
       ${whereClause}
       ORDER BY rh.CREATED_ON DESC
       LIMIT ${limitNum} OFFSET ${offset}
