@@ -40,18 +40,19 @@ export const getDevices: RequestHandler = async (req, res) => {
 
     if (search) {
       conditions.push(
-        "(d.device_name LIKE ? OR d.device_mac LIKE ? OR d.ip_address LIKE ?)",
+        "(device_name LIKE ? OR device_mac LIKE ? OR ip_address LIKE ?)",
       );
       queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
 
-    if (branch_id) {
-      conditions.push("d.branch_id = ?");
-      queryParams.push(branch_id);
-    }
+    // Skip branch_id filter for now until table is fixed
+    // if (branch_id) {
+    //   conditions.push("branch_id = ?");
+    //   queryParams.push(branch_id);
+    // }
 
     if (device_status) {
-      conditions.push("d.device_status = ?");
+      conditions.push("device_status = ?");
       queryParams.push(device_status);
     }
 
@@ -61,10 +62,9 @@ export const getDevices: RequestHandler = async (req, res) => {
 
     // Get total count
     const countQuery = `
-      SELECT COUNT(*) as total 
-      FROM devices d 
-      LEFT JOIN branches b ON d.branch_id = b.id 
-      ${whereClause}
+      SELECT COUNT(*) as total
+      FROM devices d
+      ${whereClause.replace('d.branch_id', 'branch_id')}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
       countQuery,
@@ -72,15 +72,14 @@ export const getDevices: RequestHandler = async (req, res) => {
     );
     const total = countResult.total;
 
-    // Get paginated results with branch info
+    // Get paginated results (without branch join for now)
     const dataQuery = `
-      SELECT 
+      SELECT
         d.*,
-        b.branch_name,
-        b.branch_code
-      FROM devices d 
-      LEFT JOIN branches b ON d.branch_id = b.id
-      ${whereClause}
+        NULL as branch_name,
+        NULL as branch_code
+      FROM devices d
+      ${whereClause.replace('d.branch_id', 'branch_id')}
       ORDER BY d.device_name ASC
       LIMIT ${limitNum} OFFSET ${offset}
     `;

@@ -4,21 +4,21 @@ import { X } from "lucide-react";
 interface User {
   uuid: string;
   emp_name: string | null;
-  username: string;
+  gender: string | null;
+  date_of_birth: string | null;
   cnic: string | null;
   phone_no: string | null;
-  email_id: string | null;
   designation: string | null;
   department: string | null;
-  branch_id: string | null;
-  branch_city: string | null;
-  branch_address: string | null;
+  joining_date: string | null;
+  email_id: string | null;
+  username: string;
   role: "admin" | "user";
   is_active: boolean;
-  date_of_birth: string | null;
-  joining_date: string | null;
-  device_mac: string | null;
-  gender: string | null;
+  created_on: string | null;
+  updated_on: string | null;
+  created_by: string | null;
+  updated_by: string | null;
 }
 
 interface EditUserModalProps {
@@ -36,18 +36,14 @@ export function EditUserModal({
 }: EditUserModalProps) {
   const [formData, setFormData] = useState({
     emp_name: "",
-    cnic: "",
-    phone_no: "",
-    email_id: "",
-    designation: "",
-    department: "",
-    branch_id: "",
-    branch_city: "",
-    branch_address: "",
     gender: "",
     date_of_birth: "",
+    cnic: "",
+    phone_no: "",
+    designation: "",
+    department: "",
     joining_date: "",
-    device_mac: "",
+    email_id: "",
     username: "",
     password: "", // Optional for updates
     role: "user" as "admin" | "user",
@@ -61,20 +57,16 @@ export function EditUserModal({
     if (user) {
       setFormData({
         emp_name: user.emp_name || "",
-        cnic: user.cnic || "",
-        phone_no: user.phone_no || "",
-        email_id: user.email_id || "",
-        designation: user.designation || "",
-        department: user.department || "",
-        branch_id: user.branch_id || "",
-        branch_city: user.branch_city || "",
-        branch_address: user.branch_address || "",
         gender: user.gender || "",
         date_of_birth: user.date_of_birth
           ? user.date_of_birth.split("T")[0]
           : "",
+        cnic: user.cnic || "",
+        phone_no: user.phone_no || "",
+        designation: user.designation || "",
+        department: user.department || "",
         joining_date: user.joining_date ? user.joining_date.split("T")[0] : "",
-        device_mac: user.device_mac || "",
+        email_id: user.email_id || "",
         username: user.username || "",
         password: "", // Always start empty
         role: user.role || "user",
@@ -358,71 +350,9 @@ export function EditUserModal({
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Device MAC Address
-                </label>
-                <input
-                  type="text"
-                  name="device_mac"
-                  value={formData.device_mac}
-                  onChange={handleInputChange}
-                  placeholder="AA:BB:CC:DD:EE:FF"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
             </div>
           </div>
 
-          {/* Branch Information */}
-          <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Branch Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Branch ID
-                </label>
-                <input
-                  type="text"
-                  name="branch_id"
-                  value={formData.branch_id}
-                  onChange={handleInputChange}
-                  placeholder="Branch code or ID"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Branch City
-                </label>
-                <input
-                  type="text"
-                  name="branch_city"
-                  value={formData.branch_city}
-                  onChange={handleInputChange}
-                  placeholder="Karachi, Lahore, Islamabad, etc."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Branch Address
-                </label>
-                <textarea
-                  name="branch_address"
-                  value={formData.branch_address}
-                  onChange={handleInputChange}
-                  rows={3}
-                  placeholder="Full branch address"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-            </div>
-          </div>
 
           <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
             <button

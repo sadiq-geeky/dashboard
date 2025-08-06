@@ -6,10 +6,6 @@ import bcrypt from "bcrypt";
 export interface User {
   uuid: string;
   emp_name: string | null;
-  device_mac: string | null;
-  branch_id: string | null;
-  branch_city: string | null;
-  branch_address: string | null;
   gender: string | null;
   date_of_birth: string | null;
   cnic: string | null;
@@ -24,14 +20,14 @@ export interface User {
   is_active: boolean;
   created_on: string | null;
   updated_on: string | null;
+  created_by: string | null;
+  updated_by: string | null;
 }
 
 export interface UserSession {
   uuid: string;
   username: string;
   role: "admin" | "user";
-  branch_id: string | null;
-  branch_city: string | null;
   emp_name: string | null;
 }
 
@@ -44,9 +40,8 @@ export const getUsers: RequestHandler = async (req, res) => {
     const offset = (pageNum - 1) * limitNum;
 
     let query = `
-      SELECT uuid, emp_name, device_mac, branch_id, branch_city, branch_address, gender,
-             date_of_birth, cnic, phone_no, designation, department,
-             joining_date, email_id, username, role, is_active, created_on, updated_on
+      SELECT uuid, emp_name, gender, date_of_birth, cnic, phone_no, designation, department,
+             joining_date, email_id, username, role, is_active, created_on, updated_on, created_by, updated_by
       FROM users
     `;
 
@@ -99,10 +94,6 @@ export const createUser: RequestHandler = async (req, res) => {
   try {
     const {
       emp_name,
-      device_mac,
-      branch_id,
-      branch_city,
-      branch_address,
       gender,
       date_of_birth,
       cnic,
@@ -126,12 +117,9 @@ export const createUser: RequestHandler = async (req, res) => {
       email_id,
       designation,
       department,
-      branch_id,
       gender,
       date_of_birth,
       joining_date,
-      device_mac,
-      branch_address,
     };
 
     const missingFields = Object.entries(requiredFields)
@@ -166,20 +154,15 @@ export const createUser: RequestHandler = async (req, res) => {
     const uuid = uuidv4();
     const query = `
       INSERT INTO users (
-        uuid, emp_name, device_mac, branch_id, branch_city, branch_address, gender,
-        date_of_birth, cnic, phone_no, designation, department,
+        uuid, emp_name, gender, date_of_birth, cnic, phone_no, designation, department,
         joining_date, email_id, username, password_hash, role, is_active,
         created_on, updated_on
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `;
 
     await executeQuery(query, [
       uuid,
       emp_name,
-      device_mac,
-      branch_id,
-      branch_city,
-      branch_address,
       gender,
       date_of_birth,
       cnic,
@@ -211,10 +194,6 @@ export const updateUser: RequestHandler = async (req, res) => {
     const { uuid } = req.params;
     const {
       emp_name,
-      device_mac,
-      branch_id,
-      branch_city,
-      branch_address,
       gender,
       date_of_birth,
       cnic,
@@ -245,18 +224,13 @@ export const updateUser: RequestHandler = async (req, res) => {
 
     let query = `
       UPDATE users SET
-        emp_name = ?, device_mac = ?, branch_id = ?, branch_city = ?, branch_address = ?,
-        gender = ?, date_of_birth = ?, cnic = ?, phone_no = ?,
+        emp_name = ?, gender = ?, date_of_birth = ?, cnic = ?, phone_no = ?,
         designation = ?, department = ?, joining_date = ?, email_id = ?,
         username = ?, role = ?, is_active = ?, updated_on = NOW()
     `;
 
     const queryParams = [
       emp_name,
-      device_mac,
-      branch_id,
-      branch_city,
-      branch_address,
       gender,
       date_of_birth,
       cnic,

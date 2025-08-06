@@ -80,7 +80,7 @@ export const uploadVoice: RequestHandler = async (req, res) => {
     // Generate UUID and insert into database
     const id = uuidv4();
     const query = `
-      INSERT INTO recording_history
+      INSERT INTO recordings
       (id, cnic, start_time, end_time, file_name, ip_address, mac_address, CREATED_ON,
        duration_seconds, audio_bitrate, sample_rate, audio_format, file_size_bytes)
       VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)

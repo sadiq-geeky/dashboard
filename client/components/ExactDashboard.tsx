@@ -10,6 +10,7 @@ import { ConversationAnalytics } from "./ConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "./Header";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Search,
   Filter,
@@ -175,7 +176,17 @@ const getStatusIcon = (status: HeartbeatRecord["status"]) => {
 
 export function ExactDashboard() {
   const { user, isAdmin } = useAuth();
-  const [activeTab, setActiveTab] = useState("home");
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Initialize activeTab based on URL parameters
+  const getInitialTab = () => {
+    const urlParams = new URLSearchParams(location.search);
+    const tab = urlParams.get('tab');
+    return tab || "home";
+  };
+
+  const [activeTab, setActiveTab] = useState(getInitialTab);
   const [analyticsSubTab, setAnalyticsSubTab] = useState("recordings");
   const [recordings, setRecordings] = useState<RecordingHistory[]>([]);
   const [filteredRecordings, setFilteredRecordings] = useState<
@@ -216,6 +227,15 @@ export function ExactDashboard() {
       setIsRefreshing(false);
     }
   };
+
+  // Handle URL parameter changes for tab switching
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const tab = urlParams.get('tab');
+    if (tab && tab !== activeTab) {
+      setActiveTab(tab);
+    }
+  }, [location.search, activeTab]);
 
   useEffect(() => {
     loadRecordings();
@@ -379,11 +399,14 @@ export function ExactDashboard() {
       <Header />
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="flex items-center justify-between h-16 px-6">
+      <div className="bg-white border-b border-gray-200" style={{display: "flex", flexDirection: "column"}}>
+        <div className="flex items-center justify-between h-16 px-6" style={{margin: "0 auto"}}>
           <div className="flex items-center space-x-1">
             <button
-              onClick={() => setActiveTab("home")}
+              onClick={() => {
+                setActiveTab("home");
+                navigate('/', { replace: true });
+              }}
               className={cn(
                 "flex flex-col items-center p-3 rounded-md",
                 activeTab === "home"
@@ -396,7 +419,10 @@ export function ExactDashboard() {
             </button>
             {isAdmin() && (
               <button
-                onClick={() => setActiveTab("device-status")}
+                onClick={() => {
+                  setActiveTab("device-status");
+                  navigate('/?tab=device-status', { replace: true });
+                }}
                 className={cn(
                   "flex flex-col items-center p-3 rounded-md",
                   activeTab === "device-status"
@@ -414,7 +440,7 @@ export function ExactDashboard() {
             </button>
             {isAdmin() && (
               <button
-                onClick={() => (window.location.href = "/branch-management")}
+                onClick={() => navigate("/branch-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
                 <Building2 className="w-5 h-5 mb-1" />
@@ -423,7 +449,7 @@ export function ExactDashboard() {
             )}
             {isAdmin() && (
               <button
-                onClick={() => (window.location.href = "/device-management")}
+                onClick={() => navigate("/device-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
                 <Monitor className="w-5 h-5 mb-1" />
@@ -432,7 +458,10 @@ export function ExactDashboard() {
             )}
             {isAdmin() && (
               <button
-                onClick={() => setActiveTab("analytics")}
+                onClick={() => {
+                  setActiveTab("analytics");
+                  navigate('/?tab=analytics', { replace: true });
+                }}
                 className={cn(
                   "flex flex-col items-center p-3 rounded-md",
                   activeTab === "analytics"
@@ -446,7 +475,7 @@ export function ExactDashboard() {
             )}
             {isAdmin() && (
               <button
-                onClick={() => (window.location.href = "/user-management")}
+                onClick={() => navigate("/user-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
                 <Users className="w-5 h-5 mb-1" />
@@ -459,28 +488,14 @@ export function ExactDashboard() {
             </button>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">Reporting DHFG</span>
-            <div className="flex items-center space-x-3">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              </div>
-              <Bell className="w-5 h-5 text-gray-500" />
-              <div className="w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                A
-              </div>
-            </div>
-          </div>
+          <div className="flex items-center space-x-4" />
         </div>
       </div>
 
       <div className="flex">
         {/* Main Content */}
         <div className="flex-1">
-          <div className="p-6">
+          <div className="px-6 py-6 pt-1" style={{padding: "24px 24px 5px"}}>
             {activeTab === "home" && (
               <>
                 {/* Search and Filter Bar */}

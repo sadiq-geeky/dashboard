@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "../components/Header";
+import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Plus,
@@ -13,6 +15,9 @@ import {
   Users,
   Monitor,
   RefreshCw,
+  Grid3X3,
+  BarChart3,
+  MessageSquare,
 } from "lucide-react";
 
 interface Branch {
@@ -41,6 +46,7 @@ interface BranchFormData {
 
 export function BranchManagement() {
   const { isAdmin } = useAuth();
+  const navigate = useNavigate();
   const [branches, setBranches] = useState<Branch[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -158,7 +164,64 @@ export function BranchManagement() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="p-6">
+
+      {/* Navigation Tabs */}
+      <div className="bg-white border-b border-gray-200" style={{display: "flex", flexDirection: "column"}}>
+        <div className="flex items-center justify-between h-16 px-6" style={{margin: "0 auto"}}>
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={() => navigate('/')}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Grid3X3 className="w-5 h-5 mb-1" />
+              <span className="text-xs">Home</span>
+            </button>
+            <button
+              onClick={() => navigate('/?tab=device-status')}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <BarChart3 className="w-5 h-5 mb-1" />
+              <span className="text-xs">Device Status</span>
+            </button>
+            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
+              <MessageSquare className="w-5 h-5 mb-1" />
+              <span className="text-xs">Live Conversation</span>
+            </button>
+            <button className="flex flex-col items-center p-3 rounded-md text-gray-700 bg-white border border-gray-300">
+              <Building2 className="w-5 h-5 mb-1" />
+              <span className="text-xs">Branches</span>
+            </button>
+            <button
+              onClick={() => navigate('/device-management')}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Monitor className="w-5 h-5 mb-1" />
+              <span className="text-xs">Devices</span>
+            </button>
+            <button
+              onClick={() => navigate('/?tab=analytics')}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <BarChart3 className="w-5 h-5 mb-1" />
+              <span className="text-xs">Analytics</span>
+            </button>
+            <button
+              onClick={() => navigate('/user-management')}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Users className="w-5 h-5 mb-1" />
+              <span className="text-xs">User Management</span>
+            </button>
+            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
+              <Mail className="w-5 h-5 mb-1" />
+              <span className="text-xs">Complaints</span>
+            </button>
+          </div>
+          <div className="flex items-center space-x-4" />
+        </div>
+      </div>
+
+      <div className="px-6 py-6 pt-1" style={{padding: "24px 24px 5px"}}>
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
@@ -293,61 +356,83 @@ export function BranchManagement() {
           {/* Add/Edit Modal */}
           {(showAddModal || showEditModal) && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 w-full max-w-md">
+              <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
                 <h2 className="text-lg font-semibold mb-4">
                   {editingBranch ? "Edit Branch" : "Add New Branch"}
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Branch Code *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.branch_code}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          branch_code: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    />
+                  {/* First Row - Branch Code and Branch Name */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Branch Code *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.branch_code}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            branch_code: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Branch Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.branch_name}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            branch_name: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Branch Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.branch_name}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          branch_name: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    />
+
+                  {/* Second Row - City and Region */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        City
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.branch_city}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            branch_city: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Region
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.region}
+                        onChange={(e) =>
+                          setFormData({ ...formData, region: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      City
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.branch_city}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          branch_city: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    />
-                  </div>
+
+                  {/* Third Row - Address (full width) */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Address
@@ -361,54 +446,46 @@ export function BranchManagement() {
                         })
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                      rows={3}
+                      rows={2}
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Region
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.region}
-                      onChange={(e) =>
-                        setFormData({ ...formData, region: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    />
+
+                  {/* Fourth Row - Contact Phone and Email */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Contact Phone
+                      </label>
+                      <input
+                        type="tel"
+                        value={formData.contact_phone}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            contact_phone: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Contact Email
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.contact_email}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            contact_email: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Contact Phone
-                    </label>
-                    <input
-                      type="tel"
-                      value={formData.contact_phone}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          contact_phone: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Contact Email
-                    </label>
-                    <input
-                      type="email"
-                      value={formData.contact_email}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          contact_email: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    />
-                  </div>
+
                   <div className="flex justify-end space-x-3 pt-4">
                     <button
                       type="button"
