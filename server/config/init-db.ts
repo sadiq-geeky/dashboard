@@ -38,10 +38,30 @@ export async function initializeTables() {
         id VARCHAR(36) PRIMARY KEY,
         ip_address VARCHAR(45) NOT NULL,
         device_name VARCHAR(255) NOT NULL,
+        device_mac VARCHAR(17),
         created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         INDEX idx_ip_address (ip_address),
-        INDEX idx_device_name (device_name)
+        INDEX idx_device_name (device_name),
+        INDEX idx_device_mac (device_mac)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `;
+
+    await executeQuery(createDevicesTable);
+    console.log("✅ Devices table created/verified successfully");
+
+    // Also create device_mappings table for compatibility
+    const createDeviceMappingsTable = `
+      CREATE TABLE IF NOT EXISTS device_mappings (
+        id VARCHAR(36) PRIMARY KEY,
+        ip_address VARCHAR(45) NOT NULL,
+        device_name VARCHAR(255) NOT NULL,
+        device_mac VARCHAR(17),
+        created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_ip_address (ip_address),
+        INDEX idx_device_name (device_name),
+        INDEX idx_device_mac (device_mac)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `;
 
