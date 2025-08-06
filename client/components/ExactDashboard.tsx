@@ -3,13 +3,13 @@ import {
   RecordingHistory,
   PaginatedResponse,
   HeartbeatRecord,
-  Contact,
 } from "@shared/api";
 import { cn } from "@/lib/utils";
-import { AddContactModal } from "./AddContactModal";
-import { EditContactModal } from "./EditContactModal";
 import { RecordingsAnalytics } from "./RecordingsAnalytics";
+import { ConversationAnalytics } from "./ConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
+import { useAuth } from "../contexts/AuthContext";
+import { Header } from "./Header";
 import {
   Search,
   Filter,
@@ -39,15 +39,29 @@ import {
   Plus,
   Edit2,
   Trash2,
+  Building2,
 } from "lucide-react";
 
 // Fetch recordings from API with retry logic
-const fetchRecordings = async (retries = 2): Promise<RecordingHistory[]> => {
+const fetchRecordings = async (
+  user: any,
+  retries = 2,
+): Promise<RecordingHistory[]> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    const response = await fetch("/api/recordings?limit=50", {
+    // Build query parameters with branch filtering for non-admin users
+    const params = new URLSearchParams({
+      limit: "50",
+      user_role: user?.role || "user",
+    });
+
+    if (user?.branch_id && user?.role !== "admin") {
+      params.append("branch_id", user.branch_id);
+    }
+
+    const response = await fetch(`/api/recordings?${params.toString()}`, {
       signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
@@ -57,7 +71,12 @@ const fetchRecordings = async (retries = 2): Promise<RecordingHistory[]> => {
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      const errorText = await response.text();
+      let errorText = "";
+      try {
+        errorText = await response.text();
+      } catch (e) {
+        errorText = "Unknown error";
+      }
       throw new Error(
         `Failed to fetch recordings: ${response.status} ${errorText}`,
       );
@@ -80,7 +99,7 @@ const fetchRecordings = async (retries = 2): Promise<RecordingHistory[]> => {
         `Retrying recordings fetch, ${retries} attempts remaining...`,
       );
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      return fetchRecordings(retries - 1);
+      return fetchRecordings(user, retries - 1);
     }
 
     return [];
@@ -132,56 +151,6 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
   }
 };
 
-// Fetch contacts from API with retry logic
-const fetchContacts = async (
-  search?: string,
-  retries = 2,
-): Promise<PaginatedResponse<Contact>> => {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-    const params = new URLSearchParams();
-    params.append("limit", "50");
-    if (search) params.append("search", search);
-
-    const response = await fetch(`/api/contacts?${params}`, {
-      signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Failed to fetch contacts: ${response.status} ${errorText}`,
-      );
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching contacts:", error);
-    if (error.name === "AbortError") {
-      console.error("Request timed out after 10 seconds");
-    }
-
-    // Retry logic for development
-    if (
-      retries > 0 &&
-      (error.name === "TypeError" || error.message?.includes("Failed to fetch"))
-    ) {
-      console.log(`Retrying contacts fetch, ${retries} attempts remaining...`);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return fetchContacts(search, retries - 1);
-    }
-
-    return { data: [], total: 0, page: 1, limit: 50, totalPages: 0 };
-  }
-};
-
 const getStatusColor = (status: HeartbeatRecord["status"]) => {
   switch (status) {
     case "online":
@@ -205,7 +174,9 @@ const getStatusIcon = (status: HeartbeatRecord["status"]) => {
 };
 
 export function ExactDashboard() {
+  const { user, isAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState("home");
+  const [analyticsSubTab, setAnalyticsSubTab] = useState("recordings");
   const [recordings, setRecordings] = useState<RecordingHistory[]>([]);
   const [filteredRecordings, setFilteredRecordings] = useState<
     RecordingHistory[]
@@ -213,9 +184,6 @@ export function ExactDashboard() {
   const [devices, setDevices] = useState<HeartbeatRecord[]>([]);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [contactsTotal, setContactsTotal] = useState(0);
-  const [contactSearch, setContactSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRecording, setSelectedRecording] =
     useState<RecordingHistory | null>(null);
@@ -224,14 +192,11 @@ export function ExactDashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
-  const [isEditContactModalOpen, setIsEditContactModalOpen] = useState(false);
-  const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const itemsPerPage = 5;
 
   const loadRecordings = async () => {
     try {
-      const recordingData = await fetchRecordings();
+      const recordingData = await fetchRecordings(user);
       setRecordings(recordingData);
       setFilteredRecordings(recordingData);
     } catch (error) {
@@ -252,34 +217,9 @@ export function ExactDashboard() {
     }
   };
 
-  const loadContacts = async () => {
-    try {
-      const result = await fetchContacts(contactSearch);
-      setContacts(result.data);
-      setContactsTotal(result.total);
-    } catch (error) {
-      console.error("Failed to load contacts:", error);
-    }
-  };
-
-  const handleContactAdded = () => {
-    loadContacts();
-  };
-
-  const handleEditContact = (contact: Contact) => {
-    setEditingContact(contact);
-    setIsEditContactModalOpen(true);
-  };
-
-  const handleContactUpdated = () => {
-    loadContacts();
-    setEditingContact(null);
-  };
-
   useEffect(() => {
     loadRecordings();
     loadDevices();
-    loadContacts();
     const recordingsInterval = setInterval(loadRecordings, 30000);
     const devicesInterval = setInterval(loadDevices, 30000);
     return () => {
@@ -287,13 +227,6 @@ export function ExactDashboard() {
       clearInterval(devicesInterval);
     };
   }, []);
-
-  // Contact search effect
-  useEffect(() => {
-    if (activeTab === "contact-list") {
-      loadContacts();
-    }
-  }, [contactSearch, activeTab]);
 
   // Device status counts
   const onlineCount = devices.filter((d) => d.status === "online").length;
@@ -443,7 +376,9 @@ export function ExactDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation - matches the exact design */}
+      <Header />
+
+      {/* Navigation Tabs */}
       <div className="bg-white border-b border-gray-200">
         <div className="flex items-center justify-between h-16 px-6">
           <div className="flex items-center space-x-1">
@@ -459,46 +394,65 @@ export function ExactDashboard() {
               <Grid3X3 className="w-5 h-5 mb-1" />
               <span className="text-xs">Home</span>
             </button>
-            <button
-              onClick={() => setActiveTab("device-status")}
-              className={cn(
-                "flex flex-col items-center p-3 rounded-md",
-                activeTab === "device-status"
-                  ? "text-gray-700 bg-white border border-gray-300"
-                  : "text-gray-500 hover:bg-gray-100",
-              )}
-            >
-              <BarChart3 className="w-5 h-5 mb-1" />
-              <span className="text-xs">Device Status</span>
-            </button>
+            {isAdmin() && (
+              <button
+                onClick={() => setActiveTab("device-status")}
+                className={cn(
+                  "flex flex-col items-center p-3 rounded-md",
+                  activeTab === "device-status"
+                    ? "text-gray-700 bg-white border border-gray-300"
+                    : "text-gray-500 hover:bg-gray-100",
+                )}
+              >
+                <BarChart3 className="w-5 h-5 mb-1" />
+                <span className="text-xs">Device Status</span>
+              </button>
+            )}
             <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
               <MessageSquare className="w-5 h-5 mb-1" />
               <span className="text-xs">Live Conversation</span>
             </button>
-            <button
-              onClick={() => setActiveTab("contact-list")}
-              className={cn(
-                "flex flex-col items-center p-3 rounded-md",
-                activeTab === "contact-list"
-                  ? "text-gray-700 bg-white border border-gray-300"
-                  : "text-gray-500 hover:bg-gray-100",
-              )}
-            >
-              <Users className="w-5 h-5 mb-1" />
-              <span className="text-xs">Contact List</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("analytics")}
-              className={cn(
-                "flex flex-col items-center p-3 rounded-md",
-                activeTab === "analytics"
-                  ? "text-gray-700 bg-white border border-gray-300"
-                  : "text-gray-500 hover:bg-gray-100",
-              )}
-            >
-              <BarChart3 className="w-5 h-5 mb-1" />
-              <span className="text-xs">Analytics</span>
-            </button>
+            {isAdmin() && (
+              <button
+                onClick={() => (window.location.href = "/branch-management")}
+                className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              >
+                <Building2 className="w-5 h-5 mb-1" />
+                <span className="text-xs">Branches</span>
+              </button>
+            )}
+            {isAdmin() && (
+              <button
+                onClick={() => (window.location.href = "/device-management")}
+                className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              >
+                <Monitor className="w-5 h-5 mb-1" />
+                <span className="text-xs">Devices</span>
+              </button>
+            )}
+            {isAdmin() && (
+              <button
+                onClick={() => setActiveTab("analytics")}
+                className={cn(
+                  "flex flex-col items-center p-3 rounded-md",
+                  activeTab === "analytics"
+                    ? "text-gray-700 bg-white border border-gray-300"
+                    : "text-gray-500 hover:bg-gray-100",
+                )}
+              >
+                <BarChart3 className="w-5 h-5 mb-1" />
+                <span className="text-xs">Analytics</span>
+              </button>
+            )}
+            {isAdmin() && (
+              <button
+                onClick={() => (window.location.href = "/user-management")}
+                className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              >
+                <Users className="w-5 h-5 mb-1" />
+                <span className="text-xs">User Management</span>
+              </button>
+            )}
             <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
               <Mail className="w-5 h-5 mb-1" />
               <span className="text-xs">Complaints</span>
@@ -658,7 +612,7 @@ export function ExactDashboard() {
               </>
             )}
 
-            {activeTab === "device-status" && (
+            {activeTab === "device-status" && isAdmin() && (
               <>
                 {/* Device Status Header */}
                 <div className="flex items-center justify-between mb-6">
@@ -835,154 +789,42 @@ export function ExactDashboard() {
               </>
             )}
 
-            {activeTab === "contact-list" && (
+            {activeTab === "analytics" && isAdmin() && (
               <>
-                {/* Contact List Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
-                      Contact List
-                    </h1>
-                    <p className="text-gray-600">
-                      Manage employee contacts and information
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setIsAddContactModalOpen(true)}
-                    className="flex items-center space-x-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 transition-colors"
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span>Add Contact</span>
-                  </button>
-                </div>
-
-                {/* Search Bar */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="relative w-80">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search contacts..."
-                      value={contactSearch}
-                      onChange={(e) => setContactSearch(e.target.value)}
-                      className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    Total: {contactsTotal} contacts
+                {/* Analytics Sub-navigation */}
+                <div className="mb-6 border-b border-gray-200">
+                  <div className="flex space-x-8">
+                    <button
+                      onClick={() => setAnalyticsSubTab("recordings")}
+                      className={cn(
+                        "py-2 px-1 border-b-2 font-medium text-sm",
+                        analyticsSubTab === "recordings"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                      )}
+                    >
+                      Recording Analytics
+                    </button>
+                    <button
+                      onClick={() => setAnalyticsSubTab("conversations")}
+                      className={cn(
+                        "py-2 px-1 border-b-2 font-medium text-sm",
+                        analyticsSubTab === "conversations"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                      )}
+                    >
+                      Conversation Analytics
+                    </button>
                   </div>
                 </div>
 
-                {/* Contacts Table */}
-                <div className="bg-white rounded-lg border border-gray-200">
-                  <div className="overflow-hidden">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Employee Name
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            CNIC
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Phone
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Email
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Designation
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Branch
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {contacts.map((contact) => (
-                          <tr key={contact.uuid} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium mr-3">
-                                  {contact.emp_name?.charAt(0).toUpperCase() ||
-                                    "?"}
-                                </div>
-                                <div>
-                                  <div className="text-sm font-medium text-gray-900">
-                                    {contact.emp_name || "N/A"}
-                                  </div>
-                                  <div className="text-sm text-gray-500">
-                                    {contact.department || ""}
-                                  </div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {contact.cnic || "N/A"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {contact.phone_no || "N/A"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {contact.email_id || "N/A"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {contact.designation || "N/A"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <div>
-                                <div>{contact.branch_id || "N/A"}</div>
-                                {contact.branch_address && (
-                                  <div className="text-xs text-gray-500">
-                                    {contact.branch_address}
-                                  </div>
-                                )}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                              <div className="flex items-center space-x-2">
-                                <button
-                                  onClick={() => handleEditContact(contact)}
-                                  className="text-blue-600 hover:text-blue-900"
-                                >
-                                  <Edit2 className="w-4 h-4" />
-                                </button>
-                                <button className="text-red-600 hover:text-red-900">
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {contacts.length === 0 && (
-                    <div className="px-6 py-12 text-center">
-                      <Users className="mx-auto h-12 w-12 text-gray-400" />
-                      <h3 className="mt-2 text-sm font-medium text-gray-900">
-                        No contacts found
-                      </h3>
-                      <p className="mt-1 text-sm text-gray-500">
-                        {contactSearch
-                          ? "No contacts match your search criteria."
-                          : "Get started by adding your first contact."}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-
-            {activeTab === "analytics" && (
-              <>
+                {/* Analytics Content */}
                 <WarningSuppressionWrapper>
-                  <RecordingsAnalytics />
+                  {analyticsSubTab === "recordings" && <RecordingsAnalytics />}
+                  {analyticsSubTab === "conversations" && (
+                    <ConversationAnalytics />
+                  )}
                 </WarningSuppressionWrapper>
               </>
             )}
@@ -1138,24 +980,6 @@ export function ExactDashboard() {
           </div>
         )}
       </div>
-
-      {/* Add Contact Modal */}
-      <AddContactModal
-        isOpen={isAddContactModalOpen}
-        onClose={() => setIsAddContactModalOpen(false)}
-        onContactAdded={handleContactAdded}
-      />
-
-      {/* Edit Contact Modal */}
-      <EditContactModal
-        isOpen={isEditContactModalOpen}
-        onClose={() => {
-          setIsEditContactModalOpen(false);
-          setEditingContact(null);
-        }}
-        onContactUpdated={handleContactUpdated}
-        contact={editingContact}
-      />
     </div>
   );
 }

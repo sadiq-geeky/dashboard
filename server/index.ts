@@ -9,12 +9,6 @@ import { initializeDatabase } from "./config/database";
 // Production database routes only
 import { getHeartbeats, postHeartbeat } from "./routes/heartbeat-db";
 import {
-  getDevices,
-  createDevice,
-  updateDevice,
-  deleteDevice,
-} from "./routes/devices-db";
-import {
   getRecordings,
   getRecording,
   createRecording,
@@ -32,12 +26,36 @@ import {
   serveAudio,
 } from "./routes/voice-upload";
 import {
-  getContacts,
-  createContact,
-  updateContact,
-  deleteContact,
-} from "./routes/contacts-db";
+  getBranches,
+  getBranch,
+  createBranch,
+  updateBranch,
+  deleteBranch,
+} from "./routes/branches-db";
+import {
+  getDevices,
+  getDevice,
+  createDevice,
+  updateDevice,
+  deleteDevice,
+  getDevicesByBranch,
+} from "./routes/devices-db";
 import { getRecordingsAnalytics } from "./routes/analytics-db";
+import {
+  getConversationAnalytics,
+  getConversationsByBranch,
+  getConversationsByCity,
+  getDailyConversationsLastMonth,
+  getUniqueCnicsByMonth,
+} from "./routes/conversation-analytics";
+import {
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  loginUser,
+  getUserProfile,
+} from "./routes/users-db";
 
 export function createServer() {
   const app = express();
@@ -71,11 +89,20 @@ export function createServer() {
   // Audio file serving route for playback
   app.get("/api/audio/:filename", serveAudio);
 
+  // Branch management routes
+  app.get("/api/branches", getBranches);
+  app.get("/api/branches/:id", getBranch);
+  app.post("/api/branches", createBranch);
+  app.put("/api/branches/:id", updateBranch);
+  app.delete("/api/branches/:id", deleteBranch);
+
   // Device management routes
   app.get("/api/devices", getDevices);
+  app.get("/api/devices/:id", getDevice);
   app.post("/api/devices", createDevice);
   app.put("/api/devices/:id", updateDevice);
   app.delete("/api/devices/:id", deleteDevice);
+  app.get("/api/branches/:branch_id/devices", getDevicesByBranch);
 
   // Recording routes
   app.get("/api/recordings", getRecordings);
@@ -84,14 +111,23 @@ export function createServer() {
   app.post("/api/recordings", createRecording);
   app.put("/api/recordings/:id", updateRecording);
 
-  // Contacts routes
-  app.get("/api/contacts", getContacts);
-  app.post("/api/contacts", createContact);
-  app.put("/api/contacts/:uuid", updateContact);
-  app.delete("/api/contacts/:uuid", deleteContact);
-
   // Analytics routes
   app.get("/api/analytics/recordings", getRecordingsAnalytics);
+
+  // Conversation Analytics routes
+  app.get("/api/analytics/conversations", getConversationAnalytics);
+  app.get("/api/analytics/conversations/branch", getConversationsByBranch);
+  app.get("/api/analytics/conversations/city", getConversationsByCity);
+  app.get("/api/analytics/conversations/daily", getDailyConversationsLastMonth);
+  app.get("/api/analytics/conversations/cnic", getUniqueCnicsByMonth);
+
+  // User Management routes
+  app.post("/api/auth/login", loginUser);
+  app.get("/api/users", getUsers);
+  app.post("/api/users", createUser);
+  app.put("/api/users/:uuid", updateUser);
+  app.delete("/api/users/:uuid", deleteUser);
+  app.get("/api/users/:uuid", getUserProfile);
 
   return app;
 }

@@ -26,9 +26,15 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ExactDashboard } from "./components/ExactDashboard";
 import { DeviceManagement } from "./pages/DeviceManagement";
+import { BranchManagement } from "./pages/BranchManagement";
 import { Recordings } from "./pages/Recordings";
+import { ConversationAnalytics } from "./pages/ConversationAnalytics";
+import { UserManagement } from "./pages/UserManagement";
+import { Login } from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,15 +44,71 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<ExactDashboard />} />
-          <Route path="/recordings" element={<Recordings />} />
-          <Route path="/devices" element={<DeviceManagement />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <ExactDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/recordings"
+              element={
+                <ProtectedRoute>
+                  <Recordings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/branch-management"
+              element={
+                <ProtectedRoute adminOnly>
+                  <BranchManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/device-management"
+              element={
+                <ProtectedRoute adminOnly>
+                  <DeviceManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/devices"
+              element={
+                <ProtectedRoute adminOnly>
+                  <DeviceManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/conversation-analytics"
+              element={
+                <ProtectedRoute adminOnly>
+                  <ConversationAnalytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/user-management"
+              element={
+                <ProtectedRoute adminOnly>
+                  <UserManagement />
+                </ProtectedRoute>
+              }
+            />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

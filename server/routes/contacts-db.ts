@@ -7,6 +7,7 @@ export interface Contact {
   emp_name: string | null;
   device_mac: string | null;
   branch_id: string | null;
+  branch_city: string | null;
   branch_address: string | null;
   gender: string | null;
   date_of_birth: string | null;
@@ -29,7 +30,7 @@ export const getContacts: RequestHandler = async (req, res) => {
     const offset = (pageNum - 1) * limitNum;
 
     let query = `
-      SELECT uuid, emp_name, device_mac, branch_id, branch_address, gender,
+      SELECT uuid, emp_name, device_mac, branch_id, branch_city, branch_address, gender,
              date_of_birth, cnic, phone_no, designation, department,
              joining_date, email_id, created_on, updated_on
       FROM contacts
@@ -83,6 +84,7 @@ export const createContact: RequestHandler = async (req, res) => {
       emp_name,
       device_mac,
       branch_id,
+      branch_city,
       branch_address,
       gender,
       date_of_birth,
@@ -103,6 +105,7 @@ export const createContact: RequestHandler = async (req, res) => {
       designation,
       department,
       branch_id,
+      branch_city,
       gender,
       date_of_birth,
       joining_date,
@@ -118,20 +121,18 @@ export const createContact: RequestHandler = async (req, res) => {
       .map(([key]) => key.replace("_", " "));
 
     if (missingFields.length > 0) {
-      return res
-        .status(400)
-        .json({
-          error: `The following fields are required: ${missingFields.join(", ")}`,
-        });
+      return res.status(400).json({
+        error: `The following fields are required: ${missingFields.join(", ")}`,
+      });
     }
 
     const uuid = uuidv4();
     const query = `
       INSERT INTO contacts (
-        uuid, emp_name, device_mac, branch_id, branch_address, gender,
+        uuid, emp_name, device_mac, branch_id, branch_city, branch_address, gender,
         date_of_birth, cnic, phone_no, designation, department,
         joining_date, email_id, created_on, updated_on
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `;
 
     await executeQuery(query, [
@@ -139,6 +140,7 @@ export const createContact: RequestHandler = async (req, res) => {
       emp_name,
       device_mac,
       branch_id,
+      branch_city,
       branch_address,
       gender,
       date_of_birth,
@@ -169,6 +171,7 @@ export const updateContact: RequestHandler = async (req, res) => {
       emp_name,
       device_mac,
       branch_id,
+      branch_city,
       branch_address,
       gender,
       date_of_birth,
@@ -182,7 +185,7 @@ export const updateContact: RequestHandler = async (req, res) => {
 
     const query = `
       UPDATE contacts SET
-        emp_name = ?, device_mac = ?, branch_id = ?, branch_address = ?,
+        emp_name = ?, device_mac = ?, branch_id = ?, branch_city = ?, branch_address = ?,
         gender = ?, date_of_birth = ?, cnic = ?, phone_no = ?,
         designation = ?, department = ?, joining_date = ?, email_id = ?,
         updated_on = NOW()
@@ -193,6 +196,7 @@ export const updateContact: RequestHandler = async (req, res) => {
       emp_name,
       device_mac,
       branch_id,
+      branch_city,
       branch_address,
       gender,
       date_of_birth,

@@ -6,37 +6,33 @@ import { v4 as uuidv4 } from "uuid";
 // Get heartbeats with status calculation
 export const getHeartbeats: RequestHandler = async (req, res) => {
   try {
-    // Query the actual heartbeat table
+    // Query the recording_heartbeat table
     const query = `
       SELECT
-        COALESCE(c.branch_address, COALESCE(dm.device_name, ranked.ip_address)) AS branch_name,
+        COALESCE(c.branch_address, h.ip_address) AS branch_name,
         COALESCE(c.branch_id, 'N/A') AS branch_code,
-        ranked.last_seen,
-        ranked.status
+        h.last_seen,
+        CASE
+          WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 5 THEN 'online'
+          WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 15 THEN 'problematic'
+          ELSE 'offline'
+        END AS status
       FROM (
         SELECT
           ip_address,
           mac_address,
-          created_on AS last_seen,
-          CASE
-            WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 5 THEN 'online'
-            WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 15 THEN 'problematic'
-            ELSE 'offline'
-          END AS status,
-          ROW_NUMBER() OVER (PARTITION BY ip_address ORDER BY created_on DESC) AS row_num
+          MAX(created_on) as last_seen
         FROM recording_heartbeat
-      ) AS ranked
-      LEFT JOIN device_mappings dm ON dm.ip_address = ranked.ip_address
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = ranked.mac_address COLLATE utf8mb4_unicode_ci
-      WHERE ranked.row_num = 1
-      ORDER BY ranked.last_seen DESC
+        GROUP BY ip_address, mac_address
+      ) h
+      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_0900_ai_ci = h.mac_address COLLATE utf8mb4_0900_ai_ci
+      ORDER BY h.last_seen DESC
     `;
 
     const heartbeats = await executeQuery<HeartbeatRecord>(query);
     res.json(heartbeats);
   } catch (error) {
     console.error("Error fetching heartbeats:", error);
-    console.error("Query failed:", query);
     res.status(500).json({
       error: "Failed to fetch heartbeats",
       details:
@@ -76,15 +72,15 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
 export const getDeviceStatus: RequestHandler = async (req, res) => {
   try {
     const query = `
-      SELECT 
+      SELECT
         COUNT(*) as total,
         SUM(CASE WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 5 THEN 1 ELSE 0 END) as online,
         SUM(CASE WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) BETWEEN 6 AND 15 THEN 1 ELSE 0 END) as problematic,
         SUM(CASE WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) > 15 THEN 1 ELSE 0 END) as offline
       FROM (
-        SELECT uuid, MAX(created_on) as created_on
-        FROM recording_heartbeat 
-        GROUP BY uuid
+        SELECT ip_address, mac_address, MAX(created_on) as created_on
+        FROM recording_heartbeat
+        GROUP BY ip_address, mac_address
       ) latest_heartbeats
     `;
 

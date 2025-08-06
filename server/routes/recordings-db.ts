@@ -5,7 +5,14 @@ import { executeQuery } from "../config/database";
 // Get recordings with pagination and CNIC search
 export const getRecordings: RequestHandler = async (req, res) => {
   try {
-    const { page = "1", limit = "10", search, device } = req.query;
+    const {
+      page = "1",
+      limit = "10",
+      search,
+      device,
+      branch_id,
+      user_role,
+    } = req.query;
 
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
@@ -13,33 +20,50 @@ export const getRecordings: RequestHandler = async (req, res) => {
 
     // Build WHERE clause for CNIC search and device filtering
     let whereClause = "";
+    let countWhereClause = "";
     let queryParams: any[] = [];
+    let countParams: any[] = [];
     const conditions: string[] = [];
+    const countConditions: string[] = [];
 
     if (search) {
-      conditions.push("cnic LIKE ?");
+      conditions.push("rh.cnic LIKE ?");
+      countConditions.push("rh.cnic LIKE ?");
       queryParams.push(`%${search}%`);
+      countParams.push(`%${search}%`);
     }
 
     if (device) {
-      conditions.push("COALESCE(dm.device_name, rh.ip_address) = ?");
+      conditions.push("rh.ip_address = ?");
+      countConditions.push("rh.ip_address = ?");
       queryParams.push(device);
+      countParams.push(device);
+    }
+
+    // Branch filtering for non-admin users
+    if (branch_id && user_role !== "admin") {
+      conditions.push("c.branch_id = ?");
+      queryParams.push(branch_id);
+      // For count, we'll do a simpler approach without complex JOINs
     }
 
     if (conditions.length > 0) {
       whereClause = `WHERE ${conditions.join(" AND ")}`;
     }
 
-    // Get total count
+    if (countConditions.length > 0) {
+      countWhereClause = `WHERE ${countConditions.join(" AND ")}`;
+    }
+
+    // Get total count (simplified to avoid collation issues)
     const countQuery = `
       SELECT COUNT(*) as total
       FROM recording_history rh
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = rh.mac_address COLLATE utf8mb4_unicode_ci
-      ${whereClause}
+      ${countWhereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
       countQuery,
-      queryParams,
+      countParams,
     );
     const total = countResult.total;
 
@@ -66,7 +90,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
         ELSE 'failed'
     END AS status
 FROM recording_history rh
-LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = rh.mac_address COLLATE utf8mb4_unicode_ci
+LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_0900_ai_ci = rh.mac_address COLLATE utf8mb4_0900_ai_ci
       ${whereClause}
       ORDER BY rh.CREATED_ON DESC
       LIMIT ${limitNum} OFFSET ${offset}
@@ -190,10 +214,9 @@ export const updateRecording: RequestHandler = async (req, res) => {
 export const getDeviceNames: RequestHandler = async (req, res) => {
   try {
     const query = `
-      SELECT DISTINCT COALESCE(dm.device_name, rh.ip_address) AS device_name
+      SELECT DISTINCT rh.ip_address AS device_name
       FROM recording_history rh
-      LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
-      WHERE COALESCE(dm.device_name, rh.ip_address) IS NOT NULL
+      WHERE rh.ip_address IS NOT NULL
       ORDER BY device_name ASC
     `;
 

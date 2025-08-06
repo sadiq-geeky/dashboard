@@ -21,6 +21,7 @@ export function AddContactModal({
     designation: "",
     department: "",
     branch_id: "",
+    branch_city: "",
     branch_address: "",
     gender: "",
     date_of_birth: "",
@@ -67,6 +68,7 @@ export function AddContactModal({
         designation: "",
         department: "",
         branch_id: "",
+        branch_city: "",
         branch_address: "",
         gender: "",
         date_of_birth: "",
@@ -217,6 +219,21 @@ export function AddContactModal({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
+                Branch City *
+              </label>
+              <input
+                type="text"
+                name="branch_city"
+                value={formData.branch_city}
+                onChange={handleInputChange}
+                required
+                placeholder="Karachi, Lahore, Islamabad, etc."
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Gender *
               </label>
               <select
@@ -303,7 +320,7 @@ export function AddContactModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Adding..." : "Add Contact"}
             </button>

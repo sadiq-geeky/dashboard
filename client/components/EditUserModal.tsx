@@ -1,0 +1,447 @@
+import React, { useState, useEffect } from "react";
+import { X } from "lucide-react";
+
+interface User {
+  uuid: string;
+  emp_name: string | null;
+  username: string;
+  cnic: string | null;
+  phone_no: string | null;
+  email_id: string | null;
+  designation: string | null;
+  department: string | null;
+  branch_id: string | null;
+  branch_city: string | null;
+  branch_address: string | null;
+  role: "admin" | "user";
+  is_active: boolean;
+  date_of_birth: string | null;
+  joining_date: string | null;
+  device_mac: string | null;
+  gender: string | null;
+}
+
+interface EditUserModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onUserUpdated: () => void;
+  user: User | null;
+}
+
+export function EditUserModal({
+  isOpen,
+  onClose,
+  onUserUpdated,
+  user,
+}: EditUserModalProps) {
+  const [formData, setFormData] = useState({
+    emp_name: "",
+    cnic: "",
+    phone_no: "",
+    email_id: "",
+    designation: "",
+    department: "",
+    branch_id: "",
+    branch_city: "",
+    branch_address: "",
+    gender: "",
+    date_of_birth: "",
+    joining_date: "",
+    device_mac: "",
+    username: "",
+    password: "", // Optional for updates
+    role: "user" as "admin" | "user",
+    is_active: true,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Populate form when user changes
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        emp_name: user.emp_name || "",
+        cnic: user.cnic || "",
+        phone_no: user.phone_no || "",
+        email_id: user.email_id || "",
+        designation: user.designation || "",
+        department: user.department || "",
+        branch_id: user.branch_id || "",
+        branch_city: user.branch_city || "",
+        branch_address: user.branch_address || "",
+        gender: user.gender || "",
+        date_of_birth: user.date_of_birth
+          ? user.date_of_birth.split("T")[0]
+          : "",
+        joining_date: user.joining_date ? user.joining_date.split("T")[0] : "",
+        device_mac: user.device_mac || "",
+        username: user.username || "",
+        password: "", // Always start empty
+        role: user.role || "user",
+        is_active: user.is_active ?? true,
+      });
+    }
+  }, [user]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
+    const { name, value, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/users/${user.uuid}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update user");
+      }
+
+      onUserUpdated();
+      onClose();
+    } catch (error) {
+      console.error("Error updating user:", error);
+      setError(
+        error instanceof Error ? error.message : "Failed to update user",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!isOpen || !user) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">
+            Edit User: {user.emp_name || user.username}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6">
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
+
+          {/* Account Information */}
+          <div className="mb-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Account Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Leave empty to keep current password"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Role
+                </label>
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Administrator</option>
+                </select>
+              </div>
+
+              <div className="md:col-span-3">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="is_active"
+                    checked={formData.is_active}
+                    onChange={handleInputChange}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">
+                    User is active
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Personal Information */}
+          <div className="mb-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Personal Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Employee Name
+                </label>
+                <input
+                  type="text"
+                  name="emp_name"
+                  value={formData.emp_name}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  CNIC
+                </label>
+                <input
+                  type="text"
+                  name="cnic"
+                  value={formData.cnic}
+                  onChange={handleInputChange}
+                  placeholder="12345-1234567-1"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  name="phone_no"
+                  value={formData.phone_no}
+                  onChange={handleInputChange}
+                  placeholder="0321-1234567"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email ID
+                </label>
+                <input
+                  type="email"
+                  name="email_id"
+                  value={formData.email_id}
+                  onChange={handleInputChange}
+                  placeholder="employee@company.com"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Gender
+                </label>
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Date of Birth
+                </label>
+                <input
+                  type="date"
+                  name="date_of_birth"
+                  value={formData.date_of_birth}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Work Information */}
+          <div className="mb-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Work Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Designation
+                </label>
+                <input
+                  type="text"
+                  name="designation"
+                  value={formData.designation}
+                  onChange={handleInputChange}
+                  placeholder="Manager, Officer, etc."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Department
+                </label>
+                <input
+                  type="text"
+                  name="department"
+                  value={formData.department}
+                  onChange={handleInputChange}
+                  placeholder="IT, HR, Finance, etc."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Joining Date
+                </label>
+                <input
+                  type="date"
+                  name="joining_date"
+                  value={formData.joining_date}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Device MAC Address
+                </label>
+                <input
+                  type="text"
+                  name="device_mac"
+                  value={formData.device_mac}
+                  onChange={handleInputChange}
+                  placeholder="AA:BB:CC:DD:EE:FF"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Branch Information */}
+          <div className="mb-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Branch Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Branch ID
+                </label>
+                <input
+                  type="text"
+                  name="branch_id"
+                  value={formData.branch_id}
+                  onChange={handleInputChange}
+                  placeholder="Branch code or ID"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Branch City
+                </label>
+                <input
+                  type="text"
+                  name="branch_city"
+                  value={formData.branch_city}
+                  onChange={handleInputChange}
+                  placeholder="Karachi, Lahore, Islamabad, etc."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Branch Address
+                </label>
+                <textarea
+                  name="branch_address"
+                  value={formData.branch_address}
+                  onChange={handleInputChange}
+                  rows={3}
+                  placeholder="Full branch address"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Updating..." : "Update User"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
