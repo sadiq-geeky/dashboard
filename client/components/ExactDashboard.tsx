@@ -205,94 +205,19 @@ export function ExactDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Sample data rows to match the design */}
-                  <tr className="border-b border-gray-100 hover:bg-gray-50" onClick={() => setSelectedDevice(devices[0])}>
-                    <td className="py-3 px-4 text-sm text-gray-900">Fatjon</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">02 Jan 2024 @ 12:34 PM</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-green-600">Successful</td>
-                    <td className="py-3 px-4">
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                  
-                  <tr className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-sm text-gray-900">David</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">02 Jan 2024 @ 12:34 PM</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-green-600">Successful</td>
-                    <td className="py-3 px-4">
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                  
-                  <tr className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-sm text-gray-900">David</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">02 Jan 2024 @ 12:34 PM</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-green-600">Successful</td>
-                    <td className="py-3 px-4">
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                  
-                  <tr className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-sm text-gray-900">David</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">02 Jan 2024 @ 12:34 PM</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-green-600">Successful</td>
-                    <td className="py-3 px-4">
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                  
-                  <tr className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-sm text-gray-900">David</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">02 Jan 2024 @ 12:34 PM</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                    <td className="py-3 px-4 text-sm text-green-600">Successful</td>
-                    <td className="py-3 px-4">
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                  
-                  {/* Show actual device data if available */}
-                  {filteredDevices.map((device, index) => (
-                    <tr key={device.device_name || `device-${index}`} className="border-b border-gray-100 hover:bg-gray-50" onClick={() => setSelectedDevice(device)}>
-                      <td className="py-3 px-4 text-sm text-gray-900">{device.device_name}</td>
-                      <td className="py-3 px-4 text-sm text-gray-500">{formatLastSeen(device.last_seen)}</td>
-                      <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                      <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                      <td className="py-3 px-4 text-sm text-gray-500">-</td>
-                      <td className="py-3 px-4 text-sm">
-                        <span className={cn(
-                          "capitalize",
-                          device.status === "online" && "text-green-600",
-                          device.status === "problematic" && "text-yellow-600",
-                          device.status === "offline" && "text-red-600"
-                        )}>
-                          {device.status === "online" ? "Successful" : device.status}
-                        </span>
+                  {filteredRecordings.map((recording, index) => (
+                    <tr key={recording.id} className="border-b border-gray-100 hover:bg-gray-50" onClick={() => setSelectedRecording(recording)}>
+                      <td className="py-3 px-4 text-sm text-gray-900">{index + 1}</td>
+                      <td className="py-3 px-4 text-sm text-gray-500">{recording.device_name || recording.ip_address}</td>
+                      <td className="py-3 px-4 text-sm text-gray-500">{recording.cnic || recording.file_name || '-'}</td>
+                      <td className="py-3 px-4 text-sm text-gray-500">
+                        {recording.start_time ? new Date(recording.start_time).toLocaleString() : '-'}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-500">
+                        {recording.duration ? `${Math.floor(recording.duration / 60)}:${String(recording.duration % 60).padStart(2, '0')}` : '-'}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-500">
+                        {recording.device_name ? `Floor Plaza, Blue Area` : recording.ip_address}
                       </td>
                       <td className="py-3 px-4">
                         <button className="text-gray-400 hover:text-gray-600">
