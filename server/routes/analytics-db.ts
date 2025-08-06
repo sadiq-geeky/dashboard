@@ -45,11 +45,13 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
     // Get recordings by branch
     const branchQuery = `
       SELECT
-        COALESCE(c.branch_address, 'Unknown Branch') as branch_name,
+        COALESCE(b.branch_address, 'Unknown Branch') as branch_name,
         COUNT(*) as count
       FROM recordings rh
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_0900_ai_ci = rh.mac_address COLLATE utf8mb4_0900_ai_ci
-      GROUP BY c.branch_address
+      LEFT JOIN devices d ON d.device_mac = rh.mac_address OR d.ip_address = rh.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      GROUP BY b.branch_address
       ORDER BY count DESC
       LIMIT 10
     `;
