@@ -10,7 +10,7 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
     const query = `
       SELECT
         COALESCE(b.branch_address, h.mac_address) AS branch_name,
-        COALESCE(b.branch_code, ip_address) AS branch_code,
+        COALESCE(b.branch_code, h.ip_address) AS branch_code,
         h.last_seen,
         CASE
           WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 5 THEN 'online'
