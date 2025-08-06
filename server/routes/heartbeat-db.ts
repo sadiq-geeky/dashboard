@@ -27,7 +27,7 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
         FROM recording_heartbeat
       ) AS ranked
       LEFT JOIN device_mappings dm ON dm.ip_address = ranked.ip_address
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = ranked.mac_address COLLATE utf8mb4_unicode_ci
+      LEFT JOIN contacts c ON CONVERT(c.device_mac USING utf8mb4) COLLATE utf8mb4_unicode_ci = CONVERT(ranked.mac_address USING utf8mb4) COLLATE utf8mb4_unicode_ci
       WHERE ranked.row_num = 1
       ORDER BY ranked.last_seen DESC
     `;
