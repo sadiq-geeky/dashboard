@@ -57,20 +57,16 @@ export function EditUserModal({
     if (user) {
       setFormData({
         emp_name: user.emp_name || "",
-        cnic: user.cnic || "",
-        phone_no: user.phone_no || "",
-        email_id: user.email_id || "",
-        designation: user.designation || "",
-        department: user.department || "",
-        branch_id: user.branch_id || "",
-        branch_city: user.branch_city || "",
-        branch_address: user.branch_address || "",
         gender: user.gender || "",
         date_of_birth: user.date_of_birth
           ? user.date_of_birth.split("T")[0]
           : "",
+        cnic: user.cnic || "",
+        phone_no: user.phone_no || "",
+        designation: user.designation || "",
+        department: user.department || "",
         joining_date: user.joining_date ? user.joining_date.split("T")[0] : "",
-        device_mac: user.device_mac || "",
+        email_id: user.email_id || "",
         username: user.username || "",
         password: "", // Always start empty
         role: user.role || "user",
