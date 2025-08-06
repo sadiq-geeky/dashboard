@@ -142,6 +142,7 @@ export const createContact: RequestHandler = async (req, res) => {
       emp_name,
       device_mac,
       branch_id,
+      branch_city,
       branch_address,
       gender,
       date_of_birth,
