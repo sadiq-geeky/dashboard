@@ -26,6 +26,12 @@ export const getRecordings: RequestHandler = async (req, res) => {
       queryParams.push(device);
     }
 
+    // Branch filtering for non-admin users
+    if (branch_id && user_role !== 'admin') {
+      conditions.push("c.branch_id = ?");
+      queryParams.push(branch_id);
+    }
+
     if (conditions.length > 0) {
       whereClause = `WHERE ${conditions.join(" AND ")}`;
     }
