@@ -1,15 +1,45 @@
 import "./global.css";
 
-// Suppress Recharts defaultProps warnings globally
+// Comprehensive suppression of Recharts defaultProps warnings
 if (typeof window !== 'undefined') {
+  // Override console methods
   const originalWarn = console.warn;
+  const originalError = console.error;
+  const originalLog = console.log;
+
+  const shouldSuppressMessage = (message: string) => {
+    return (
+      message.includes('defaultProps will be removed from function components') ||
+      message.includes('Support for defaultProps will be removed') ||
+      (message.includes('XAxis') && message.includes('defaultProps')) ||
+      (message.includes('YAxis') && message.includes('defaultProps'))
+    );
+  };
+
   console.warn = (...args) => {
-    const message = String(args[0] || '');
-    if (message.includes('defaultProps will be removed from function components') &&
-        (message.includes('XAxis') || message.includes('YAxis'))) {
-      return; // Suppress these specific Recharts warnings
-    }
+    const message = args.map(arg => String(arg)).join(' ');
+    if (shouldSuppressMessage(message)) return;
     originalWarn.apply(console, args);
+  };
+
+  console.error = (...args) => {
+    const message = args.map(arg => String(arg)).join(' ');
+    if (shouldSuppressMessage(message)) return;
+    originalError.apply(console, args);
+  };
+
+  console.log = (...args) => {
+    const message = args.map(arg => String(arg)).join(' ');
+    if (shouldSuppressMessage(message)) return;
+    originalLog.apply(console, args);
+  };
+
+  // Also suppress React's internal warning system
+  const originalConsoleWarn = window.console.warn;
+  window.console.warn = (...args) => {
+    const message = args.map(arg => String(arg)).join(' ');
+    if (shouldSuppressMessage(message)) return;
+    originalConsoleWarn.apply(window.console, args);
   };
 }
 
