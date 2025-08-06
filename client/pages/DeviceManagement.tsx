@@ -89,33 +89,9 @@ export function DeviceManagement() {
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`HTTP Error ${response.status}:`, errorText);
-
-        // If it's a table structure error, try to fix it
-        if (errorText.includes('Unknown column') || errorText.includes('branch_id')) {
-          console.log('🔧 Detected table structure issue, attempting fix...');
-          const fixed = await fixDevicesTable();
-          if (fixed) {
-            // Retry the fetch after fixing
-            console.log('🔄 Retrying fetch after table fix...');
-            const retryResponse = await fetch(
-              `/api/devices?limit=50&search=${encodeURIComponent(searchQuery)}`,
-            );
-            if (retryResponse.ok) {
-              const retryData = await retryResponse.json();
-              console.log('✅ Devices fetched successfully after fix:', retryData);
-              setDevices(retryData.data || []);
-              return;
-            } else {
-              const retryErrorText = await retryResponse.text();
-              throw new Error(`Failed to fetch devices after fix: ${retryResponse.status} ${retryErrorText}`);
-            }
-          }
-        }
-
         throw new Error(`Failed to fetch devices: ${response.status} ${errorText}`);
       }
 
-      // Only read response.json() if response was ok
       const data = await response.json();
       console.log('✅ Devices fetched successfully:', data);
       setDevices(data.data || []);
