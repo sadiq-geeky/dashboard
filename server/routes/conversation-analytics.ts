@@ -76,13 +76,13 @@ export const getConversationsByCity: RequestHandler = async (req, res) => {
 export const getDailyConversationsLastMonth: RequestHandler = async (req, res) => {
   try {
     const query = `
-      SELECT 
-        DATE(rh.CREATED_ON) as date,
-        COUNT(rh.id) as count
-      FROM recording_history rh
-      WHERE rh.CREATED_ON >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
-      GROUP BY DATE(rh.CREATED_ON)
-      ORDER BY date DESC
+      SELECT
+        DATE(r.start_time) AS date,
+        COUNT(r.id) AS count
+      FROM recording_history r
+      WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+      GROUP BY DATE(r.start_time)
+      ORDER BY date
     `;
 
     const result = await executeQuery<{
