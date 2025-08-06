@@ -33,58 +33,6 @@ export async function initializeTables() {
     await executeQuery(createContactsTable);
     console.log("✅ Contacts table created/verified successfully");
 
-    // Create devices table if it doesn't exist
-    const createDevicesTable = `
-      CREATE TABLE IF NOT EXISTS devices (
-        id VARCHAR(36) PRIMARY KEY,
-        ip_address VARCHAR(45) NOT NULL,
-        device_name VARCHAR(255) NOT NULL,
-        device_mac VARCHAR(17),
-        created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_ip_address (ip_address),
-        INDEX idx_device_name (device_name),
-        INDEX idx_device_mac (device_mac)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    `;
-
-    await executeQuery(createDevicesTable);
-    console.log("✅ Devices table created/verified successfully");
-
-    // Also create device_mappings table for compatibility
-    const createDeviceMappingsTable = `
-      CREATE TABLE IF NOT EXISTS device_mappings (
-        id VARCHAR(36) PRIMARY KEY,
-        ip_address VARCHAR(45) NOT NULL,
-        device_name VARCHAR(255) NOT NULL,
-        device_mac VARCHAR(17),
-        created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_ip_address (ip_address),
-        INDEX idx_device_name (device_name),
-        INDEX idx_device_mac (device_mac)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    `;
-
-    await executeQuery(createDeviceMappingsTable);
-    console.log("✅ Device mappings table created/verified successfully");
-
-    // Create heartbeats table if it doesn't exist
-    const createHeartbeatsTable = `
-      CREATE TABLE IF NOT EXISTS heartbeats (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        device_name VARCHAR(255) NOT NULL,
-        ip_address VARCHAR(45),
-        status ENUM('online', 'problematic', 'offline') DEFAULT 'online',
-        last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX idx_device_name (device_name),
-        INDEX idx_last_seen (last_seen)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-    `;
-
-    await executeQuery(createHeartbeatsTable);
-    console.log("✅ Heartbeats table created/verified successfully");
 
     // Create recording_heartbeat table for compatibility
     const createRecordingHeartbeatTable = `
