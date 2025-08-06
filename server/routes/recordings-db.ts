@@ -76,7 +76,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
         rh.end_time,
         rh.file_name,
         rh.CREATED_ON AS created_on,
-        COALESCE(ldbu.branch_id, 'N/A') AS branch_no,
+        COALESCE(b.branch_code, 'N/A') AS branch_no,
         COALESCE(b.branch_address, 'NA') AS branch_address,
         CASE
             WHEN rh.end_time IS NOT NULL THEN
