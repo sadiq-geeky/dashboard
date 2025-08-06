@@ -207,22 +207,22 @@ export function ExactDashboard() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
                       S.no
                     </th>
-                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Branch No
                     </th>
-                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
                       CNIC
                     </th>
-                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Timestamp
                     </th>
-                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Duration
                     </th>
-                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Branch Address
                     </th>
                     <th className="w-10"></th>
@@ -235,27 +235,27 @@ export function ExactDashboard() {
                       className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
                       onClick={() => setSelectedRecording(recording)}
                     >
-                      <td className="py-3 px-4 text-sm text-gray-900">
+                      <td className="py-2 px-2 text-xs text-gray-900">
                         {startIndex + index + 1}
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-500">
+                      <td className="py-2 px-2 text-xs text-gray-500">
                         {recording.device_name || recording.ip_address}
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-500">
+                      <td className="py-2 px-2 text-xs text-gray-500">
                         {recording.cnic || recording.file_name || "-"}
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-500">
+                      <td className="py-2 px-2 text-xs text-gray-500">
                         {recording.start_time
                           ? new Date(recording.start_time).toLocaleString()
                           : "-"}
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-500">
+                      <td className="py-2 px-2 text-xs text-gray-500">
                         {recording.duration
                           ? `${Math.floor(recording.duration / 60)}:${String(recording.duration % 60).padStart(2, "0")}`
                           : "-"}
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-500">NA</td>
-                      <td className="py-3 px-4">
+                      <td className="py-2 px-2 text-xs text-gray-500">NA</td>
+                      <td className="py-2 px-2">
                         <button className="text-gray-400 hover:text-gray-600">
                           <MoreHorizontal className="w-4 h-4" />
                         </button>
@@ -424,44 +424,6 @@ export function ExactDashboard() {
                 )}
               </div>
 
-              {/* Previous Logs Section */}
-              <div>
-                <h2 className="text-lg font-medium text-gray-900 mb-4">
-                  Previous Logs
-                </h2>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center text-xs text-gray-500 border-b pb-2">
-                    <span>S.no</span>
-                    <span>Branch No</span>
-                    <span>Date</span>
-                    <span>Action</span>
-                  </div>
-
-                  {recordings.slice(0, 3).map((recording, index) => (
-                    <div
-                      key={recording.id}
-                      className="flex justify-between items-center text-sm"
-                    >
-                      <span className="text-gray-900">{index + 1}</span>
-                      <span className="text-gray-500">
-                        {recording.device_name || recording.ip_address}
-                      </span>
-                      <span className="text-gray-500">
-                        {recording.created_on
-                          ? new Date(recording.created_on).toLocaleDateString()
-                          : "-"}
-                      </span>
-                      <button className="text-blue-600 hover:text-blue-700 text-xs">
-                        View more
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                <button className="w-full mt-4 py-2 text-sm text-blue-600 hover:text-blue-700">
-                  View all logs →
-                </button>
-              </div>
             </div>
           </div>
         )}
