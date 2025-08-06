@@ -5,7 +5,7 @@ import { executeQuery } from "../config/database";
 // Get recordings with pagination and CNIC search
 export const getRecordings: RequestHandler = async (req, res) => {
   try {
-    const { page = "1", limit = "10", search, device } = req.query;
+    const { page = "1", limit = "10", search, device, branch_id, user_role } = req.query;
 
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
