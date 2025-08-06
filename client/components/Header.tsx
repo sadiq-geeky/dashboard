@@ -6,8 +6,13 @@ import { LogOut, User, ChevronDown, Shield, Building2, ArrowLeft, Home } from 'l
 export function Header() {
   const { user, logout, isAdmin } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   if (!user) return null;
+
+  const isOnDashboard = location.pathname === '/';
+  const goBackToDashboard = () => navigate('/');
 
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-4">
