@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { DashboardLayout } from "../components/DashboardLayout";
 import { useAuth } from "../contexts/AuthContext";
+import { Header } from "../components/Header";
 import {
   Search,
   Plus,
