@@ -172,6 +172,27 @@ export function ExactDashboard() {
         {/* Main Content */}
         <div className="flex-1">
           <div className="p-6">
+            {/* Search and Filter Bar */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 pr-4 py-2 w-80 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                  <Filter className="w-4 h-4" />
+                  <span>Filter</span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
 
             {/* Table */}
             <div className="bg-white rounded-md border border-gray-200">
