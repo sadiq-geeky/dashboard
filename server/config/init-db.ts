@@ -111,6 +111,32 @@ export async function initializeTables() {
     await executeQuery(createRecordingsTable);
     console.log("✅ Recordings table created/verified successfully");
 
+    // Also create recording_history table for compatibility
+    const createRecordingHistoryTable = `
+      CREATE TABLE IF NOT EXISTS recording_history (
+        id VARCHAR(36) PRIMARY KEY,
+        cnic VARCHAR(15),
+        start_time TIMESTAMP,
+        end_time TIMESTAMP,
+        file_name VARCHAR(255),
+        device_name VARCHAR(255),
+        ip_address VARCHAR(45),
+        device_mac VARCHAR(17),
+        duration_seconds INT,
+        status ENUM('completed', 'in_progress', 'failed') DEFAULT 'in_progress',
+        CREATED_ON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_cnic (cnic),
+        INDEX idx_device_name (device_name),
+        INDEX idx_device_mac (device_mac),
+        INDEX idx_start_time (start_time),
+        INDEX idx_status (status)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `;
+
+    await executeQuery(createRecordingHistoryTable);
+    console.log("✅ Recording history table created/verified successfully");
+
     console.log("🚀 All database tables initialized successfully");
     
   } catch (error) {
