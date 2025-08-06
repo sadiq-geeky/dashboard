@@ -45,7 +45,7 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
 // Receive heartbeat from device
 export const postHeartbeat: RequestHandler = async (req, res) => {
   try {
-    const { ip_address } = req.body;
+    const { ip_address, mac_address } = req.body;
 
     if (!ip_address) {
       return res.status(400).json({ error: "IP address is required" });
@@ -53,11 +53,11 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
     const uuid = uuidv4(); // Generate a new UUID
     // Insert heartbeat into database
     const query = `
-      INSERT INTO recording_heartbeat (uuid, ip_address, created_on) 
-      VALUES (?, ?, NOW())
+      INSERT INTO recording_heartbeat (uuid, ip_address, mac_address, created_on)
+      VALUES (?, ?, ?, NOW())
     `;
 
-    await executeQuery(query, [uuid, ip_address]);
+    await executeQuery(query, [uuid, ip_address, mac_address?.trim() || null]);
 
     res.json({
       success: true,

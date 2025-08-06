@@ -50,7 +50,7 @@ const upload = multer({
 // Upload voice recording
 export const uploadVoice: RequestHandler = async (req, res) => {
   try {
-    const { ip_address, start_time, end_time, cnic } = req.body;
+    const { ip_address, start_time, end_time, cnic, mac_address } = req.body;
     const file = req.file;
 
     // Validate required parameters
@@ -80,10 +80,10 @@ export const uploadVoice: RequestHandler = async (req, res) => {
     // Generate UUID and insert into database
     const id = uuidv4();
     const query = `
-      INSERT INTO recording_history 
-      (id, cnic, start_time, end_time, file_name, ip_address, CREATED_ON, 
-       duration_seconds, audio_bitrate, sample_rate, audio_format, file_size_bytes) 
-      VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)
+      INSERT INTO recording_history
+      (id, cnic, start_time, end_time, file_name, ip_address, mac_address, CREATED_ON,
+       duration_seconds, audio_bitrate, sample_rate, audio_format, file_size_bytes)
+      VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)
     `;
 
     await executeQuery(query, [
@@ -93,6 +93,7 @@ export const uploadVoice: RequestHandler = async (req, res) => {
       end_time,
       file.filename,
       ip_address.trim(),
+      mac_address?.trim() || null,
       durationSeconds,
       audioBitrate,
       sampleRate,
