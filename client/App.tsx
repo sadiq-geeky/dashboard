@@ -44,6 +44,7 @@ const App = () => (
           <Route path="/" element={<ExactDashboard />} />
           <Route path="/recordings" element={<Recordings />} />
           <Route path="/devices" element={<DeviceManagement />} />
+          <Route path="/conversation-analytics" element={<ConversationAnalytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
