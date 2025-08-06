@@ -11,6 +11,8 @@ import { EditContactModal } from "./EditContactModal";
 import { RecordingsAnalytics } from "./RecordingsAnalytics";
 import { ConversationAnalytics } from "./ConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
+import { useAuth } from "../contexts/AuthContext";
+import { Header } from "./Header";
 import {
   Search,
   Filter,
