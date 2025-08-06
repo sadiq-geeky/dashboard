@@ -238,12 +238,22 @@ export function ExactDashboard() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="flex space-x-1">
-                    <button className="w-6 h-6 flex items-center justify-center rounded text-sm text-gray-500 hover:bg-gray-100">1</button>
-                    <button className="w-6 h-6 flex items-center justify-center rounded text-sm bg-blue-100 text-blue-600">2</button>
-                    <button className="w-6 h-6 flex items-center justify-center rounded text-sm text-gray-500 hover:bg-gray-100">3</button>
-                    <button className="w-6 h-6 flex items-center justify-center rounded text-sm text-gray-500 hover:bg-gray-100">4</button>
+                    {[1, 2, 3, 4].map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={cn(
+                          "w-6 h-6 flex items-center justify-center rounded text-sm",
+                          currentPage === page
+                            ? "bg-blue-100 text-blue-600"
+                            : "text-gray-500 hover:bg-gray-100"
+                        )}
+                      >
+                        {page}
+                      </button>
+                    ))}
                   </div>
-                  <span className="text-sm text-gray-500">/ 10</span>
+                  <span className="text-sm text-gray-500">/ {Math.ceil(filteredRecordings.length / itemsPerPage)}</span>
                 </div>
               </div>
             </div>
