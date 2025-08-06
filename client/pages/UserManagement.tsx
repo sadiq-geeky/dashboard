@@ -58,12 +58,13 @@ export function UserManagement() {
       const response = await fetch(
         `/api/users?search=${encodeURIComponent(search)}&limit=100`,
       );
-      const data = await response.json();
 
       if (response.ok) {
+        const data = await response.json();
         setUsers(data.data);
         setTotal(data.total);
       } else {
+        const data = await response.json();
         console.error("Failed to fetch users:", data.error);
       }
     } catch (error) {
