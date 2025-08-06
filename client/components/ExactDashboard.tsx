@@ -983,8 +983,38 @@ export function ExactDashboard() {
 
             {activeTab === "analytics" && (
               <>
+                {/* Analytics Sub-navigation */}
+                <div className="mb-6 border-b border-gray-200">
+                  <div className="flex space-x-8">
+                    <button
+                      onClick={() => setAnalyticsSubTab("recordings")}
+                      className={cn(
+                        "py-2 px-1 border-b-2 font-medium text-sm",
+                        analyticsSubTab === "recordings"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      )}
+                    >
+                      Recording Analytics
+                    </button>
+                    <button
+                      onClick={() => setAnalyticsSubTab("conversations")}
+                      className={cn(
+                        "py-2 px-1 border-b-2 font-medium text-sm",
+                        analyticsSubTab === "conversations"
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      )}
+                    >
+                      Conversation Analytics
+                    </button>
+                  </div>
+                </div>
+
+                {/* Analytics Content */}
                 <WarningSuppressionWrapper>
-                  <RecordingsAnalytics />
+                  {analyticsSubTab === "recordings" && <RecordingsAnalytics />}
+                  {analyticsSubTab === "conversations" && <ConversationAnalytics />}
                 </WarningSuppressionWrapper>
               </>
             )}
