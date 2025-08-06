@@ -56,7 +56,40 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-// Contact Types
+// Branch Types
+export interface Branch {
+  id: string;
+  branch_code: string;
+  branch_name: string;
+  branch_city?: string;
+  branch_address?: string;
+  region?: string;
+  contact_phone?: string;
+  contact_email?: string;
+  is_active: boolean;
+  created_on: string;
+  updated_on: string;
+}
+
+// Device Types
+export interface Device {
+  id: string;
+  device_name: string;
+  device_mac?: string;
+  ip_address?: string;
+  device_type: 'recorder' | 'monitor' | 'other';
+  branch_id?: string;
+  branch_name?: string;
+  branch_code?: string;
+  installation_date?: string;
+  last_maintenance?: string;
+  device_status: 'active' | 'inactive' | 'maintenance';
+  notes?: string;
+  created_on: string;
+  updated_on: string;
+}
+
+// Contact Types (kept for backwards compatibility)
 export interface Contact {
   uuid: string;
   emp_name: string | null;
