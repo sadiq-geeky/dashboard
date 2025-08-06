@@ -9,27 +9,25 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
     // Query the actual heartbeat table
     const query = `
       SELECT
-        COALESCE(c.branch_address, COALESCE(dm.device_name, ranked.ip_address)) AS branch_name,
+        COALESCE(c.branch_address, COALESCE(dm.device_name, h.device_name, h.ip_address)) AS branch_name,
         COALESCE(c.branch_id, 'N/A') AS branch_code,
-        ranked.last_seen,
-        ranked.status
+        h.last_seen,
+        CASE
+          WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 5 THEN 'online'
+          WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 15 THEN 'problematic'
+          ELSE 'offline'
+        END AS status
       FROM (
         SELECT
+          device_name,
           ip_address,
-          mac_address,
-          created_on AS last_seen,
-          CASE
-            WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 5 THEN 'online'
-            WHEN TIMESTAMPDIFF(MINUTE, created_on, NOW()) <= 15 THEN 'problematic'
-            ELSE 'offline'
-          END AS status,
-          ROW_NUMBER() OVER (PARTITION BY ip_address ORDER BY created_on DESC) AS row_num
-        FROM recording_heartbeat
-      ) AS ranked
-      LEFT JOIN device_mappings dm ON dm.ip_address = ranked.ip_address
-      LEFT JOIN contacts c ON c.device_mac = ranked.mac_address
-      WHERE ranked.row_num = 1
-      ORDER BY ranked.last_seen DESC
+          MAX(last_seen) as last_seen
+        FROM heartbeats
+        GROUP BY device_name, ip_address
+      ) h
+      LEFT JOIN device_mappings dm ON dm.ip_address = h.ip_address OR dm.device_name = h.device_name
+      LEFT JOIN contacts c ON c.device_mac = dm.device_mac
+      ORDER BY h.last_seen DESC
     `;
 
     const heartbeats = await executeQuery<HeartbeatRecord>(query);
