@@ -281,47 +281,47 @@ export function ExactDashboard() {
           <div className="p-6">
             {/* Audio Player Section */}
             {selectedRecording && (
-              <div className="mb-8">
-                <h2 className="text-lg font-medium text-gray-900 mb-4">
+              <div className="mb-6 pb-6 border-b border-gray-200">
+                <h2 className="text-sm font-medium text-gray-900 mb-3">
                   Recording {selectedRecording.id?.slice(-5) || '43543'}
                 </h2>
 
                 {/* Audio Player */}
-                <div className="bg-gray-50 rounded-lg p-4">
+                <div className="bg-gray-50 rounded-lg p-3">
                   {/* Progress Bar */}
-                  <div className="mb-4">
-                    <div className="flex justify-between text-xs text-gray-500 mb-2">
+                  <div className="mb-3">
+                    <div className="flex justify-between text-xs text-gray-500 mb-1">
                       <span>1:56</span>
                       <span>{selectedRecording.duration ? `${Math.floor(selectedRecording.duration / 60)}:${String(selectedRecording.duration % 60).padStart(2, '0')}` : '3:21'}</span>
                     </div>
                     <div className="relative">
-                      <div className="w-full h-2 bg-gray-200 rounded-full">
-                        <div className="h-2 bg-blue-500 rounded-full" style={{ width: '60%' }}>
-                          <div className="absolute right-0 top-0 w-3 h-3 bg-blue-500 rounded-full -mt-0.5 -mr-1.5"></div>
+                      <div className="w-full h-1.5 bg-gray-200 rounded-full">
+                        <div className="h-1.5 bg-blue-500 rounded-full" style={{ width: '60%' }}>
+                          <div className="absolute right-0 top-0 w-2.5 h-2.5 bg-blue-500 rounded-full -mt-0.5 -mr-1"></div>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Audio Controls */}
-                  <div className="flex items-center justify-center space-x-4">
-                    <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <Play className="w-5 h-5" />
+                  <div className="flex items-center justify-center space-x-2">
+                    <button className="p-1 text-gray-600 hover:text-gray-800">
+                      <Play className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <Pause className="w-5 h-5" />
+                    <button className="p-1 text-gray-600 hover:text-gray-800">
+                      <Pause className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <RotateCcw className="w-5 h-5" />
+                    <button className="p-1 text-gray-600 hover:text-gray-800">
+                      <RotateCcw className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <SkipBack className="w-5 h-5" />
+                    <button className="p-1 text-gray-600 hover:text-gray-800">
+                      <SkipBack className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <Shuffle className="w-5 h-5" />
+                    <button className="p-1 text-gray-600 hover:text-gray-800">
+                      <Shuffle className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <Download className="w-5 h-5" />
+                    <button className="p-1 text-gray-600 hover:text-gray-800">
+                      <Download className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
