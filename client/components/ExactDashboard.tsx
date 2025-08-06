@@ -251,40 +251,43 @@ export function ExactDashboard() {
         {/* Right Sidebar */}
         <div className="w-80 bg-white border-l border-gray-200">
           <div className="p-6">
-            {/* Customer Details Section */}
+            {/* Customer Profile Section */}
             <div className="mb-8">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Customer Details</h2>
-              {selectedDevice ? (
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Customer Profile</h2>
+              {selectedRecording ? (
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-orange-400 rounded-full flex items-center justify-center text-white font-medium">
-                      {selectedDevice.device_name?.charAt(0).toUpperCase() || 'D'}
+                      {selectedRecording.cnic?.charAt(0).toUpperCase() || 'A'}
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">{selectedDevice.device_name}</div>
-                      <div className="text-sm text-gray-500">Device</div>
+                      <div className="font-medium text-gray-900">Ahmad Shah</div>
+                      <div className="text-sm text-gray-500">ID: 3-123456</div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-3 pt-4">
                     <div>
-                      <div className="text-sm text-gray-500">Status</div>
-                      <div className="text-sm text-gray-900 capitalize">{selectedDevice.status}</div>
+                      <div className="text-sm text-gray-500">Gender - Male</div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500">Last Seen</div>
-                      <div className="text-sm text-gray-900">{formatLastSeen(selectedDevice.last_seen)}</div>
+                      <div className="text-sm text-gray-500">Date of Birth - 06/301986</div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500">Device ID</div>
-                      <div className="text-sm text-gray-900">{selectedDevice.id}</div>
+                      <div className="text-sm text-gray-500">CNIC - 3-1234-2345</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500">Phone Number - 031-5897123</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500">Email - ahmadshah@gmail.com</div>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-8">
                   <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-3"></div>
-                  <p className="text-sm text-gray-500">Select a device to view details</p>
+                  <p className="text-sm text-gray-500">Select a recording to view customer profile</p>
                 </div>
               )}
             </div>
