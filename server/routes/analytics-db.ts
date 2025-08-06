@@ -48,7 +48,7 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
         COALESCE(c.branch_address, 'Unknown Branch') as branch_name,
         COUNT(*) as count
       FROM recording_history rh
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_unicode_ci = rh.mac_address COLLATE utf8mb4_unicode_ci
+      LEFT JOIN contacts c ON CONVERT(c.device_mac USING utf8mb4) COLLATE utf8mb4_unicode_ci = CONVERT(rh.mac_address USING utf8mb4) COLLATE utf8mb4_unicode_ci
       GROUP BY c.branch_address
       ORDER BY count DESC
       LIMIT 10
