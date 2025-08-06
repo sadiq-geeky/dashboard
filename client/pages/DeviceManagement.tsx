@@ -89,12 +89,29 @@ export function DeviceManagement() {
         },
       });
 
+      // Read response once and handle both success and error cases
+      const responseText = await response.text();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fix devices table');
+        let errorMessage = 'Failed to fix devices table';
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          // If response is not JSON, use the text as error message
+          errorMessage = responseText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
 
-      const result = await response.json();
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch {
+        // If response is not JSON, assume success
+        result = { message: 'Devices table fixed successfully' };
+      }
+
       console.log("✅ Devices table fixed:", result.message);
       return true;
     } catch (error) {
