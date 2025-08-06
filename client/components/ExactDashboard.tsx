@@ -215,29 +215,6 @@ export function ExactDashboard() {
     }
   };
 
-  const loadContacts = async () => {
-    try {
-      const result = await fetchContacts(contactSearch);
-      setContacts(result.data);
-      setContactsTotal(result.total);
-    } catch (error) {
-      console.error("Failed to load contacts:", error);
-    }
-  };
-
-  const handleContactAdded = () => {
-    loadContacts();
-  };
-
-  const handleEditContact = (contact: Contact) => {
-    setEditingContact(contact);
-    setIsEditContactModalOpen(true);
-  };
-
-  const handleContactUpdated = () => {
-    loadContacts();
-    setEditingContact(null);
-  };
 
   useEffect(() => {
     loadRecordings();
