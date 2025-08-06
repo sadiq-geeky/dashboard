@@ -180,7 +180,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
         COUNT(DISTINCT c.branch_id) as activeBranches,
         SUM(CASE WHEN DATE(r.start_time) = CURDATE() THEN 1 ELSE 0 END) as todayConversations
       FROM recording_history r
-      LEFT JOIN contacts c ON CONVERT(c.device_mac USING utf8mb4) COLLATE utf8mb4_unicode_ci = CONVERT(r.mac_address USING utf8mb4) COLLATE utf8mb4_unicode_ci
+      LEFT JOIN contacts c ON c.device_mac = r.mac_address
       WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
     `;
 
