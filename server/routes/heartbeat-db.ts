@@ -36,7 +36,6 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
     res.json(heartbeats);
   } catch (error) {
     console.error("Error fetching heartbeats:", error);
-    console.error("Query failed:", query);
     res.status(500).json({
       error: "Failed to fetch heartbeats",
       details:
