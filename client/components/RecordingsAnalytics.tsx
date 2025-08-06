@@ -194,17 +194,34 @@ export function RecordingsAnalytics() {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Recordings (Last 30 Days)</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dailyRecordings.reverse()}>
+            <LineChart
+              data={dailyRecordings.reverse()}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="date"
                 tickFormatter={formatDate}
                 axisLine={true}
                 tickLine={true}
+                tick={true}
+                mirror={false}
+                reversed={false}
+                type="category"
+                allowDataOverflow={false}
+                allowDecimals={true}
+                allowDuplicatedCategory={true}
               />
               <YAxis
                 axisLine={true}
                 tickLine={true}
+                tick={true}
+                mirror={false}
+                reversed={false}
+                type="number"
+                allowDataOverflow={false}
+                allowDecimals={true}
+                allowDuplicatedCategory={true}
               />
               <Tooltip
                 labelFormatter={(label) => formatDate(label)}
