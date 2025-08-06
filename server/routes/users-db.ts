@@ -154,20 +154,15 @@ export const createUser: RequestHandler = async (req, res) => {
     const uuid = uuidv4();
     const query = `
       INSERT INTO users (
-        uuid, emp_name, device_mac, branch_id, branch_city, branch_address, gender,
-        date_of_birth, cnic, phone_no, designation, department,
+        uuid, emp_name, gender, date_of_birth, cnic, phone_no, designation, department,
         joining_date, email_id, username, password_hash, role, is_active,
         created_on, updated_on
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `;
 
     await executeQuery(query, [
       uuid,
       emp_name,
-      device_mac,
-      branch_id,
-      branch_city,
-      branch_address,
       gender,
       date_of_birth,
       cnic,
