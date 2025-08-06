@@ -120,7 +120,56 @@ export function Header() {
                       </span>
                     </div>
                   </div>
-                  
+
+                  {/* Navigation Menu */}
+                  <div className="py-1 border-b border-gray-200">
+                    <button
+                      onClick={() => {
+                        setShowDropdown(false);
+                        navigate('/');
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                    >
+                      <Home className="h-4 w-4" />
+                      <span>Dashboard</span>
+                    </button>
+
+                    {isAdmin() && (
+                      <>
+                        <button
+                          onClick={() => {
+                            setShowDropdown(false);
+                            navigate('/branch-management');
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                        >
+                          <Building2 className="h-4 w-4" />
+                          <span>Branch Management</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowDropdown(false);
+                            navigate('/device-management');
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                        >
+                          <Shield className="h-4 w-4" />
+                          <span>Device Management</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowDropdown(false);
+                            navigate('/user-management');
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                        >
+                          <User className="h-4 w-4" />
+                          <span>User Management</span>
+                        </button>
+                      </>
+                    )}
+                  </div>
+
                   <button
                     onClick={() => {
                       setShowDropdown(false);
