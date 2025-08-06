@@ -5,6 +5,7 @@ import multer from "multer";
 import { parseFile } from "music-metadata";
 import path from "path";
 import fs from "fs";
+import { voiceLogger } from "../utils/logger";
 
 // Create uploads directory if it doesn't exist
 const uploadDir = path.join(process.cwd(), "uploads");
