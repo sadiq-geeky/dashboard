@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Header } from "../components/Header";
 import { AddUserModal } from "../components/AddUserModal";
 import { EditUserModal } from "../components/EditUserModal";
+import { cn } from "@/lib/utils";
 import {
   Users,
   Plus,
@@ -11,6 +12,12 @@ import {
   Shield,
   User,
   RefreshCw,
+  Grid3X3,
+  BarChart3,
+  MessageSquare,
+  Building2,
+  Monitor,
+  Mail,
 } from "lucide-react";
 
 interface User {
