@@ -458,7 +458,9 @@ export function ExactDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation - matches the exact design */}
+      <Header />
+
+      {/* Navigation Tabs */}
       <div className="bg-white border-b border-gray-200">
         <div className="flex items-center justify-between h-16 px-6">
           <div className="flex items-center space-x-1">
