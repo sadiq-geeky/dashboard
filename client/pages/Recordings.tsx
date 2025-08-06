@@ -36,6 +36,7 @@ import { Header } from "../components/Header";
 const fetchRecordings = async (
   page: number,
   limit: number,
+  user: any,
   search?: string,
   device?: string,
 ): Promise<PaginatedResponse<RecordingHistory>> => {
@@ -43,9 +44,15 @@ const fetchRecordings = async (
     const params = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
+      user_role: user?.role || 'user',
       ...(search && { search }),
       ...(device && { device }),
     });
+
+    // Add branch filtering for non-admin users
+    if (user?.branch_id && user?.role !== 'admin') {
+      params.append('branch_id', user.branch_id);
+    }
 
     const response = await fetch(`/api/recordings?${params}`);
     if (!response.ok) throw new Error("Failed to fetch recordings");
