@@ -39,11 +39,6 @@ interface Device {
   updated_on: string;
 }
 
-interface Branch {
-  id: string;
-  branch_code: string;
-  branch_name: string;
-}
 
 interface DeviceFormData {
   device_name: string;
@@ -60,7 +55,6 @@ export function DeviceManagement() {
   const { isAdmin } = useAuth();
   const navigate = useNavigate();
   const [devices, setDevices] = useState<Device[]>([]);
-  const [branches, setBranches] = useState<Branch[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
@@ -104,20 +98,9 @@ export function DeviceManagement() {
     }
   };
 
-  const fetchBranches = async () => {
-    try {
-      const response = await fetch("/api/branches?limit=100&active=true");
-      if (!response.ok) throw new Error("Failed to fetch branches");
-      const data = await response.json();
-      setBranches(data.data);
-    } catch (error) {
-      console.error("Error fetching branches:", error);
-    }
-  };
 
   useEffect(() => {
     fetchDevices();
-    fetchBranches();
   }, [searchQuery]);
 
   const handleSubmit = async (e: React.FormEvent) => {
