@@ -219,7 +219,6 @@ export function ExactDashboard() {
   useEffect(() => {
     loadRecordings();
     loadDevices();
-    loadContacts();
     const recordingsInterval = setInterval(loadRecordings, 30000);
     const devicesInterval = setInterval(loadDevices, 30000);
     return () => {
