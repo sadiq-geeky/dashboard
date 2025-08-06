@@ -57,9 +57,12 @@ const fetchRecordings = async (): Promise<RecordingHistory[]> => {
 
 export function ExactDashboard() {
   const [recordings, setRecordings] = useState<RecordingHistory[]>([]);
-  const [filteredRecordings, setFilteredRecordings] = useState<RecordingHistory[]>([]);
+  const [filteredRecordings, setFilteredRecordings] = useState<
+    RecordingHistory[]
+  >([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRecording, setSelectedRecording] = useState<RecordingHistory | null>(null);
+  const [selectedRecording, setSelectedRecording] =
+    useState<RecordingHistory | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -81,9 +84,12 @@ export function ExactDashboard() {
 
   useEffect(() => {
     if (searchQuery) {
-      const filtered = recordings.filter(recording =>
-        recording.cnic?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        recording.device_name?.toLowerCase().includes(searchQuery.toLowerCase())
+      const filtered = recordings.filter(
+        (recording) =>
+          recording.cnic?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          recording.device_name
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()),
       );
       setFilteredRecordings(filtered);
     } else {
@@ -91,7 +97,10 @@ export function ExactDashboard() {
     }
 
     // Reset to page 1 if current page exceeds available pages
-    const totalPages = Math.ceil((searchQuery ? filteredRecordings.length : recordings.length) / itemsPerPage);
+    const totalPages = Math.ceil(
+      (searchQuery ? filteredRecordings.length : recordings.length) /
+        itemsPerPage,
+    );
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
@@ -148,7 +157,6 @@ export function ExactDashboard() {
               <span className="text-xs">Complaints</span>
             </button>
           </div>
-
 
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-600">Reporting DHFG</span>
@@ -222,19 +230,31 @@ export function ExactDashboard() {
                 </thead>
                 <tbody>
                   {currentRecordings.map((recording, index) => (
-                    <tr key={recording.id} className="border-b border-gray-100 hover:bg-gray-50" onClick={() => setSelectedRecording(recording)}>
-                      <td className="py-3 px-4 text-sm text-gray-900">{startIndex + index + 1}</td>
-                      <td className="py-3 px-4 text-sm text-gray-500">{recording.device_name || recording.ip_address}</td>
-                      <td className="py-3 px-4 text-sm text-gray-500">{recording.cnic || recording.file_name || '-'}</td>
-                      <td className="py-3 px-4 text-sm text-gray-500">
-                        {recording.start_time ? new Date(recording.start_time).toLocaleString() : '-'}
+                    <tr
+                      key={recording.id}
+                      className="border-b border-gray-100 hover:bg-gray-50"
+                      onClick={() => setSelectedRecording(recording)}
+                    >
+                      <td className="py-3 px-4 text-sm text-gray-900">
+                        {startIndex + index + 1}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-500">
-                        {recording.duration ? `${Math.floor(recording.duration / 60)}:${String(recording.duration % 60).padStart(2, '0')}` : '-'}
+                        {recording.device_name || recording.ip_address}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-500">
-                        NA
+                        {recording.cnic || recording.file_name || "-"}
                       </td>
+                      <td className="py-3 px-4 text-sm text-gray-500">
+                        {recording.start_time
+                          ? new Date(recording.start_time).toLocaleString()
+                          : "-"}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-500">
+                        {recording.duration
+                          ? `${Math.floor(recording.duration / 60)}:${String(recording.duration % 60).padStart(2, "0")}`
+                          : "-"}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-500">NA</td>
                       <td className="py-3 px-4">
                         <button className="text-gray-400 hover:text-gray-600">
                           <MoreHorizontal className="w-4 h-4" />
@@ -244,17 +264,22 @@ export function ExactDashboard() {
                   ))}
                 </tbody>
               </table>
-              
+
               {/* Footer */}
               <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
                 <div className="text-sm text-gray-500">
-                  Showing {startIndex + 1}-{Math.min(endIndex, filteredRecordings.length)} of {filteredRecordings.length} items
+                  Showing {startIndex + 1}-
+                  {Math.min(endIndex, filteredRecordings.length)} of{" "}
+                  {filteredRecordings.length} items
                 </div>
                 <div className="flex items-center space-x-2">
                   {totalPages > 1 && (
                     <>
                       <div className="flex space-x-1">
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        {Array.from(
+                          { length: totalPages },
+                          (_, i) => i + 1,
+                        ).map((page) => (
                           <button
                             key={page}
                             onClick={() => setCurrentPage(page)}
@@ -262,14 +287,16 @@ export function ExactDashboard() {
                               "w-6 h-6 flex items-center justify-center rounded text-sm",
                               currentPage === page
                                 ? "bg-blue-100 text-blue-600"
-                                : "text-gray-500 hover:bg-gray-100"
+                                : "text-gray-500 hover:bg-gray-100",
                             )}
                           >
                             {page}
                           </button>
                         ))}
                       </div>
-                      <span className="text-sm text-gray-500">/ {totalPages}</span>
+                      <span className="text-sm text-gray-500">
+                        / {totalPages}
+                      </span>
                     </>
                   )}
                 </div>
@@ -285,7 +312,7 @@ export function ExactDashboard() {
             {selectedRecording && (
               <div className="mb-6 pb-6 border-b border-gray-200">
                 <h2 className="text-sm font-medium text-gray-900 mb-3">
-                  Recording {selectedRecording.id?.slice(-5) || '43543'}
+                  Recording {selectedRecording.id?.slice(-5) || "43543"}
                 </h2>
 
                 {/* Audio Player */}
@@ -294,11 +321,18 @@ export function ExactDashboard() {
                   <div className="mb-3">
                     <div className="flex justify-between text-xs text-gray-500 mb-1">
                       <span>1:56</span>
-                      <span>{selectedRecording.duration ? `${Math.floor(selectedRecording.duration / 60)}:${String(selectedRecording.duration % 60).padStart(2, '0')}` : '3:21'}</span>
+                      <span>
+                        {selectedRecording.duration
+                          ? `${Math.floor(selectedRecording.duration / 60)}:${String(selectedRecording.duration % 60).padStart(2, "0")}`
+                          : "3:21"}
+                      </span>
                     </div>
                     <div className="relative">
                       <div className="w-full h-1.5 bg-gray-200 rounded-full">
-                        <div className="h-1.5 bg-blue-500 rounded-full" style={{ width: '60%' }}>
+                        <div
+                          className="h-1.5 bg-blue-500 rounded-full"
+                          style={{ width: "60%" }}
+                        >
                           <div className="absolute right-0 top-0 w-2.5 h-2.5 bg-blue-500 rounded-full -mt-0.5 -mr-1"></div>
                         </div>
                       </div>
@@ -332,15 +366,19 @@ export function ExactDashboard() {
 
             {/* Customer Profile Section */}
             <div className="mb-6 pb-6 border-b border-gray-200">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Customer Profile</h2>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">
+                Customer Profile
+              </h2>
               {selectedRecording ? (
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-orange-400 rounded-full flex items-center justify-center text-white font-medium">
-                      {selectedRecording.cnic?.charAt(0).toUpperCase() || 'A'}
+                      {selectedRecording.cnic?.charAt(0).toUpperCase() || "A"}
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">Ahmad Shah</div>
+                      <div className="font-medium text-gray-900">
+                        Ahmad Shah
+                      </div>
                       <div className="text-sm text-gray-500">ID: 3-123456</div>
                     </div>
                   </div>
@@ -350,30 +388,42 @@ export function ExactDashboard() {
                       <div className="text-sm text-gray-500">Gender - Male</div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500">Date of Birth - 06/301986</div>
+                      <div className="text-sm text-gray-500">
+                        Date of Birth - 06/301986
+                      </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500">CNIC - 3-1234-2345</div>
+                      <div className="text-sm text-gray-500">
+                        CNIC - 3-1234-2345
+                      </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500">Phone Number - 031-5897123</div>
+                      <div className="text-sm text-gray-500">
+                        Phone Number - 031-5897123
+                      </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500">Email - ahmadshah@gmail.com</div>
+                      <div className="text-sm text-gray-500">
+                        Email - ahmadshah@gmail.com
+                      </div>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-8">
                   <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-3"></div>
-                  <p className="text-sm text-gray-500">Select a recording to view customer profile</p>
+                  <p className="text-sm text-gray-500">
+                    Select a recording to view customer profile
+                  </p>
                 </div>
               )}
             </div>
 
             {/* Previous Logs Section */}
             <div>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Previous Logs</h2>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">
+                Previous Logs
+              </h2>
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-xs text-gray-500 border-b pb-2">
                   <span>S.no</span>
@@ -383,11 +433,18 @@ export function ExactDashboard() {
                 </div>
 
                 {recordings.slice(0, 3).map((recording, index) => (
-                  <div key={recording.id} className="flex justify-between items-center text-sm">
+                  <div
+                    key={recording.id}
+                    className="flex justify-between items-center text-sm"
+                  >
                     <span className="text-gray-900">{index + 1}</span>
-                    <span className="text-gray-500">{recording.device_name || recording.ip_address}</span>
                     <span className="text-gray-500">
-                      {recording.created_on ? new Date(recording.created_on).toLocaleDateString() : '-'}
+                      {recording.device_name || recording.ip_address}
+                    </span>
+                    <span className="text-gray-500">
+                      {recording.created_on
+                        ? new Date(recording.created_on).toLocaleDateString()
+                        : "-"}
                     </span>
                     <button className="text-blue-600 hover:text-blue-700 text-xs">
                       View more

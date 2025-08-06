@@ -83,7 +83,9 @@ export function ModernDashboard() {
   const [devices, setDevices] = useState<HeartbeatRecord[]>([]);
   const [filteredDevices, setFilteredDevices] = useState<HeartbeatRecord[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDevice, setSelectedDevice] = useState<HeartbeatRecord | null>(null);
+  const [selectedDevice, setSelectedDevice] = useState<HeartbeatRecord | null>(
+    null,
+  );
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
@@ -109,8 +111,8 @@ export function ModernDashboard() {
 
   useEffect(() => {
     if (searchQuery) {
-      const filtered = devices.filter(device =>
-        device.device_name?.toLowerCase().includes(searchQuery.toLowerCase())
+      const filtered = devices.filter((device) =>
+        device.device_name?.toLowerCase().includes(searchQuery.toLowerCase()),
       );
       setFilteredDevices(filtered);
     } else {
@@ -119,7 +121,9 @@ export function ModernDashboard() {
   }, [searchQuery, devices]);
 
   const onlineCount = devices.filter((d) => d.status === "online").length;
-  const problematicCount = devices.filter((d) => d.status === "problematic").length;
+  const problematicCount = devices.filter(
+    (d) => d.status === "problematic",
+  ).length;
   const offlineCount = devices.filter((d) => d.status === "offline").length;
 
   const formatLastSeen = (dateString: string) => {
@@ -164,7 +168,7 @@ export function ModernDashboard() {
               </button>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-4">
             <div className="text-sm text-gray-500">Reporting DHFG</div>
             <div className="flex items-center space-x-2">
@@ -183,8 +187,10 @@ export function ModernDashboard() {
           <div className="max-w-7xl mx-auto">
             {/* Header Section */}
             <div className="mb-6">
-              <h1 className="text-2xl font-semibold text-gray-900 mb-2">Devices</h1>
-              
+              <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+                Devices
+              </h1>
+
               {/* Search and Filter Bar */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -198,7 +204,7 @@ export function ModernDashboard() {
                       className="pl-10 pr-4 py-2 w-72 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
-                  
+
                   <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                     <Filter className="h-4 w-4" />
                     <span>Filter</span>
@@ -212,13 +218,15 @@ export function ModernDashboard() {
                     disabled={isRefreshing}
                     className={cn(
                       "flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors",
-                      isRefreshing && "opacity-50 cursor-not-allowed"
+                      isRefreshing && "opacity-50 cursor-not-allowed",
                     )}
                   >
-                    <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin")} />
+                    <RefreshCw
+                      className={cn("h-4 w-4", isRefreshing && "animate-spin")}
+                    />
                     <span>Refresh</span>
                   </button>
-                  
+
                   <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                     <Download className="h-4 w-4" />
                     <span>Export</span>
@@ -252,7 +260,7 @@ export function ModernDashboard() {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {filteredDevices.map((device, index) => (
-                      <tr 
+                      <tr
                         key={device.device_name || `device-${index}`}
                         className="hover:bg-gray-50 cursor-pointer transition-colors"
                         onClick={() => setSelectedDevice(device)}
@@ -266,7 +274,7 @@ export function ModernDashboard() {
                           <span
                             className={cn(
                               "inline-flex items-center space-x-1 rounded-full px-2.5 py-1 text-xs font-medium border",
-                              getStatusColor(device.status)
+                              getStatusColor(device.status),
                             )}
                           >
                             {getStatusIcon(device.status)}
@@ -308,7 +316,9 @@ export function ModernDashboard() {
                     No devices found
                   </h3>
                   <p className="mt-1 text-sm text-gray-500">
-                    {searchQuery ? "Try adjusting your search query." : "No device heartbeats have been recorded yet."}
+                    {searchQuery
+                      ? "Try adjusting your search query."
+                      : "No device heartbeats have been recorded yet."}
                   </p>
                 </div>
               )}
@@ -322,7 +332,9 @@ export function ModernDashboard() {
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2 text-sm text-gray-500">
                       <Clock className="h-4 w-4" />
-                      <span>Last updated: {lastUpdate.toLocaleTimeString()}</span>
+                      <span>
+                        Last updated: {lastUpdate.toLocaleTimeString()}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -336,7 +348,9 @@ export function ModernDashboard() {
           <div className="space-y-6">
             {/* Device Details Panel */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Device Details</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Device Details
+              </h3>
               {selectedDevice ? (
                 <div className="space-y-4">
                   <div className="p-4 bg-gray-50 rounded-lg">
@@ -345,29 +359,43 @@ export function ModernDashboard() {
                         <Monitor className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <div className="font-medium text-gray-900">{selectedDevice.device_name}</div>
-                        <div className="text-sm text-gray-500">Device ID: {selectedDevice.id}</div>
+                        <div className="font-medium text-gray-900">
+                          {selectedDevice.device_name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          Device ID: {selectedDevice.id}
+                        </div>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-500">Status:</span>
-                        <span className={cn(
-                          "inline-flex items-center space-x-1 rounded-full px-2 py-1 text-xs font-medium border",
-                          getStatusColor(selectedDevice.status)
-                        )}>
+                        <span
+                          className={cn(
+                            "inline-flex items-center space-x-1 rounded-full px-2 py-1 text-xs font-medium border",
+                            getStatusColor(selectedDevice.status),
+                          )}
+                        >
                           {getStatusIcon(selectedDevice.status)}
-                          <span className="capitalize">{selectedDevice.status}</span>
+                          <span className="capitalize">
+                            {selectedDevice.status}
+                          </span>
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-500">Last Seen:</span>
-                        <span className="text-sm text-gray-900">{formatLastSeen(selectedDevice.last_seen)}</span>
+                        <span className="text-sm text-gray-500">
+                          Last Seen:
+                        </span>
+                        <span className="text-sm text-gray-900">
+                          {formatLastSeen(selectedDevice.last_seen)}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-500">Location:</span>
-                        <span className="text-sm text-gray-900">Office Floor 2</span>
+                        <span className="text-sm text-gray-900">
+                          Office Floor 2
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -384,54 +412,74 @@ export function ModernDashboard() {
 
             {/* Stats Summary */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Overview</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Overview
+              </h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
                   <div className="flex items-center space-x-2">
                     <Wifi className="h-5 w-5 text-green-600" />
-                    <span className="text-sm font-medium text-green-900">Online</span>
+                    <span className="text-sm font-medium text-green-900">
+                      Online
+                    </span>
                   </div>
-                  <span className="text-lg font-bold text-green-600">{onlineCount}</span>
+                  <span className="text-lg font-bold text-green-600">
+                    {onlineCount}
+                  </span>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                   <div className="flex items-center space-x-2">
                     <AlertTriangle className="h-5 w-5 text-yellow-600" />
-                    <span className="text-sm font-medium text-yellow-900">Problematic</span>
+                    <span className="text-sm font-medium text-yellow-900">
+                      Problematic
+                    </span>
                   </div>
-                  <span className="text-lg font-bold text-yellow-600">{problematicCount}</span>
+                  <span className="text-lg font-bold text-yellow-600">
+                    {problematicCount}
+                  </span>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
                   <div className="flex items-center space-x-2">
                     <WifiOff className="h-5 w-5 text-red-600" />
-                    <span className="text-sm font-medium text-red-900">Offline</span>
+                    <span className="text-sm font-medium text-red-900">
+                      Offline
+                    </span>
                   </div>
-                  <span className="text-lg font-bold text-red-600">{offlineCount}</span>
+                  <span className="text-lg font-bold text-red-600">
+                    {offlineCount}
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Recent Activity */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Recent Activity
+              </h3>
               <div className="space-y-3">
                 <div className="text-sm text-gray-500">
                   <div className="flex items-center space-x-2 mb-1">
                     <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                     <span>Device connected</span>
                   </div>
-                  <div className="text-xs text-gray-400 ml-4">2 minutes ago</div>
+                  <div className="text-xs text-gray-400 ml-4">
+                    2 minutes ago
+                  </div>
                 </div>
-                
+
                 <div className="text-sm text-gray-500">
                   <div className="flex items-center space-x-2 mb-1">
                     <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
                     <span>Performance warning</span>
                   </div>
-                  <div className="text-xs text-gray-400 ml-4">15 minutes ago</div>
+                  <div className="text-xs text-gray-400 ml-4">
+                    15 minutes ago
+                  </div>
                 </div>
-                
+
                 <div className="text-sm text-gray-500">
                   <div className="flex items-center space-x-2 mb-1">
                     <div className="w-2 h-2 bg-red-400 rounded-full"></div>
