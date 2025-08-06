@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { RecordingHistory, PaginatedResponse, HeartbeatRecord } from "@shared/api";
+import { RecordingHistory, PaginatedResponse, HeartbeatRecord, Contact } from "@shared/api";
 import { cn } from "@/lib/utils";
 import {
   Search,
