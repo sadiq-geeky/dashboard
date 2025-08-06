@@ -30,7 +30,7 @@ export const getContacts: RequestHandler = async (req, res) => {
     const offset = (pageNum - 1) * limitNum;
 
     let query = `
-      SELECT uuid, emp_name, device_mac, branch_id, branch_address, gender,
+      SELECT uuid, emp_name, device_mac, branch_id, branch_city, branch_address, gender,
              date_of_birth, cnic, phone_no, designation, department,
              joining_date, email_id, created_on, updated_on
       FROM contacts
