@@ -56,6 +56,7 @@ const fetchRecordings = async (): Promise<RecordingHistory[]> => {
 };
 
 export function ExactDashboard() {
+  const [activeTab, setActiveTab] = useState("home");
   const [recordings, setRecordings] = useState<RecordingHistory[]>([]);
   const [filteredRecordings, setFilteredRecordings] = useState<
     RecordingHistory[]
