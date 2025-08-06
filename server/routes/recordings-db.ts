@@ -207,10 +207,9 @@ export const updateRecording: RequestHandler = async (req, res) => {
 export const getDeviceNames: RequestHandler = async (req, res) => {
   try {
     const query = `
-      SELECT DISTINCT COALESCE(dm.device_name, rh.ip_address) AS device_name
+      SELECT DISTINCT rh.ip_address AS device_name
       FROM recording_history rh
-      LEFT JOIN device_mappings dm ON rh.ip_address COLLATE utf8mb4_0900_ai_ci = dm.ip_address COLLATE utf8mb4_0900_ai_ci
-      WHERE COALESCE(dm.device_name, rh.ip_address) IS NOT NULL
+      WHERE rh.ip_address IS NOT NULL
       ORDER BY device_name ASC
     `;
 
