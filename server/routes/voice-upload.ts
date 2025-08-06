@@ -52,8 +52,8 @@ const upload = multer({
 export const uploadVoice: RequestHandler = async (req, res) => {
   const startTime = Date.now();
   const requestId = uuidv4();
-  const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
-  const userAgent = req.get('User-Agent') || 'unknown';
+  const clientIp = req.ip || req.connection.remoteAddress || "unknown";
+  const userAgent = req.get("User-Agent") || "unknown";
   const { ip_address, start_time, end_time, cnic, mac_address } = req.body;
   const file = req.file;
 
@@ -210,7 +210,8 @@ export const uploadVoice: RequestHandler = async (req, res) => {
     });
   } catch (error) {
     const duration = Date.now() - startTime;
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
 
     voiceLogger.error("voice-upload", "upload_voice_error", errorMessage, {
       request_id: requestId,
@@ -226,7 +227,10 @@ export const uploadVoice: RequestHandler = async (req, res) => {
         device_mac: mac_address?.trim() || null,
         original_filename: file?.originalname,
         file_mimetype: file?.mimetype,
-        error_type: error instanceof Error && error.message.includes("Only MP3 and WAV") ? "file_format_error" : "general_error",
+        error_type:
+          error instanceof Error && error.message.includes("Only MP3 and WAV")
+            ? "file_format_error"
+            : "general_error",
       },
     });
 
@@ -244,8 +248,8 @@ export const uploadVoice: RequestHandler = async (req, res) => {
 export const serveAudio: RequestHandler = (req, res) => {
   const startTime = Date.now();
   const requestId = uuidv4();
-  const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
-  const userAgent = req.get('User-Agent') || 'unknown';
+  const clientIp = req.ip || req.connection.remoteAddress || "unknown";
+  const userAgent = req.get("User-Agent") || "unknown";
   const { filename } = req.params;
 
   voiceLogger.info("voice-upload", "serve_audio_request", {
@@ -293,7 +297,7 @@ export const serveAudio: RequestHandler = (req, res) => {
     // Stream the file
     const stream = fs.createReadStream(filepath);
 
-    stream.on('end', () => {
+    stream.on("end", () => {
       const duration = Date.now() - startTime;
       voiceLogger.info("voice-upload", "audio_streaming_success", {
         request_id: requestId,
@@ -304,24 +308,30 @@ export const serveAudio: RequestHandler = (req, res) => {
       });
     });
 
-    stream.on('error', (streamError) => {
+    stream.on("error", (streamError) => {
       const duration = Date.now() - startTime;
-      voiceLogger.error("voice-upload", "audio_streaming_error", streamError.message, {
-        request_id: requestId,
-        ip_address: clientIp,
-        file_name: filename,
-        duration_ms: duration,
-        details: {
-          error_stack: streamError.stack,
-          stream_error: true,
+      voiceLogger.error(
+        "voice-upload",
+        "audio_streaming_error",
+        streamError.message,
+        {
+          request_id: requestId,
+          ip_address: clientIp,
+          file_name: filename,
+          duration_ms: duration,
+          details: {
+            error_stack: streamError.stack,
+            stream_error: true,
+          },
         },
-      });
+      );
     });
 
     stream.pipe(res);
   } catch (error) {
     const duration = Date.now() - startTime;
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
 
     voiceLogger.error("voice-upload", "serve_audio_error", errorMessage, {
       request_id: requestId,

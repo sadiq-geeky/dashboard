@@ -28,11 +28,14 @@ export class Logger {
   private logFilePath: string;
 
   constructor(logFileName: string) {
-    this.logFilePath = path.join(logsDir, `${logFileName}_${this.getDateString()}.log`);
+    this.logFilePath = path.join(
+      logsDir,
+      `${logFileName}_${this.getDateString()}.log`,
+    );
   }
 
   private getDateString(): string {
-    return new Date().toISOString().split('T')[0];
+    return new Date().toISOString().split("T")[0];
   }
 
   private formatLogEntry(entry: LogEntry): string {
@@ -53,21 +56,21 @@ export class Logger {
       ...(entry.details && { details: entry.details }),
     };
 
-    return JSON.stringify(logLine) + '\n';
+    return JSON.stringify(logLine) + "\n";
   }
 
-  log(entry: Omit<LogEntry, 'timestamp'>): void {
+  log(entry: Omit<LogEntry, "timestamp">): void {
     const fullEntry: LogEntry = {
       ...entry,
       timestamp: new Date().toISOString(),
     };
 
     const logLine = this.formatLogEntry(fullEntry);
-    
+
     try {
-      fs.appendFileSync(this.logFilePath, logLine, 'utf8');
+      fs.appendFileSync(this.logFilePath, logLine, "utf8");
     } catch (error) {
-      console.error('Failed to write to log file:', error);
+      console.error("Failed to write to log file:", error);
     }
   }
 
@@ -89,7 +92,12 @@ export class Logger {
     });
   }
 
-  error(source: string, action: string, error: string, data?: Partial<LogEntry>): void {
+  error(
+    source: string,
+    action: string,
+    error: string,
+    data?: Partial<LogEntry>,
+  ): void {
     this.log({
       level: "ERROR",
       source,
