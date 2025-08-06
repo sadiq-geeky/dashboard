@@ -35,7 +35,6 @@ export const getRecordings: RequestHandler = async (req, res) => {
       SELECT COUNT(*) as total
       FROM recording_history rh
       LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
-      LEFT JOIN contacts c ON dm.mac_address COLLATE utf8mb4_unicode_ci = c.device_mac COLLATE utf8mb4_unicode_ci
       ${whereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
@@ -70,7 +69,6 @@ export const getRecordings: RequestHandler = async (req, res) => {
     END AS status
 FROM recording_history rh
 LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
-LEFT JOIN contacts c ON dm.mac_address COLLATE utf8mb4_unicode_ci = c.device_mac COLLATE utf8mb4_unicode_ci
       ${whereClause}
       ORDER BY rh.CREATED_ON DESC
       LIMIT ${limitNum} OFFSET ${offset}
