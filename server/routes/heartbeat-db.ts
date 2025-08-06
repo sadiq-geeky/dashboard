@@ -20,7 +20,7 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
       FROM (
         SELECT
           mac_address,
-          ip_address,
+          MAX(ip_address) as ip_address,
           MAX(created_on) as last_seen
         FROM heartbeat WHERE mac_address IS NOT NULL
         GROUP BY mac_address
