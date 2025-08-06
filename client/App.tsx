@@ -34,6 +34,7 @@ import { BranchManagement } from "./pages/BranchManagement";
 import { Recordings } from "./pages/Recordings";
 import { ConversationAnalytics } from "./pages/ConversationAnalytics";
 import { UserManagement } from "./pages/UserManagement";
+import { Deployment } from "./pages/Deployment";
 import { Login } from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
@@ -101,6 +102,14 @@ const App = () => (
               element={
                 <ProtectedRoute adminOnly>
                   <UserManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/deployment"
+              element={
+                <ProtectedRoute adminOnly>
+                  <Deployment />
                 </ProtectedRoute>
               }
             />

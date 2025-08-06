@@ -29,13 +29,15 @@ export const getConversationsByBranch: RequestHandler = async (req, res) => {
   try {
     const query = `
       SELECT
-        c.branch_id,
-        COALESCE(MAX(c.branch_address), 'Unknown Branch') as branch_name,
+        ldbu.branch_id,
+        COALESCE(MAX(b.branch_address), 'Unknown Branch') as branch_name,
         COUNT(r.id) AS count
       FROM recordings r
-      JOIN contacts c
-        ON r.mac_address COLLATE utf8mb4_0900_ai_ci = c.device_mac COLLATE utf8mb4_0900_ai_ci
-      GROUP BY c.branch_id
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE ldbu.branch_id IS NOT NULL
+      GROUP BY ldbu.branch_id
       ORDER BY count DESC
     `;
 
@@ -57,14 +59,15 @@ export const getConversationsByCity: RequestHandler = async (req, res) => {
   try {
     const query = `
       SELECT
-        c.branch_city as city,
+        b.branch_city as city,
         COUNT(r.id) AS count,
-        COUNT(DISTINCT c.branch_id) as branch_count
+        COUNT(DISTINCT ldbu.branch_id) as branch_count
       FROM recordings r
-      JOIN contacts c
-        ON r.mac_address COLLATE utf8mb4_0900_ai_ci = c.device_mac COLLATE utf8mb4_0900_ai_ci
-      WHERE c.branch_city IS NOT NULL
-      GROUP BY c.branch_city
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE b.branch_city IS NOT NULL
+      GROUP BY b.branch_city
       ORDER BY count DESC
     `;
 
@@ -141,27 +144,30 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
     // Conversations by branch - using exact user query
     const branchQuery = `
       SELECT
-        c.branch_id,
-        COALESCE(MAX(c.branch_address), 'Unknown Branch') as branch_name,
+        ldbu.branch_id,
+        COALESCE(MAX(b.branch_address), 'Unknown Branch') as branch_name,
         COUNT(r.id) AS count
       FROM recordings r
-      JOIN contacts c
-        ON r.mac_address COLLATE utf8mb4_0900_ai_ci = c.device_mac COLLATE utf8mb4_0900_ai_ci
-      GROUP BY c.branch_id
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE ldbu.branch_id IS NOT NULL
+      GROUP BY ldbu.branch_id
       ORDER BY count DESC
     `;
 
     // Conversations by city - using exact user query
     const cityQuery = `
       SELECT
-        c.branch_city as city,
+        b.branch_city as city,
         COUNT(r.id) AS count,
-        COUNT(DISTINCT c.branch_id) as branch_count
+        COUNT(DISTINCT ldbu.branch_id) as branch_count
       FROM recordings r
-      JOIN contacts c
-        ON r.mac_address COLLATE utf8mb4_0900_ai_ci = c.device_mac COLLATE utf8mb4_0900_ai_ci
-      WHERE c.branch_city IS NOT NULL
-      GROUP BY c.branch_city
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE b.branch_city IS NOT NULL
+      GROUP BY b.branch_city
       ORDER BY count DESC
     `;
 
@@ -189,10 +195,12 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
       SELECT
         COUNT(*) as totalConversations,
         COUNT(DISTINCT REPLACE(r.cnic, '-', '')) as uniqueCustomers,
-        COUNT(DISTINCT c.branch_id) as activeBranches,
+        COUNT(DISTINCT ldbu.branch_id) as activeBranches,
         SUM(CASE WHEN DATE(r.start_time) = CURDATE() THEN 1 ELSE 0 END) as todayConversations
       FROM recordings r
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_0900_ai_ci = r.mac_address COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
       WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
     `;
 

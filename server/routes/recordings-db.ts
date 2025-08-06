@@ -42,7 +42,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
 
     // Branch filtering for non-admin users
     if (branch_id && user_role !== "admin") {
-      conditions.push("c.branch_id = ?");
+      conditions.push("ldbu.branch_id = ?");
       queryParams.push(branch_id);
       // For count, we'll do a simpler approach without complex JOINs
     }
@@ -70,29 +70,31 @@ export const getRecordings: RequestHandler = async (req, res) => {
     // Get paginated results
     const dataQuery = `
       SELECT
-    rh.id,
-    rh.cnic,
-    rh.start_time,
-    rh.end_time,
-    rh.file_name,
-    rh.CREATED_ON AS created_on,
-    c.branch_id AS branch_no,
-    COALESCE(c.branch_address, 'NA') AS branch_address,
-    CASE
-        WHEN rh.end_time IS NOT NULL THEN
+        rh.id,
+        rh.cnic,
+        rh.start_time,
+        rh.end_time,
+        rh.file_name,
+        rh.CREATED_ON AS created_on,
+        COALESCE(b.branch_code, rh.mac_address) AS branch_no,
+        COALESCE(b.branch_address, rh.mac_address) AS branch_address,
+        CASE
+          WHEN rh.end_time IS NOT NULL THEN
             TIMESTAMPDIFF(SECOND, rh.start_time, rh.end_time)
-        ELSE NULL
-    END AS duration,
-    duration_seconds,
-    CASE
-        WHEN rh.end_time IS NOT NULL AND rh.file_name IS NOT NULL THEN 'completed'
-        WHEN rh.start_time IS NOT NULL AND rh.end_time IS NULL THEN 'in_progress'
-        ELSE 'failed'
-    END AS status
-FROM recordings rh
-LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_0900_ai_ci = rh.mac_address COLLATE utf8mb4_0900_ai_ci
+          ELSE NULL
+        END AS duration,
+        duration_seconds,
+        CASE
+          WHEN rh.end_time IS NOT NULL AND rh.file_name IS NOT NULL THEN 'completed'
+          WHEN rh.start_time IS NOT NULL AND rh.end_time IS NULL THEN 'in_progress'
+          ELSE 'failed'
+        END AS status
+      FROM recordings rh
+      LEFT JOIN devices d ON d.device_mac = rh.mac_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
       ${whereClause}
-      ORDER BY rh.CREATED_ON DESC
+      ORDER BY start_time DESC
       LIMIT ${limitNum} OFFSET ${offset}
     `;
 

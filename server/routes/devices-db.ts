@@ -64,7 +64,7 @@ export const getDevices: RequestHandler = async (req, res) => {
     const countQuery = `
       SELECT COUNT(*) as total
       FROM devices d
-      ${whereClause.replace('d.branch_id', 'branch_id')}
+      ${whereClause.replace("d.branch_id", "branch_id")}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
       countQuery,
@@ -79,7 +79,7 @@ export const getDevices: RequestHandler = async (req, res) => {
         NULL as branch_name,
         NULL as branch_code
       FROM devices d
-      ${whereClause.replace('d.branch_id', 'branch_id')}
+      ${whereClause.replace("d.branch_id", "branch_id")}
       ORDER BY d.device_name ASC
       LIMIT ${limitNum} OFFSET ${offset}
     `;
@@ -135,7 +135,6 @@ export const createDevice: RequestHandler = async (req, res) => {
       device_mac,
       ip_address,
       device_type,
-      branch_id,
       installation_date,
       last_maintenance,
       device_status,
@@ -146,13 +145,39 @@ export const createDevice: RequestHandler = async (req, res) => {
       return res.status(400).json({ error: "Device name is required" });
     }
 
+    // Check for unique MAC address if provided
+    if (device_mac) {
+      const macCheck = await executeQuery(
+        "SELECT id FROM devices WHERE device_mac = ?",
+        [device_mac],
+      );
+      if (macCheck.length > 0) {
+        return res
+          .status(400)
+          .json({ error: "Device MAC address already exists" });
+      }
+    }
+
+    // Check for unique IP address if provided
+    if (ip_address) {
+      const ipCheck = await executeQuery(
+        "SELECT id FROM devices WHERE ip_address = ?",
+        [ip_address],
+      );
+      if (ipCheck.length > 0) {
+        return res
+          .status(400)
+          .json({ error: "Device IP address already exists" });
+      }
+    }
+
     const id = uuidv4();
 
     const query = `
-      INSERT INTO devices 
-      (id, device_name, device_mac, ip_address, device_type, branch_id, 
-       installation_date, last_maintenance, device_status, notes) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO devices
+      (id, device_name, device_mac, ip_address, device_type,
+       installation_date, last_maintenance, device_status, notes)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     await executeQuery(query, [
@@ -161,7 +186,6 @@ export const createDevice: RequestHandler = async (req, res) => {
       device_mac || null,
       ip_address || null,
       device_type || "recorder",
-      branch_id || null,
       installation_date || null,
       last_maintenance || null,
       device_status || "active",
@@ -175,13 +199,7 @@ export const createDevice: RequestHandler = async (req, res) => {
     });
   } catch (error: any) {
     console.error("Error creating device:", error);
-    if (error.code === "ER_DUP_ENTRY") {
-      res.status(400).json({ error: "Device MAC address already exists" });
-    } else if (error.code === "ER_NO_REFERENCED_ROW_2") {
-      res.status(400).json({ error: "Invalid branch ID" });
-    } else {
-      res.status(500).json({ error: "Failed to create device" });
-    }
+    res.status(500).json({ error: "Failed to create device" });
   }
 };
 
@@ -194,17 +212,42 @@ export const updateDevice: RequestHandler = async (req, res) => {
       device_mac,
       ip_address,
       device_type,
-      branch_id,
       installation_date,
       last_maintenance,
       device_status,
       notes,
     } = req.body;
 
+    // Check for unique MAC address if provided (excluding current device)
+    if (device_mac) {
+      const macCheck = await executeQuery(
+        "SELECT id FROM devices WHERE device_mac = ? AND id != ?",
+        [device_mac, id],
+      );
+      if (macCheck.length > 0) {
+        return res
+          .status(400)
+          .json({ error: "Device MAC address already exists" });
+      }
+    }
+
+    // Check for unique IP address if provided (excluding current device)
+    if (ip_address) {
+      const ipCheck = await executeQuery(
+        "SELECT id FROM devices WHERE ip_address = ? AND id != ?",
+        [ip_address, id],
+      );
+      if (ipCheck.length > 0) {
+        return res
+          .status(400)
+          .json({ error: "Device IP address already exists" });
+      }
+    }
+
     const query = `
-      UPDATE devices 
-      SET device_name = ?, device_mac = ?, ip_address = ?, device_type = ?, 
-          branch_id = ?, installation_date = ?, last_maintenance = ?, 
+      UPDATE devices
+      SET device_name = ?, device_mac = ?, ip_address = ?, device_type = ?,
+          installation_date = ?, last_maintenance = ?,
           device_status = ?, notes = ?, updated_on = CURRENT_TIMESTAMP
       WHERE id = ?
     `;
@@ -214,7 +257,6 @@ export const updateDevice: RequestHandler = async (req, res) => {
       device_mac || null,
       ip_address || null,
       device_type || "recorder",
-      branch_id || null,
       installation_date || null,
       last_maintenance || null,
       device_status || "active",
@@ -232,13 +274,7 @@ export const updateDevice: RequestHandler = async (req, res) => {
     });
   } catch (error: any) {
     console.error("Error updating device:", error);
-    if (error.code === "ER_DUP_ENTRY") {
-      res.status(400).json({ error: "Device MAC address already exists" });
-    } else if (error.code === "ER_NO_REFERENCED_ROW_2") {
-      res.status(400).json({ error: "Invalid branch ID" });
-    } else {
-      res.status(500).json({ error: "Failed to update device" });
-    }
+    res.status(500).json({ error: "Failed to update device" });
   }
 };
 

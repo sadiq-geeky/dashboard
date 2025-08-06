@@ -38,8 +38,6 @@ interface User {
   is_active: boolean;
   created_on: string | null;
   updated_on: string | null;
-  created_by: string | null;
-  updated_by: string | null;
 }
 
 export function UserManagement() {
@@ -58,12 +56,13 @@ export function UserManagement() {
       const response = await fetch(
         `/api/users?search=${encodeURIComponent(search)}&limit=100`,
       );
-      const data = await response.json();
 
       if (response.ok) {
+        const data = await response.json();
         setUsers(data.data);
         setTotal(data.total);
       } else {
+        const data = await response.json();
         console.error("Failed to fetch users:", data.error);
       }
     } catch (error) {
@@ -95,8 +94,12 @@ export function UserManagement() {
       if (response.ok) {
         loadUsers(); // Refresh the list
       } else {
-        const data = await response.json();
-        alert("Failed to delete user: " + data.error);
+        try {
+          const data = await response.json();
+          alert("Failed to delete user: " + data.error);
+        } catch {
+          alert("Failed to delete user");
+        }
       }
     } catch (error) {
       console.error("Error deleting user:", error);

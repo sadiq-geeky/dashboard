@@ -122,14 +122,19 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
 
     clearTimeout(timeoutId);
 
-    if (!response.ok) {
-      const errorText = await response.text();
+    if (response.ok) {
+      return await response.json();
+    } else {
+      let errorText = "";
+      try {
+        errorText = await response.text();
+      } catch (e) {
+        errorText = "Unknown error";
+      }
       throw new Error(
         `Failed to fetch heartbeats: ${response.status} ${errorText}`,
       );
     }
-
-    return await response.json();
   } catch (error) {
     console.error("Error fetching heartbeats:", error);
     if (error.name === "AbortError") {
@@ -182,7 +187,7 @@ export function ExactDashboard() {
   // Initialize activeTab based on URL parameters
   const getInitialTab = () => {
     const urlParams = new URLSearchParams(location.search);
-    const tab = urlParams.get('tab');
+    const tab = urlParams.get("tab");
     return tab || "home";
   };
 
@@ -231,7 +236,7 @@ export function ExactDashboard() {
   // Handle URL parameter changes for tab switching
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const tab = urlParams.get('tab');
+    const tab = urlParams.get("tab");
     if (tab && tab !== activeTab) {
       setActiveTab(tab);
     }
@@ -399,13 +404,19 @@ export function ExactDashboard() {
       <Header />
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200" style={{display: "flex", flexDirection: "column"}}>
-        <div className="flex items-center justify-between h-16 px-6" style={{margin: "0 auto"}}>
+      <div
+        className="bg-white border-b border-gray-200"
+        style={{ display: "flex", flexDirection: "column" }}
+      >
+        <div
+          className="flex items-center justify-between h-16 px-6"
+          style={{ margin: "0 auto" }}
+        >
           <div className="flex items-center space-x-1">
             <button
               onClick={() => {
                 setActiveTab("home");
-                navigate('/', { replace: true });
+                navigate("/", { replace: true });
               }}
               className={cn(
                 "flex flex-col items-center p-3 rounded-md",
@@ -421,7 +432,7 @@ export function ExactDashboard() {
               <button
                 onClick={() => {
                   setActiveTab("device-status");
-                  navigate('/?tab=device-status', { replace: true });
+                  navigate("/?tab=device-status", { replace: true });
                 }}
                 className={cn(
                   "flex flex-col items-center p-3 rounded-md",
@@ -458,9 +469,18 @@ export function ExactDashboard() {
             )}
             {isAdmin() && (
               <button
+                onClick={() => navigate("/deployment")}
+                className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              >
+                <Settings className="w-5 h-5 mb-1" />
+                <span className="text-xs">Deployment</span>
+              </button>
+            )}
+            {isAdmin() && (
+              <button
                 onClick={() => {
                   setActiveTab("analytics");
-                  navigate('/?tab=analytics', { replace: true });
+                  navigate("/?tab=analytics", { replace: true });
                 }}
                 className={cn(
                   "flex flex-col items-center p-3 rounded-md",
@@ -495,7 +515,7 @@ export function ExactDashboard() {
       <div className="flex">
         {/* Main Content */}
         <div className="flex-1">
-          <div className="px-6 py-6 pt-1" style={{padding: "24px 24px 5px"}}>
+          <div className="px-6 py-6 pt-1" style={{ padding: "24px 24px 5px" }}>
             {activeTab === "home" && (
               <>
                 {/* Search and Filter Bar */}
@@ -758,7 +778,7 @@ export function ExactDashboard() {
                       <tbody className="bg-white divide-y divide-gray-200">
                         {devices.map((device, index) => (
                           <tr
-                            key={device.branch_name || `device-${index}`}
+                            key={`${device.branch_code}-${device.branch_name}-${index}`}
                             className="hover:bg-gray-50"
                           >
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">

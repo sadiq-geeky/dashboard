@@ -56,6 +56,13 @@ import {
   loginUser,
   getUserProfile,
 } from "./routes/users-db";
+import {
+  getDeployments,
+  createDeployment,
+  deleteDeployment,
+  getDeployment,
+  updateDeployment,
+} from "./routes/deployments-db";
 
 export function createServer() {
   const app = express();
@@ -128,6 +135,13 @@ export function createServer() {
   app.put("/api/users/:uuid", updateUser);
   app.delete("/api/users/:uuid", deleteUser);
   app.get("/api/users/:uuid", getUserProfile);
+
+  // Deployment Management routes
+  app.get("/api/deployments", getDeployments);
+  app.post("/api/deployments", createDeployment);
+  app.get("/api/deployments/:uuid", getDeployment);
+  app.put("/api/deployments/:uuid", updateDeployment);
+  app.delete("/api/deployments/:uuid", deleteDeployment);
 
   return app;
 }

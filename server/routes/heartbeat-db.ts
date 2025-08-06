@@ -6,11 +6,11 @@ import { v4 as uuidv4 } from "uuid";
 // Get heartbeats with status calculation
 export const getHeartbeats: RequestHandler = async (req, res) => {
   try {
-    // Query the heartbeat table
+    // Query the heartbeat table with device and branch info
     const query = `
       SELECT
-        COALESCE(c.branch_address, h.ip_address) AS branch_name,
-        COALESCE(c.branch_id, 'N/A') AS branch_code,
+        COALESCE(b.branch_address, h.mac_address) AS branch_name,
+        COALESCE(b.branch_code, h.ip_address) AS branch_code,
         h.last_seen,
         CASE
           WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 5 THEN 'online'
@@ -19,13 +19,15 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
         END AS status
       FROM (
         SELECT
-          ip_address,
           mac_address,
+          MAX(ip_address) as ip_address,
           MAX(created_on) as last_seen
-        FROM heartbeat
-        GROUP BY ip_address, mac_address
+        FROM heartbeat WHERE mac_address IS NOT NULL
+        GROUP BY mac_address
       ) h
-      LEFT JOIN contacts c ON c.device_mac COLLATE utf8mb4_0900_ai_ci = h.mac_address COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN devices d ON d.device_mac = h.mac_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
       ORDER BY h.last_seen DESC
     `;
 
