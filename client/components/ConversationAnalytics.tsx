@@ -268,33 +268,34 @@ export function ConversationAnalytics() {
             Conversations by City
           </h3>
           <ResponsiveContainer width="100%" height={400}>
-            <PieChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <Pie
-                data={conversationsByCity.slice(0, 8)}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ city, percent }) =>
-                  `${city}: ${(percent * 100).toFixed(0)}%`
-                }
-                outerRadius={120}
-                fill="#8884d8"
-                dataKey="count"
-              >
-                {conversationsByCity.slice(0, 8).map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={CHART_COLORS[index % CHART_COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip 
+            <LineChart
+              data={conversationsByCity.slice(0, 10)}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="city"
+                angle={-45}
+                textAnchor="end"
+                height={80}
+                tick={{ fontSize: 10 }}
+              />
+              <YAxis />
+              <Tooltip
                 formatter={(value: number, name, props) => [
                   `${value} conversations`,
                   `${props.payload.branch_count} branches`
                 ]}
+                labelFormatter={(label) => `City: ${label}`}
               />
-            </PieChart>
+              <Line
+                type="monotone"
+                dataKey="count"
+                stroke={COLORS.secondary}
+                strokeWidth={3}
+                dot={{ fill: COLORS.secondary, strokeWidth: 2, r: 6 }}
+              />
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
