@@ -54,6 +54,8 @@ export function ExactDashboard() {
   const [filteredRecordings, setFilteredRecordings] = useState<RecordingHistory[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRecording, setSelectedRecording] = useState<RecordingHistory | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const loadRecordings = async () => {
     try {
