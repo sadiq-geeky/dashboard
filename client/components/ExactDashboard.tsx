@@ -458,6 +458,15 @@ export function ExactDashboard() {
             )}
             {isAdmin() && (
               <button
+                onClick={() => navigate("/deployment")}
+                className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              >
+                <Settings className="w-5 h-5 mb-1" />
+                <span className="text-xs">Deployment</span>
+              </button>
+            )}
+            {isAdmin() && (
+              <button
                 onClick={() => {
                   setActiveTab("analytics");
                   navigate('/?tab=analytics', { replace: true });
