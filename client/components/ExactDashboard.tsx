@@ -14,6 +14,12 @@ import {
   Bell,
   User,
   ChevronDown,
+  Play,
+  Pause,
+  RotateCcw,
+  SkipBack,
+  Shuffle,
+  Download,
 } from "lucide-react";
 
 // Fetch recordings from API
