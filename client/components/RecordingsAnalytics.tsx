@@ -252,12 +252,18 @@ export function RecordingsAnalytics() {
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={recordingsByBranch} layout="horizontal">
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" />
-            <YAxis 
-              dataKey="branch_name" 
-              type="category" 
+            <XAxis
+              type="number"
+              axisLine={true}
+              tickLine={true}
+            />
+            <YAxis
+              dataKey="branch_name"
+              type="category"
               width={150}
               tick={{ fontSize: 12 }}
+              axisLine={true}
+              tickLine={true}
             />
             <Tooltip formatter={(value: number) => [value, "Recordings"]} />
             <Bar dataKey="count" fill={COLORS.secondary} />
