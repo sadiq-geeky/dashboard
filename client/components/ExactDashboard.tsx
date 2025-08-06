@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { HeartbeatRecord } from "@shared/api";
+import { RecordingHistory, PaginatedResponse } from "@shared/api";
 import { cn } from "@/lib/utils";
 import {
   Search,
@@ -16,13 +16,13 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-// Fetch heartbeats from API
-const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
+// Fetch recordings from API
+const fetchRecordings = async (): Promise<RecordingHistory[]> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    const response = await fetch("/api/heartbeats", {
+    const response = await fetch("/api/recordings?limit=50", {
       signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
@@ -34,13 +34,14 @@ const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(
-        `Failed to fetch heartbeats: ${response.status} ${errorText}`,
+        `Failed to fetch recordings: ${response.status} ${errorText}`,
       );
     }
 
-    return await response.json();
+    const result: PaginatedResponse<RecordingHistory> = await response.json();
+    return result.data;
   } catch (error) {
-    console.error("Error fetching heartbeats:", error);
+    console.error("Error fetching recordings:", error);
     if (error.name === "AbortError") {
       console.error("Request timed out after 10 seconds");
     }
