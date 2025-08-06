@@ -93,12 +93,37 @@ const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
   }
 };
 
+const getStatusColor = (status: HeartbeatRecord["status"]) => {
+  switch (status) {
+    case "online":
+      return "text-green-600 bg-green-50";
+    case "problematic":
+      return "text-yellow-600 bg-yellow-50";
+    case "offline":
+      return "text-red-600 bg-red-50";
+  }
+};
+
+const getStatusIcon = (status: HeartbeatRecord["status"]) => {
+  switch (status) {
+    case "online":
+      return <Wifi className="h-4 w-4" />;
+    case "problematic":
+      return <AlertTriangle className="h-4 w-4" />;
+    case "offline":
+      return <WifiOff className="h-4 w-4" />;
+  }
+};
+
 export function ExactDashboard() {
   const [activeTab, setActiveTab] = useState("home");
   const [recordings, setRecordings] = useState<RecordingHistory[]>([]);
   const [filteredRecordings, setFilteredRecordings] = useState<
     RecordingHistory[]
   >([]);
+  const [devices, setDevices] = useState<HeartbeatRecord[]>([]);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRecording, setSelectedRecording] =
     useState<RecordingHistory | null>(null);
