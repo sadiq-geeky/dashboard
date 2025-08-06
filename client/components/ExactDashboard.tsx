@@ -72,9 +72,14 @@ const fetchRecordings = async (retries = 2): Promise<RecordingHistory[]> => {
     }
 
     // Retry logic for development
-    if (retries > 0 && (error.name === "TypeError" || error.message?.includes("Failed to fetch"))) {
-      console.log(`Retrying recordings fetch, ${retries} attempts remaining...`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    if (
+      retries > 0 &&
+      (error.name === "TypeError" || error.message?.includes("Failed to fetch"))
+    ) {
+      console.log(
+        `Retrying recordings fetch, ${retries} attempts remaining...`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       return fetchRecordings(retries - 1);
     }
 
@@ -112,9 +117,14 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
     }
 
     // Retry logic for development
-    if (retries > 0 && (error.name === "TypeError" || error.message?.includes("Failed to fetch"))) {
-      console.log(`Retrying heartbeats fetch, ${retries} attempts remaining...`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    if (
+      retries > 0 &&
+      (error.name === "TypeError" || error.message?.includes("Failed to fetch"))
+    ) {
+      console.log(
+        `Retrying heartbeats fetch, ${retries} attempts remaining...`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       return fetchHeartbeats(retries - 1);
     }
 
@@ -159,9 +169,12 @@ const fetchContacts = async (
     }
 
     // Retry logic for development
-    if (retries > 0 && (error.name === "TypeError" || error.message?.includes("Failed to fetch"))) {
+    if (
+      retries > 0 &&
+      (error.name === "TypeError" || error.message?.includes("Failed to fetch"))
+    ) {
       console.log(`Retrying contacts fetch, ${retries} attempts remaining...`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       return fetchContacts(search, retries - 1);
     }
 

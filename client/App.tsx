@@ -1,7 +1,10 @@
 import "./global.css";
 
 // Simple Recharts warning suppression
-if (typeof window !== "undefined" && !(window as any).__WARNING_SUPPRESSION_SETUP__) {
+if (
+  typeof window !== "undefined" &&
+  !(window as any).__WARNING_SUPPRESSION_SETUP__
+) {
   (window as any).__WARNING_SUPPRESSION_SETUP__ = true;
 
   const originalWarn = console.warn;
