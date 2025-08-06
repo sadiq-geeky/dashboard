@@ -55,7 +55,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
     `;
     const [countResult] = await executeQuery<{ total: number }>(
       countQuery,
-      queryParams,
+      countParams,
     );
     const total = countResult.total;
 
