@@ -403,7 +403,10 @@ export function ExactDashboard() {
         <div className="flex items-center justify-between h-16 px-6" style={{margin: "0 auto"}}>
           <div className="flex items-center space-x-1">
             <button
-              onClick={() => setActiveTab("home")}
+              onClick={() => {
+                setActiveTab("home");
+                navigate('/', { replace: true });
+              }}
               className={cn(
                 "flex flex-col items-center p-3 rounded-md",
                 activeTab === "home"
@@ -416,7 +419,10 @@ export function ExactDashboard() {
             </button>
             {isAdmin() && (
               <button
-                onClick={() => setActiveTab("device-status")}
+                onClick={() => {
+                  setActiveTab("device-status");
+                  navigate('/?tab=device-status', { replace: true });
+                }}
                 className={cn(
                   "flex flex-col items-center p-3 rounded-md",
                   activeTab === "device-status"
