@@ -122,7 +122,9 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
 
     clearTimeout(timeoutId);
 
-    if (!response.ok) {
+    if (response.ok) {
+      return await response.json();
+    } else {
       let errorText = "";
       try {
         errorText = await response.text();
@@ -133,8 +135,6 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
         `Failed to fetch heartbeats: ${response.status} ${errorText}`,
       );
     }
-
-    return await response.json();
   } catch (error) {
     console.error("Error fetching heartbeats:", error);
     if (error.name === "AbortError") {
