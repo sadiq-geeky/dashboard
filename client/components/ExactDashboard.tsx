@@ -404,18 +404,14 @@ export function ExactDashboard() {
                     {/* Progress Bar */}
                     <div className="mb-3">
                       <div className="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>1:56</span>
-                        <span>
-                          {selectedRecording.duration
-                            ? `${Math.floor(selectedRecording.duration / 60)}:${String(selectedRecording.duration % 60).padStart(2, "0")}`
-                            : "3:21"}
-                        </span>
+                        <span>{formatTime(currentTime)}</span>
+                        <span>{formatTime(duration)}</span>
                       </div>
                       <div className="relative">
                         <div className="w-full h-1.5 bg-gray-200 rounded-full">
                           <div
                             className="h-1.5 bg-blue-500 rounded-full"
-                            style={{ width: "60%" }}
+                            style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : "0%" }}
                           >
                             <div className="absolute right-0 top-0 w-2.5 h-2.5 bg-blue-500 rounded-full -mt-0.5 -mr-1"></div>
                           </div>
@@ -425,22 +421,41 @@ export function ExactDashboard() {
 
                     {/* Audio Controls */}
                     <div className="flex items-center justify-center space-x-2">
-                      <button className="p-1 text-gray-600 hover:text-gray-800">
-                        <Play className="w-4 h-4" />
-                      </button>
-                      <button className="p-1 text-gray-600 hover:text-gray-800">
-                        <Pause className="w-4 h-4" />
-                      </button>
-                      <button className="p-1 text-gray-600 hover:text-gray-800">
+                      {!isPlaying ? (
+                        <button
+                          onClick={playAudio}
+                          className="p-1 text-gray-600 hover:text-gray-800"
+                          disabled={!selectedRecording?.file_name}
+                        >
+                          <Play className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={pauseAudio}
+                          className="p-1 text-gray-600 hover:text-gray-800"
+                        >
+                          <Pause className="w-4 h-4" />
+                        </button>
+                      )}
+                      <button
+                        onClick={resetAudio}
+                        className="p-1 text-gray-600 hover:text-gray-800"
+                        disabled={!selectedRecording?.file_name}
+                      >
                         <RotateCcw className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-gray-600 hover:text-gray-800">
+                      <button
+                        onClick={skipBack}
+                        className="p-1 text-gray-600 hover:text-gray-800"
+                        disabled={!selectedRecording?.file_name}
+                      >
                         <SkipBack className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-gray-600 hover:text-gray-800">
-                        <Shuffle className="w-4 h-4" />
-                      </button>
-                      <button className="p-1 text-gray-600 hover:text-gray-800">
+                      <button
+                        onClick={downloadAudio}
+                        className="p-1 text-gray-600 hover:text-gray-800"
+                        disabled={!selectedRecording?.file_name}
+                      >
                         <Download className="w-4 h-4" />
                       </button>
                     </div>
