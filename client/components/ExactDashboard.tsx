@@ -3,7 +3,6 @@ import {
   RecordingHistory,
   PaginatedResponse,
   HeartbeatRecord,
-  Contact,
 } from "@shared/api";
 import { cn } from "@/lib/utils";
 import { AddContactModal } from "./AddContactModal";
