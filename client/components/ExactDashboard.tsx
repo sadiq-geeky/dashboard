@@ -7,6 +7,7 @@ import {
 } from "@shared/api";
 import { cn } from "@/lib/utils";
 import { AddContactModal } from "./AddContactModal";
+import { EditContactModal } from "./EditContactModal";
 import {
   Search,
   Filter,
@@ -184,6 +185,8 @@ export function ExactDashboard() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
+  const [isEditContactModalOpen, setIsEditContactModalOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const itemsPerPage = 5;
 
   const loadRecordings = async () => {
@@ -221,6 +224,16 @@ export function ExactDashboard() {
 
   const handleContactAdded = () => {
     loadContacts();
+  };
+
+  const handleEditContact = (contact: Contact) => {
+    setEditingContact(contact);
+    setIsEditContactModalOpen(true);
+  };
+
+  const handleContactUpdated = () => {
+    loadContacts();
+    setEditingContact(null);
   };
 
   useEffect(() => {
@@ -876,7 +889,10 @@ export function ExactDashboard() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               <div className="flex items-center space-x-2">
-                                <button className="text-blue-600 hover:text-blue-900">
+                                <button
+                                  onClick={() => handleEditContact(contact)}
+                                  className="text-blue-600 hover:text-blue-900"
+                                >
                                   <Edit2 className="w-4 h-4" />
                                 </button>
                                 <button className="text-red-600 hover:text-red-900">
@@ -1064,6 +1080,17 @@ export function ExactDashboard() {
         isOpen={isAddContactModalOpen}
         onClose={() => setIsAddContactModalOpen(false)}
         onContactAdded={handleContactAdded}
+      />
+
+      {/* Edit Contact Modal */}
+      <EditContactModal
+        isOpen={isEditContactModalOpen}
+        onClose={() => {
+          setIsEditContactModalOpen(false);
+          setEditingContact(null);
+        }}
+        onContactUpdated={handleContactUpdated}
+        contact={editingContact}
       />
     </div>
   );
