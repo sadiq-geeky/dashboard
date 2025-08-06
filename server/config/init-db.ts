@@ -4,34 +4,56 @@ export async function initializeTables() {
   try {
     console.log("🔄 Initializing database tables...");
 
-    // Create contacts table
-    const createContactsTable = `
-      CREATE TABLE IF NOT EXISTS contacts (
-        uuid VARCHAR(36) PRIMARY KEY,
-        emp_name VARCHAR(255),
-        device_mac VARCHAR(17),
-        branch_id VARCHAR(50),
+    // Create branches table
+    const createBranchesTable = `
+      CREATE TABLE IF NOT EXISTS branches (
+        id VARCHAR(36) PRIMARY KEY,
+        branch_code VARCHAR(50) UNIQUE NOT NULL,
+        branch_name VARCHAR(255) NOT NULL,
         branch_city VARCHAR(100),
         branch_address TEXT,
-        gender ENUM('Male', 'Female', 'Other'),
-        date_of_birth DATE,
-        cnic VARCHAR(15),
-        phone_no VARCHAR(20),
-        designation VARCHAR(100),
-        department VARCHAR(100),
-        joining_date DATE,
-        email_id VARCHAR(255),
+        region VARCHAR(100),
+        contact_phone VARCHAR(20),
+        contact_email VARCHAR(255),
+        is_active BOOLEAN DEFAULT true,
         created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_emp_name (emp_name),
-        INDEX idx_cnic (cnic),
-        INDEX idx_phone_no (phone_no),
-        INDEX idx_email_id (email_id)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        INDEX idx_branch_code (branch_code),
+        INDEX idx_branch_name (branch_name),
+        INDEX idx_branch_city (branch_city),
+        INDEX idx_is_active (is_active)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `;
 
-    await executeQuery(createContactsTable);
-    console.log("✅ Contacts table created/verified successfully");
+    await executeQuery(createBranchesTable);
+    console.log("✅ Branches table created/verified successfully");
+
+    // Create devices table
+    const createDevicesTable = `
+      CREATE TABLE IF NOT EXISTS devices (
+        id VARCHAR(36) PRIMARY KEY,
+        device_name VARCHAR(255) NOT NULL,
+        device_mac VARCHAR(17) UNIQUE,
+        ip_address VARCHAR(45),
+        device_type ENUM('recorder', 'monitor', 'other') DEFAULT 'recorder',
+        branch_id VARCHAR(36),
+        installation_date DATE,
+        last_maintenance DATE,
+        device_status ENUM('active', 'inactive', 'maintenance') DEFAULT 'active',
+        notes TEXT,
+        created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE SET NULL,
+        INDEX idx_device_name (device_name),
+        INDEX idx_device_mac (device_mac),
+        INDEX idx_ip_address (ip_address),
+        INDEX idx_branch_id (branch_id),
+        INDEX idx_device_status (device_status)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    `;
+
+    await executeQuery(createDevicesTable);
+    console.log("✅ Devices table created/verified successfully");
 
 
     // Create recording_heartbeat table for compatibility
