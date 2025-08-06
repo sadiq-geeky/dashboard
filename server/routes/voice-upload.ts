@@ -50,7 +50,7 @@ const upload = multer({
 // Upload voice recording
 export const uploadVoice: RequestHandler = async (req, res) => {
   try {
-    const { ip_address, start_time, end_time, cnic } = req.body;
+    const { ip_address, start_time, end_time, cnic, mac_address } = req.body;
     const file = req.file;
 
     // Validate required parameters
