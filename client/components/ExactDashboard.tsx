@@ -183,6 +183,7 @@ export function ExactDashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
   const itemsPerPage = 5;
 
   const loadRecordings = async () => {
