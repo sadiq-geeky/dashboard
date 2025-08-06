@@ -6,10 +6,6 @@ import bcrypt from "bcrypt";
 export interface User {
   uuid: string;
   emp_name: string | null;
-  device_mac: string | null;
-  branch_id: string | null;
-  branch_city: string | null;
-  branch_address: string | null;
   gender: string | null;
   date_of_birth: string | null;
   cnic: string | null;
@@ -24,14 +20,14 @@ export interface User {
   is_active: boolean;
   created_on: string | null;
   updated_on: string | null;
+  created_by: string | null;
+  updated_by: string | null;
 }
 
 export interface UserSession {
   uuid: string;
   username: string;
   role: "admin" | "user";
-  branch_id: string | null;
-  branch_city: string | null;
   emp_name: string | null;
 }
 
