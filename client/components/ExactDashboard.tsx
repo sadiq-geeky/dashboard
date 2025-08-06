@@ -1011,7 +1011,7 @@ export function ExactDashboard() {
               </>
             )}
 
-            {activeTab === "analytics" && (
+            {activeTab === "analytics" && isAdmin() && (
               <>
                 {/* Analytics Sub-navigation */}
                 <div className="mb-6 border-b border-gray-200">
