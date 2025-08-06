@@ -99,9 +99,7 @@ export function AddUserModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Add New User
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">Add New User</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
@@ -119,7 +117,9 @@ export function AddUserModal({
 
           {/* Account Information */}
           <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Account Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Account Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -169,7 +169,9 @@ export function AddUserModal({
 
           {/* Personal Information */}
           <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Personal Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -266,7 +268,9 @@ export function AddUserModal({
 
           {/* Work Information */}
           <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Work Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Work Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -331,7 +335,9 @@ export function AddUserModal({
 
           {/* Branch Information */}
           <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Branch Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Branch Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

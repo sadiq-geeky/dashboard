@@ -7,13 +7,13 @@ export interface Device {
   device_name: string;
   device_mac?: string;
   ip_address?: string;
-  device_type: 'recorder' | 'monitor' | 'other';
+  device_type: "recorder" | "monitor" | "other";
   branch_id?: string;
   branch_name?: string;
   branch_code?: string;
   installation_date?: string;
   last_maintenance?: string;
-  device_status: 'active' | 'inactive' | 'maintenance';
+  device_status: "active" | "inactive" | "maintenance";
   notes?: string;
   created_on: string;
   updated_on: string;
@@ -22,7 +22,13 @@ export interface Device {
 // Get all devices with pagination and branch info
 export const getDevices: RequestHandler = async (req, res) => {
   try {
-    const { page = "1", limit = "10", search, branch_id, device_status } = req.query;
+    const {
+      page = "1",
+      limit = "10",
+      search,
+      branch_id,
+      device_status,
+    } = req.query;
 
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
@@ -33,7 +39,9 @@ export const getDevices: RequestHandler = async (req, res) => {
     const conditions: string[] = [];
 
     if (search) {
-      conditions.push("(d.device_name LIKE ? OR d.device_mac LIKE ? OR d.ip_address LIKE ?)");
+      conditions.push(
+        "(d.device_name LIKE ? OR d.device_mac LIKE ? OR d.ip_address LIKE ?)",
+      );
       queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
 
@@ -58,7 +66,10 @@ export const getDevices: RequestHandler = async (req, res) => {
       LEFT JOIN branches b ON d.branch_id = b.id 
       ${whereClause}
     `;
-    const [countResult] = await executeQuery<{ total: number }>(countQuery, queryParams);
+    const [countResult] = await executeQuery<{ total: number }>(
+      countQuery,
+      queryParams,
+    );
     const total = countResult.total;
 
     // Get paginated results with branch info
@@ -150,11 +161,11 @@ export const createDevice: RequestHandler = async (req, res) => {
       device_name,
       device_mac || null,
       ip_address || null,
-      device_type || 'recorder',
+      device_type || "recorder",
       branch_id || null,
       installation_date || null,
       last_maintenance || null,
-      device_status || 'active',
+      device_status || "active",
       notes || null,
     ]);
 
@@ -203,11 +214,11 @@ export const updateDevice: RequestHandler = async (req, res) => {
       device_name,
       device_mac || null,
       ip_address || null,
-      device_type || 'recorder',
+      device_type || "recorder",
       branch_id || null,
       installation_date || null,
       last_maintenance || null,
-      device_status || 'active',
+      device_status || "active",
       notes || null,
       id,
     ]);

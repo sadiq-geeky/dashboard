@@ -43,7 +43,10 @@ import {
 } from "lucide-react";
 
 // Fetch recordings from API with retry logic
-const fetchRecordings = async (user: any, retries = 2): Promise<RecordingHistory[]> => {
+const fetchRecordings = async (
+  user: any,
+  retries = 2,
+): Promise<RecordingHistory[]> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -51,11 +54,11 @@ const fetchRecordings = async (user: any, retries = 2): Promise<RecordingHistory
     // Build query parameters with branch filtering for non-admin users
     const params = new URLSearchParams({
       limit: "50",
-      user_role: user?.role || 'user',
+      user_role: user?.role || "user",
     });
 
-    if (user?.branch_id && user?.role !== 'admin') {
-      params.append('branch_id', user.branch_id);
+    if (user?.branch_id && user?.role !== "admin") {
+      params.append("branch_id", user.branch_id);
     }
 
     const response = await fetch(`/api/recordings?${params.toString()}`, {
@@ -148,7 +151,6 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
   }
 };
 
-
 const getStatusColor = (status: HeartbeatRecord["status"]) => {
   switch (status) {
     case "online":
@@ -215,7 +217,6 @@ export function ExactDashboard() {
     }
   };
 
-
   useEffect(() => {
     loadRecordings();
     loadDevices();
@@ -226,7 +227,6 @@ export function ExactDashboard() {
       clearInterval(devicesInterval);
     };
   }, []);
-
 
   // Device status counts
   const onlineCount = devices.filter((d) => d.status === "online").length;
@@ -414,7 +414,7 @@ export function ExactDashboard() {
             </button>
             {isAdmin() && (
               <button
-                onClick={() => window.location.href = '/branch-management'}
+                onClick={() => (window.location.href = "/branch-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
                 <Building2 className="w-5 h-5 mb-1" />
@@ -423,7 +423,7 @@ export function ExactDashboard() {
             )}
             {isAdmin() && (
               <button
-                onClick={() => window.location.href = '/device-management'}
+                onClick={() => (window.location.href = "/device-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
                 <Monitor className="w-5 h-5 mb-1" />
@@ -446,7 +446,7 @@ export function ExactDashboard() {
             )}
             {isAdmin() && (
               <button
-                onClick={() => window.location.href = '/user-management'}
+                onClick={() => (window.location.href = "/user-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
                 <Users className="w-5 h-5 mb-1" />
@@ -789,7 +789,6 @@ export function ExactDashboard() {
               </>
             )}
 
-
             {activeTab === "analytics" && isAdmin() && (
               <>
                 {/* Analytics Sub-navigation */}
@@ -801,7 +800,7 @@ export function ExactDashboard() {
                         "py-2 px-1 border-b-2 font-medium text-sm",
                         analyticsSubTab === "recordings"
                           ? "border-blue-500 text-blue-600"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
                       )}
                     >
                       Recording Analytics
@@ -812,7 +811,7 @@ export function ExactDashboard() {
                         "py-2 px-1 border-b-2 font-medium text-sm",
                         analyticsSubTab === "conversations"
                           ? "border-blue-500 text-blue-600"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
                       )}
                     >
                       Conversation Analytics
@@ -823,7 +822,9 @@ export function ExactDashboard() {
                 {/* Analytics Content */}
                 <WarningSuppressionWrapper>
                   {analyticsSubTab === "recordings" && <RecordingsAnalytics />}
-                  {analyticsSubTab === "conversations" && <ConversationAnalytics />}
+                  {analyticsSubTab === "conversations" && (
+                    <ConversationAnalytics />
+                  )}
                 </WarningSuppressionWrapper>
               </>
             )}
@@ -979,7 +980,6 @@ export function ExactDashboard() {
           </div>
         )}
       </div>
-
     </div>
   );
 }

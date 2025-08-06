@@ -3,8 +3,17 @@ import { executeQuery } from "../config/database";
 
 // Conversation Analytics interface
 export interface ConversationAnalytics {
-  conversationsByBranch: Array<{ branch_id: string; branch_name: string; count: number; month: string }>;
-  conversationsByCity: Array<{ city: string; count: number; branch_count: number }>;
+  conversationsByBranch: Array<{
+    branch_id: string;
+    branch_name: string;
+    count: number;
+    month: string;
+  }>;
+  conversationsByCity: Array<{
+    city: string;
+    count: number;
+    branch_count: number;
+  }>;
   dailyConversationsLastMonth: Array<{ date: string; count: number }>;
   uniqueCnicsByMonth: Array<{ month: string; unique_cnic_count: number }>;
   totalStats: {
@@ -73,7 +82,10 @@ export const getConversationsByCity: RequestHandler = async (req, res) => {
 };
 
 // Get daily conversations for last month
-export const getDailyConversationsLastMonth: RequestHandler = async (req, res) => {
+export const getDailyConversationsLastMonth: RequestHandler = async (
+  req,
+  res,
+) => {
   try {
     const query = `
       SELECT
@@ -113,7 +125,7 @@ export const getUniqueCnicsByMonth: RequestHandler = async (req, res) => {
 
     const response = {
       month: new Date().toISOString().slice(0, 7), // Current month
-      unique_cnic_count: result[0]?.unique_cnic_count || 0
+      unique_cnic_count: result[0]?.unique_cnic_count || 0,
     };
 
     res.json([response]);
@@ -192,8 +204,12 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
       uniqueCnicResult,
       totalStatsResult,
     ] = await Promise.all([
-      executeQuery<{ branch_id: string; branch_name: string; count: number }>(branchQuery),
-      executeQuery<{ city: string; count: number; branch_count: number }>(cityQuery),
+      executeQuery<{ branch_id: string; branch_name: string; count: number }>(
+        branchQuery,
+      ),
+      executeQuery<{ city: string; count: number; branch_count: number }>(
+        cityQuery,
+      ),
       executeQuery<{ date: string; count: number }>(dailyQuery),
       executeQuery<{ unique_cnic_count: number }>(cnicQuery),
       executeQuery<{
@@ -215,7 +231,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
 
     const analytics: ConversationAnalytics = {
       conversationsByBranch: conversationsByBranch.map((row) => ({
-        branch_id: row.branch_id || 'unknown',
+        branch_id: row.branch_id || "unknown",
         branch_name: row.branch_name || "Unknown Branch",
         count: row.count,
         month: new Date().toISOString().slice(0, 7), // Current month as default
@@ -233,7 +249,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
         {
           month: new Date().toISOString().slice(0, 7), // Current month
           unique_cnic_count: uniqueCnicCount,
-        }
+        },
       ],
       totalStats: {
         totalConversations: totalStats.totalConversations,

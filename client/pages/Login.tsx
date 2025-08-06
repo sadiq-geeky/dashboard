@@ -1,42 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { Lock, User, Eye, EyeOff, LogIn } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { Lock, User, Eye, EyeOff, LogIn } from "lucide-react";
 
 export function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  
+  const [error, setError] = useState("");
+
   const { login, isAuthenticated } = useAuth();
 
   useEffect(() => {
     // Redirect if already authenticated
     if (isAuthenticated) {
-      window.location.href = '/';
+      window.location.href = "/";
     }
   }, [isAuthenticated]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     if (!username || !password) {
-      setError('Please enter both username and password');
+      setError("Please enter both username and password");
       setIsLoading(false);
       return;
     }
 
     const success = await login(username, password);
-    
+
     if (success) {
-      window.location.href = '/';
+      window.location.href = "/";
     } else {
-      setError('Invalid username or password');
+      setError("Invalid username or password");
     }
-    
+
     setIsLoading(false);
   };
 
@@ -71,7 +71,10 @@ export function Login() {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Username
               </label>
               <div className="mt-1 relative">
@@ -93,7 +96,10 @@ export function Login() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password
               </label>
               <div className="mt-1 relative">
@@ -103,7 +109,7 @@ export function Login() {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
                   value={password}
@@ -137,7 +143,7 @@ export function Login() {
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                 <LogIn className="h-5 w-5 text-red-500 group-hover:text-red-400" />
               </span>
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? "Signing in..." : "Sign in"}
             </button>
           </div>
 

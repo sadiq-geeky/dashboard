@@ -48,41 +48,62 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <ExactDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/recordings" element={
-              <ProtectedRoute>
-                <Recordings />
-              </ProtectedRoute>
-            } />
-            <Route path="/branch-management" element={
-              <ProtectedRoute adminOnly>
-                <BranchManagement />
-              </ProtectedRoute>
-            } />
-            <Route path="/device-management" element={
-              <ProtectedRoute adminOnly>
-                <DeviceManagement />
-              </ProtectedRoute>
-            } />
-            <Route path="/devices" element={
-              <ProtectedRoute adminOnly>
-                <DeviceManagement />
-              </ProtectedRoute>
-            } />
-            <Route path="/conversation-analytics" element={
-              <ProtectedRoute adminOnly>
-                <ConversationAnalytics />
-              </ProtectedRoute>
-            } />
-            <Route path="/user-management" element={
-              <ProtectedRoute adminOnly>
-                <UserManagement />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <ExactDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/recordings"
+              element={
+                <ProtectedRoute>
+                  <Recordings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/branch-management"
+              element={
+                <ProtectedRoute adminOnly>
+                  <BranchManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/device-management"
+              element={
+                <ProtectedRoute adminOnly>
+                  <DeviceManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/devices"
+              element={
+                <ProtectedRoute adminOnly>
+                  <DeviceManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/conversation-analytics"
+              element={
+                <ProtectedRoute adminOnly>
+                  <ConversationAnalytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/user-management"
+              element={
+                <ProtectedRoute adminOnly>
+                  <UserManagement />
+                </ProtectedRoute>
+              }
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

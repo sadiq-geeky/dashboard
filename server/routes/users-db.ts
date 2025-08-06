@@ -20,7 +20,7 @@ export interface User {
   email_id: string | null;
   username: string;
   password_hash: string;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
   is_active: boolean;
   created_on: string | null;
   updated_on: string | null;
@@ -29,7 +29,7 @@ export interface User {
 export interface UserSession {
   uuid: string;
   username: string;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
   branch_id: string | null;
   branch_city: string | null;
   emp_name: string | null;
@@ -60,7 +60,10 @@ export const getUsers: RequestHandler = async (req, res) => {
 
     query += ` ORDER BY created_on DESC LIMIT ${limitNum} OFFSET ${offset}`;
 
-    const users = await executeQuery<Omit<User, 'password_hash'>>(query, queryParams);
+    const users = await executeQuery<Omit<User, "password_hash">>(
+      query,
+      queryParams,
+    );
 
     // Get total count for pagination
     let countQuery = `SELECT COUNT(*) as total FROM users`;
@@ -72,7 +75,10 @@ export const getUsers: RequestHandler = async (req, res) => {
       countParams.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
 
-    const countResult = await executeQuery<{ total: number }>(countQuery, countParams);
+    const countResult = await executeQuery<{ total: number }>(
+      countQuery,
+      countParams,
+    );
     const total = countResult[0]?.total || 0;
 
     res.json({
@@ -107,7 +113,7 @@ export const createUser: RequestHandler = async (req, res) => {
       email_id,
       username,
       password,
-      role = 'user',
+      role = "user",
     } = req.body;
 
     // Validate required fields
@@ -136,17 +142,15 @@ export const createUser: RequestHandler = async (req, res) => {
       .map(([key]) => key.replace("_", " "));
 
     if (missingFields.length > 0) {
-      return res
-        .status(400)
-        .json({
-          error: `The following fields are required: ${missingFields.join(", ")}`,
-        });
+      return res.status(400).json({
+        error: `The following fields are required: ${missingFields.join(", ")}`,
+      });
     }
 
     // Check if username already exists
     const existingUser = await executeQuery<{ uuid: string }>(
       `SELECT uuid FROM users WHERE username = ?`,
-      [username]
+      [username],
     );
 
     if (existingUser.length > 0) {
@@ -229,7 +233,7 @@ export const updateUser: RequestHandler = async (req, res) => {
     if (username) {
       const existingUser = await executeQuery<{ uuid: string }>(
         `SELECT uuid FROM users WHERE username = ? AND uuid != ?`,
-        [username, uuid]
+        [username, uuid],
       );
 
       if (existingUser.length > 0) {
@@ -320,7 +324,7 @@ export const loginUser: RequestHandler = async (req, res) => {
     // Get user by username
     const users = await executeQuery<User>(
       `SELECT * FROM users WHERE username = ? AND is_active = true`,
-      [username]
+      [username],
     );
 
     if (users.length === 0) {
@@ -368,12 +372,12 @@ export const getUserProfile: RequestHandler = async (req, res) => {
   try {
     const { uuid } = req.params;
 
-    const users = await executeQuery<Omit<User, 'password_hash'>>(
+    const users = await executeQuery<Omit<User, "password_hash">>(
       `SELECT uuid, emp_name, device_mac, branch_id, branch_city, branch_address, gender,
               date_of_birth, cnic, phone_no, designation, department,
               joining_date, email_id, username, role, is_active, created_on, updated_on
        FROM users WHERE uuid = ?`,
-      [uuid]
+      [uuid],
     );
 
     if (users.length === 0) {

@@ -2,7 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Header } from "../components/Header";
 import { AddUserModal } from "../components/AddUserModal";
 import { EditUserModal } from "../components/EditUserModal";
-import { Users, Plus, Search, Edit2, Trash2, Shield, User, RefreshCw } from "lucide-react";
+import {
+  Users,
+  Plus,
+  Search,
+  Edit2,
+  Trash2,
+  Shield,
+  User,
+  RefreshCw,
+} from "lucide-react";
 
 interface User {
   uuid: string;
@@ -16,7 +25,7 @@ interface User {
   branch_id: string | null;
   branch_city: string | null;
   branch_address: string | null;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
   is_active: boolean;
   created_on: string | null;
 }
@@ -33,9 +42,11 @@ export function UserManagement() {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/users?search=${encodeURIComponent(search)}&limit=100`);
+      const response = await fetch(
+        `/api/users?search=${encodeURIComponent(search)}&limit=100`,
+      );
       const data = await response.json();
-      
+
       if (response.ok) {
         setUsers(data.data);
         setTotal(data.total);
@@ -94,13 +105,17 @@ export function UserManagement() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-            <p className="text-gray-600">Manage system users and their permissions</p>
+            <h1 className="text-2xl font-bold text-gray-900">
+              User Management
+            </h1>
+            <p className="text-gray-600">
+              Manage system users and their permissions
+            </p>
           </div>
           <button
             onClick={() => setShowAddModal(true)}
@@ -147,9 +162,11 @@ export function UserManagement() {
                 <Shield className="h-6 w-6 text-red-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Administrators</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Administrators
+                </p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u => u.role === 'admin').length}
+                  {users.filter((u) => u.role === "admin").length}
                 </p>
               </div>
             </div>
@@ -161,9 +178,11 @@ export function UserManagement() {
                 <User className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Regular Users</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Regular Users
+                </p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u => u.role === 'user').length}
+                  {users.filter((u) => u.role === "user").length}
                 </p>
               </div>
             </div>
@@ -219,7 +238,7 @@ export function UserManagement() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                            {user.role === 'admin' ? (
+                            {user.role === "admin" ? (
                               <Shield className="h-4 w-4 text-blue-600" />
                             ) : (
                               <User className="h-4 w-4 text-blue-600" />
@@ -227,27 +246,39 @@ export function UserManagement() {
                           </div>
                           <div className="ml-3">
                             <div className="text-sm font-medium text-gray-900">
-                              {user.emp_name || 'N/A'}
+                              {user.emp_name || "N/A"}
                             </div>
-                            <div className="text-sm text-gray-500">@{user.username}</div>
+                            <div className="text-sm text-gray-500">
+                              @{user.username}
+                            </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{user.email_id}</div>
-                        <div className="text-sm text-gray-500">{user.phone_no}</div>
+                        <div className="text-sm text-gray-900">
+                          {user.email_id}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {user.phone_no}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{user.branch_id}</div>
-                        <div className="text-sm text-gray-500">{user.branch_city}</div>
+                        <div className="text-sm text-gray-900">
+                          {user.branch_id}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {user.branch_city}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          user.role === 'admin' 
-                            ? 'bg-red-100 text-red-800' 
-                            : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {user.role === 'admin' ? (
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            user.role === "admin"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-blue-100 text-blue-800"
+                          }`}
+                        >
+                          {user.role === "admin" ? (
                             <>
                               <Shield className="h-3 w-3 mr-1" />
                               Administrator
@@ -261,12 +292,14 @@ export function UserManagement() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          user.is_active 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {user.is_active ? 'Active' : 'Inactive'}
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            user.is_active
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {user.is_active ? "Active" : "Inactive"}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -293,9 +326,13 @@ export function UserManagement() {
               {users.length === 0 && !loading && (
                 <div className="text-center py-12">
                   <Users className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">No users found</h3>
+                  <h3 className="mt-2 text-sm font-medium text-gray-900">
+                    No users found
+                  </h3>
                   <p className="mt-1 text-sm text-gray-500">
-                    {search ? "Try adjusting your search criteria." : "Get started by creating a new user."}
+                    {search
+                      ? "Try adjusting your search criteria."
+                      : "Get started by creating a new user."}
                   </p>
                 </div>
               )}

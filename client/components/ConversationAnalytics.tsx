@@ -18,11 +18,27 @@ import {
   ScatterChart,
   Scatter,
 } from "recharts";
-import { MessageSquare, Users, Building2, Calendar, RefreshCw, TrendingUp } from "lucide-react";
+import {
+  MessageSquare,
+  Users,
+  Building2,
+  Calendar,
+  RefreshCw,
+  TrendingUp,
+} from "lucide-react";
 
 interface ConversationAnalytics {
-  conversationsByBranch: Array<{ branch_id: string; branch_name: string; count: number; month: string }>;
-  conversationsByCity: Array<{ city: string; count: number; branch_count: number }>;
+  conversationsByBranch: Array<{
+    branch_id: string;
+    branch_name: string;
+    count: number;
+    month: string;
+  }>;
+  conversationsByCity: Array<{
+    city: string;
+    count: number;
+    branch_count: number;
+  }>;
   dailyConversationsLastMonth: Array<{ date: string; count: number }>;
   uniqueCnicsByMonth: Array<{ month: string; unique_cnic_count: number }>;
   totalStats: {
@@ -58,7 +74,9 @@ const CHART_COLORS = [
 ];
 
 export function ConversationAnalytics() {
-  const [analytics, setAnalytics] = useState<ConversationAnalytics | null>(null);
+  const [analytics, setAnalytics] = useState<ConversationAnalytics | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -92,30 +110,45 @@ export function ConversationAnalytics() {
   };
 
   const formatMonth = (monthString: string) => {
-    const [year, month] = monthString.split('-');
+    const [year, month] = monthString.split("-");
     const date = new Date(parseInt(year), parseInt(month) - 1);
-    return date.toLocaleDateString("en-US", { year: "numeric", month: "short" });
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+    });
   };
 
   // Process branch data for visualization - group by current month
-  const processedBranchData = analytics?.conversationsByBranch.reduce((acc, item) => {
-    const existing = acc.find(b => b.branch_id === item.branch_id);
-    if (existing) {
-      existing.count += item.count;
-    } else {
-      acc.push({ ...item });
-    }
-    return acc;
-  }, [] as Array<{ branch_id: string; branch_name: string; count: number; month: string }>)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 10) || [];
+  const processedBranchData =
+    analytics?.conversationsByBranch
+      .reduce(
+        (acc, item) => {
+          const existing = acc.find((b) => b.branch_id === item.branch_id);
+          if (existing) {
+            existing.count += item.count;
+          } else {
+            acc.push({ ...item });
+          }
+          return acc;
+        },
+        [] as Array<{
+          branch_id: string;
+          branch_name: string;
+          count: number;
+          month: string;
+        }>,
+      )
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10) || [];
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="flex items-center space-x-2">
           <RefreshCw className="h-5 w-5 animate-spin text-blue-500" />
-          <span className="text-gray-600">Loading conversation analytics...</span>
+          <span className="text-gray-600">
+            Loading conversation analytics...
+          </span>
         </div>
       </div>
     );
@@ -140,7 +173,9 @@ export function ConversationAnalytics() {
   if (!analytics) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-gray-600">No conversation analytics data available</p>
+        <p className="text-gray-600">
+          No conversation analytics data available
+        </p>
       </div>
     );
   }
@@ -160,7 +195,9 @@ export function ConversationAnalytics() {
           <h1 className="text-2xl font-bold text-gray-900">
             Conversation Analytics
           </h1>
-          <p className="text-gray-600">Customer interaction insights and metrics</p>
+          <p className="text-gray-600">
+            Customer interaction insights and metrics
+          </p>
         </div>
         <button
           onClick={fetchAnalytics}
@@ -195,7 +232,9 @@ export function ConversationAnalytics() {
               <Users className="h-6 w-6 text-green-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Unique Customers</p>
+              <p className="text-sm font-medium text-gray-500">
+                Unique Customers
+              </p>
               <p className="text-2xl font-bold text-gray-900">
                 {totalStats.uniqueCustomers.toLocaleString()}
               </p>
@@ -209,7 +248,9 @@ export function ConversationAnalytics() {
               <Building2 className="h-6 w-6 text-purple-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Active Branches</p>
+              <p className="text-sm font-medium text-gray-500">
+                Active Branches
+              </p>
               <p className="text-2xl font-bold text-gray-900">
                 {totalStats.activeBranches.toLocaleString()}
               </p>
@@ -284,7 +325,7 @@ export function ConversationAnalytics() {
               <Tooltip
                 formatter={(value: number, name, props) => [
                   `${value} conversations`,
-                  `${props.payload.branch_count} branches`
+                  `${props.payload.branch_count} branches`,
                 ]}
                 labelFormatter={(label) => `City: ${label}`}
               />
@@ -323,10 +364,7 @@ export function ConversationAnalytics() {
                 labelFormatter={(label) => formatDate(label)}
                 formatter={(value: number) => [value, "Conversations"]}
               />
-              <Scatter
-                dataKey="count"
-                fill={COLORS.success}
-              />
+              <Scatter dataKey="count" fill={COLORS.success} />
             </ScatterChart>
           </ResponsiveContainer>
         </div>
@@ -386,7 +424,10 @@ export function ConversationAnalytics() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {conversationsByCity.map((city, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                <tr
+                  key={index}
+                  className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {city.city}
                   </td>
@@ -416,7 +457,12 @@ export function ConversationAnalytics() {
             <p className="text-sm text-gray-600">Avg Conversations/Day</p>
             <p className="text-xl font-bold text-blue-600">
               {dailyConversationsLastMonth.length > 0
-                ? (dailyConversationsLastMonth.reduce((sum, day) => sum + day.count, 0) / dailyConversationsLastMonth.length).toFixed(1)
+                ? (
+                    dailyConversationsLastMonth.reduce(
+                      (sum, day) => sum + day.count,
+                      0,
+                    ) / dailyConversationsLastMonth.length
+                  ).toFixed(1)
                 : "0"}
             </p>
           </div>
@@ -435,7 +481,9 @@ export function ConversationAnalytics() {
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">Top City</p>
             <p className="text-xl font-bold text-purple-600">
-              {conversationsByCity.length > 0 ? conversationsByCity[0].city : "N/A"}
+              {conversationsByCity.length > 0
+                ? conversationsByCity[0].city
+                : "N/A"}
             </p>
           </div>
         </div>

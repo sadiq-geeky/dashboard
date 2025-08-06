@@ -13,7 +13,7 @@ interface User {
   branch_id: string | null;
   branch_city: string | null;
   branch_address: string | null;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
   is_active: boolean;
   date_of_birth: string | null;
   joining_date: string | null;
@@ -50,7 +50,7 @@ export function EditUserModal({
     device_mac: "",
     username: "",
     password: "", // Optional for updates
-    role: "user" as 'admin' | 'user',
+    role: "user" as "admin" | "user",
     is_active: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,9 +73,7 @@ export function EditUserModal({
         date_of_birth: user.date_of_birth
           ? user.date_of_birth.split("T")[0]
           : "",
-        joining_date: user.joining_date
-          ? user.joining_date.split("T")[0]
-          : "",
+        joining_date: user.joining_date ? user.joining_date.split("T")[0] : "",
         device_mac: user.device_mac || "",
         username: user.username || "",
         password: "", // Always start empty
@@ -93,7 +91,8 @@ export function EditUserModal({
     const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -156,7 +155,9 @@ export function EditUserModal({
 
           {/* Account Information */}
           <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Account Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Account Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -209,7 +210,9 @@ export function EditUserModal({
                     onChange={handleInputChange}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <span className="ml-2 text-sm text-gray-700">User is active</span>
+                  <span className="ml-2 text-sm text-gray-700">
+                    User is active
+                  </span>
                 </label>
               </div>
             </div>
@@ -217,7 +220,9 @@ export function EditUserModal({
 
           {/* Personal Information */}
           <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Personal Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -308,7 +313,9 @@ export function EditUserModal({
 
           {/* Work Information */}
           <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Work Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Work Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -369,7 +376,9 @@ export function EditUserModal({
 
           {/* Branch Information */}
           <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Branch Information</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Branch Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

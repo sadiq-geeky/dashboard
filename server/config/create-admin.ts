@@ -6,7 +6,7 @@ export async function createDefaultAdmin() {
   try {
     // Check if admin user already exists
     const existingAdmin = await executeQuery<{ uuid: string }>(
-      `SELECT uuid FROM users WHERE role = 'admin' LIMIT 1`
+      `SELECT uuid FROM users WHERE role = 'admin' LIMIT 1`,
     );
 
     if (existingAdmin.length > 0) {

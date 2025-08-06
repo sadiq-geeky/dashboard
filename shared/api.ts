@@ -77,13 +77,13 @@ export interface Device {
   device_name: string;
   device_mac?: string;
   ip_address?: string;
-  device_type: 'recorder' | 'monitor' | 'other';
+  device_type: "recorder" | "monitor" | "other";
   branch_id?: string;
   branch_name?: string;
   branch_code?: string;
   installation_date?: string;
   last_maintenance?: string;
-  device_status: 'active' | 'inactive' | 'maintenance';
+  device_status: "active" | "inactive" | "maintenance";
   notes?: string;
   created_on: string;
   updated_on: string;

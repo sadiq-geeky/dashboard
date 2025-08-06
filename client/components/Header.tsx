@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, User, ChevronDown, Shield, Building2, ArrowLeft, Home } from 'lucide-react';
+import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  LogOut,
+  User,
+  ChevronDown,
+  Shield,
+  Building2,
+  ArrowLeft,
+  Home,
+} from "lucide-react";
 
 export function Header() {
   const { user, logout, isAdmin } = useAuth();
@@ -11,8 +19,8 @@ export function Header() {
 
   if (!user) return null;
 
-  const isOnDashboard = location.pathname === '/';
-  const goBackToDashboard = () => navigate('/');
+  const isOnDashboard = location.pathname === "/";
+  const goBackToDashboard = () => navigate("/");
 
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-4">
@@ -45,7 +53,9 @@ export function Header() {
               <h1 className="text-xl font-semibold text-gray-900">
                 Voice Recording System
               </h1>
-              <p className="text-sm text-gray-500">Powered by SE TECH (Pvt.) Ltd.</p>
+              <p className="text-sm text-gray-500">
+                Powered by SE TECH (Pvt.) Ltd.
+              </p>
             </div>
           </button>
         </div>
@@ -101,11 +111,13 @@ export function Header() {
                     </p>
                     <p className="text-xs text-gray-500">@{user.username}</p>
                     <div className="flex items-center space-x-1 mt-1">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                        isAdmin()
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                          isAdmin()
+                            ? "bg-red-100 text-red-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
                         {isAdmin() ? (
                           <>
                             <Shield className="h-3 w-3 mr-1" />
@@ -126,7 +138,7 @@ export function Header() {
                     <button
                       onClick={() => {
                         setShowDropdown(false);
-                        navigate('/');
+                        navigate("/");
                       }}
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                     >
@@ -139,7 +151,7 @@ export function Header() {
                         <button
                           onClick={() => {
                             setShowDropdown(false);
-                            navigate('/branch-management');
+                            navigate("/branch-management");
                           }}
                           className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                         >
@@ -149,7 +161,7 @@ export function Header() {
                         <button
                           onClick={() => {
                             setShowDropdown(false);
-                            navigate('/device-management');
+                            navigate("/device-management");
                           }}
                           className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                         >
@@ -159,7 +171,7 @@ export function Header() {
                         <button
                           onClick={() => {
                             setShowDropdown(false);
-                            navigate('/user-management');
+                            navigate("/user-management");
                           }}
                           className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                         >

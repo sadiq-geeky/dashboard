@@ -55,7 +55,6 @@ export async function initializeTables() {
     await executeQuery(createDevicesTable);
     console.log("✅ Devices table created/verified successfully");
 
-
     // Create recording_heartbeat table for compatibility
     const createRecordingHeartbeatTable = `
       CREATE TABLE IF NOT EXISTS recording_heartbeat (
@@ -71,7 +70,6 @@ export async function initializeTables() {
 
     await executeQuery(createRecordingHeartbeatTable);
     console.log("✅ Recording heartbeat table created/verified successfully");
-
 
     // Also create recording_history table for compatibility
     const createRecordingHistoryTable = `
@@ -159,7 +157,9 @@ export async function initializeTables() {
 
     // Create sample branch data if none exists
     try {
-      const existingBranches = await executeQuery("SELECT COUNT(*) as count FROM branches");
+      const existingBranches = await executeQuery(
+        "SELECT COUNT(*) as count FROM branches",
+      );
       if (existingBranches[0].count === 0) {
         console.log("🏢 Creating sample branch data...");
         const { v4: uuidv4 } = await import("uuid");
@@ -173,7 +173,7 @@ export async function initializeTables() {
             branch_address: "I.I. Chundrigar Road, Karachi",
             region: "Sindh",
             contact_phone: "+92-21-111-225-224",
-            contact_email: "karachi.hq@bankalfalah.com"
+            contact_email: "karachi.hq@bankalfalah.com",
           },
           {
             id: uuidv4(),
@@ -183,7 +183,7 @@ export async function initializeTables() {
             branch_address: "Mall Road, Lahore",
             region: "Punjab",
             contact_phone: "+92-42-111-225-224",
-            contact_email: "lahore.main@bankalfalah.com"
+            contact_email: "lahore.main@bankalfalah.com",
           },
           {
             id: uuidv4(),
@@ -193,15 +193,24 @@ export async function initializeTables() {
             branch_address: "Blue Area, Islamabad",
             region: "ICT",
             contact_phone: "+92-51-111-225-224",
-            contact_email: "islamabad@bankalfalah.com"
-          }
+            contact_email: "islamabad@bankalfalah.com",
+          },
         ];
 
         for (const branch of sampleBranches) {
           await executeQuery(
             `INSERT INTO branches (id, branch_code, branch_name, branch_city, branch_address, region, contact_phone, contact_email)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [branch.id, branch.branch_code, branch.branch_name, branch.branch_city, branch.branch_address, branch.region, branch.contact_phone, branch.contact_email]
+            [
+              branch.id,
+              branch.branch_code,
+              branch.branch_name,
+              branch.branch_city,
+              branch.branch_address,
+              branch.region,
+              branch.contact_phone,
+              branch.contact_email,
+            ],
           );
         }
         console.log("✅ Sample branch data created successfully");

@@ -30,7 +30,9 @@ export const getBranches: RequestHandler = async (req, res) => {
     const conditions: string[] = [];
 
     if (search) {
-      conditions.push("(branch_name LIKE ? OR branch_code LIKE ? OR branch_city LIKE ?)");
+      conditions.push(
+        "(branch_name LIKE ? OR branch_code LIKE ? OR branch_city LIKE ?)",
+      );
       queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
 
@@ -45,7 +47,10 @@ export const getBranches: RequestHandler = async (req, res) => {
 
     // Get total count
     const countQuery = `SELECT COUNT(*) as total FROM branches ${whereClause}`;
-    const [countResult] = await executeQuery<{ total: number }>(countQuery, queryParams);
+    const [countResult] = await executeQuery<{ total: number }>(
+      countQuery,
+      queryParams,
+    );
     const total = countResult.total;
 
     // Get paginated results
@@ -105,7 +110,9 @@ export const createBranch: RequestHandler = async (req, res) => {
     } = req.body;
 
     if (!branch_code || !branch_name) {
-      return res.status(400).json({ error: "Branch code and name are required" });
+      return res
+        .status(400)
+        .json({ error: "Branch code and name are required" });
     }
 
     const id = uuidv4();

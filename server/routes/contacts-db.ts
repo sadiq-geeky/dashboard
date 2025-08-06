@@ -121,11 +121,9 @@ export const createContact: RequestHandler = async (req, res) => {
       .map(([key]) => key.replace("_", " "));
 
     if (missingFields.length > 0) {
-      return res
-        .status(400)
-        .json({
-          error: `The following fields are required: ${missingFields.join(", ")}`,
-        });
+      return res.status(400).json({
+        error: `The following fields are required: ${missingFields.join(", ")}`,
+      });
     }
 
     const uuid = uuidv4();
