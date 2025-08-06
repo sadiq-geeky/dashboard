@@ -232,7 +232,7 @@ export function ExactDashboard() {
                   {currentRecordings.map((recording, index) => (
                     <tr
                       key={recording.id}
-                      className="border-b border-gray-100 hover:bg-gray-50"
+                      className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
                       onClick={() => setSelectedRecording(recording)}
                     >
                       <td className="py-3 px-4 text-sm text-gray-900">
@@ -305,160 +305,162 @@ export function ExactDashboard() {
           </div>
         </div>
 
-        {/* Right Sidebar */}
-        <div className="w-80 bg-white border-l border-gray-200">
-          <div className="p-6">
-            {/* Audio Player Section */}
-            {selectedRecording && (
-              <div className="mb-6 pb-6 border-b border-gray-200">
-                <h2 className="text-sm font-medium text-gray-900 mb-3">
-                  Recording {selectedRecording.id?.slice(-5) || "43543"}
-                </h2>
+        {/* Right Sidebar - Only show when a recording is selected */}
+        {selectedRecording && (
+          <div className="w-80 bg-white border-l border-gray-200">
+            <div className="p-6">
+              {/* Audio Player Section */}
+              {selectedRecording && (
+                <div className="mb-6 pb-6 border-b border-gray-200">
+                  <h2 className="text-sm font-medium text-gray-900 mb-3">
+                    Recording {selectedRecording.id?.slice(-5) || "43543"}
+                  </h2>
 
-                {/* Audio Player */}
-                <div className="bg-gray-50 rounded-lg p-3">
-                  {/* Progress Bar */}
-                  <div className="mb-3">
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>1:56</span>
-                      <span>
-                        {selectedRecording.duration
-                          ? `${Math.floor(selectedRecording.duration / 60)}:${String(selectedRecording.duration % 60).padStart(2, "0")}`
-                          : "3:21"}
-                      </span>
+                  {/* Audio Player */}
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    {/* Progress Bar */}
+                    <div className="mb-3">
+                      <div className="flex justify-between text-xs text-gray-500 mb-1">
+                        <span>1:56</span>
+                        <span>
+                          {selectedRecording.duration
+                            ? `${Math.floor(selectedRecording.duration / 60)}:${String(selectedRecording.duration % 60).padStart(2, "0")}`
+                            : "3:21"}
+                        </span>
+                      </div>
+                      <div className="relative">
+                        <div className="w-full h-1.5 bg-gray-200 rounded-full">
+                          <div
+                            className="h-1.5 bg-blue-500 rounded-full"
+                            style={{ width: "60%" }}
+                          >
+                            <div className="absolute right-0 top-0 w-2.5 h-2.5 bg-blue-500 rounded-full -mt-0.5 -mr-1"></div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="relative">
-                      <div className="w-full h-1.5 bg-gray-200 rounded-full">
-                        <div
-                          className="h-1.5 bg-blue-500 rounded-full"
-                          style={{ width: "60%" }}
-                        >
-                          <div className="absolute right-0 top-0 w-2.5 h-2.5 bg-blue-500 rounded-full -mt-0.5 -mr-1"></div>
+
+                    {/* Audio Controls */}
+                    <div className="flex items-center justify-center space-x-2">
+                      <button className="p-1 text-gray-600 hover:text-gray-800">
+                        <Play className="w-4 h-4" />
+                      </button>
+                      <button className="p-1 text-gray-600 hover:text-gray-800">
+                        <Pause className="w-4 h-4" />
+                      </button>
+                      <button className="p-1 text-gray-600 hover:text-gray-800">
+                        <RotateCcw className="w-4 h-4" />
+                      </button>
+                      <button className="p-1 text-gray-600 hover:text-gray-800">
+                        <SkipBack className="w-4 h-4" />
+                      </button>
+                      <button className="p-1 text-gray-600 hover:text-gray-800">
+                        <Shuffle className="w-4 h-4" />
+                      </button>
+                      <button className="p-1 text-gray-600 hover:text-gray-800">
+                        <Download className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Customer Profile Section */}
+              <div className="mb-6 pb-6 border-b border-gray-200">
+                <h2 className="text-lg font-medium text-gray-900 mb-4">
+                  Customer Profile
+                </h2>
+                {selectedRecording ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-orange-400 rounded-full flex items-center justify-center text-white font-medium">
+                        {selectedRecording.cnic?.charAt(0).toUpperCase() || "A"}
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-900">
+                          Ahmad Shah
+                        </div>
+                        <div className="text-sm text-gray-500">ID: 3-123456</div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 pt-4">
+                      <div>
+                        <div className="text-sm text-gray-500">Gender - Male</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500">
+                          Date of Birth - 06/301986
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500">
+                          CNIC - 3-1234-2345
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500">
+                          Phone Number - 031-5897123
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500">
+                          Email - ahmadshah@gmail.com
                         </div>
                       </div>
                     </div>
                   </div>
-
-                  {/* Audio Controls */}
-                  <div className="flex items-center justify-center space-x-2">
-                    <button className="p-1 text-gray-600 hover:text-gray-800">
-                      <Play className="w-4 h-4" />
-                    </button>
-                    <button className="p-1 text-gray-600 hover:text-gray-800">
-                      <Pause className="w-4 h-4" />
-                    </button>
-                    <button className="p-1 text-gray-600 hover:text-gray-800">
-                      <RotateCcw className="w-4 h-4" />
-                    </button>
-                    <button className="p-1 text-gray-600 hover:text-gray-800">
-                      <SkipBack className="w-4 h-4" />
-                    </button>
-                    <button className="p-1 text-gray-600 hover:text-gray-800">
-                      <Shuffle className="w-4 h-4" />
-                    </button>
-                    <button className="p-1 text-gray-600 hover:text-gray-800">
-                      <Download className="w-4 h-4" />
-                    </button>
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-3"></div>
+                    <p className="text-sm text-gray-500">
+                      Select a recording to view customer profile
+                    </p>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* Customer Profile Section */}
-            <div className="mb-6 pb-6 border-b border-gray-200">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">
-                Customer Profile
-              </h2>
-              {selectedRecording ? (
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-orange-400 rounded-full flex items-center justify-center text-white font-medium">
-                      {selectedRecording.cnic?.charAt(0).toUpperCase() || "A"}
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900">
-                        Ahmad Shah
-                      </div>
-                      <div className="text-sm text-gray-500">ID: 3-123456</div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3 pt-4">
-                    <div>
-                      <div className="text-sm text-gray-500">Gender - Male</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-500">
-                        Date of Birth - 06/301986
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-500">
-                        CNIC - 3-1234-2345
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-500">
-                        Phone Number - 031-5897123
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-500">
-                        Email - ahmadshah@gmail.com
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-3"></div>
-                  <p className="text-sm text-gray-500">
-                    Select a recording to view customer profile
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Previous Logs Section */}
-            <div>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">
-                Previous Logs
-              </h2>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center text-xs text-gray-500 border-b pb-2">
-                  <span>S.no</span>
-                  <span>Branch No</span>
-                  <span>Date</span>
-                  <span>Action</span>
-                </div>
-
-                {recordings.slice(0, 3).map((recording, index) => (
-                  <div
-                    key={recording.id}
-                    className="flex justify-between items-center text-sm"
-                  >
-                    <span className="text-gray-900">{index + 1}</span>
-                    <span className="text-gray-500">
-                      {recording.device_name || recording.ip_address}
-                    </span>
-                    <span className="text-gray-500">
-                      {recording.created_on
-                        ? new Date(recording.created_on).toLocaleDateString()
-                        : "-"}
-                    </span>
-                    <button className="text-blue-600 hover:text-blue-700 text-xs">
-                      View more
-                    </button>
-                  </div>
-                ))}
+                )}
               </div>
 
-              <button className="w-full mt-4 py-2 text-sm text-blue-600 hover:text-blue-700">
-                View all logs →
-              </button>
+              {/* Previous Logs Section */}
+              <div>
+                <h2 className="text-lg font-medium text-gray-900 mb-4">
+                  Previous Logs
+                </h2>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center text-xs text-gray-500 border-b pb-2">
+                    <span>S.no</span>
+                    <span>Branch No</span>
+                    <span>Date</span>
+                    <span>Action</span>
+                  </div>
+
+                  {recordings.slice(0, 3).map((recording, index) => (
+                    <div
+                      key={recording.id}
+                      className="flex justify-between items-center text-sm"
+                    >
+                      <span className="text-gray-900">{index + 1}</span>
+                      <span className="text-gray-500">
+                        {recording.device_name || recording.ip_address}
+                      </span>
+                      <span className="text-gray-500">
+                        {recording.created_on
+                          ? new Date(recording.created_on).toLocaleDateString()
+                          : "-"}
+                      </span>
+                      <button className="text-blue-600 hover:text-blue-700 text-xs">
+                        View more
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <button className="w-full mt-4 py-2 text-sm text-blue-600 hover:text-blue-700">
+                  View all logs →
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
