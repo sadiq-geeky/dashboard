@@ -42,16 +42,35 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<ExactDashboard />} />
-          <Route path="/recordings" element={<Recordings />} />
-          <Route path="/devices" element={<DeviceManagement />} />
-          <Route path="/conversation-analytics" element={<ConversationAnalytics />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <ExactDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/recordings" element={
+              <ProtectedRoute>
+                <Recordings />
+              </ProtectedRoute>
+            } />
+            <Route path="/devices" element={
+              <ProtectedRoute adminOnly>
+                <DeviceManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/conversation-analytics" element={
+              <ProtectedRoute adminOnly>
+                <ConversationAnalytics />
+              </ProtectedRoute>
+            } />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
