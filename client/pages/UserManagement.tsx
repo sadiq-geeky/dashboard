@@ -113,7 +113,63 @@ export function UserManagement() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Navigation Tabs */}
+      <div className="bg-white border-b border-gray-200" style={{display: "flex", flexDirection: "column"}}>
+        <div className="flex items-center justify-between h-16 px-6" style={{margin: "0 auto"}}>
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={() => window.location.href = '/'}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Grid3X3 className="w-5 h-5 mb-1" />
+              <span className="text-xs">Home</span>
+            </button>
+            <button
+              onClick={() => window.location.href = '/?tab=device-status'}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <BarChart3 className="w-5 h-5 mb-1" />
+              <span className="text-xs">Device Status</span>
+            </button>
+            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
+              <MessageSquare className="w-5 h-5 mb-1" />
+              <span className="text-xs">Live Conversation</span>
+            </button>
+            <button
+              onClick={() => window.location.href = '/branch-management'}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Building2 className="w-5 h-5 mb-1" />
+              <span className="text-xs">Branches</span>
+            </button>
+            <button
+              onClick={() => window.location.href = '/device-management'}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Monitor className="w-5 h-5 mb-1" />
+              <span className="text-xs">Devices</span>
+            </button>
+            <button
+              onClick={() => window.location.href = '/?tab=analytics'}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <BarChart3 className="w-5 h-5 mb-1" />
+              <span className="text-xs">Analytics</span>
+            </button>
+            <button className="flex flex-col items-center p-3 rounded-md text-gray-700 bg-white border border-gray-300">
+              <Users className="w-5 h-5 mb-1" />
+              <span className="text-xs">User Management</span>
+            </button>
+            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
+              <Mail className="w-5 h-5 mb-1" />
+              <span className="text-xs">Complaints</span>
+            </button>
+          </div>
+          <div className="flex items-center space-x-4" />
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{padding: "24px 24px 5px"}}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
