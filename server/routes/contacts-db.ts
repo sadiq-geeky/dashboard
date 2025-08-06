@@ -129,10 +129,10 @@ export const createContact: RequestHandler = async (req, res) => {
     const uuid = uuidv4();
     const query = `
       INSERT INTO contacts (
-        uuid, emp_name, device_mac, branch_id, branch_address, gender,
+        uuid, emp_name, device_mac, branch_id, branch_city, branch_address, gender,
         date_of_birth, cnic, phone_no, designation, department,
         joining_date, email_id, created_on, updated_on
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `;
 
     await executeQuery(query, [
