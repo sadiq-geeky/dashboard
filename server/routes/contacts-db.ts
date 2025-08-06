@@ -7,6 +7,7 @@ export interface Contact {
   emp_name: string | null;
   device_mac: string | null;
   branch_id: string | null;
+  branch_city: string | null;
   branch_address: string | null;
   gender: string | null;
   date_of_birth: string | null;
