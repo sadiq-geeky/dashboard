@@ -65,8 +65,8 @@ export async function initializeTables() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `;
 
-    await executeQuery(createDevicesTable);
-    console.log("✅ Devices table created/verified successfully");
+    await executeQuery(createDeviceMappingsTable);
+    console.log("✅ Device mappings table created/verified successfully");
 
     // Create heartbeats table if it doesn't exist
     const createHeartbeatsTable = `
