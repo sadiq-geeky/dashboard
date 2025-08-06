@@ -97,5 +97,14 @@ export async function initializeDatabase() {
     process.exit(1);
   }
 
+  // Initialize tables after successful connection
+  try {
+    const { initializeTables } = await import("./init-db");
+    await initializeTables();
+  } catch (error) {
+    console.error("❌ Failed to initialize database tables:", error);
+    // Don't exit here, let the app continue in case tables exist with different structure
+  }
+
   console.log("🚀 Database initialized successfully");
 }
