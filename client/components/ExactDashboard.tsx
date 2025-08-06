@@ -208,6 +208,7 @@ const getStatusIcon = (status: HeartbeatRecord["status"]) => {
 };
 
 export function ExactDashboard() {
+  const { user, isAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState("home");
   const [analyticsSubTab, setAnalyticsSubTab] = useState("recordings");
   const [recordings, setRecordings] = useState<RecordingHistory[]>([]);
