@@ -379,8 +379,8 @@ export function ExactDashboard() {
       <Header />
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="flex items-center justify-between h-16 px-6">
+      <div className="bg-white border-b border-gray-200" style={{display: "flex", flexDirection: "column"}}>
+        <div className="flex items-center justify-between h-16 px-6" style={{margin: "0 auto"}}>
           <div className="flex items-center space-x-1">
             <button
               onClick={() => setActiveTab("home")}
@@ -459,28 +459,14 @@ export function ExactDashboard() {
             </button>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">Reporting DHFG</span>
-            <div className="flex items-center space-x-3">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              </div>
-              <Bell className="w-5 h-5 text-gray-500" />
-              <div className="w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                A
-              </div>
-            </div>
-          </div>
+          <div className="flex items-center space-x-4" />
         </div>
       </div>
 
       <div className="flex">
         {/* Main Content */}
         <div className="flex-1">
-          <div className="p-6">
+          <div className="px-6 py-6 pt-1" style={{padding: "24px 24px 5px"}}>
             {activeTab === "home" && (
               <>
                 {/* Search and Filter Bar */}
