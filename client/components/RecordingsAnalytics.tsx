@@ -196,16 +196,24 @@ export function RecordingsAnalytics() {
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={dailyRecordings.reverse()}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tickFormatter={formatDate} />
-              <YAxis />
-              <Tooltip 
+              <XAxis
+                dataKey="date"
+                tickFormatter={formatDate}
+                axisLine={true}
+                tickLine={true}
+              />
+              <YAxis
+                axisLine={true}
+                tickLine={true}
+              />
+              <Tooltip
                 labelFormatter={(label) => formatDate(label)}
                 formatter={(value: number) => [value, "Recordings"]}
               />
-              <Line 
-                type="monotone" 
-                dataKey="count" 
-                stroke={COLORS.primary} 
+              <Line
+                type="monotone"
+                dataKey="count"
+                stroke={COLORS.primary}
                 strokeWidth={2}
                 dot={{ fill: COLORS.primary, strokeWidth: 2, r: 4 }}
               />
