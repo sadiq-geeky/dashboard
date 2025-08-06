@@ -29,6 +29,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ExactDashboard } from "./components/ExactDashboard";
 import { DeviceManagement } from "./pages/DeviceManagement";
 import { Recordings } from "./pages/Recordings";
+import { ConversationAnalytics } from "./pages/ConversationAnalytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
