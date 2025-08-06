@@ -137,6 +137,29 @@ export async function initializeTables() {
     await executeQuery(createRecordingHistoryTable);
     console.log("✅ Recording history table created/verified successfully");
 
+    // Add device_mac column to existing tables if it doesn't exist
+    try {
+      await executeQuery(`ALTER TABLE device_mappings ADD COLUMN device_mac VARCHAR(17)`);
+      console.log("✅ Added device_mac column to device_mappings table");
+    } catch (error: any) {
+      if (error.code === 'ER_DUP_FIELDNAME') {
+        console.log("✅ device_mac column already exists in device_mappings table");
+      } else {
+        console.log("⚠️  Could not add device_mac to device_mappings:", error.message);
+      }
+    }
+
+    try {
+      await executeQuery(`ALTER TABLE recording_history ADD COLUMN device_mac VARCHAR(17)`);
+      console.log("✅ Added device_mac column to recording_history table");
+    } catch (error: any) {
+      if (error.code === 'ER_DUP_FIELDNAME') {
+        console.log("✅ device_mac column already exists in recording_history table");
+      } else {
+        console.log("⚠️  Could not add device_mac to recording_history:", error.message);
+      }
+    }
+
     console.log("🚀 All database tables initialized successfully");
     
   } catch (error) {
