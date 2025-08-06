@@ -100,5 +100,12 @@ export function createServer() {
   // Analytics routes
   app.get("/api/analytics/recordings", getRecordingsAnalytics);
 
+  // Conversation Analytics routes
+  app.get("/api/analytics/conversations", getConversationAnalytics);
+  app.get("/api/analytics/conversations/branch", getConversationsByBranch);
+  app.get("/api/analytics/conversations/city", getConversationsByCity);
+  app.get("/api/analytics/conversations/daily", getDailyConversationsLastMonth);
+  app.get("/api/analytics/conversations/cnic", getUniqueCnicsByMonth);
+
   return app;
 }
