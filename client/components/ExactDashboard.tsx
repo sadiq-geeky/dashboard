@@ -305,10 +305,10 @@ export function ExactDashboard() {
 
   // Contact search effect
   useEffect(() => {
-    if (activeTab === "contact-list") {
+    if (activeTab === "contact-list" && isAdmin()) {
       loadContacts();
     }
-  }, [contactSearch, activeTab]);
+  }, [contactSearch, activeTab, isAdmin]);
 
   // Device status counts
   const onlineCount = devices.filter((d) => d.status === "online").length;
