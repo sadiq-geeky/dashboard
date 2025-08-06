@@ -125,6 +125,7 @@ const formatDuration = (seconds: number | null) => {
 };
 
 export function Recordings() {
+  const { user } = useAuth();
   const [recordings, setRecordings] = useState<
     PaginatedResponse<RecordingHistory>
   >({
