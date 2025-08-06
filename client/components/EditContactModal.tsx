@@ -44,6 +44,7 @@ export function EditContactModal({
         designation: contact.designation || "",
         department: contact.department || "",
         branch_id: contact.branch_id || "",
+        branch_city: (contact as any).branch_city || "",
         branch_address: contact.branch_address || "",
         gender: contact.gender || "",
         date_of_birth: contact.date_of_birth
