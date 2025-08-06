@@ -452,7 +452,10 @@ export function ExactDashboard() {
             )}
             {isAdmin() && (
               <button
-                onClick={() => setActiveTab("analytics")}
+                onClick={() => {
+                  setActiveTab("analytics");
+                  navigate('/?tab=analytics', { replace: true });
+                }}
                 className={cn(
                   "flex flex-col items-center p-3 rounded-md",
                   activeTab === "analytics"
