@@ -943,7 +943,9 @@ export function ExactDashboard() {
 
             {activeTab === "analytics" && (
               <>
-                <RecordingsAnalytics />
+                <WarningSuppressionWrapper>
+                  <RecordingsAnalytics />
+                </WarningSuppressionWrapper>
               </>
             )}
           </div>
