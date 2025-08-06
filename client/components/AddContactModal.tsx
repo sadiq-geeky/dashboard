@@ -219,6 +219,21 @@ export function AddContactModal({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
+                Branch City *
+              </label>
+              <input
+                type="text"
+                name="branch_city"
+                value={formData.branch_city}
+                onChange={handleInputChange}
+                required
+                placeholder="Karachi, Lahore, Islamabad, etc."
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Gender *
               </label>
               <select
