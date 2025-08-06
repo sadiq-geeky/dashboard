@@ -21,6 +21,7 @@ export function AddContactModal({
     designation: "",
     department: "",
     branch_id: "",
+    branch_city: "",
     branch_address: "",
     gender: "",
     date_of_birth: "",
