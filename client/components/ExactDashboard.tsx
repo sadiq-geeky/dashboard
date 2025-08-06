@@ -540,7 +540,7 @@ export function ExactDashboard() {
                             {startIndex + index + 1}
                           </td>
                           <td className="py-2 px-2 text-xs text-gray-500">
-                            {recording.device_name || recording.ip_address}
+                            {recording.branch_no || recording.device_name || recording.ip_address}
                           </td>
                           <td className="py-2 px-2 text-xs text-gray-500">
                             {recording.cnic || recording.file_name || "-"}
