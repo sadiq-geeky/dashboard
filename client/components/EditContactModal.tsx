@@ -9,7 +9,12 @@ interface EditContactModalProps {
   contact: Contact | null;
 }
 
-export function EditContactModal({ isOpen, onClose, onContactUpdated, contact }: EditContactModalProps) {
+export function EditContactModal({
+  isOpen,
+  onClose,
+  onContactUpdated,
+  contact,
+}: EditContactModalProps) {
   const [formData, setFormData] = useState({
     emp_name: "",
     cnic: "",
@@ -40,22 +45,30 @@ export function EditContactModal({ isOpen, onClose, onContactUpdated, contact }:
         branch_id: contact.branch_id || "",
         branch_address: contact.branch_address || "",
         gender: contact.gender || "",
-        date_of_birth: contact.date_of_birth ? contact.date_of_birth.split('T')[0] : "",
-        joining_date: contact.joining_date ? contact.joining_date.split('T')[0] : "",
+        date_of_birth: contact.date_of_birth
+          ? contact.date_of_birth.split("T")[0]
+          : "",
+        joining_date: contact.joining_date
+          ? contact.joining_date.split("T")[0]
+          : "",
         device_mac: contact.device_mac || "",
       });
     }
   }, [contact]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contact) return;
-    
+
     setIsSubmitting(true);
     setError(null);
 
@@ -77,7 +90,9 @@ export function EditContactModal({ isOpen, onClose, onContactUpdated, contact }:
       onClose();
     } catch (error) {
       console.error("Error updating contact:", error);
-      setError(error instanceof Error ? error.message : "Failed to update contact");
+      setError(
+        error instanceof Error ? error.message : "Failed to update contact",
+      );
     } finally {
       setIsSubmitting(false);
     }

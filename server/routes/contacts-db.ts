@@ -111,13 +111,18 @@ export const createContact: RequestHandler = async (req, res) => {
     };
 
     const missingFields = Object.entries(requiredFields)
-      .filter(([key, value]) => !value || (typeof value === 'string' && value.trim() === ''))
-      .map(([key]) => key.replace('_', ' '));
+      .filter(
+        ([key, value]) =>
+          !value || (typeof value === "string" && value.trim() === ""),
+      )
+      .map(([key]) => key.replace("_", " "));
 
     if (missingFields.length > 0) {
       return res
         .status(400)
-        .json({ error: `The following fields are required: ${missingFields.join(', ')}` });
+        .json({
+          error: `The following fields are required: ${missingFields.join(", ")}`,
+        });
     }
 
     const uuid = uuidv4();

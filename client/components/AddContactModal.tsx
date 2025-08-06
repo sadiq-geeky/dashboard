@@ -8,7 +8,11 @@ interface AddContactModalProps {
   onContactAdded: () => void;
 }
 
-export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactModalProps) {
+export function AddContactModal({
+  isOpen,
+  onClose,
+  onContactAdded,
+}: AddContactModalProps) {
   const [formData, setFormData] = useState({
     emp_name: "",
     cnic: "",
@@ -26,9 +30,13 @@ export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactM
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,7 +78,9 @@ export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactM
       onClose();
     } catch (error) {
       console.error("Error creating contact:", error);
-      setError(error instanceof Error ? error.message : "Failed to create contact");
+      setError(
+        error instanceof Error ? error.message : "Failed to create contact",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -82,7 +92,9 @@ export function AddContactModal({ isOpen, onClose, onContactAdded }: AddContactM
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Add New Contact</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Add New Contact
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"

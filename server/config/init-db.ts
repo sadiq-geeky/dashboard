@@ -3,7 +3,7 @@ import { executeQuery } from "./database";
 export async function initializeTables() {
   try {
     console.log("🔄 Initializing database tables...");
-    
+
     // Create contacts table
     const createContactsTable = `
       CREATE TABLE IF NOT EXISTS contacts (
@@ -139,29 +139,42 @@ export async function initializeTables() {
 
     // Add device_mac column to existing tables if it doesn't exist
     try {
-      await executeQuery(`ALTER TABLE device_mappings ADD COLUMN device_mac VARCHAR(17)`);
+      await executeQuery(
+        `ALTER TABLE device_mappings ADD COLUMN device_mac VARCHAR(17)`,
+      );
       console.log("✅ Added device_mac column to device_mappings table");
     } catch (error: any) {
-      if (error.code === 'ER_DUP_FIELDNAME') {
-        console.log("✅ device_mac column already exists in device_mappings table");
+      if (error.code === "ER_DUP_FIELDNAME") {
+        console.log(
+          "✅ device_mac column already exists in device_mappings table",
+        );
       } else {
-        console.log("⚠️  Could not add device_mac to device_mappings:", error.message);
+        console.log(
+          "⚠️  Could not add device_mac to device_mappings:",
+          error.message,
+        );
       }
     }
 
     try {
-      await executeQuery(`ALTER TABLE recording_history ADD COLUMN device_mac VARCHAR(17)`);
+      await executeQuery(
+        `ALTER TABLE recording_history ADD COLUMN device_mac VARCHAR(17)`,
+      );
       console.log("✅ Added device_mac column to recording_history table");
     } catch (error: any) {
-      if (error.code === 'ER_DUP_FIELDNAME') {
-        console.log("✅ device_mac column already exists in recording_history table");
+      if (error.code === "ER_DUP_FIELDNAME") {
+        console.log(
+          "✅ device_mac column already exists in recording_history table",
+        );
       } else {
-        console.log("⚠️  Could not add device_mac to recording_history:", error.message);
+        console.log(
+          "⚠️  Could not add device_mac to recording_history:",
+          error.message,
+        );
       }
     }
 
     console.log("🚀 All database tables initialized successfully");
-    
   } catch (error) {
     console.error("❌ Error initializing database tables:", error);
     throw error;
