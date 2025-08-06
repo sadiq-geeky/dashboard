@@ -83,13 +83,22 @@ export function DeviceManagement() {
     try {
       setLoading(true);
       const response = await fetch(
-        `/api/devices?limit=50&search=${searchQuery}`,
+        `/api/devices?limit=50&search=${encodeURIComponent(searchQuery)}`,
       );
-      if (!response.ok) throw new Error("Failed to fetch devices");
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`HTTP Error ${response.status}:`, errorText);
+        throw new Error(`Failed to fetch devices: ${response.status} ${errorText}`);
+      }
+
       const data = await response.json();
-      setDevices(data.data);
+      console.log('Devices fetched successfully:', data);
+      setDevices(data.data || []);
     } catch (error) {
       console.error("Error fetching devices:", error);
+      // Set empty array on error to prevent crashes
+      setDevices([]);
     } finally {
       setLoading(false);
     }
