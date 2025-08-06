@@ -25,7 +25,7 @@ export const getConversationsByBranch: RequestHandler = async (req, res) => {
         COUNT(r.id) AS count
       FROM recording_history r
       JOIN contacts c
-        ON CONVERT(r.mac_address USING utf8mb4) COLLATE utf8mb4_unicode_ci = CONVERT(c.device_mac USING utf8mb4) COLLATE utf8mb4_unicode_ci
+        ON r.mac_address = c.device_mac
       GROUP BY c.branch_id
       ORDER BY count DESC
     `;
@@ -53,7 +53,7 @@ export const getConversationsByCity: RequestHandler = async (req, res) => {
         COUNT(DISTINCT c.branch_id) as branch_count
       FROM recording_history r
       JOIN contacts c
-        ON CONVERT(r.mac_address USING utf8mb4) COLLATE utf8mb4_unicode_ci = CONVERT(c.device_mac USING utf8mb4) COLLATE utf8mb4_unicode_ci
+        ON r.mac_address = c.device_mac
       WHERE c.branch_city IS NOT NULL
       GROUP BY c.branch_city
       ORDER BY count DESC
@@ -134,7 +134,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
         COUNT(r.id) AS count
       FROM recording_history r
       JOIN contacts c
-        ON CONVERT(r.mac_address USING utf8mb4) COLLATE utf8mb4_unicode_ci = CONVERT(c.device_mac USING utf8mb4) COLLATE utf8mb4_unicode_ci
+        ON r.mac_address = c.device_mac
       GROUP BY c.branch_id
       ORDER BY count DESC
     `;
@@ -147,7 +147,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
         COUNT(DISTINCT c.branch_id) as branch_count
       FROM recording_history r
       JOIN contacts c
-        ON CONVERT(r.mac_address USING utf8mb4) COLLATE utf8mb4_unicode_ci = CONVERT(c.device_mac USING utf8mb4) COLLATE utf8mb4_unicode_ci
+        ON r.mac_address = c.device_mac
       WHERE c.branch_city IS NOT NULL
       GROUP BY c.branch_city
       ORDER BY count DESC
