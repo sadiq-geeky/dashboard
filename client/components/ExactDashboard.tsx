@@ -42,6 +42,7 @@ import {
   Plus,
   Edit2,
   Trash2,
+  Building2,
 } from "lucide-react";
 
 // Fetch recordings from API with retry logic
