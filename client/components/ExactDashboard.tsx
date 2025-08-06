@@ -867,7 +867,7 @@ export function ExactDashboard() {
               </>
             )}
 
-            {activeTab === "contact-list" && (
+            {activeTab === "contact-list" && isAdmin() && (
               <>
                 {/* Contact List Header */}
                 <div className="flex items-center justify-between mb-6">
