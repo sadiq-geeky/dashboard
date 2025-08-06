@@ -5,8 +5,6 @@ import {
   HeartbeatRecord,
 } from "@shared/api";
 import { cn } from "@/lib/utils";
-import { AddContactModal } from "./AddContactModal";
-import { EditContactModal } from "./EditContactModal";
 import { RecordingsAnalytics } from "./RecordingsAnalytics";
 import { ConversationAnalytics } from "./ConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
