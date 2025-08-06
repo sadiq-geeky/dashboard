@@ -67,6 +67,11 @@ const App = () => (
                 <ConversationAnalytics />
               </ProtectedRoute>
             } />
+            <Route path="/user-management" element={
+              <ProtectedRoute adminOnly>
+                <UserManagement />
+              </ProtectedRoute>
+            } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
