@@ -182,9 +182,6 @@ export function ExactDashboard() {
   const [devices, setDevices] = useState<HeartbeatRecord[]>([]);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [contactsTotal, setContactsTotal] = useState(0);
-  const [contactSearch, setContactSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRecording, setSelectedRecording] =
     useState<RecordingHistory | null>(null);
