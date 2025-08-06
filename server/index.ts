@@ -83,5 +83,11 @@ export function createServer() {
   app.post("/api/recordings", createRecording);
   app.put("/api/recordings/:id", updateRecording);
 
+  // Contacts routes
+  app.get("/api/contacts", getContacts);
+  app.post("/api/contacts", createContact);
+  app.put("/api/contacts/:uuid", updateContact);
+  app.delete("/api/contacts/:uuid", deleteContact);
+
   return app;
 }
