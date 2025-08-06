@@ -70,7 +70,12 @@ const fetchRecordings = async (user: any, retries = 2): Promise<RecordingHistory
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      const errorText = await response.text();
+      let errorText = "";
+      try {
+        errorText = await response.text();
+      } catch (e) {
+        errorText = "Unknown error";
+      }
       throw new Error(
         `Failed to fetch recordings: ${response.status} ${errorText}`,
       );
