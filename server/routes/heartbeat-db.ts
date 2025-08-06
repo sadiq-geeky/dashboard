@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { HeartbeatRecord } from "@shared/api";
 import { executeQuery } from "../config/database";
 import { v4 as uuidv4 } from "uuid";
+import { heartbeatLogger } from "../utils/logger";
 
 // Get heartbeats with status calculation
 export const getHeartbeats: RequestHandler = async (req, res) => {
