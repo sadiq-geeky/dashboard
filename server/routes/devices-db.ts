@@ -61,10 +61,9 @@ export const getDevices: RequestHandler = async (req, res) => {
 
     // Get total count
     const countQuery = `
-      SELECT COUNT(*) as total 
-      FROM devices d 
-      LEFT JOIN branches b ON d.branch_id = b.id 
-      ${whereClause}
+      SELECT COUNT(*) as total
+      FROM devices d
+      ${whereClause.replace('d.branch_id', 'branch_id')}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
       countQuery,
@@ -72,15 +71,14 @@ export const getDevices: RequestHandler = async (req, res) => {
     );
     const total = countResult.total;
 
-    // Get paginated results with branch info
+    // Get paginated results (without branch join for now)
     const dataQuery = `
-      SELECT 
+      SELECT
         d.*,
-        b.branch_name,
-        b.branch_code
-      FROM devices d 
-      LEFT JOIN branches b ON d.branch_id = b.id
-      ${whereClause}
+        NULL as branch_name,
+        NULL as branch_code
+      FROM devices d
+      ${whereClause.replace('d.branch_id', 'branch_id')}
       ORDER BY d.device_name ASC
       LIMIT ${limitNum} OFFSET ${offset}
     `;
