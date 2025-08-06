@@ -4,21 +4,21 @@ import { X } from "lucide-react";
 interface User {
   uuid: string;
   emp_name: string | null;
-  username: string;
+  gender: string | null;
+  date_of_birth: string | null;
   cnic: string | null;
   phone_no: string | null;
-  email_id: string | null;
   designation: string | null;
   department: string | null;
-  branch_id: string | null;
-  branch_city: string | null;
-  branch_address: string | null;
+  joining_date: string | null;
+  email_id: string | null;
+  username: string;
   role: "admin" | "user";
   is_active: boolean;
-  date_of_birth: string | null;
-  joining_date: string | null;
-  device_mac: string | null;
-  gender: string | null;
+  created_on: string | null;
+  updated_on: string | null;
+  created_by: string | null;
+  updated_by: string | null;
 }
 
 interface EditUserModalProps {
@@ -36,18 +36,14 @@ export function EditUserModal({
 }: EditUserModalProps) {
   const [formData, setFormData] = useState({
     emp_name: "",
-    cnic: "",
-    phone_no: "",
-    email_id: "",
-    designation: "",
-    department: "",
-    branch_id: "",
-    branch_city: "",
-    branch_address: "",
     gender: "",
     date_of_birth: "",
+    cnic: "",
+    phone_no: "",
+    designation: "",
+    department: "",
     joining_date: "",
-    device_mac: "",
+    email_id: "",
     username: "",
     password: "", // Optional for updates
     role: "user" as "admin" | "user",
