@@ -37,6 +37,7 @@ import {
   updateContact,
   deleteContact,
 } from "./routes/contacts-db";
+import { getRecordingsAnalytics } from "./routes/analytics-db";
 
 export function createServer() {
   const app = express();
