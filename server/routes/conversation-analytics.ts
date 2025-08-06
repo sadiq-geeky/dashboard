@@ -134,7 +134,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
         COUNT(r.id) AS count
       FROM recording_history r
       JOIN contacts c
-        ON r.mac_address = c.device_mac
+        ON r.mac_address COLLATE utf8mb4_0900_ai_ci = c.device_mac COLLATE utf8mb4_0900_ai_ci
       GROUP BY c.branch_id
       ORDER BY count DESC
     `;
