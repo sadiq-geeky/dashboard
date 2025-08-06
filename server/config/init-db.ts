@@ -157,6 +157,59 @@ export async function initializeTables() {
       console.error("❌ Error creating default admin user:", error);
     }
 
+    // Create sample branch data if none exists
+    try {
+      const existingBranches = await executeQuery("SELECT COUNT(*) as count FROM branches");
+      if (existingBranches[0].count === 0) {
+        console.log("🏢 Creating sample branch data...");
+        const { v4: uuidv4 } = await import("uuid");
+
+        const sampleBranches = [
+          {
+            id: uuidv4(),
+            branch_code: "HQ001",
+            branch_name: "Head Office Karachi",
+            branch_city: "Karachi",
+            branch_address: "I.I. Chundrigar Road, Karachi",
+            region: "Sindh",
+            contact_phone: "+92-21-111-225-224",
+            contact_email: "karachi.hq@bankalfalah.com"
+          },
+          {
+            id: uuidv4(),
+            branch_code: "LHR001",
+            branch_name: "Lahore Main Branch",
+            branch_city: "Lahore",
+            branch_address: "Mall Road, Lahore",
+            region: "Punjab",
+            contact_phone: "+92-42-111-225-224",
+            contact_email: "lahore.main@bankalfalah.com"
+          },
+          {
+            id: uuidv4(),
+            branch_code: "ISB001",
+            branch_name: "Islamabad Branch",
+            branch_city: "Islamabad",
+            branch_address: "Blue Area, Islamabad",
+            region: "ICT",
+            contact_phone: "+92-51-111-225-224",
+            contact_email: "islamabad@bankalfalah.com"
+          }
+        ];
+
+        for (const branch of sampleBranches) {
+          await executeQuery(
+            `INSERT INTO branches (id, branch_code, branch_name, branch_city, branch_address, region, contact_phone, contact_email)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [branch.id, branch.branch_code, branch.branch_name, branch.branch_city, branch.branch_address, branch.region, branch.contact_phone, branch.contact_email]
+          );
+        }
+        console.log("✅ Sample branch data created successfully");
+      }
+    } catch (error) {
+      console.error("❌ Error creating sample branch data:", error);
+    }
+
     console.log("🚀 All database tables initialized successfully");
   } catch (error) {
     console.error("❌ Error initializing database tables:", error);
