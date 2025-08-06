@@ -50,7 +50,6 @@ interface DeviceFormData {
   device_mac: string;
   ip_address: string;
   device_type: "recorder" | "monitor" | "other";
-  branch_id: string;
   installation_date: string;
   last_maintenance: string;
   device_status: "active" | "inactive" | "maintenance";
@@ -72,7 +71,6 @@ export function DeviceManagement() {
     device_mac: "",
     ip_address: "",
     device_type: "recorder",
-    branch_id: "",
     installation_date: "",
     last_maintenance: "",
     device_status: "active",
@@ -137,7 +135,6 @@ export function DeviceManagement() {
         },
         body: JSON.stringify({
           ...formData,
-          branch_id: formData.branch_id || null,
           installation_date: formData.installation_date || null,
           last_maintenance: formData.last_maintenance || null,
         }),
@@ -154,7 +151,6 @@ export function DeviceManagement() {
         device_mac: "",
         ip_address: "",
         device_type: "recorder",
-        branch_id: "",
         installation_date: "",
         last_maintenance: "",
         device_status: "active",
@@ -172,7 +168,6 @@ export function DeviceManagement() {
       device_mac: device.device_mac || "",
       ip_address: device.ip_address || "",
       device_type: device.device_type,
-      branch_id: device.branch_id || "",
       installation_date: device.installation_date || "",
       last_maintenance: device.last_maintenance || "",
       device_status: device.device_status,
@@ -504,25 +499,6 @@ export function DeviceManagement() {
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Assigned Branch
-                    </label>
-                    <select
-                      value={formData.branch_id}
-                      onChange={(e) =>
-                        setFormData({ ...formData, branch_id: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    >
-                      <option value="">Select Branch</option>
-                      {branches.map((branch) => (
-                        <option key={branch.id} value={branch.id}>
-                          {branch.branch_name} ({branch.branch_code})
-                        </option>
-                      ))}
-                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
