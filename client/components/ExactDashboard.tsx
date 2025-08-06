@@ -778,7 +778,10 @@ export function ExactDashboard() {
                       Manage employee contacts and information
                     </p>
                   </div>
-                  <button className="flex items-center space-x-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 transition-colors">
+                  <button
+                    onClick={() => setIsAddContactModalOpen(true)}
+                    className="flex items-center space-x-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 transition-colors"
+                  >
                     <Plus className="h-4 w-4" />
                     <span>Add Contact</span>
                   </button>
