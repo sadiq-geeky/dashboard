@@ -102,7 +102,6 @@ export async function initializeTables() {
       CREATE TABLE IF NOT EXISTS users (
         uuid VARCHAR(36) PRIMARY KEY,
         emp_name VARCHAR(255) NOT NULL,
-        branch_id VARCHAR(36),
         gender ENUM('Male', 'Female', 'Other'),
         date_of_birth DATE,
         cnic VARCHAR(15),
@@ -117,9 +116,9 @@ export async function initializeTables() {
         is_active BOOLEAN DEFAULT true,
         created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE SET NULL,
+        created_by VARCHAR(36),
+        updated_by VARCHAR(36),
         INDEX idx_username (username),
-        INDEX idx_branch_id (branch_id),
         INDEX idx_role (role),
         INDEX idx_is_active (is_active)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
