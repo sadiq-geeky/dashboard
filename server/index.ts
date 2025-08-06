@@ -115,5 +115,13 @@ export function createServer() {
   app.get("/api/analytics/conversations/daily", getDailyConversationsLastMonth);
   app.get("/api/analytics/conversations/cnic", getUniqueCnicsByMonth);
 
+  // User Management routes
+  app.post("/api/auth/login", loginUser);
+  app.get("/api/users", getUsers);
+  app.post("/api/users", createUser);
+  app.put("/api/users/:uuid", updateUser);
+  app.delete("/api/users/:uuid", deleteUser);
+  app.get("/api/users/:uuid", getUserProfile);
+
   return app;
 }
