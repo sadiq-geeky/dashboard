@@ -50,26 +50,89 @@ const upload = multer({
 
 // Upload voice recording
 export const uploadVoice: RequestHandler = async (req, res) => {
-  try {
-    const { ip_address, start_time, end_time, cnic, mac_address } = req.body;
-    const file = req.file;
+  const startTime = Date.now();
+  const requestId = uuidv4();
+  const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
+  const userAgent = req.get('User-Agent') || 'unknown';
+  const { ip_address, start_time, end_time, cnic, mac_address } = req.body;
+  const file = req.file;
 
+  voiceLogger.info("voice-upload", "upload_voice_request", {
+    request_id: requestId,
+    ip_address: clientIp,
+    user_agent: userAgent,
+    cnic: cnic,
+    mac_address: mac_address?.trim(),
+    details: {
+      body_ip_address: ip_address,
+      body_mac_address: mac_address?.trim(),
+      start_time: start_time,
+      end_time: end_time,
+      file_received: !!file,
+      original_filename: file?.originalname,
+      file_mimetype: file?.mimetype,
+    },
+  });
+
+  try {
     // Validate required parameters
     if (!ip_address?.trim()) {
+      voiceLogger.warn("voice-upload", "validation_failed", {
+        request_id: requestId,
+        ip_address: clientIp,
+        cnic: cnic,
+        details: { missing_field: "ip_address" },
+      });
       return res.status(400).json({ error: "IP address is required" });
     }
     if (!start_time) {
+      voiceLogger.warn("voice-upload", "validation_failed", {
+        request_id: requestId,
+        ip_address: clientIp,
+        cnic: cnic,
+        details: { missing_field: "start_time" },
+      });
       return res.status(400).json({ error: "Start time is required" });
     }
     if (!end_time) {
+      voiceLogger.warn("voice-upload", "validation_failed", {
+        request_id: requestId,
+        ip_address: clientIp,
+        cnic: cnic,
+        details: { missing_field: "end_time" },
+      });
       return res.status(400).json({ error: "End time is required" });
     }
     if (!cnic) {
+      voiceLogger.warn("voice-upload", "validation_failed", {
+        request_id: requestId,
+        ip_address: clientIp,
+        details: { missing_field: "cnic" },
+      });
       return res.status(400).json({ error: "CNIC is required" });
     }
     if (!file) {
+      voiceLogger.warn("voice-upload", "validation_failed", {
+        request_id: requestId,
+        ip_address: clientIp,
+        cnic: cnic,
+        details: { missing_field: "audio_file" },
+      });
       return res.status(400).json({ error: "Audio file is required" });
     }
+
+    voiceLogger.info("voice-upload", "file_processing_start", {
+      request_id: requestId,
+      ip_address: clientIp,
+      cnic: cnic,
+      file_name: file.filename,
+      file_size: file.size,
+      details: {
+        original_filename: file.originalname,
+        file_mimetype: file.mimetype,
+        file_path: file.path,
+      },
+    });
 
     // Parse audio metadata
     const metadata = await parseFile(file.path);
@@ -77,6 +140,19 @@ export const uploadVoice: RequestHandler = async (req, res) => {
     const audioBitrate = metadata.format.bitrate || 0;
     const sampleRate = metadata.format.sampleRate || 0;
     const audioFormat = metadata.format.container || file.mimetype;
+
+    voiceLogger.info("voice-upload", "metadata_extracted", {
+      request_id: requestId,
+      ip_address: clientIp,
+      cnic: cnic,
+      file_name: file.filename,
+      details: {
+        duration_seconds: durationSeconds,
+        audio_bitrate: audioBitrate,
+        sample_rate: sampleRate,
+        audio_format: audioFormat,
+      },
+    });
 
     // Generate UUID and insert into database
     const id = uuidv4();
@@ -102,6 +178,30 @@ export const uploadVoice: RequestHandler = async (req, res) => {
       file.size,
     ]);
 
+    const duration = Date.now() - startTime;
+
+    voiceLogger.info("voice-upload", "upload_voice_success", {
+      request_id: requestId,
+      ip_address: clientIp,
+      cnic: cnic,
+      mac_address: mac_address?.trim(),
+      file_name: file.filename,
+      file_size: file.size,
+      duration_ms: duration,
+      details: {
+        recording_id: id,
+        device_ip: ip_address.trim(),
+        device_mac: mac_address?.trim() || null,
+        start_time: start_time,
+        end_time: end_time,
+        duration_seconds: durationSeconds,
+        audio_bitrate: audioBitrate,
+        sample_rate: sampleRate,
+        audio_format: audioFormat,
+        playback_url: `/api/audio/${file.filename}`,
+      },
+    });
+
     res.status(201).json({
       success: true,
       id,
@@ -109,6 +209,27 @@ export const uploadVoice: RequestHandler = async (req, res) => {
       playback_url: `/api/audio/${file.filename}`,
     });
   } catch (error) {
+    const duration = Date.now() - startTime;
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    voiceLogger.error("voice-upload", "upload_voice_error", errorMessage, {
+      request_id: requestId,
+      ip_address: clientIp,
+      cnic: cnic,
+      mac_address: mac_address?.trim(),
+      file_name: file?.filename,
+      file_size: file?.size,
+      duration_ms: duration,
+      details: {
+        error_stack: error instanceof Error ? error.stack : undefined,
+        device_ip: ip_address,
+        device_mac: mac_address?.trim() || null,
+        original_filename: file?.originalname,
+        file_mimetype: file?.mimetype,
+        error_type: error instanceof Error && error.message.includes("Only MP3 and WAV") ? "file_format_error" : "general_error",
+      },
+    });
+
     console.error("Error uploading voice:", error);
 
     if (error instanceof Error && error.message.includes("Only MP3 and WAV")) {
