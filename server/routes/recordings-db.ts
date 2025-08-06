@@ -27,9 +27,10 @@ export const getRecordings: RequestHandler = async (req, res) => {
     }
 
     if (device) {
-      conditions.push("COALESCE(dm.device_name, rh.ip_address) = ?");
+      conditions.push("rh.ip_address = ?");
+      countConditions.push("rh.ip_address = ?");
       queryParams.push(device);
-      // Skip device filtering for count query to avoid JOIN complexity
+      countParams.push(device);
     }
 
     // Branch filtering for non-admin users
