@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { RecordingHistory, PaginatedResponse } from "@shared/api";
+import { RecordingHistory, PaginatedResponse, HeartbeatRecord } from "@shared/api";
 import { cn } from "@/lib/utils";
 import {
   Search,
@@ -20,6 +20,12 @@ import {
   SkipBack,
   Shuffle,
   Download,
+  RefreshCw,
+  Wifi,
+  WifiOff,
+  AlertTriangle,
+  Clock,
+  Monitor,
 } from "lucide-react";
 
 // Fetch recordings from API
