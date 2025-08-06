@@ -767,7 +767,7 @@ export function ExactDashboard() {
                       <tbody className="bg-white divide-y divide-gray-200">
                         {devices.map((device, index) => (
                           <tr
-                            key={device.branch_name || `device-${index}`}
+                            key={`${device.branch_code}-${device.branch_name}-${index}`}
                             className="hover:bg-gray-50"
                           >
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
