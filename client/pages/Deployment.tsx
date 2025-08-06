@@ -154,10 +154,18 @@ export function Deployment() {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Failed to delete deployment");
+      if (!response.ok) {
+        try {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to delete deployment");
+        } catch {
+          throw new Error("Failed to delete deployment");
+        }
+      }
       await fetchData();
     } catch (error) {
       console.error("Error deleting deployment:", error);
+      alert(error.message || "Failed to delete deployment");
     }
   };
 
