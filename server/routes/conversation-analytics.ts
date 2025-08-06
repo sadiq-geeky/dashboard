@@ -192,13 +192,13 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
       conversationsByBranch,
       conversationsByCity,
       dailyConversationsLastMonth,
-      uniqueCnicsByMonth,
+      uniqueCnicResult,
       totalStatsResult,
     ] = await Promise.all([
-      executeQuery<{ branch_id: string; branch_name: string; count: number; month: string }>(branchQuery),
+      executeQuery<{ branch_id: string; branch_name: string; count: number }>(branchQuery),
       executeQuery<{ city: string; count: number; branch_count: number }>(cityQuery),
       executeQuery<{ date: string; count: number }>(dailyQuery),
-      executeQuery<{ month: string; unique_cnic_count: number }>(cnicQuery),
+      executeQuery<{ unique_cnic_count: number }>(cnicQuery),
       executeQuery<{
         totalConversations: number;
         uniqueCustomers: number;
