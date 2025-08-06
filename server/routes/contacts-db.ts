@@ -37,7 +37,7 @@ export const getContacts: RequestHandler = async (req, res) => {
 
     const queryParams: any[] = [];
 
-    if (search && typeof search === 'string' && search.trim()) {
+    if (search && typeof search === "string" && search.trim()) {
       query += ` WHERE emp_name LIKE ? OR cnic LIKE ? OR phone_no LIKE ? OR email_id LIKE ?`;
       const searchTerm = `%${search.trim()}%`;
       queryParams.push(searchTerm, searchTerm, searchTerm, searchTerm);
@@ -51,13 +51,16 @@ export const getContacts: RequestHandler = async (req, res) => {
     let countQuery = `SELECT COUNT(*) as total FROM contacts`;
     const countParams: any[] = [];
 
-    if (search && typeof search === 'string' && search.trim()) {
+    if (search && typeof search === "string" && search.trim()) {
       countQuery += ` WHERE emp_name LIKE ? OR cnic LIKE ? OR phone_no LIKE ? OR email_id LIKE ?`;
       const searchTerm = `%${search.trim()}%`;
       countParams.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
 
-    const countResult = await executeQuery<{ total: number }>(countQuery, countParams);
+    const countResult = await executeQuery<{ total: number }>(
+      countQuery,
+      countParams,
+    );
     const total = countResult[0]?.total || 0;
 
     res.json({
