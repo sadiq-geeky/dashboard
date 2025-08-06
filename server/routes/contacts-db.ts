@@ -187,7 +187,7 @@ export const updateContact: RequestHandler = async (req, res) => {
 
     const query = `
       UPDATE contacts SET
-        emp_name = ?, device_mac = ?, branch_id = ?, branch_address = ?,
+        emp_name = ?, device_mac = ?, branch_id = ?, branch_city = ?, branch_address = ?,
         gender = ?, date_of_birth = ?, cnic = ?, phone_no = ?,
         designation = ?, department = ?, joining_date = ?, email_id = ?,
         updated_on = NOW()
