@@ -194,10 +194,6 @@ export const updateUser: RequestHandler = async (req, res) => {
     const { uuid } = req.params;
     const {
       emp_name,
-      device_mac,
-      branch_id,
-      branch_city,
-      branch_address,
       gender,
       date_of_birth,
       cnic,
@@ -228,18 +224,13 @@ export const updateUser: RequestHandler = async (req, res) => {
 
     let query = `
       UPDATE users SET
-        emp_name = ?, device_mac = ?, branch_id = ?, branch_city = ?, branch_address = ?,
-        gender = ?, date_of_birth = ?, cnic = ?, phone_no = ?,
+        emp_name = ?, gender = ?, date_of_birth = ?, cnic = ?, phone_no = ?,
         designation = ?, department = ?, joining_date = ?, email_id = ?,
         username = ?, role = ?, is_active = ?, updated_on = NOW()
     `;
 
     const queryParams = [
       emp_name,
-      device_mac,
-      branch_id,
-      branch_city,
-      branch_address,
       gender,
       date_of_birth,
       cnic,
