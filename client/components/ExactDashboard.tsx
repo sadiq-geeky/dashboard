@@ -45,12 +45,22 @@ import {
 } from "lucide-react";
 
 // Fetch recordings from API with retry logic
-const fetchRecordings = async (retries = 2): Promise<RecordingHistory[]> => {
+const fetchRecordings = async (user: any, retries = 2): Promise<RecordingHistory[]> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    const response = await fetch("/api/recordings?limit=50", {
+    // Build query parameters with branch filtering for non-admin users
+    const params = new URLSearchParams({
+      limit: "50",
+      user_role: user?.role || 'user',
+    });
+
+    if (user?.branch_id && user?.role !== 'admin') {
+      params.append('branch_id', user.branch_id);
+    }
+
+    const response = await fetch(`/api/recordings?${params.toString()}`, {
       signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
