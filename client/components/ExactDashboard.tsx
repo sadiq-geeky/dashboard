@@ -41,8 +41,8 @@ import {
   Trash2,
 } from "lucide-react";
 
-// Fetch recordings from API
-const fetchRecordings = async (): Promise<RecordingHistory[]> => {
+// Fetch recordings from API with retry logic
+const fetchRecordings = async (retries = 2): Promise<RecordingHistory[]> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -70,6 +70,14 @@ const fetchRecordings = async (): Promise<RecordingHistory[]> => {
     if (error.name === "AbortError") {
       console.error("Request timed out after 10 seconds");
     }
+
+    // Retry logic for development
+    if (retries > 0 && (error.name === "TypeError" || error.message?.includes("Failed to fetch"))) {
+      console.log(`Retrying recordings fetch, ${retries} attempts remaining...`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return fetchRecordings(retries - 1);
+    }
+
     return [];
   }
 };
