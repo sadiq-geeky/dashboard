@@ -175,7 +175,7 @@ export function Deployment() {
 
   const availableDevices = devices.filter(d => !getDeployedDeviceIds().has(d.id));
   const availableBranches = branches.filter(b => !getDeployedBranchIds().has(b.id));
-  const availableUsers = users.filter(u => !getDeployedUserIds().has(u.uuid));
+  const availableUsers = users.filter(u => !getDeployedUserIds().has(u.uuid) && u.role !== 'admin');
 
   if (!isAdmin()) {
     return (
