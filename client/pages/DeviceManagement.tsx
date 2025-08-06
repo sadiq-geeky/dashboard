@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "../components/Header";
+import { cn } from "@/lib/utils";
 import {
   Search,
   Plus,
@@ -13,6 +14,11 @@ import {
   AlertTriangle,
   RefreshCw,
   Settings,
+  Grid3X3,
+  BarChart3,
+  MessageSquare,
+  Users,
+  Mail,
 } from "lucide-react";
 
 interface Device {
