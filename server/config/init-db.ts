@@ -175,6 +175,25 @@ export async function initializeTables() {
       }
     }
 
+    // Add branch_city column to existing contacts table if it doesn't exist
+    try {
+      await executeQuery(
+        `ALTER TABLE contacts ADD COLUMN branch_city VARCHAR(100)`,
+      );
+      console.log("✅ Added branch_city column to contacts table");
+    } catch (error: any) {
+      if (error.code === "ER_DUP_FIELDNAME") {
+        console.log(
+          "✅ branch_city column already exists in contacts table",
+        );
+      } else {
+        console.log(
+          "⚠️  Could not add branch_city to contacts:",
+          error.message,
+        );
+      }
+    }
+
     console.log("🚀 All database tables initialized successfully");
   } catch (error) {
     console.error("❌ Error initializing database tables:", error);
