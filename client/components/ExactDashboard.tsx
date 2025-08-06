@@ -93,7 +93,7 @@ const fetchRecordings = async (user: any, retries = 2): Promise<RecordingHistory
         `Retrying recordings fetch, ${retries} attempts remaining...`,
       );
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      return fetchRecordings(retries - 1);
+      return fetchRecordings(user, retries - 1);
     }
 
     return [];
