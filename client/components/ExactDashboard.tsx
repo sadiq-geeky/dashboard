@@ -296,33 +296,29 @@ export function ExactDashboard() {
             <div>
               <h2 className="text-lg font-medium text-gray-900 mb-4">Previous Logs</h2>
               <div className="space-y-3">
-                <div className="p-3 bg-gray-50 rounded-md">
-                  <div className="flex justify-between items-start mb-1">
-                    <span className="text-sm font-medium text-gray-900">System Update</span>
-                    <span className="text-xs text-gray-500">2h ago</span>
-                  </div>
-                  <p className="text-sm text-gray-600">Updated system configuration</p>
+                <div className="flex justify-between items-center text-xs text-gray-500 border-b pb-2">
+                  <span>S.no</span>
+                  <span>Branch No</span>
+                  <span>Date</span>
+                  <span>Action</span>
                 </div>
-                
-                <div className="p-3 bg-gray-50 rounded-md">
-                  <div className="flex justify-between items-start mb-1">
-                    <span className="text-sm font-medium text-gray-900">Device Connection</span>
-                    <span className="text-xs text-gray-500">4h ago</span>
+
+                {recordings.slice(0, 3).map((recording, index) => (
+                  <div key={recording.id} className="flex justify-between items-center text-sm">
+                    <span className="text-gray-900">{index + 1}</span>
+                    <span className="text-gray-500">{recording.device_name || recording.ip_address}</span>
+                    <span className="text-gray-500">
+                      {recording.created_on ? new Date(recording.created_on).toLocaleDateString() : '-'}
+                    </span>
+                    <button className="text-blue-600 hover:text-blue-700 text-xs">
+                      View more
+                    </button>
                   </div>
-                  <p className="text-sm text-gray-600">Device successfully connected</p>
-                </div>
-                
-                <div className="p-3 bg-gray-50 rounded-md">
-                  <div className="flex justify-between items-start mb-1">
-                    <span className="text-sm font-medium text-gray-900">Health Check</span>
-                    <span className="text-xs text-gray-500">6h ago</span>
-                  </div>
-                  <p className="text-sm text-gray-600">All systems operational</p>
-                </div>
+                ))}
               </div>
-              
+
               <button className="w-full mt-4 py-2 text-sm text-blue-600 hover:text-blue-700">
-                View all logs →
+                View all logs ���
               </button>
             </div>
           </div>
