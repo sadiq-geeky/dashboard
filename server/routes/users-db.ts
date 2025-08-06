@@ -94,10 +94,6 @@ export const createUser: RequestHandler = async (req, res) => {
   try {
     const {
       emp_name,
-      device_mac,
-      branch_id,
-      branch_city,
-      branch_address,
       gender,
       date_of_birth,
       cnic,
@@ -121,12 +117,9 @@ export const createUser: RequestHandler = async (req, res) => {
       email_id,
       designation,
       department,
-      branch_id,
       gender,
       date_of_birth,
       joining_date,
-      device_mac,
-      branch_address,
     };
 
     const missingFields = Object.entries(requiredFields)
