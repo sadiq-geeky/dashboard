@@ -136,5 +136,12 @@ export function createServer() {
   app.delete("/api/users/:uuid", deleteUser);
   app.get("/api/users/:uuid", getUserProfile);
 
+  // Deployment Management routes
+  app.get("/api/deployments", getDeployments);
+  app.post("/api/deployments", createDeployment);
+  app.get("/api/deployments/:uuid", getDeployment);
+  app.put("/api/deployments/:uuid", updateDeployment);
+  app.delete("/api/deployments/:uuid", deleteDeployment);
+
   return app;
 }
