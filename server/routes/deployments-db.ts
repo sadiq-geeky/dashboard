@@ -29,7 +29,7 @@ export const getDeployments: RequestHandler = async (req, res) => {
         b.branch_city,
         b.branch_address,
         u.username,
-        u.email,
+        u.email_id,
         u.role,
         u.full_name
       FROM link_device_branch_user ldbu
@@ -210,7 +210,7 @@ export const getDeployment: RequestHandler = async (req, res) => {
         b.branch_city,
         b.branch_address,
         u.username,
-        u.email,
+        u.email_id,
         u.role,
         u.full_name
       FROM link_device_branch_user ldbu
