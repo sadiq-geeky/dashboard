@@ -438,14 +438,6 @@ export function ConversationAnalytics() {
               {conversationsByCity.length > 0 ? conversationsByCity[0].city : "N/A"}
             </p>
           </div>
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600">Customer Retention</p>
-            <p className="text-xl font-bold text-orange-600">
-              {totalStats.totalConversations > 0 && totalStats.uniqueCustomers > 0
-                ? (totalStats.totalConversations / totalStats.uniqueCustomers).toFixed(1)
-                : "0"}
-            </p>
-          </div>
         </div>
       </div>
     </div>
