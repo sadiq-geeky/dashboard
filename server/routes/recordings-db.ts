@@ -35,6 +35,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
       SELECT COUNT(*) as total
       FROM recording_history rh
       LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
+      LEFT JOIN contacts c ON dm.mac_address = c.device_mac
       ${whereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
@@ -54,8 +55,8 @@ export const getRecordings: RequestHandler = async (req, res) => {
     rh.CREATED_ON AS created_on,
     rh.ip_address,
     COALESCE(dm.device_name, rh.ip_address) AS device_name,
-    COALESCE(dm.device_name, rh.ip_address) AS branch_no,
-    'NA' AS branch_address,
+    COALESCE(c.branch_id, COALESCE(dm.device_name, rh.ip_address)) AS branch_no,
+    COALESCE(c.branch_address, 'NA') AS branch_address,
     CASE
         WHEN rh.end_time IS NOT NULL THEN
             TIMESTAMPDIFF(SECOND, rh.start_time, rh.end_time)
@@ -69,6 +70,7 @@ export const getRecordings: RequestHandler = async (req, res) => {
     END AS status
 FROM recording_history rh
 LEFT JOIN device_mappings dm ON rh.ip_address = dm.ip_address
+LEFT JOIN contacts c ON dm.mac_address = c.device_mac
       ${whereClause}
       ORDER BY rh.CREATED_ON DESC
       LIMIT ${limitNum} OFFSET ${offset}
