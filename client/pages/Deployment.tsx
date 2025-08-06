@@ -75,24 +75,31 @@ export function Deployment() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [devicesRes, branchesRes, usersRes, deploymentsRes] = await Promise.all([
-        fetch("/api/devices?limit=100"),
-        fetch("/api/branches?limit=100&active=true"),
-        fetch("/api/users?limit=100"),
-        fetch("/api/deployments"),
-      ]);
+      const [devicesRes, branchesRes, usersRes, deploymentsRes] =
+        await Promise.all([
+          fetch("/api/devices?limit=100"),
+          fetch("/api/branches?limit=100&active=true"),
+          fetch("/api/users?limit=100"),
+          fetch("/api/deployments"),
+        ]);
 
       // Check if all responses are OK before parsing JSON
-      if (!devicesRes.ok || !branchesRes.ok || !usersRes.ok || !deploymentsRes.ok) {
+      if (
+        !devicesRes.ok ||
+        !branchesRes.ok ||
+        !usersRes.ok ||
+        !deploymentsRes.ok
+      ) {
         throw new Error("One or more API requests failed");
       }
 
-      const [devicesData, branchesData, usersData, deploymentsData] = await Promise.all([
-        devicesRes.json(),
-        branchesRes.json(),
-        usersRes.json(),
-        deploymentsRes.json(),
-      ]);
+      const [devicesData, branchesData, usersData, deploymentsData] =
+        await Promise.all([
+          devicesRes.json(),
+          branchesRes.json(),
+          usersRes.json(),
+          deploymentsRes.json(),
+        ]);
 
       setDevices(devicesData.data || []);
       setBranches(branchesData.data || []);
@@ -111,7 +118,7 @@ export function Deployment() {
 
   const handleCreateDeployment = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedDevice || !selectedBranch || !selectedUser) {
       alert("Please select a device, branch, and user");
       return;
@@ -169,20 +176,30 @@ export function Deployment() {
     }
   };
 
-  const getDeployedDeviceIds = () => new Set(deployments.map(d => d.device_id));
-  const getDeployedBranchIds = () => new Set(deployments.map(d => d.branch_id));
-  const getDeployedUserIds = () => new Set(deployments.map(d => d.user_id));
+  const getDeployedDeviceIds = () =>
+    new Set(deployments.map((d) => d.device_id));
+  const getDeployedBranchIds = () =>
+    new Set(deployments.map((d) => d.branch_id));
+  const getDeployedUserIds = () => new Set(deployments.map((d) => d.user_id));
 
-  const availableDevices = devices.filter(d => !getDeployedDeviceIds().has(d.id));
-  const availableBranches = branches.filter(b => !getDeployedBranchIds().has(b.id));
-  const availableUsers = users.filter(u => !getDeployedUserIds().has(u.uuid) && u.role !== 'admin');
+  const availableDevices = devices.filter(
+    (d) => !getDeployedDeviceIds().has(d.id),
+  );
+  const availableBranches = branches.filter(
+    (b) => !getDeployedBranchIds().has(b.id),
+  );
+  const availableUsers = users.filter(
+    (u) => !getDeployedUserIds().has(u.uuid) && u.role !== "admin",
+  );
 
   if (!isAdmin()) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="flex items-center justify-center h-64">
-          <p className="text-gray-600">Access denied. Admin privileges required.</p>
+          <p className="text-gray-600">
+            Access denied. Admin privileges required.
+          </p>
         </div>
       </div>
     );
@@ -193,8 +210,14 @@ export function Deployment() {
       <Header />
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200" style={{ display: "flex", flexDirection: "column" }}>
-        <div className="flex items-center justify-between h-16 px-6" style={{ margin: "0 auto" }}>
+      <div
+        className="bg-white border-b border-gray-200"
+        style={{ display: "flex", flexDirection: "column" }}
+      >
+        <div
+          className="flex items-center justify-between h-16 px-6"
+          style={{ margin: "0 auto" }}
+        >
           <div className="flex items-center space-x-1">
             <button
               onClick={() => navigate("/")}
@@ -259,8 +282,12 @@ export function Deployment() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Device Deployment</h1>
-              <p className="text-gray-600">Link devices, branches, and users together</p>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Device Deployment
+              </h1>
+              <p className="text-gray-600">
+                Link devices, branches, and users together
+              </p>
             </div>
             <div className="flex items-center space-x-4">
               <button
@@ -291,15 +318,21 @@ export function Deployment() {
                 {/* Current Deployments */}
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-gray-900">Active Deployments</h2>
-                    <span className="text-sm text-gray-500">{deployments.length} deployments</span>
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Active Deployments
+                    </h2>
+                    <span className="text-sm text-gray-500">
+                      {deployments.length} deployments
+                    </span>
                   </div>
-                  
+
                   {deployments.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
                       <Settings className="h-12 w-12 mx-auto mb-3 text-gray-300" />
                       <p>No deployments configured yet</p>
-                      <p className="text-sm">Create your first deployment to get started</p>
+                      <p className="text-sm">
+                        Create your first deployment to get started
+                      </p>
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -316,10 +349,14 @@ export function Deployment() {
                               </div>
                               <div>
                                 <p className="font-medium text-gray-900">
-                                  {devices.find(d => d.id === deployment.device_id)?.device_name || "Unknown Device"}
+                                  {devices.find(
+                                    (d) => d.id === deployment.device_id,
+                                  )?.device_name || "Unknown Device"}
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                  {devices.find(d => d.id === deployment.device_id)?.device_mac || "No MAC"}
+                                  {devices.find(
+                                    (d) => d.id === deployment.device_id,
+                                  )?.device_mac || "No MAC"}
                                 </p>
                               </div>
                             </div>
@@ -333,10 +370,14 @@ export function Deployment() {
                               </div>
                               <div>
                                 <p className="font-medium text-gray-900">
-                                  {branches.find(b => b.id === deployment.branch_id)?.branch_name || "Unknown Branch"}
+                                  {branches.find(
+                                    (b) => b.id === deployment.branch_id,
+                                  )?.branch_name || "Unknown Branch"}
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                  {branches.find(b => b.id === deployment.branch_id)?.branch_code || "No Code"}
+                                  {branches.find(
+                                    (b) => b.id === deployment.branch_id,
+                                  )?.branch_code || "No Code"}
                                 </p>
                               </div>
                             </div>
@@ -350,18 +391,27 @@ export function Deployment() {
                               </div>
                               <div>
                                 <p className="font-medium text-gray-900">
-                                  {users.find(u => u.uuid === deployment.user_id)?.full_name || 
-                                   users.find(u => u.uuid === deployment.user_id)?.username || "Unknown User"}
+                                  {users.find(
+                                    (u) => u.uuid === deployment.user_id,
+                                  )?.full_name ||
+                                    users.find(
+                                      (u) => u.uuid === deployment.user_id,
+                                    )?.username ||
+                                    "Unknown User"}
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                  {users.find(u => u.uuid === deployment.user_id)?.role || "No Role"}
+                                  {users.find(
+                                    (u) => u.uuid === deployment.user_id,
+                                  )?.role || "No Role"}
                                 </p>
                               </div>
                             </div>
                           </div>
 
                           <button
-                            onClick={() => handleDeleteDeployment(deployment.uuid)}
+                            onClick={() =>
+                              handleDeleteDeployment(deployment.uuid)
+                            }
                             className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           >
                             <Unlink className="h-4 w-4" />
@@ -377,26 +427,35 @@ export function Deployment() {
                   {/* Available Devices */}
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-gray-900">Available Devices</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        Available Devices
+                      </h3>
                       <span className="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
                         {availableDevices.length}
                       </span>
                     </div>
                     <div className="space-y-3 max-h-64 overflow-y-auto">
                       {availableDevices.map((device) => (
-                        <div key={device.id} className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+                        <div
+                          key={device.id}
+                          className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg"
+                        >
                           <Monitor className="h-5 w-5 text-blue-600" />
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-900 truncate">{device.device_name}</p>
-                            <p className="text-xs text-gray-500">{device.device_mac || "No MAC"}</p>
+                            <p className="font-medium text-gray-900 truncate">
+                              {device.device_name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {device.device_mac || "No MAC"}
+                            </p>
                           </div>
                           <span
                             className={`px-2 py-1 rounded-full text-xs ${
                               device.device_status === "active"
                                 ? "bg-green-100 text-green-700"
                                 : device.device_status === "maintenance"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : "bg-red-100 text-red-700"
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : "bg-red-100 text-red-700"
                             }`}
                           >
                             {device.device_status}
@@ -404,7 +463,9 @@ export function Deployment() {
                         </div>
                       ))}
                       {availableDevices.length === 0 && (
-                        <p className="text-gray-500 text-sm text-center py-4">All devices are deployed</p>
+                        <p className="text-gray-500 text-sm text-center py-4">
+                          All devices are deployed
+                        </p>
                       )}
                     </div>
                   </div>
@@ -412,23 +473,34 @@ export function Deployment() {
                   {/* Available Branches */}
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-gray-900">Available Branches</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        Available Branches
+                      </h3>
                       <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">
                         {availableBranches.length}
                       </span>
                     </div>
                     <div className="space-y-3 max-h-64 overflow-y-auto">
                       {availableBranches.map((branch) => (
-                        <div key={branch.id} className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+                        <div
+                          key={branch.id}
+                          className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg"
+                        >
                           <Building2 className="h-5 w-5 text-green-600" />
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-900 truncate">{branch.branch_name}</p>
-                            <p className="text-xs text-gray-500">{branch.branch_code}</p>
+                            <p className="font-medium text-gray-900 truncate">
+                              {branch.branch_name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {branch.branch_code}
+                            </p>
                           </div>
                         </div>
                       ))}
                       {availableBranches.length === 0 && (
-                        <p className="text-gray-500 text-sm text-center py-4">All branches have devices</p>
+                        <p className="text-gray-500 text-sm text-center py-4">
+                          All branches have devices
+                        </p>
                       )}
                     </div>
                   </div>
@@ -436,25 +508,34 @@ export function Deployment() {
                   {/* Available Users */}
                   <div className="bg-white rounded-lg border border-gray-200 p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-gray-900">Available Users</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        Available Users
+                      </h3>
                       <span className="text-sm text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
                         {availableUsers.length}
                       </span>
                     </div>
                     <div className="space-y-3 max-h-64 overflow-y-auto">
                       {availableUsers.map((user) => (
-                        <div key={user.uuid} className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg">
+                        <div
+                          key={user.uuid}
+                          className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg"
+                        >
                           <Users className="h-5 w-5 text-purple-600" />
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-gray-900 truncate">
                               {user.full_name || user.username}
                             </p>
-                            <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+                            <p className="text-xs text-gray-500 capitalize">
+                              {user.role}
+                            </p>
                           </div>
                         </div>
                       ))}
                       {availableUsers.length === 0 && (
-                        <p className="text-gray-500 text-sm text-center py-4">All users are assigned</p>
+                        <p className="text-gray-500 text-sm text-center py-4">
+                          All users are assigned
+                        </p>
                       )}
                     </div>
                   </div>
@@ -464,25 +545,38 @@ export function Deployment() {
               {/* Statistics Sidebar */}
               <div className="space-y-6">
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="font-semibold text-gray-900 mb-4">Deployment Statistics</h3>
+                  <h3 className="font-semibold text-gray-900 mb-4">
+                    Deployment Statistics
+                  </h3>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600">Total Devices</span>
-                      <span className="font-semibold text-blue-600">{devices.length}</span>
+                      <span className="font-semibold text-blue-600">
+                        {devices.length}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600">Deployed</span>
-                      <span className="font-semibold text-green-600">{deployments.length}</span>
+                      <span className="font-semibold text-green-600">
+                        {deployments.length}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600">Available</span>
-                      <span className="font-semibold text-gray-600">{availableDevices.length}</span>
+                      <span className="font-semibold text-gray-600">
+                        {availableDevices.length}
+                      </span>
                     </div>
                     <div className="pt-2 border-t">
                       <div className="flex items-center justify-between">
                         <span className="text-gray-600">Deployment Rate</span>
                         <span className="font-semibold text-red-600">
-                          {devices.length > 0 ? Math.round((deployments.length / devices.length) * 100) : 0}%
+                          {devices.length > 0
+                            ? Math.round(
+                                (deployments.length / devices.length) * 100,
+                              )
+                            : 0}
+                          %
                         </span>
                       </div>
                     </div>
@@ -490,7 +584,9 @@ export function Deployment() {
                 </div>
 
                 <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                  <h3 className="font-semibold text-gray-900 mb-4">
+                    Quick Actions
+                  </h3>
                   <div className="space-y-3">
                     <button
                       onClick={() => navigate("/device-management")}
@@ -498,7 +594,9 @@ export function Deployment() {
                     >
                       <div className="flex items-center space-x-3">
                         <Monitor className="h-5 w-5 text-blue-600" />
-                        <span className="text-sm font-medium">Manage Devices</span>
+                        <span className="text-sm font-medium">
+                          Manage Devices
+                        </span>
                       </div>
                     </button>
                     <button
@@ -507,7 +605,9 @@ export function Deployment() {
                     >
                       <div className="flex items-center space-x-3">
                         <Building2 className="h-5 w-5 text-green-600" />
-                        <span className="text-sm font-medium">Manage Branches</span>
+                        <span className="text-sm font-medium">
+                          Manage Branches
+                        </span>
                       </div>
                     </button>
                     <button
@@ -516,7 +616,9 @@ export function Deployment() {
                     >
                       <div className="flex items-center space-x-3">
                         <Users className="h-5 w-5 text-purple-600" />
-                        <span className="text-sm font-medium">Manage Users</span>
+                        <span className="text-sm font-medium">
+                          Manage Users
+                        </span>
                       </div>
                     </button>
                   </div>
@@ -529,7 +631,9 @@ export function Deployment() {
           {showLinkModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 w-full max-w-md">
-                <h2 className="text-lg font-semibold mb-4">Create New Deployment</h2>
+                <h2 className="text-lg font-semibold mb-4">
+                  Create New Deployment
+                </h2>
                 <form onSubmit={handleCreateDeployment} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">

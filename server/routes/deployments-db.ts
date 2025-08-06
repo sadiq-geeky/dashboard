@@ -40,7 +40,7 @@ export const getDeployments: RequestHandler = async (req, res) => {
     `;
 
     const deployments = await executeQuery(query);
-    
+
     // Transform the data to include nested objects
     const transformedDeployments = deployments.map((row: any) => ({
       uuid: row.uuid,
@@ -51,33 +51,39 @@ export const getDeployments: RequestHandler = async (req, res) => {
       updated_on: row.updated_on,
       created_by: row.created_by,
       updated_by: row.updated_by,
-      device: row.device_name ? {
-        id: row.device_id,
-        device_name: row.device_name,
-        device_mac: row.device_mac,
-        ip_address: row.ip_address,
-        device_type: row.device_type,
-        device_status: row.device_status
-      } : null,
-      branch: row.branch_name ? {
-        id: row.branch_id,
-        branch_code: row.branch_code,
-        branch_name: row.branch_name,
-        branch_city: row.branch_city,
-        branch_address: row.branch_address
-      } : null,
-      user: row.username ? {
-        uuid: row.user_id,
-        username: row.username,
-        email: row.email_id,
-        role: row.role,
-        full_name: row.emp_name
-      } : null
+      device: row.device_name
+        ? {
+            id: row.device_id,
+            device_name: row.device_name,
+            device_mac: row.device_mac,
+            ip_address: row.ip_address,
+            device_type: row.device_type,
+            device_status: row.device_status,
+          }
+        : null,
+      branch: row.branch_name
+        ? {
+            id: row.branch_id,
+            branch_code: row.branch_code,
+            branch_name: row.branch_name,
+            branch_city: row.branch_city,
+            branch_address: row.branch_address,
+          }
+        : null,
+      user: row.username
+        ? {
+            uuid: row.user_id,
+            username: row.username,
+            email: row.email_id,
+            role: row.role,
+            full_name: row.emp_name,
+          }
+        : null,
     }));
 
     res.json({
       success: true,
-      data: transformedDeployments
+      data: transformedDeployments,
     });
   } catch (error) {
     console.error("Error fetching deployments:", error);
@@ -91,52 +97,52 @@ export const createDeployment: RequestHandler = async (req, res) => {
     const { device_id, branch_id, user_id } = req.body;
 
     if (!device_id || !branch_id || !user_id) {
-      return res.status(400).json({ 
-        error: "Device ID, Branch ID, and User ID are required" 
+      return res.status(400).json({
+        error: "Device ID, Branch ID, and User ID are required",
       });
     }
 
     // Check if device is already deployed
     const existingDeviceDeployment = await executeQuery(
-      'SELECT uuid FROM link_device_branch_user WHERE device_id = ?',
-      [device_id]
+      "SELECT uuid FROM link_device_branch_user WHERE device_id = ?",
+      [device_id],
     );
 
     if (existingDeviceDeployment.length > 0) {
-      return res.status(400).json({ 
-        error: "Device is already deployed to another branch" 
+      return res.status(400).json({
+        error: "Device is already deployed to another branch",
       });
     }
 
     // Check if branch already has a device
     const existingBranchDeployment = await executeQuery(
-      'SELECT uuid FROM link_device_branch_user WHERE branch_id = ?',
-      [branch_id]
+      "SELECT uuid FROM link_device_branch_user WHERE branch_id = ?",
+      [branch_id],
     );
 
     if (existingBranchDeployment.length > 0) {
-      return res.status(400).json({ 
-        error: "Branch already has a device assigned" 
+      return res.status(400).json({
+        error: "Branch already has a device assigned",
       });
     }
 
     // Check if user is already assigned
     const existingUserDeployment = await executeQuery(
-      'SELECT uuid FROM link_device_branch_user WHERE user_id = ?',
-      [user_id]
+      "SELECT uuid FROM link_device_branch_user WHERE user_id = ?",
+      [user_id],
     );
 
     if (existingUserDeployment.length > 0) {
-      return res.status(400).json({ 
-        error: "User is already assigned to another deployment" 
+      return res.status(400).json({
+        error: "User is already assigned to another deployment",
       });
     }
 
     // Verify that the device, branch, and user exist
     const [deviceCheck, branchCheck, userCheck] = await Promise.all([
-      executeQuery('SELECT id FROM devices WHERE id = ?', [device_id]),
-      executeQuery('SELECT id FROM branches WHERE id = ?', [branch_id]),
-      executeQuery('SELECT uuid FROM users WHERE uuid = ?', [user_id])
+      executeQuery("SELECT id FROM devices WHERE id = ?", [device_id]),
+      executeQuery("SELECT id FROM branches WHERE id = ?", [branch_id]),
+      executeQuery("SELECT uuid FROM users WHERE uuid = ?", [user_id]),
     ]);
 
     if (deviceCheck.length === 0) {
@@ -162,7 +168,7 @@ export const createDeployment: RequestHandler = async (req, res) => {
     res.status(201).json({
       success: true,
       uuid,
-      message: "Deployment created successfully"
+      message: "Deployment created successfully",
     });
   } catch (error) {
     console.error("Error creating deployment:", error);
@@ -184,7 +190,7 @@ export const deleteDeployment: RequestHandler = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Deployment deleted successfully"
+      message: "Deployment deleted successfully",
     });
   } catch (error) {
     console.error("Error deleting deployment:", error);
@@ -236,33 +242,39 @@ export const getDeployment: RequestHandler = async (req, res) => {
       updated_on: row.updated_on,
       created_by: row.created_by,
       updated_by: row.updated_by,
-      device: row.device_name ? {
-        id: row.device_id,
-        device_name: row.device_name,
-        device_mac: row.device_mac,
-        ip_address: row.ip_address,
-        device_type: row.device_type,
-        device_status: row.device_status
-      } : null,
-      branch: row.branch_name ? {
-        id: row.branch_id,
-        branch_code: row.branch_code,
-        branch_name: row.branch_name,
-        branch_city: row.branch_city,
-        branch_address: row.branch_address
-      } : null,
-      user: row.username ? {
-        uuid: row.user_id,
-        username: row.username,
-        email: row.email_id,
-        role: row.role,
-        full_name: row.emp_name
-      } : null
+      device: row.device_name
+        ? {
+            id: row.device_id,
+            device_name: row.device_name,
+            device_mac: row.device_mac,
+            ip_address: row.ip_address,
+            device_type: row.device_type,
+            device_status: row.device_status,
+          }
+        : null,
+      branch: row.branch_name
+        ? {
+            id: row.branch_id,
+            branch_code: row.branch_code,
+            branch_name: row.branch_name,
+            branch_city: row.branch_city,
+            branch_address: row.branch_address,
+          }
+        : null,
+      user: row.username
+        ? {
+            uuid: row.user_id,
+            username: row.username,
+            email: row.email_id,
+            role: row.role,
+            full_name: row.emp_name,
+          }
+        : null,
     };
 
     res.json({
       success: true,
-      data: deployment
+      data: deployment,
     });
   } catch (error) {
     console.error("Error fetching deployment:", error);
@@ -277,15 +289,15 @@ export const updateDeployment: RequestHandler = async (req, res) => {
     const { device_id, branch_id, user_id } = req.body;
 
     if (!device_id || !branch_id || !user_id) {
-      return res.status(400).json({ 
-        error: "Device ID, Branch ID, and User ID are required" 
+      return res.status(400).json({
+        error: "Device ID, Branch ID, and User ID are required",
       });
     }
 
     // Check if the deployment exists
     const existingDeployment = await executeQuery(
-      'SELECT uuid FROM link_device_branch_user WHERE uuid = ?',
-      [uuid]
+      "SELECT uuid FROM link_device_branch_user WHERE uuid = ?",
+      [uuid],
     );
 
     if (existingDeployment.length === 0) {
@@ -295,32 +307,32 @@ export const updateDeployment: RequestHandler = async (req, res) => {
     // Check for conflicts (excluding current deployment)
     const [deviceConflict, branchConflict, userConflict] = await Promise.all([
       executeQuery(
-        'SELECT uuid FROM link_device_branch_user WHERE device_id = ? AND uuid != ?',
-        [device_id, uuid]
+        "SELECT uuid FROM link_device_branch_user WHERE device_id = ? AND uuid != ?",
+        [device_id, uuid],
       ),
       executeQuery(
-        'SELECT uuid FROM link_device_branch_user WHERE branch_id = ? AND uuid != ?',
-        [branch_id, uuid]
+        "SELECT uuid FROM link_device_branch_user WHERE branch_id = ? AND uuid != ?",
+        [branch_id, uuid],
       ),
       executeQuery(
-        'SELECT uuid FROM link_device_branch_user WHERE user_id = ? AND uuid != ?',
-        [user_id, uuid]
-      )
+        "SELECT uuid FROM link_device_branch_user WHERE user_id = ? AND uuid != ?",
+        [user_id, uuid],
+      ),
     ]);
 
     if (deviceConflict.length > 0) {
-      return res.status(400).json({ 
-        error: "Device is already deployed to another branch" 
+      return res.status(400).json({
+        error: "Device is already deployed to another branch",
       });
     }
     if (branchConflict.length > 0) {
-      return res.status(400).json({ 
-        error: "Branch already has a device assigned" 
+      return res.status(400).json({
+        error: "Branch already has a device assigned",
       });
     }
     if (userConflict.length > 0) {
-      return res.status(400).json({ 
-        error: "User is already assigned to another deployment" 
+      return res.status(400).json({
+        error: "User is already assigned to another deployment",
       });
     }
 
@@ -330,7 +342,12 @@ export const updateDeployment: RequestHandler = async (req, res) => {
       WHERE uuid = ?
     `;
 
-    const result = await executeQuery(query, [device_id, branch_id, user_id, uuid]);
+    const result = await executeQuery(query, [
+      device_id,
+      branch_id,
+      user_id,
+      uuid,
+    ]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Deployment not found" });
@@ -338,7 +355,7 @@ export const updateDeployment: RequestHandler = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Deployment updated successfully"
+      message: "Deployment updated successfully",
     });
   } catch (error) {
     console.error("Error updating deployment:", error);

@@ -39,7 +39,6 @@ interface Device {
   updated_on: string;
 }
 
-
 interface DeviceFormData {
   device_name: string;
   device_mac: string;
@@ -97,7 +96,6 @@ export function DeviceManagement() {
       setLoading(false);
     }
   };
-
 
   useEffect(() => {
     fetchDevices();

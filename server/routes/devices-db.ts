@@ -64,7 +64,7 @@ export const getDevices: RequestHandler = async (req, res) => {
     const countQuery = `
       SELECT COUNT(*) as total
       FROM devices d
-      ${whereClause.replace('d.branch_id', 'branch_id')}
+      ${whereClause.replace("d.branch_id", "branch_id")}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
       countQuery,
@@ -79,7 +79,7 @@ export const getDevices: RequestHandler = async (req, res) => {
         NULL as branch_name,
         NULL as branch_code
       FROM devices d
-      ${whereClause.replace('d.branch_id', 'branch_id')}
+      ${whereClause.replace("d.branch_id", "branch_id")}
       ORDER BY d.device_name ASC
       LIMIT ${limitNum} OFFSET ${offset}
     `;
@@ -148,22 +148,26 @@ export const createDevice: RequestHandler = async (req, res) => {
     // Check for unique MAC address if provided
     if (device_mac) {
       const macCheck = await executeQuery(
-        'SELECT id FROM devices WHERE device_mac = ?',
-        [device_mac]
+        "SELECT id FROM devices WHERE device_mac = ?",
+        [device_mac],
       );
       if (macCheck.length > 0) {
-        return res.status(400).json({ error: "Device MAC address already exists" });
+        return res
+          .status(400)
+          .json({ error: "Device MAC address already exists" });
       }
     }
 
     // Check for unique IP address if provided
     if (ip_address) {
       const ipCheck = await executeQuery(
-        'SELECT id FROM devices WHERE ip_address = ?',
-        [ip_address]
+        "SELECT id FROM devices WHERE ip_address = ?",
+        [ip_address],
       );
       if (ipCheck.length > 0) {
-        return res.status(400).json({ error: "Device IP address already exists" });
+        return res
+          .status(400)
+          .json({ error: "Device IP address already exists" });
       }
     }
 
@@ -217,22 +221,26 @@ export const updateDevice: RequestHandler = async (req, res) => {
     // Check for unique MAC address if provided (excluding current device)
     if (device_mac) {
       const macCheck = await executeQuery(
-        'SELECT id FROM devices WHERE device_mac = ? AND id != ?',
-        [device_mac, id]
+        "SELECT id FROM devices WHERE device_mac = ? AND id != ?",
+        [device_mac, id],
       );
       if (macCheck.length > 0) {
-        return res.status(400).json({ error: "Device MAC address already exists" });
+        return res
+          .status(400)
+          .json({ error: "Device MAC address already exists" });
       }
     }
 
     // Check for unique IP address if provided (excluding current device)
     if (ip_address) {
       const ipCheck = await executeQuery(
-        'SELECT id FROM devices WHERE ip_address = ? AND id != ?',
-        [ip_address, id]
+        "SELECT id FROM devices WHERE ip_address = ? AND id != ?",
+        [ip_address, id],
       );
       if (ipCheck.length > 0) {
-        return res.status(400).json({ error: "Device IP address already exists" });
+        return res
+          .status(400)
+          .json({ error: "Device IP address already exists" });
       }
     }
 
