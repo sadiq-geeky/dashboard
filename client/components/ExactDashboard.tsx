@@ -10,6 +10,7 @@ import { ConversationAnalytics } from "./ConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "./Header";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Filter,
@@ -175,6 +176,7 @@ const getStatusIcon = (status: HeartbeatRecord["status"]) => {
 
 export function ExactDashboard() {
   const { user, isAdmin } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("home");
   const [analyticsSubTab, setAnalyticsSubTab] = useState("recordings");
   const [recordings, setRecordings] = useState<RecordingHistory[]>([]);
@@ -414,7 +416,7 @@ export function ExactDashboard() {
             </button>
             {isAdmin() && (
               <button
-                onClick={() => (window.location.href = "/branch-management")}
+                onClick={() => navigate("/branch-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
                 <Building2 className="w-5 h-5 mb-1" />
@@ -423,7 +425,7 @@ export function ExactDashboard() {
             )}
             {isAdmin() && (
               <button
-                onClick={() => (window.location.href = "/device-management")}
+                onClick={() => navigate("/device-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
                 <Monitor className="w-5 h-5 mb-1" />
@@ -446,7 +448,7 @@ export function ExactDashboard() {
             )}
             {isAdmin() && (
               <button
-                onClick={() => (window.location.href = "/user-management")}
+                onClick={() => navigate("/user-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
                 <Users className="w-5 h-5 mb-1" />
