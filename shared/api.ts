@@ -52,3 +52,22 @@ export interface PaginatedResponse<T> {
   limit: number;
   totalPages: number;
 }
+
+// Contact Types
+export interface Contact {
+  uuid: string;
+  emp_name: string | null;
+  device_mac: string | null;
+  branch_id: string | null;
+  branch_address: string | null;
+  gender: string | null;
+  date_of_birth: string | null;
+  cnic: string | null;
+  phone_no: string | null;
+  designation: string | null;
+  department: string | null;
+  joining_date: string | null;
+  email_id: string | null;
+  created_on: string | null;
+  updated_on: string | null;
+}
