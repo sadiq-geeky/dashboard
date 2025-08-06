@@ -103,11 +103,8 @@ export async function initializeTables() {
     const createUsersTable = `
       CREATE TABLE IF NOT EXISTS users (
         uuid VARCHAR(36) PRIMARY KEY,
-        emp_name VARCHAR(255),
-        device_mac VARCHAR(17),
-        branch_id VARCHAR(50),
-        branch_city VARCHAR(100),
-        branch_address TEXT,
+        emp_name VARCHAR(255) NOT NULL,
+        branch_id VARCHAR(36),
         gender ENUM('Male', 'Female', 'Other'),
         date_of_birth DATE,
         cnic VARCHAR(15),
@@ -122,11 +119,12 @@ export async function initializeTables() {
         is_active BOOLEAN DEFAULT true,
         created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE SET NULL,
         INDEX idx_username (username),
         INDEX idx_branch_id (branch_id),
         INDEX idx_role (role),
         INDEX idx_is_active (is_active)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `;
 
     await executeQuery(createUsersTable);
