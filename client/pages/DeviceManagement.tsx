@@ -391,23 +391,13 @@ export function DeviceManagement() {
                 className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
               />
             </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={fetchDevices}
-                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-              >
-                <RefreshCw className="h-4 w-4" />
-                <span>Refresh</span>
-              </button>
-              <button
-                onClick={fixDevicesTable}
-                className="flex items-center space-x-2 px-4 py-2 border border-yellow-300 bg-yellow-50 rounded-md text-yellow-700 hover:bg-yellow-100"
-                title="Fix devices table structure if there are database issues"
-              >
-                <Settings className="h-4 w-4" />
-                <span>Fix DB</span>
-              </button>
-            </div>
+            <button
+              onClick={fetchDevices}
+              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            >
+              <RefreshCw className="h-4 w-4" />
+              <span>Refresh</span>
+            </button>
           </div>
 
           {/* Devices Grid */}
