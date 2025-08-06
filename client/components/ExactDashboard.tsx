@@ -659,7 +659,7 @@ export function ExactDashboard() {
         </div>
 
         {/* Right Sidebar - Only show when a recording is selected and on home tab */}
-        {selectedRecording && (
+        {selectedRecording && activeTab === "home" && (
           <div className="w-80 bg-white border-l border-gray-200">
             <div className="p-6">
               {/* Audio Player Section */}
