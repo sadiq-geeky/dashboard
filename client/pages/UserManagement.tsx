@@ -96,8 +96,12 @@ export function UserManagement() {
       if (response.ok) {
         loadUsers(); // Refresh the list
       } else {
-        const data = await response.json();
-        alert("Failed to delete user: " + data.error);
+        try {
+          const data = await response.json();
+          alert("Failed to delete user: " + data.error);
+        } catch {
+          alert("Failed to delete user");
+        }
       }
     } catch (error) {
       console.error("Error deleting user:", error);
