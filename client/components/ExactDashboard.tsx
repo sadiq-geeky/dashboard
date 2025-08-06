@@ -476,18 +476,20 @@ export function ExactDashboard() {
               <Grid3X3 className="w-5 h-5 mb-1" />
               <span className="text-xs">Home</span>
             </button>
-            <button
-              onClick={() => setActiveTab("device-status")}
-              className={cn(
-                "flex flex-col items-center p-3 rounded-md",
-                activeTab === "device-status"
-                  ? "text-gray-700 bg-white border border-gray-300"
-                  : "text-gray-500 hover:bg-gray-100",
-              )}
-            >
-              <BarChart3 className="w-5 h-5 mb-1" />
-              <span className="text-xs">Device Status</span>
-            </button>
+            {isAdmin() && (
+              <button
+                onClick={() => setActiveTab("device-status")}
+                className={cn(
+                  "flex flex-col items-center p-3 rounded-md",
+                  activeTab === "device-status"
+                    ? "text-gray-700 bg-white border border-gray-300"
+                    : "text-gray-500 hover:bg-gray-100",
+                )}
+              >
+                <BarChart3 className="w-5 h-5 mb-1" />
+                <span className="text-xs">Device Status</span>
+              </button>
+            )}
             <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
               <MessageSquare className="w-5 h-5 mb-1" />
               <span className="text-xs">Live Conversation</span>
