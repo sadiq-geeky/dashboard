@@ -2,9 +2,21 @@ import { RequestHandler } from "express";
 import { HeartbeatRecord } from "@shared/api";
 import { executeQuery } from "../config/database";
 import { v4 as uuidv4 } from "uuid";
+import { heartbeatLogger } from "../utils/logger";
 
 // Get heartbeats with status calculation
 export const getHeartbeats: RequestHandler = async (req, res) => {
+  const startTime = Date.now();
+  const requestId = uuidv4();
+  const clientIp = req.ip || req.connection.remoteAddress || "unknown";
+  const userAgent = req.get("User-Agent") || "unknown";
+
+  heartbeatLogger.info("heartbeat-db", "get_heartbeats_request", {
+    request_id: requestId,
+    ip_address: clientIp,
+    user_agent: userAgent,
+  });
+
   try {
     // Query the heartbeat table with device and branch info
     const query = `
@@ -32,8 +44,36 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
     `;
 
     const heartbeats = await executeQuery<HeartbeatRecord>(query);
+    const duration = Date.now() - startTime;
+
+    heartbeatLogger.info("heartbeat-db", "get_heartbeats_success", {
+      request_id: requestId,
+      ip_address: clientIp,
+      duration_ms: duration,
+      details: { records_count: heartbeats.length },
+    });
+
     res.json(heartbeats);
   } catch (error) {
+    const duration = Date.now() - startTime;
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
+    heartbeatLogger.error(
+      "heartbeat-db",
+      "get_heartbeats_error",
+      errorMessage,
+      {
+        request_id: requestId,
+        ip_address: clientIp,
+        duration_ms: duration,
+        details: {
+          error_stack: error instanceof Error ? error.stack : undefined,
+          query_failed: true,
+        },
+      },
+    );
+
     console.error("Error fetching heartbeats:", error);
     res.status(500).json({
       error: "Failed to fetch heartbeats",
@@ -45,12 +85,34 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
 
 // Receive heartbeat from device
 export const postHeartbeat: RequestHandler = async (req, res) => {
-  try {
-    const { ip_address, mac_address } = req.body;
+  const startTime = Date.now();
+  const requestId = uuidv4();
+  const clientIp = req.ip || req.connection.remoteAddress || "unknown";
+  const userAgent = req.get("User-Agent") || "unknown";
+  const { ip_address, mac_address } = req.body;
 
+  heartbeatLogger.info("heartbeat-db", "post_heartbeat_request", {
+    request_id: requestId,
+    ip_address: clientIp,
+    mac_address: mac_address?.trim(),
+    user_agent: userAgent,
+    details: {
+      body_ip_address: ip_address,
+      body_mac_address: mac_address?.trim(),
+    },
+  });
+
+  try {
     if (!ip_address) {
+      heartbeatLogger.warn("heartbeat-db", "post_heartbeat_validation_failed", {
+        request_id: requestId,
+        ip_address: clientIp,
+        mac_address: mac_address?.trim(),
+        details: { missing_field: "ip_address" },
+      });
       return res.status(400).json({ error: "IP address is required" });
     }
+
     const uuid = uuidv4(); // Generate a new UUID
     // Insert heartbeat into database
     const query = `
@@ -60,11 +122,47 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
 
     await executeQuery(query, [uuid, ip_address, mac_address?.trim() || null]);
 
+    const duration = Date.now() - startTime;
+
+    heartbeatLogger.info("heartbeat-db", "post_heartbeat_success", {
+      request_id: requestId,
+      ip_address: clientIp,
+      mac_address: mac_address?.trim(),
+      duration_ms: duration,
+      details: {
+        heartbeat_uuid: uuid,
+        device_ip: ip_address,
+        device_mac: mac_address?.trim() || null,
+      },
+    });
+
     res.json({
       success: true,
       message: "Heartbeat recorded",
     });
   } catch (error) {
+    const duration = Date.now() - startTime;
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
+    heartbeatLogger.error(
+      "heartbeat-db",
+      "post_heartbeat_error",
+      errorMessage,
+      {
+        request_id: requestId,
+        ip_address: clientIp,
+        mac_address: mac_address?.trim(),
+        duration_ms: duration,
+        details: {
+          error_stack: error instanceof Error ? error.stack : undefined,
+          device_ip: ip_address,
+          device_mac: mac_address?.trim() || null,
+          database_insert_failed: true,
+        },
+      },
+    );
+
     console.error("Error recording heartbeat:", error);
     res.status(500).json({ error: "Failed to record heartbeat" });
   }
@@ -72,6 +170,17 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
 
 // Get device status summary
 export const getDeviceStatus: RequestHandler = async (req, res) => {
+  const startTime = Date.now();
+  const requestId = uuidv4();
+  const clientIp = req.ip || req.connection.remoteAddress || "unknown";
+  const userAgent = req.get("User-Agent") || "unknown";
+
+  heartbeatLogger.info("heartbeat-db", "get_device_status_request", {
+    request_id: requestId,
+    ip_address: clientIp,
+    user_agent: userAgent,
+  });
+
   try {
     const query = `
       SELECT
@@ -87,8 +196,41 @@ export const getDeviceStatus: RequestHandler = async (req, res) => {
     `;
 
     const [status] = await executeQuery(query);
+    const duration = Date.now() - startTime;
+
+    heartbeatLogger.info("heartbeat-db", "get_device_status_success", {
+      request_id: requestId,
+      ip_address: clientIp,
+      duration_ms: duration,
+      details: {
+        total: status.total,
+        online: status.online,
+        problematic: status.problematic,
+        offline: status.offline,
+      },
+    });
+
     res.json(status);
   } catch (error) {
+    const duration = Date.now() - startTime;
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
+    heartbeatLogger.error(
+      "heartbeat-db",
+      "get_device_status_error",
+      errorMessage,
+      {
+        request_id: requestId,
+        ip_address: clientIp,
+        duration_ms: duration,
+        details: {
+          error_stack: error instanceof Error ? error.stack : undefined,
+          query_failed: true,
+        },
+      },
+    );
+
     console.error("Error fetching device status:", error);
     res.status(500).json({ error: "Failed to fetch device status" });
   }
