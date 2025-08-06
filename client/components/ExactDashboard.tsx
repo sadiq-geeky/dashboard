@@ -6,6 +6,7 @@ import {
   Contact,
 } from "@shared/api";
 import { cn } from "@/lib/utils";
+import { AddContactModal } from "./AddContactModal";
 import {
   Search,
   Filter,
