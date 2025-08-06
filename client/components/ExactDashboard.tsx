@@ -1058,6 +1058,13 @@ export function ExactDashboard() {
           </div>
         )}
       </div>
+
+      {/* Add Contact Modal */}
+      <AddContactModal
+        isOpen={isAddContactModalOpen}
+        onClose={() => setIsAddContactModalOpen(false)}
+        onContactAdded={handleContactAdded}
+      />
     </div>
   );
 }
