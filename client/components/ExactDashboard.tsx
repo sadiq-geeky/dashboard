@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { RecordingHistory, PaginatedResponse, HeartbeatRecord, Contact } from "@shared/api";
+import {
+  RecordingHistory,
+  PaginatedResponse,
+  HeartbeatRecord,
+  Contact,
+} from "@shared/api";
 import { cn } from "@/lib/utils";
 import {
   Search,
@@ -98,7 +103,9 @@ const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
 };
 
 // Fetch contacts from API
-const fetchContacts = async (search?: string): Promise<PaginatedResponse<Contact>> => {
+const fetchContacts = async (
+  search?: string,
+): Promise<PaginatedResponse<Contact>> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -231,7 +238,9 @@ export function ExactDashboard() {
 
   // Device status counts
   const onlineCount = devices.filter((d) => d.status === "online").length;
-  const problematicCount = devices.filter((d) => d.status === "problematic").length;
+  const problematicCount = devices.filter(
+    (d) => d.status === "problematic",
+  ).length;
   const offlineCount = devices.filter((d) => d.status === "offline").length;
 
   useEffect(() => {
@@ -318,7 +327,7 @@ export function ExactDashboard() {
 
   const downloadAudio = () => {
     if (selectedRecording?.file_name) {
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = `/api/audio/${selectedRecording.file_name}`;
       link.download = selectedRecording.file_name;
       link.click();
@@ -328,7 +337,7 @@ export function ExactDashboard() {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   // Initialize audio when recording is selected
@@ -336,15 +345,15 @@ export function ExactDashboard() {
     if (selectedRecording?.file_name) {
       const audio = new Audio(`/api/audio/${selectedRecording.file_name}`);
 
-      audio.addEventListener('loadedmetadata', () => {
+      audio.addEventListener("loadedmetadata", () => {
         setDuration(audio.duration);
       });
 
-      audio.addEventListener('timeupdate', () => {
+      audio.addEventListener("timeupdate", () => {
         setCurrentTime(audio.currentTime);
       });
 
-      audio.addEventListener('ended', () => {
+      audio.addEventListener("ended", () => {
         setIsPlaying(false);
         setCurrentTime(0);
       });
@@ -355,9 +364,9 @@ export function ExactDashboard() {
 
       return () => {
         audio.pause();
-        audio.removeEventListener('loadedmetadata', () => {});
-        audio.removeEventListener('timeupdate', () => {});
-        audio.removeEventListener('ended', () => {});
+        audio.removeEventListener("loadedmetadata", () => {});
+        audio.removeEventListener("timeupdate", () => {});
+        audio.removeEventListener("ended", () => {});
       };
     } else {
       setAudioRef(null);
@@ -385,7 +394,7 @@ export function ExactDashboard() {
                 "flex flex-col items-center p-3 rounded-md",
                 activeTab === "home"
                   ? "text-gray-700 bg-white border border-gray-300"
-                  : "text-gray-500 hover:bg-gray-100"
+                  : "text-gray-500 hover:bg-gray-100",
               )}
             >
               <Grid3X3 className="w-5 h-5 mb-1" />
@@ -397,7 +406,7 @@ export function ExactDashboard() {
                 "flex flex-col items-center p-3 rounded-md",
                 activeTab === "device-status"
                   ? "text-gray-700 bg-white border border-gray-300"
-                  : "text-gray-500 hover:bg-gray-100"
+                  : "text-gray-500 hover:bg-gray-100",
               )}
             >
               <BarChart3 className="w-5 h-5 mb-1" />
@@ -413,7 +422,7 @@ export function ExactDashboard() {
                 "flex flex-col items-center p-3 rounded-md",
                 activeTab === "contact-list"
                   ? "text-gray-700 bg-white border border-gray-300"
-                  : "text-gray-500 hover:bg-gray-100"
+                  : "text-gray-500 hover:bg-gray-100",
               )}
             >
               <Users className="w-5 h-5 mb-1" />
@@ -454,127 +463,129 @@ export function ExactDashboard() {
             {activeTab === "home" && (
               <>
                 {/* Search and Filter Bar */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 pr-4 py-2 w-80 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10 pr-4 py-2 w-80 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+
+                    <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                      <Filter className="w-4 h-4" />
+                      <span>Filter</span>
+                      <ChevronDown className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
 
-                <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
-                  <Filter className="w-4 h-4" />
-                  <span>Filter</span>
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+                {/* Table */}
+                <div className="bg-white rounded-md border border-gray-200">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          S.no
+                        </th>
+                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Branch No
+                        </th>
+                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          CNIC
+                        </th>
+                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Timestamp
+                        </th>
+                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Duration
+                        </th>
+                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Branch Address
+                        </th>
+                        <th className="w-10"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentRecordings.map((recording, index) => (
+                        <tr
+                          key={recording.id}
+                          className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                          onClick={() => setSelectedRecording(recording)}
+                        >
+                          <td className="py-2 px-2 text-xs text-gray-900">
+                            {startIndex + index + 1}
+                          </td>
+                          <td className="py-2 px-2 text-xs text-gray-500">
+                            {recording.device_name || recording.ip_address}
+                          </td>
+                          <td className="py-2 px-2 text-xs text-gray-500">
+                            {recording.cnic || recording.file_name || "-"}
+                          </td>
+                          <td className="py-2 px-2 text-xs text-gray-500">
+                            {recording.start_time
+                              ? new Date(recording.start_time).toLocaleString()
+                              : "-"}
+                          </td>
+                          <td className="py-2 px-2 text-xs text-gray-500">
+                            {recording.duration
+                              ? `${Math.floor(recording.duration / 60)}:${String(recording.duration % 60).padStart(2, "0")}`
+                              : "-"}
+                          </td>
+                          <td className="py-2 px-2 text-xs text-gray-500">
+                            NA
+                          </td>
+                          <td className="py-2 px-2">
+                            <button className="text-gray-400 hover:text-gray-600">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
 
-            {/* Table */}
-            <div className="bg-white rounded-md border border-gray-200">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      S.no
-                    </th>
-                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Branch No
-                    </th>
-                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      CNIC
-                    </th>
-                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Timestamp
-                    </th>
-                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Duration
-                    </th>
-                    <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Branch Address
-                    </th>
-                    <th className="w-10"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentRecordings.map((recording, index) => (
-                    <tr
-                      key={recording.id}
-                      className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-                      onClick={() => setSelectedRecording(recording)}
-                    >
-                      <td className="py-2 px-2 text-xs text-gray-900">
-                        {startIndex + index + 1}
-                      </td>
-                      <td className="py-2 px-2 text-xs text-gray-500">
-                        {recording.device_name || recording.ip_address}
-                      </td>
-                      <td className="py-2 px-2 text-xs text-gray-500">
-                        {recording.cnic || recording.file_name || "-"}
-                      </td>
-                      <td className="py-2 px-2 text-xs text-gray-500">
-                        {recording.start_time
-                          ? new Date(recording.start_time).toLocaleString()
-                          : "-"}
-                      </td>
-                      <td className="py-2 px-2 text-xs text-gray-500">
-                        {recording.duration
-                          ? `${Math.floor(recording.duration / 60)}:${String(recording.duration % 60).padStart(2, "0")}`
-                          : "-"}
-                      </td>
-                      <td className="py-2 px-2 text-xs text-gray-500">NA</td>
-                      <td className="py-2 px-2">
-                        <button className="text-gray-400 hover:text-gray-600">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              {/* Footer */}
-              <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
-                <div className="text-sm text-gray-500">
-                  Showing {startIndex + 1}-
-                  {Math.min(endIndex, filteredRecordings.length)} of{" "}
-                  {filteredRecordings.length} items
+                  {/* Footer */}
+                  <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
+                    <div className="text-sm text-gray-500">
+                      Showing {startIndex + 1}-
+                      {Math.min(endIndex, filteredRecordings.length)} of{" "}
+                      {filteredRecordings.length} items
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {totalPages > 1 && (
+                        <>
+                          <div className="flex space-x-1">
+                            {Array.from(
+                              { length: totalPages },
+                              (_, i) => i + 1,
+                            ).map((page) => (
+                              <button
+                                key={page}
+                                onClick={() => setCurrentPage(page)}
+                                className={cn(
+                                  "w-6 h-6 flex items-center justify-center rounded text-sm",
+                                  currentPage === page
+                                    ? "bg-blue-100 text-blue-600"
+                                    : "text-gray-500 hover:bg-gray-100",
+                                )}
+                              >
+                                {page}
+                              </button>
+                            ))}
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            / {totalPages}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  {totalPages > 1 && (
-                    <>
-                      <div className="flex space-x-1">
-                        {Array.from(
-                          { length: totalPages },
-                          (_, i) => i + 1,
-                        ).map((page) => (
-                          <button
-                            key={page}
-                            onClick={() => setCurrentPage(page)}
-                            className={cn(
-                              "w-6 h-6 flex items-center justify-center rounded text-sm",
-                              currentPage === page
-                                ? "bg-blue-100 text-blue-600"
-                                : "text-gray-500 hover:bg-gray-100",
-                            )}
-                          >
-                            {page}
-                          </button>
-                        ))}
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        / {totalPages}
-                      </span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
               </>
             )}
 
@@ -629,7 +640,9 @@ export function ExactDashboard() {
                         <Wifi className="h-8 w-8 text-green-600" />
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-500">Online</div>
+                        <div className="text-sm font-medium text-gray-500">
+                          Online
+                        </div>
                         <div className="text-2xl font-bold text-green-600">
                           {onlineCount}
                         </div>
@@ -659,7 +672,9 @@ export function ExactDashboard() {
                         <WifiOff className="h-8 w-8 text-red-600" />
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-500">Offline</div>
+                        <div className="text-sm font-medium text-gray-500">
+                          Offline
+                        </div>
                         <div className="text-2xl font-bold text-red-600">
                           {offlineCount}
                         </div>
@@ -677,7 +692,9 @@ export function ExactDashboard() {
                       </h2>
                       <div className="flex items-center space-x-2 text-sm text-gray-500">
                         <Clock className="h-4 w-4" />
-                        <span>Last updated: {lastUpdate.toLocaleTimeString()}</span>
+                        <span>
+                          Last updated: {lastUpdate.toLocaleTimeString()}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -714,7 +731,9 @@ export function ExactDashboard() {
                                 )}
                               >
                                 {getStatusIcon(device.status)}
-                                <span className="capitalize">{device.status}</span>
+                                <span className="capitalize">
+                                  {device.status}
+                                </span>
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -811,7 +830,8 @@ export function ExactDashboard() {
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center">
                                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium mr-3">
-                                  {contact.emp_name?.charAt(0).toUpperCase() || "?"}
+                                  {contact.emp_name?.charAt(0).toUpperCase() ||
+                                    "?"}
                                 </div>
                                 <div>
                                   <div className="text-sm font-medium text-gray-900">
@@ -870,8 +890,7 @@ export function ExactDashboard() {
                       <p className="mt-1 text-sm text-gray-500">
                         {contactSearch
                           ? "No contacts match your search criteria."
-                          : "Get started by adding your first contact."
-                        }
+                          : "Get started by adding your first contact."}
                       </p>
                     </div>
                   )}
@@ -904,7 +923,12 @@ export function ExactDashboard() {
                         <div className="w-full h-1.5 bg-gray-200 rounded-full">
                           <div
                             className="h-1.5 bg-blue-500 rounded-full"
-                            style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : "0%" }}
+                            style={{
+                              width:
+                                duration > 0
+                                  ? `${(currentTime / duration) * 100}%`
+                                  : "0%",
+                            }}
                           >
                             <div className="absolute right-0 top-0 w-2.5 h-2.5 bg-blue-500 rounded-full -mt-0.5 -mr-1"></div>
                           </div>
@@ -970,13 +994,16 @@ export function ExactDashboard() {
                     <div className="flex-shrink-0">
                       <div className="w-16 h-20 bg-white rounded border border-gray-200 p-2 flex flex-col items-center justify-center">
                         <div className="w-10 h-10 bg-orange-400 rounded-full flex items-center justify-center text-white font-medium text-sm mb-1">
-                          {selectedRecording.cnic?.charAt(0).toUpperCase() || "A"}
+                          {selectedRecording.cnic?.charAt(0).toUpperCase() ||
+                            "A"}
                         </div>
                         <div className="text-center">
                           <div className="text-xs font-medium text-gray-900">
                             Ahmed Shah
                           </div>
-                          <div className="text-xs text-gray-500">ID # 239982</div>
+                          <div className="text-xs text-gray-500">
+                            ID # 239982
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -988,7 +1015,9 @@ export function ExactDashboard() {
                         <span className="text-gray-800">Male</span>
                       </div>
                       <div className="flex">
-                        <span className="text-gray-600 w-20">Date of Birth :</span>
+                        <span className="text-gray-600 w-20">
+                          Date of Birth :
+                        </span>
                         <span className="text-gray-800">05/09/1996</span>
                       </div>
                       <div className="flex">
@@ -996,7 +1025,9 @@ export function ExactDashboard() {
                         <span className="text-gray-800">61901-1234567-1</span>
                       </div>
                       <div className="flex">
-                        <span className="text-gray-600 w-20">Phone Number :</span>
+                        <span className="text-gray-600 w-20">
+                          Phone Number :
+                        </span>
                         <span className="text-gray-800">0321-9876543</span>
                       </div>
                       <div className="flex">
@@ -1014,7 +1045,6 @@ export function ExactDashboard() {
                   </div>
                 )}
               </div>
-
             </div>
           </div>
         )}

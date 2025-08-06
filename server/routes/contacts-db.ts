@@ -32,38 +32,41 @@ export const getContacts: RequestHandler = async (req, res) => {
              joining_date, email_id, created_on, updated_on
       FROM contacts
     `;
-    
+
     const queryParams: any[] = [];
-    
+
     if (search) {
       query += ` WHERE emp_name LIKE ? OR cnic LIKE ? OR phone_no LIKE ? OR email_id LIKE ?`;
       const searchTerm = `%${search}%`;
       queryParams.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
-    
+
     query += ` ORDER BY created_on DESC LIMIT ? OFFSET ?`;
     queryParams.push(Number(limit), offset);
 
     const contacts = await executeQuery<Contact>(query, queryParams);
-    
+
     // Get total count for pagination
     let countQuery = `SELECT COUNT(*) as total FROM contacts`;
     const countParams: any[] = [];
-    
+
     if (search) {
       countQuery += ` WHERE emp_name LIKE ? OR cnic LIKE ? OR phone_no LIKE ? OR email_id LIKE ?`;
       const searchTerm = `%${search}%`;
       countParams.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
-    
-    const [{ total }] = await executeQuery<{ total: number }>(countQuery, countParams);
-    
+
+    const [{ total }] = await executeQuery<{ total: number }>(
+      countQuery,
+      countParams,
+    );
+
     res.json({
       data: contacts,
       total,
       page: Number(page),
       limit: Number(limit),
-      totalPages: Math.ceil(total / Number(limit))
+      totalPages: Math.ceil(total / Number(limit)),
     });
   } catch (error) {
     console.error("Error fetching contacts:", error);
@@ -86,11 +89,13 @@ export const createContact: RequestHandler = async (req, res) => {
       designation,
       department,
       joining_date,
-      email_id
+      email_id,
     } = req.body;
 
     if (!emp_name || !cnic) {
-      return res.status(400).json({ error: "Employee name and CNIC are required" });
+      return res
+        .status(400)
+        .json({ error: "Employee name and CNIC are required" });
     }
 
     const uuid = uuidv4();
@@ -115,13 +120,13 @@ export const createContact: RequestHandler = async (req, res) => {
       designation,
       department,
       joining_date,
-      email_id
+      email_id,
     ]);
 
     res.status(201).json({
       success: true,
       uuid,
-      message: "Contact created successfully"
+      message: "Contact created successfully",
     });
   } catch (error) {
     console.error("Error creating contact:", error);
@@ -145,7 +150,7 @@ export const updateContact: RequestHandler = async (req, res) => {
       designation,
       department,
       joining_date,
-      email_id
+      email_id,
     } = req.body;
 
     const query = `
@@ -170,12 +175,12 @@ export const updateContact: RequestHandler = async (req, res) => {
       department,
       joining_date,
       email_id,
-      uuid
+      uuid,
     ]);
 
     res.json({
       success: true,
-      message: "Contact updated successfully"
+      message: "Contact updated successfully",
     });
   } catch (error) {
     console.error("Error updating contact:", error);
@@ -187,13 +192,13 @@ export const updateContact: RequestHandler = async (req, res) => {
 export const deleteContact: RequestHandler = async (req, res) => {
   try {
     const { uuid } = req.params;
-    
+
     const query = `DELETE FROM contacts WHERE uuid = ?`;
     await executeQuery(query, [uuid]);
 
     res.json({
       success: true,
-      message: "Contact deleted successfully"
+      message: "Contact deleted successfully",
     });
   } catch (error) {
     console.error("Error deleting contact:", error);
