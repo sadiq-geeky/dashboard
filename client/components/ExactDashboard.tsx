@@ -246,7 +246,7 @@ export function ExactDashboard() {
 
   const loadRecordings = async () => {
     try {
-      const recordingData = await fetchRecordings();
+      const recordingData = await fetchRecordings(user);
       setRecordings(recordingData);
       setFilteredRecordings(recordingData);
     } catch (error) {
