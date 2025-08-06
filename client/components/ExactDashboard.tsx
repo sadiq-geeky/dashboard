@@ -312,34 +312,22 @@ export function ExactDashboard() {
                   {/* Audio Controls */}
                   <div className="flex items-center justify-center space-x-4">
                     <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
+                      <Play className="w-5 h-5" />
                     </button>
                     <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-                      </svg>
+                      <Pause className="w-5 h-5" />
                     </button>
                     <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
-                      </svg>
+                      <RotateCcw className="w-5 h-5" />
                     </button>
                     <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                      </svg>
+                      <SkipBack className="w-5 h-5" />
                     </button>
                     <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/>
-                      </svg>
+                      <Shuffle className="w-5 h-5" />
                     </button>
                     <button className="p-2 text-gray-600 hover:text-gray-800">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-                      </svg>
+                      <Download className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
