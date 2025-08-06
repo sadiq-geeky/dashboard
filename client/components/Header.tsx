@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { LogOut, User, ChevronDown, Shield, Building2 } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { LogOut, User, ChevronDown, Shield, Building2, ArrowLeft, Home } from 'lucide-react';
 
 export function Header() {
   const { user, logout, isAdmin } = useAuth();
