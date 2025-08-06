@@ -43,8 +43,7 @@ export const getContacts: RequestHandler = async (req, res) => {
       queryParams.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
 
-    query += ` ORDER BY created_on DESC LIMIT ? OFFSET ?`;
-    queryParams.push(limitNum, offset);
+    query += ` ORDER BY created_on DESC LIMIT ${limitNum} OFFSET ${offset}`;
 
     const contacts = await executeQuery<Contact>(query, queryParams);
 
