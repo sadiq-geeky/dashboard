@@ -26,18 +26,6 @@ export function Header() {
     <div className="bg-white border-b border-gray-200 px-5 py-1" style={{padding: "5px 24px 5px 20px"}}>
       <div className="flex items-center justify-between" style={{fontWeight: "300"}}>
         <div className="flex items-center space-x-3">
-          {/* Back button when not on dashboard */}
-          {!isOnDashboard && (
-            <button
-              onClick={goBackToDashboard}
-              className="flex items-center space-x-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
-              title="Back to Dashboard"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span className="text-sm font-medium">Dashboard</span>
-            </button>
-          )}
-
           {/* Clickable logo */}
           <button
             onClick={goBackToDashboard}
