@@ -38,6 +38,13 @@ import {
   deleteContact,
 } from "./routes/contacts-db";
 import { getRecordingsAnalytics } from "./routes/analytics-db";
+import {
+  getConversationAnalytics,
+  getConversationsByBranch,
+  getConversationsByCity,
+  getDailyConversationsLastMonth,
+  getUniqueCnicsByMonth,
+} from "./routes/conversation-analytics";
 
 export function createServer() {
   const app = express();
