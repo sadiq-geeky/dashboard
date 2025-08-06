@@ -240,7 +240,7 @@ export function ExactDashboard() {
               {/* Footer */}
               <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
                 <div className="text-sm text-gray-500">
-                  {filteredRecordings.length} items
+                  Showing {startIndex + 1}-{Math.min(endIndex, filteredRecordings.length)} of {filteredRecordings.length} items
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="flex space-x-1">
