@@ -40,18 +40,19 @@ export const getDevices: RequestHandler = async (req, res) => {
 
     if (search) {
       conditions.push(
-        "(d.device_name LIKE ? OR d.device_mac LIKE ? OR d.ip_address LIKE ?)",
+        "(device_name LIKE ? OR device_mac LIKE ? OR ip_address LIKE ?)",
       );
       queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
 
-    if (branch_id) {
-      conditions.push("d.branch_id = ?");
-      queryParams.push(branch_id);
-    }
+    // Skip branch_id filter for now until table is fixed
+    // if (branch_id) {
+    //   conditions.push("branch_id = ?");
+    //   queryParams.push(branch_id);
+    // }
 
     if (device_status) {
-      conditions.push("d.device_status = ?");
+      conditions.push("device_status = ?");
       queryParams.push(device_status);
     }
 
