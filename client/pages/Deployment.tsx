@@ -82,6 +82,11 @@ export function Deployment() {
         fetch("/api/deployments"),
       ]);
 
+      // Check if all responses are OK before parsing JSON
+      if (!devicesRes.ok || !branchesRes.ok || !usersRes.ok || !deploymentsRes.ok) {
+        throw new Error("One or more API requests failed");
+      }
+
       const [devicesData, branchesData, usersData, deploymentsData] = await Promise.all([
         devicesRes.json(),
         branchesRes.json(),
