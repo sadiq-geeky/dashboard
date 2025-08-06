@@ -69,9 +69,9 @@ export const getDeployments: RequestHandler = async (req, res) => {
       user: row.username ? {
         uuid: row.user_id,
         username: row.username,
-        email: row.email,
+        email: row.email_id,
         role: row.role,
-        full_name: row.full_name
+        full_name: row.emp_name
       } : null
     }));
 
@@ -254,9 +254,9 @@ export const getDeployment: RequestHandler = async (req, res) => {
       user: row.username ? {
         uuid: row.user_id,
         username: row.username,
-        email: row.email,
+        email: row.email_id,
         role: row.role,
-        full_name: row.full_name
+        full_name: row.emp_name
       } : null
     };
 
