@@ -11,11 +11,18 @@ export function Header() {
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">
-            CRM Dashboard
-          </h1>
-          <p className="text-sm text-gray-500">Voice Recording System</p>
+        <div className="flex items-center space-x-3">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets%2F7967a1920bbf4ce0ae781c5d84b92543%2F0958e94a3cce420e957ba5a524dc2794?format=webp&width=800"
+            alt="Bank Alfalah Logo"
+            className="h-8 w-auto object-contain"
+          />
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">
+              Voice Recording System
+            </h1>
+            <p className="text-sm text-gray-500">Powered by SE TECH (Pvt.) Ltd.</p>
+          </div>
         </div>
 
         <div className="flex items-center space-x-4">
