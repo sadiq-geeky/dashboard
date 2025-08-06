@@ -158,6 +158,17 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
 
 // Get device status summary
 export const getDeviceStatus: RequestHandler = async (req, res) => {
+  const startTime = Date.now();
+  const requestId = uuidv4();
+  const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
+  const userAgent = req.get('User-Agent') || 'unknown';
+
+  heartbeatLogger.info("heartbeat-db", "get_device_status_request", {
+    request_id: requestId,
+    ip_address: clientIp,
+    user_agent: userAgent,
+  });
+
   try {
     const query = `
       SELECT
@@ -173,8 +184,35 @@ export const getDeviceStatus: RequestHandler = async (req, res) => {
     `;
 
     const [status] = await executeQuery(query);
+    const duration = Date.now() - startTime;
+
+    heartbeatLogger.info("heartbeat-db", "get_device_status_success", {
+      request_id: requestId,
+      ip_address: clientIp,
+      duration_ms: duration,
+      details: {
+        total: status.total,
+        online: status.online,
+        problematic: status.problematic,
+        offline: status.offline,
+      },
+    });
+
     res.json(status);
   } catch (error) {
+    const duration = Date.now() - startTime;
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    heartbeatLogger.error("heartbeat-db", "get_device_status_error", errorMessage, {
+      request_id: requestId,
+      ip_address: clientIp,
+      duration_ms: duration,
+      details: {
+        error_stack: error instanceof Error ? error.stack : undefined,
+        query_failed: true,
+      },
+    });
+
     console.error("Error fetching device status:", error);
     res.status(500).json({ error: "Failed to fetch device status" });
   }
