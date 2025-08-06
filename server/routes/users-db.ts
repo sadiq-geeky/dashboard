@@ -41,7 +41,7 @@ export const getUsers: RequestHandler = async (req, res) => {
 
     let query = `
       SELECT uuid, emp_name, gender, date_of_birth, cnic, phone_no, designation, department,
-             joining_date, email_id, username, role, is_active, created_on, updated_on, created_by, updated_by
+             joining_date, email_id, username, role, is_active, created_on, updated_on
       FROM users
     `;
 
