@@ -48,11 +48,11 @@ export function Header() {
               className="flex items-center space-x-2 text-sm bg-white border border-gray-300 rounded-md px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500"
             >
               <div className="flex items-center space-x-2">
-                <div className="h-6 w-6 bg-blue-100 rounded-full flex items-center justify-center">
+                <div className="h-6 w-6 bg-red-100 rounded-full flex items-center justify-center">
                   {isAdmin() ? (
-                    <Shield className="h-3 w-3 text-blue-600" />
+                    <Shield className="h-3 w-3 text-red-600" />
                   ) : (
-                    <User className="h-3 w-3 text-blue-600" />
+                    <User className="h-3 w-3 text-red-600" />
                   )}
                 </div>
                 <div className="text-left">
