@@ -276,6 +276,14 @@ export function ExactDashboard() {
     };
   }, []);
 
+  // Force refresh analytics components when analytics tab becomes active
+  useEffect(() => {
+    if (activeTab === "analytics") {
+      // Force a refresh by updating lastUpdate to trigger component remount
+      setLastUpdate(new Date());
+    }
+  }, [activeTab]);
+
   // Device status counts
   const onlineCount = devices.filter((d) => d.status === "online").length;
   const problematicCount = devices.filter(
