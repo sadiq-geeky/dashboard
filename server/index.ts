@@ -204,6 +204,50 @@ export function createServer() {
   app.delete("/api/users/:uuid", deleteUser);
   app.get("/api/users/:uuid", getUserProfile);
 
+  // Debug endpoint to promote user to manager (development only)
+  app.post("/api/debug/promote-to-manager", async (req, res) => {
+    try {
+      const { executeQuery } = await import("./config/database");
+
+      // Find first regular user
+      const users = await executeQuery<{ uuid: string; username: string; role: string }>(
+        "SELECT uuid, username, role FROM users WHERE role = 'user' AND is_active = true LIMIT 1"
+      );
+
+      if (users.length === 0) {
+        return res.json({
+          success: false,
+          message: "No regular users found to promote"
+        });
+      }
+
+      const user = users[0];
+
+      // Promote to manager
+      await executeQuery(
+        "UPDATE users SET role = 'manager' WHERE uuid = ?",
+        [user.uuid]
+      );
+
+      res.json({
+        success: true,
+        message: "User promoted to manager successfully",
+        user: {
+          username: user.username,
+          uuid: user.uuid,
+          newRole: "manager"
+        }
+      });
+
+    } catch (error) {
+      console.error("Error promoting user to manager:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to promote user to manager"
+      });
+    }
+  });
+
   // Deployment Management routes (protected with branch filtering)
   app.get("/api/deployments", authenticate, addBranchFilter(), getDeployments);
   app.post("/api/deployments", createDeployment);
