@@ -91,7 +91,7 @@ export function Complaints() {
     customer_email: "",
     customer_cnic: "",
     device_id: "",
-    device_location: "",
+    city: "",
     issue_category: "",
     complaint_text: "",
     priority: "medium" as "low" | "medium" | "high" | "urgent",
