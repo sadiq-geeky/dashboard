@@ -225,5 +225,13 @@ export function createServer() {
   // Fix audio file mappings (development only)
   app.post("/api/fix/audio-mappings", fixAudioMappings);
 
+  // Complaints Management routes (admin only)
+  app.get("/api/complaints", authenticate, addBranchFilter(), getComplaints);
+  app.get("/api/complaints/stats", authenticate, getComplaintsStats);
+  app.get("/api/complaints/:complaint_id", authenticate, getComplaint);
+  app.post("/api/complaints", authenticate, createComplaint);
+  app.put("/api/complaints/:complaint_id", authenticate, updateComplaint);
+  app.delete("/api/complaints/:complaint_id", authenticate, deleteComplaint);
+
   return app;
 }
