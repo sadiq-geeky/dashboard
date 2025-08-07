@@ -57,10 +57,13 @@ export const getRecordings: RequestHandler = async (req: any, res) => {
       countWhereClause = `WHERE ${countConditions.join(" AND ")}`;
     }
 
-    // Get total count (simplified to avoid collation issues)
+    // Get total count with proper JOINs for branch filtering
     const countQuery = `
       SELECT COUNT(*) as total
       FROM recordings rh
+      LEFT JOIN devices d ON d.device_mac = rh.mac_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id COLLATE utf8mb4_0900_ai_ci = d.id COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
       ${countWhereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
