@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "../components/Header";
+import { AdminNavigation } from "../components/AdminNavigation";
 import { useNavigate } from "react-router-dom";
 import {
   Mail,
@@ -22,11 +23,7 @@ import {
   ChevronUp,
   AlertCircle,
   Plus,
-  Grid3X3,
   BarChart3,
-  Monitor,
-  Settings,
-  Users,
   Activity,
 } from "lucide-react";
 import { authFetch } from "@/lib/api";
