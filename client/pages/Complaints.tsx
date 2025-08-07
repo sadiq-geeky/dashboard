@@ -287,7 +287,8 @@ export function Complaints() {
         customer_phone: createComplaintData.customer_phone,
         customer_email: createComplaintData.customer_email,
         customer_cnic: createComplaintData.customer_cnic,
-        device_used: createComplaintData.device_used,
+        device_used: createComplaintData.device_id,
+        device_location: createComplaintData.device_location,
         issue_category: createComplaintData.issue_category,
       };
 
