@@ -366,6 +366,25 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
         activeBranches: totalStats.activeBranches,
         todayConversations: totalStats.todayConversations,
       },
+      conversionMetrics: {
+        totalConversions: conversionMetrics.totalConversions,
+        conversionRate: Math.round((conversionMetrics.conversionRate || 0) * 10) / 10,
+        avgConversationDuration: Math.round(conversionMetrics.avgConversationDuration || 0),
+        successfulOutcomes: conversionMetrics.successfulOutcomes,
+      },
+      conversionsByBranch: conversionsByBranchResult.map((row) => ({
+        branch_name: row.branch_name,
+        total_conversations: row.total_conversations,
+        successful_conversions: row.successful_conversions,
+        conversion_rate: Math.round((row.conversion_rate || 0) * 10) / 10,
+      })),
+      conversionTrends: conversionTrendsResult.map((row) => ({
+        date: row.date,
+        conversations: row.conversations,
+        conversions: row.conversions,
+        conversion_rate: Math.round((row.conversion_rate || 0) * 10) / 10,
+      })),
+      conversionFunnel: conversionFunnel,
     };
 
     res.json(analytics);
