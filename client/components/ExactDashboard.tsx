@@ -40,6 +40,11 @@ import {
   Trash2,
   X,
   CheckCircle,
+  Grid3X3,
+  BarChart3,
+  Mail,
+  Building2,
+  Settings,
 } from "lucide-react";
 
 // Fetch recordings from API with retry logic
