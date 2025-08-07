@@ -209,20 +209,23 @@ export function GoogleConversationAnalytics() {
   const conversionTrends = analytics.conversionTrends || [];
   const conversionFunnel = analytics.conversionFunnel || [];
 
+  // 3. Number of conversions according to date in last month
   const dailyChartData =
     dailyConversations.length > 0
       ? [
-          ["Date", "Conversations"],
+          ["Date", "Conversions", "Total Conversations"],
           ...dailyConversations.map((item) => [
             formatDate(item.date),
-            item.count,
+            item.conversion_count,
+            item.total_conversations,
           ]),
         ]
       : [
-          ["Date", "Conversations"],
-          ["No data", 0],
+          ["Date", "Conversions", "Total Conversations"],
+          ["No data", 0, 0],
         ];
 
+  // 1. Number of conversations according to branch
   const branchChartData =
     conversationsByBranch.length > 0
       ? [
@@ -237,15 +240,20 @@ export function GoogleConversationAnalytics() {
           ["No data", 0],
         ];
 
+  // 2. Conversion number per city
   const cityChartData =
     conversationsByCity.length > 0
       ? [
-          ["City", "Conversations"],
-          ...conversationsByCity.map((item) => [item.city, item.count]),
+          ["City", "Conversions", "Total Conversations"],
+          ...conversationsByCity.map((item) => [
+            item.city,
+            item.conversion_count,
+            item.total_conversations,
+          ]),
         ]
       : [
-          ["City", "Conversations"],
-          ["No data", 0],
+          ["City", "Conversions", "Total Conversations"],
+          ["No data", 0, 0],
         ];
 
   const conversionTrendsChartData =
