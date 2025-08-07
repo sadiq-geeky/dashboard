@@ -177,7 +177,7 @@ export function GoogleRecordingsAnalytics() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Today's Recordings</p>
-              <p className="text-2xl font-bold text-gray-900">{analytics.todayRecordings}</p>
+              <p className="text-2xl font-bold text-gray-900">{analytics.todayRecordings || 0}</p>
             </div>
             <CheckCircle className="h-8 w-8 text-green-500" />
           </div>
