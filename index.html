@@ -7,21 +7,21 @@
 
     <!-- Early warning suppression script -->
     <script>
-      (function() {
+      (function () {
         // Store original console methods
         const originalWarn = console.warn;
         const originalError = console.error;
 
         // Override console methods immediately
-        console.warn = function(...args) {
-          const message = String(args.join(' '));
+        console.warn = function (...args) {
+          const message = String(args.join(" "));
 
           // Suppress Recharts defaultProps warnings
           if (
-            message.includes('Support for defaultProps will be removed') ||
-            message.includes('defaultProps will be removed') ||
-            (message.includes('XAxis') && message.includes('defaultProps')) ||
-            (message.includes('YAxis') && message.includes('defaultProps'))
+            message.includes("Support for defaultProps will be removed") ||
+            message.includes("defaultProps will be removed") ||
+            (message.includes("XAxis") && message.includes("defaultProps")) ||
+            (message.includes("YAxis") && message.includes("defaultProps"))
           ) {
             return; // Suppress these warnings completely
           }
@@ -30,15 +30,15 @@
           originalWarn.apply(console, args);
         };
 
-        console.error = function(...args) {
-          const message = String(args.join(' '));
+        console.error = function (...args) {
+          const message = String(args.join(" "));
 
           // Suppress Recharts defaultProps errors
           if (
-            message.includes('Support for defaultProps will be removed') ||
-            message.includes('defaultProps will be removed') ||
-            (message.includes('XAxis') && message.includes('defaultProps')) ||
-            (message.includes('YAxis') && message.includes('defaultProps'))
+            message.includes("Support for defaultProps will be removed") ||
+            message.includes("defaultProps will be removed") ||
+            (message.includes("XAxis") && message.includes("defaultProps")) ||
+            (message.includes("YAxis") && message.includes("defaultProps"))
           ) {
             return; // Suppress these errors completely
           }

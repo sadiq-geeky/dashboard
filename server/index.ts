@@ -62,7 +62,7 @@ import {
   forgotPassword,
   resetPassword,
   validateResetToken,
-  initPasswordResetTable
+  initPasswordResetTable,
 } from "./routes/auth";
 import {
   getDeployments,

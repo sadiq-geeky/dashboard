@@ -37,26 +37,26 @@ export const initPasswordResetTable = async () => {
         INDEX idx_expires (expires_at)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `;
-    
+
     await executeQuery(createTableQuery);
-    console.log('✅ Password reset tokens table initialized');
+    console.log("✅ Password reset tokens table initialized");
   } catch (error) {
-    console.error('❌ Error creating password reset tokens table:', error);
+    console.error("❌ Error creating password reset tokens table:", error);
   }
 };
 
 // Generate secure random token
 const generateResetToken = (): string => {
-  return crypto.randomBytes(32).toString('hex');
+  return crypto.randomBytes(32).toString("hex");
 };
 
 // Clean up expired tokens
 const cleanupExpiredTokens = async () => {
   try {
-    const query = 'DELETE FROM password_reset_tokens WHERE expires_at < NOW()';
+    const query = "DELETE FROM password_reset_tokens WHERE expires_at < NOW()";
     await executeQuery(query);
   } catch (error) {
-    console.error('Error cleaning up expired tokens:', error);
+    console.error("Error cleaning up expired tokens:", error);
   }
 };
 
@@ -66,21 +66,23 @@ export const forgotPassword: RequestHandler = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({ error: 'Email address is required' });
+      return res.status(400).json({ error: "Email address is required" });
     }
 
     // Clean up expired tokens first
     await cleanupExpiredTokens();
 
     // Find user by email
-    const userQuery = 'SELECT uuid, username, email_id, emp_name FROM users WHERE email_id = ? AND is_active = true';
+    const userQuery =
+      "SELECT uuid, username, email_id, emp_name FROM users WHERE email_id = ? AND is_active = true";
     const users = await executeQuery<User>(userQuery, [email]);
 
     if (users.length === 0) {
       // Don't reveal whether email exists or not for security
-      return res.json({ 
-        success: true, 
-        message: 'If an account with this email exists, a password reset link has been sent.' 
+      return res.json({
+        success: true,
+        message:
+          "If an account with this email exists, a password reset link has been sent.",
       });
     }
 
@@ -96,33 +98,43 @@ export const forgotPassword: RequestHandler = async (req, res) => {
       INSERT INTO password_reset_tokens (id, user_id, token, expires_at) 
       VALUES (?, ?, ?, ?)
     `;
-    
-    await executeQuery(insertTokenQuery, [tokenId, user.uuid, resetToken, expiresAt]);
+
+    await executeQuery(insertTokenQuery, [
+      tokenId,
+      user.uuid,
+      resetToken,
+      expiresAt,
+    ]);
 
     // Create reset link
-    const resetLink = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}`;
+    const resetLink = `${req.protocol}://${req.get("host")}/reset-password?token=${resetToken}`;
 
     // Send email
-    const emailTemplate = emailTemplates.passwordReset(resetLink, user.emp_name || user.username);
+    const emailTemplate = emailTemplates.passwordReset(
+      resetLink,
+      user.emp_name || user.username,
+    );
     const emailSent = await sendEmail(
-      user.email_id, 
-      emailTemplate.subject, 
-      emailTemplate.html, 
-      emailTemplate.text
+      user.email_id,
+      emailTemplate.subject,
+      emailTemplate.html,
+      emailTemplate.text,
     );
 
     if (!emailSent) {
-      return res.status(500).json({ error: 'Failed to send reset email. Please try again later.' });
+      return res
+        .status(500)
+        .json({ error: "Failed to send reset email. Please try again later." });
     }
 
-    res.json({ 
-      success: true, 
-      message: 'Password reset instructions have been sent to your email address.' 
+    res.json({
+      success: true,
+      message:
+        "Password reset instructions have been sent to your email address.",
     });
-
   } catch (error) {
-    console.error('Error in forgot password:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error in forgot password:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -132,17 +144,22 @@ export const resetPassword: RequestHandler = async (req, res) => {
     const { token, newPassword } = req.body;
 
     if (!token || !newPassword) {
-      return res.status(400).json({ error: 'Token and new password are required' });
+      return res
+        .status(400)
+        .json({ error: "Token and new password are required" });
     }
 
     // Validate password strength
     if (newPassword.length < 8) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 8 characters long" });
     }
 
     if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPassword)) {
-      return res.status(400).json({ 
-        error: 'Password must contain at least one uppercase letter, one lowercase letter, and one number' 
+      return res.status(400).json({
+        error:
+          "Password must contain at least one uppercase letter, one lowercase letter, and one number",
       });
     }
 
@@ -156,14 +173,13 @@ export const resetPassword: RequestHandler = async (req, res) => {
       JOIN users u ON prt.user_id = u.uuid 
       WHERE prt.token = ? AND prt.expires_at > NOW() AND u.is_active = true
     `;
-    
-    const tokens = await executeQuery<PasswordResetToken & { user_uuid: string; username: string }>(
-      tokenQuery, 
-      [token]
-    );
+
+    const tokens = await executeQuery<
+      PasswordResetToken & { user_uuid: string; username: string }
+    >(tokenQuery, [token]);
 
     if (tokens.length === 0) {
-      return res.status(400).json({ error: 'Invalid or expired reset token' });
+      return res.status(400).json({ error: "Invalid or expired reset token" });
     }
 
     const resetTokenData = tokens[0];
@@ -173,27 +189,34 @@ export const resetPassword: RequestHandler = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
     // Update user password
-    const updatePasswordQuery = 'UPDATE users SET password_hash = ? WHERE uuid = ?';
-    await executeQuery(updatePasswordQuery, [hashedPassword, resetTokenData.user_uuid]);
+    const updatePasswordQuery =
+      "UPDATE users SET password_hash = ? WHERE uuid = ?";
+    await executeQuery(updatePasswordQuery, [
+      hashedPassword,
+      resetTokenData.user_uuid,
+    ]);
 
     // Delete used token
-    const deleteTokenQuery = 'DELETE FROM password_reset_tokens WHERE token = ?';
+    const deleteTokenQuery =
+      "DELETE FROM password_reset_tokens WHERE token = ?";
     await executeQuery(deleteTokenQuery, [token]);
 
     // Delete all other tokens for this user (invalidate all reset requests)
-    const deleteUserTokensQuery = 'DELETE FROM password_reset_tokens WHERE user_id = ?';
+    const deleteUserTokensQuery =
+      "DELETE FROM password_reset_tokens WHERE user_id = ?";
     await executeQuery(deleteUserTokensQuery, [resetTokenData.user_uuid]);
 
-    console.log(`✅ Password reset successful for user: ${resetTokenData.username}`);
+    console.log(
+      `✅ Password reset successful for user: ${resetTokenData.username}`,
+    );
 
-    res.json({ 
-      success: true, 
-      message: 'Password has been reset successfully' 
+    res.json({
+      success: true,
+      message: "Password has been reset successfully",
     });
-
   } catch (error) {
-    console.error('Error in reset password:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error in reset password:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -203,7 +226,7 @@ export const validateResetToken: RequestHandler = async (req, res) => {
     const { token } = req.params;
 
     if (!token) {
-      return res.status(400).json({ error: 'Token is required' });
+      return res.status(400).json({ error: "Token is required" });
     }
 
     // Clean up expired tokens first
@@ -216,27 +239,27 @@ export const validateResetToken: RequestHandler = async (req, res) => {
       JOIN users u ON prt.user_id = u.uuid 
       WHERE prt.token = ? AND prt.expires_at > NOW() AND u.is_active = true
     `;
-    
-    const tokens = await executeQuery<{ expires_at: string; username: string; email_id: string }>(
-      tokenQuery, 
-      [token]
-    );
+
+    const tokens = await executeQuery<{
+      expires_at: string;
+      username: string;
+      email_id: string;
+    }>(tokenQuery, [token]);
 
     if (tokens.length === 0) {
-      return res.status(400).json({ error: 'Invalid or expired reset token' });
+      return res.status(400).json({ error: "Invalid or expired reset token" });
     }
 
     const tokenData = tokens[0];
 
-    res.json({ 
-      success: true, 
-      message: 'Token is valid',
+    res.json({
+      success: true,
+      message: "Token is valid",
       expires_at: tokenData.expires_at,
-      email: tokenData.email_id
+      email: tokenData.email_id,
     });
-
   } catch (error) {
-    console.error('Error validating reset token:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error validating reset token:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

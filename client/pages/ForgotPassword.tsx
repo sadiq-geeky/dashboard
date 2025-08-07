@@ -41,7 +41,9 @@ export function ForgotPassword() {
 
       if (response.ok) {
         setIsSubmitted(true);
-        setMessage("Password reset instructions have been sent to your email address.");
+        setMessage(
+          "Password reset instructions have been sent to your email address.",
+        );
       } else {
         setError(data.error || "Failed to send reset email. Please try again.");
       }
@@ -81,10 +83,14 @@ export function ForgotPassword() {
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="text-center space-y-4">
               <div className="text-sm text-gray-600">
-                <p>Please check your email and click the reset link to continue.</p>
-                <p className="mt-2">If you don't see the email, check your spam folder.</p>
+                <p>
+                  Please check your email and click the reset link to continue.
+                </p>
+                <p className="mt-2">
+                  If you don't see the email, check your spam folder.
+                </p>
               </div>
-              
+
               <div className="pt-4">
                 <button
                   onClick={handleBackToLogin}
@@ -116,7 +122,8 @@ export function ForgotPassword() {
             Reset your password
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Enter your email address and we'll send you a link to reset your password
+            Enter your email address and we'll send you a link to reset your
+            password
           </p>
         </div>
 

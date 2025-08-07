@@ -223,20 +223,28 @@ export function ExactDashboard() {
       setFilteredRecordings(recordingData);
 
       // Extract unique cities and branch numbers
-      const cities = [...new Set(recordingData
-        .map(r => r.branch_address)
-        .filter(address => address && address.trim() !== "" && address !== "NA")
-        .map(address => {
-          // Extract city from address (assuming it's the last part after comma)
-          const parts = address.split(',').map(part => part.trim());
-          return parts[parts.length - 1];
-        })
-      )].sort();
+      const cities = [
+        ...new Set(
+          recordingData
+            .map((r) => r.branch_address)
+            .filter(
+              (address) => address && address.trim() !== "" && address !== "NA",
+            )
+            .map((address) => {
+              // Extract city from address (assuming it's the last part after comma)
+              const parts = address.split(",").map((part) => part.trim());
+              return parts[parts.length - 1];
+            }),
+        ),
+      ].sort();
 
-      const branchNos = [...new Set(recordingData
-        .map(r => r.branch_no || r.device_name)
-        .filter(branchNo => branchNo && branchNo.trim() !== "")
-      )].sort();
+      const branchNos = [
+        ...new Set(
+          recordingData
+            .map((r) => r.branch_no || r.device_name)
+            .filter((branchNo) => branchNo && branchNo.trim() !== ""),
+        ),
+      ].sort();
 
       setUniqueCities(cities);
       setUniqueBranchNos(branchNos);
@@ -303,7 +311,9 @@ export function ExactDashboard() {
     if (selectedCity !== "all") {
       filtered = filtered.filter((recording) => {
         if (!recording.branch_address) return false;
-        const parts = recording.branch_address.split(',').map(part => part.trim());
+        const parts = recording.branch_address
+          .split(",")
+          .map((part) => part.trim());
         const city = parts[parts.length - 1];
         return city === selectedCity;
       });
@@ -324,7 +334,14 @@ export function ExactDashboard() {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
-  }, [searchQuery, selectedCity, selectedBranchNo, recordings, currentPage, itemsPerPage]);
+  }, [
+    searchQuery,
+    selectedCity,
+    selectedBranchNo,
+    recordings,
+    currentPage,
+    itemsPerPage,
+  ]);
 
   const formatLastSeen = (dateString: string) => {
     const date = new Date(dateString);
@@ -514,9 +531,7 @@ export function ExactDashboard() {
             </button>
 
             {/* Admin group separator */}
-            {isAdmin() && (
-              <div className="w-px h-8 bg-gray-300 mx-2"></div>
-            )}
+            {isAdmin() && <div className="w-px h-8 bg-gray-300 mx-2"></div>}
 
             {/* Admin group: Branches, Devices, Users, Deployment */}
             {isAdmin() && (
@@ -588,7 +603,10 @@ export function ExactDashboard() {
                     </div>
 
                     {/* City Filter */}
-                    <Select value={selectedCity} onValueChange={setSelectedCity}>
+                    <Select
+                      value={selectedCity}
+                      onValueChange={setSelectedCity}
+                    >
                       <SelectTrigger className="w-40 h-8 text-sm">
                         <SelectValue placeholder="Filter by City" />
                       </SelectTrigger>
@@ -603,7 +621,10 @@ export function ExactDashboard() {
                     </Select>
 
                     {/* Branch Number Filter */}
-                    <Select value={selectedBranchNo} onValueChange={setSelectedBranchNo}>
+                    <Select
+                      value={selectedBranchNo}
+                      onValueChange={setSelectedBranchNo}
+                    >
                       <SelectTrigger className="w-40 h-8 text-sm">
                         <SelectValue placeholder="Filter by Branch" />
                       </SelectTrigger>
@@ -618,7 +639,9 @@ export function ExactDashboard() {
                     </Select>
 
                     {/* Clear Filters Button */}
-                    {(selectedCity !== "all" || selectedBranchNo !== "all" || searchQuery) && (
+                    {(selectedCity !== "all" ||
+                      selectedBranchNo !== "all" ||
+                      searchQuery) && (
                       <button
                         onClick={() => {
                           setSelectedCity("all");
@@ -670,8 +693,7 @@ export function ExactDashboard() {
                             {startIndex + index + 1}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
-                            {recording.branch_no ||
-                              recording.device_name}
+                            {recording.branch_no || recording.device_name}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.cnic || recording.file_name || "-"}
@@ -949,8 +971,12 @@ export function ExactDashboard() {
 
                 {/* Analytics Content */}
                 <WarningSuppressionWrapper>
-                  {analyticsSubTab === "recordings" && <GoogleRecordingsAnalytics />}
-                  {analyticsSubTab === "conversations" && <GoogleConversationAnalytics />}
+                  {analyticsSubTab === "recordings" && (
+                    <GoogleRecordingsAnalytics />
+                  )}
+                  {analyticsSubTab === "conversations" && (
+                    <GoogleConversationAnalytics />
+                  )}
                 </WarningSuppressionWrapper>
               </>
             )}

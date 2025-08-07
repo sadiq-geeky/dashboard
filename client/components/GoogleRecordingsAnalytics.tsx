@@ -31,16 +31,18 @@ export function GoogleRecordingsAnalytics() {
       setLoading(true);
       setError(null);
       const response = await authFetch("/api/analytics/recordings");
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch analytics: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setAnalytics(data);
     } catch (error) {
       console.error("Error fetching analytics:", error);
-      setError(error instanceof Error ? error.message : "Failed to fetch analytics");
+      setError(
+        error instanceof Error ? error.message : "Failed to fetch analytics",
+      );
       // Set mock data for demo purposes with all required fields
       setAnalytics({
         totalRecordings: 1234,
@@ -71,9 +73,24 @@ export function GoogleRecordingsAnalytics() {
           { status: "in_progress", count: 33 },
         ],
         monthlyTrends: [
-          { month: "Jan", recordings: 1234, avgDuration: 204, todayRecordings: 48 },
-          { month: "Dec", recordings: 1098, avgDuration: 198, todayRecordings: 42 },
-          { month: "Nov", recordings: 987, avgDuration: 201, todayRecordings: 39 },
+          {
+            month: "Jan",
+            recordings: 1234,
+            avgDuration: 204,
+            todayRecordings: 48,
+          },
+          {
+            month: "Dec",
+            recordings: 1098,
+            avgDuration: 198,
+            todayRecordings: 42,
+          },
+          {
+            month: "Nov",
+            recordings: 987,
+            avgDuration: 201,
+            todayRecordings: 39,
+          },
         ],
       });
     } finally {
@@ -92,9 +109,9 @@ export function GoogleRecordingsAnalytics() {
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", { 
-      month: "short", 
-      day: "numeric" 
+    return new Date(dateStr).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -130,46 +147,52 @@ export function GoogleRecordingsAnalytics() {
   const branchStats = analytics.branchStats || [];
   const statusDistribution = analytics.statusDistribution || [];
 
-  const dailyChartData = dailyRecordings.length > 0 ? [
-    ["Date", "Recordings"],
-    ...dailyRecordings.map(item => [
-      formatDate(item.date),
-      item.count
-    ])
-  ] : [
-    ["Date", "Recordings"],
-    ["No data", 0]
-  ];
+  const dailyChartData =
+    dailyRecordings.length > 0
+      ? [
+          ["Date", "Recordings"],
+          ...dailyRecordings.map((item) => [formatDate(item.date), item.count]),
+        ]
+      : [
+          ["Date", "Recordings"],
+          ["No data", 0],
+        ];
 
-  const branchChartData = branchStats.length > 0 ? [
-    ["Branch", "Total Recordings"],
-    ...branchStats.map(item => [
-      item.branch_name,
-      item.total_recordings
-    ])
-  ] : [
-    ["Branch", "Total Recordings"],
-    ["No data", 0]
-  ];
+  const branchChartData =
+    branchStats.length > 0
+      ? [
+          ["Branch", "Total Recordings"],
+          ...branchStats.map((item) => [
+            item.branch_name,
+            item.total_recordings,
+          ]),
+        ]
+      : [
+          ["Branch", "Total Recordings"],
+          ["No data", 0],
+        ];
 
-  const statusChartData = statusDistribution.length > 0 ? [
-    ["Status", "Count"],
-    ...statusDistribution.map(item => [
-      item.status.charAt(0).toUpperCase() + item.status.slice(1),
-      item.count
-    ])
-  ] : [
-    ["Status", "Count"],
-    ["No data", 0]
-  ];
+  const statusChartData =
+    statusDistribution.length > 0
+      ? [
+          ["Status", "Count"],
+          ...statusDistribution.map((item) => [
+            item.status.charAt(0).toUpperCase() + item.status.slice(1),
+            item.count,
+          ]),
+        ]
+      : [
+          ["Status", "Count"],
+          ["No data", 0],
+        ];
 
   const chartOptions = {
-    backgroundColor: 'transparent',
-    titleTextStyle: { color: '#374151', fontSize: 16 },
-    legendTextStyle: { color: '#6B7280' },
-    hAxis: { textStyle: { color: '#6B7280' } },
-    vAxis: { textStyle: { color: '#6B7280' } },
-    colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
+    backgroundColor: "transparent",
+    titleTextStyle: { color: "#374151", fontSize: 16 },
+    legendTextStyle: { color: "#6B7280" },
+    hAxis: { textStyle: { color: "#6B7280" } },
+    vAxis: { textStyle: { color: "#6B7280" } },
+    colors: ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"],
   };
 
   return (
@@ -179,8 +202,12 @@ export function GoogleRecordingsAnalytics() {
         <div className="bg-white rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Recordings</p>
-              <p className="text-2xl font-bold text-gray-900">{(analytics.totalRecordings || 0).toLocaleString()}</p>
+              <p className="text-sm font-medium text-gray-600">
+                Total Recordings
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                {(analytics.totalRecordings || 0).toLocaleString()}
+              </p>
             </div>
             <TrendingUp className="h-8 w-8 text-blue-500" />
           </div>
@@ -189,8 +216,12 @@ export function GoogleRecordingsAnalytics() {
         <div className="bg-white rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Today's Recordings</p>
-              <p className="text-2xl font-bold text-gray-900">{analytics.todayRecordings || 0}</p>
+              <p className="text-sm font-medium text-gray-600">
+                Today's Recordings
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                {analytics.todayRecordings || 0}
+              </p>
             </div>
             <CheckCircle className="h-8 w-8 text-green-500" />
           </div>
@@ -200,7 +231,9 @@ export function GoogleRecordingsAnalytics() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Avg Duration</p>
-              <p className="text-2xl font-bold text-gray-900">{formatDuration(analytics.avgDuration || 0)}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {formatDuration(analytics.avgDuration || 0)}
+              </p>
             </div>
             <Clock className="h-8 w-8 text-purple-500" />
           </div>
@@ -211,7 +244,12 @@ export function GoogleRecordingsAnalytics() {
             <div>
               <p className="text-sm font-medium text-gray-600">Success Rate</p>
               <p className="text-2xl font-bold text-gray-900">
-                {Math.round(((analytics.completedRecordings || 0) / (analytics.totalRecordings || 1)) * 100)}%
+                {Math.round(
+                  ((analytics.completedRecordings || 0) /
+                    (analytics.totalRecordings || 1)) *
+                    100,
+                )}
+                %
               </p>
             </div>
             <Users className="h-8 w-8 text-emerald-500" />
@@ -223,7 +261,9 @@ export function GoogleRecordingsAnalytics() {
       <div className="grid grid-cols-2 gap-6">
         {/* Daily Recordings Line Chart */}
         <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Recordings (Last 7 Days)</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Daily Recordings (Last 7 Days)
+          </h3>
           <Chart
             chartType="LineChart"
             width="100%"
@@ -241,7 +281,9 @@ export function GoogleRecordingsAnalytics() {
 
         {/* Status Distribution Pie Chart */}
         <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recording Status Distribution</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Recording Status Distribution
+          </h3>
           <Chart
             chartType="PieChart"
             width="100%"
@@ -259,7 +301,9 @@ export function GoogleRecordingsAnalytics() {
 
       {/* Branch Performance Bar Chart */}
       <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Recordings by Branch</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Recordings by Branch
+        </h3>
         <Chart
           chartType="ColumnChart"
           width="100%"

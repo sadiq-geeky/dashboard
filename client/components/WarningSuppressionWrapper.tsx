@@ -5,7 +5,7 @@ interface WarningSuppressionWrapperProps {
 }
 
 // Global suppression setup
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   // Store original console methods globally
   const originalWarn = console.warn;
   const originalError = console.error;
@@ -16,10 +16,18 @@ if (typeof window !== 'undefined') {
 
     // Check if this is a Recharts defaultProps warning
     if (
-      message.includes("Support for defaultProps will be removed from function components") ||
-      message.includes("defaultProps will be removed from function components") ||
-      (message.includes("XAxis") && (message.includes("defaultProps") || message.includes("Support for defaultProps"))) ||
-      (message.includes("YAxis") && (message.includes("defaultProps") || message.includes("Support for defaultProps"))) ||
+      message.includes(
+        "Support for defaultProps will be removed from function components",
+      ) ||
+      message.includes(
+        "defaultProps will be removed from function components",
+      ) ||
+      (message.includes("XAxis") &&
+        (message.includes("defaultProps") ||
+          message.includes("Support for defaultProps"))) ||
+      (message.includes("YAxis") &&
+        (message.includes("defaultProps") ||
+          message.includes("Support for defaultProps"))) ||
       message.includes("recharts")
     ) {
       // Suppress these warnings completely
@@ -35,10 +43,18 @@ if (typeof window !== 'undefined') {
 
     // Check if this is a Recharts defaultProps error
     if (
-      message.includes("Support for defaultProps will be removed from function components") ||
-      message.includes("defaultProps will be removed from function components") ||
-      (message.includes("XAxis") && (message.includes("defaultProps") || message.includes("Support for defaultProps"))) ||
-      (message.includes("YAxis") && (message.includes("defaultProps") || message.includes("Support for defaultProps"))) ||
+      message.includes(
+        "Support for defaultProps will be removed from function components",
+      ) ||
+      message.includes(
+        "defaultProps will be removed from function components",
+      ) ||
+      (message.includes("XAxis") &&
+        (message.includes("defaultProps") ||
+          message.includes("Support for defaultProps"))) ||
+      (message.includes("YAxis") &&
+        (message.includes("defaultProps") ||
+          message.includes("Support for defaultProps"))) ||
       message.includes("recharts")
     ) {
       // Suppress these errors completely

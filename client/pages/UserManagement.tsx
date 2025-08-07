@@ -85,19 +85,22 @@ export function UserManagement() {
 
   const isSystemAdmin = (user: User) => {
     // Check if user is a system administrator (admin role and specific usernames)
-    return user.role === "admin" && (
-      user.username === "admin" ||
-      user.username === "system" ||
-      user.username === "administrator" ||
-      user.emp_name === "System Administrator"
+    return (
+      user.role === "admin" &&
+      (user.username === "admin" ||
+        user.username === "system" ||
+        user.username === "administrator" ||
+        user.emp_name === "System Administrator")
     );
   };
 
   const handleDeleteUser = async (uuid: string) => {
-    const user = users.find(u => u.uuid === uuid);
+    const user = users.find((u) => u.uuid === uuid);
 
     if (user && isSystemAdmin(user)) {
-      alert("Cannot delete system administrator account. This action is not permitted for security reasons.");
+      alert(
+        "Cannot delete system administrator account. This action is not permitted for security reasons.",
+      );
       return;
     }
 
@@ -389,8 +392,8 @@ export function UserManagement() {
                             isSystemAdmin(user)
                               ? "bg-purple-100 text-purple-800"
                               : user.role === "admin"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-blue-100 text-blue-800"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-blue-100 text-blue-800"
                           }`}
                         >
                           {isSystemAdmin(user) ? (

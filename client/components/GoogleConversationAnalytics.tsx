@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Chart } from "react-google-charts";
-import { MessageSquare, Users, Building2, TrendingUp, RefreshCw } from "lucide-react";
+import {
+  MessageSquare,
+  Users,
+  Building2,
+  TrendingUp,
+  RefreshCw,
+} from "lucide-react";
 import { authFetch } from "@/lib/api";
 
 interface ConversationAnalytics {
@@ -11,11 +17,17 @@ interface ConversationAnalytics {
   conversationsByBranch: Array<{ branch_name: string; conversations: number }>;
   conversationsByCity: Array<{ city: string; conversations: number }>;
   dailyConversations: Array<{ date: string; count: number }>;
-  monthlyTrends: Array<{ month: string; conversations: number; customers: number }>;
+  monthlyTrends: Array<{
+    month: string;
+    conversations: number;
+    customers: number;
+  }>;
 }
 
 export function GoogleConversationAnalytics() {
-  const [analytics, setAnalytics] = useState<ConversationAnalytics | null>(null);
+  const [analytics, setAnalytics] = useState<ConversationAnalytics | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,16 +36,18 @@ export function GoogleConversationAnalytics() {
       setLoading(true);
       setError(null);
       const response = await authFetch("/api/analytics/conversations");
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch analytics: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setAnalytics(data);
     } catch (error) {
       console.error("Error fetching conversation analytics:", error);
-      setError(error instanceof Error ? error.message : "Failed to fetch analytics");
+      setError(
+        error instanceof Error ? error.message : "Failed to fetch analytics",
+      );
       // Set mock data for demo purposes
       setAnalytics({
         totalConversations: 2156,
@@ -83,9 +97,9 @@ export function GoogleConversationAnalytics() {
   }, []);
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", { 
-      month: "short", 
-      day: "numeric" 
+    return new Date(dateStr).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -93,7 +107,9 @@ export function GoogleConversationAnalytics() {
     return (
       <div className="flex items-center justify-center h-64">
         <RefreshCw className="h-8 w-8 animate-spin text-gray-400" />
-        <span className="ml-2 text-gray-600">Loading conversation analytics...</span>
+        <span className="ml-2 text-gray-600">
+          Loading conversation analytics...
+        </span>
       </div>
     );
   }
@@ -122,58 +138,67 @@ export function GoogleConversationAnalytics() {
   const conversationsByCity = analytics.conversationsByCity || [];
   const monthlyTrends = analytics.monthlyTrends || [];
 
-  const dailyChartData = dailyConversations.length > 0 ? [
-    ["Date", "Conversations"],
-    ...dailyConversations.map(item => [
-      formatDate(item.date),
-      item.count
-    ])
-  ] : [
-    ["Date", "Conversations"],
-    ["No data", 0]
-  ];
+  const dailyChartData =
+    dailyConversations.length > 0
+      ? [
+          ["Date", "Conversations"],
+          ...dailyConversations.map((item) => [
+            formatDate(item.date),
+            item.count,
+          ]),
+        ]
+      : [
+          ["Date", "Conversations"],
+          ["No data", 0],
+        ];
 
-  const branchChartData = conversationsByBranch.length > 0 ? [
-    ["Branch", "Conversations"],
-    ...conversationsByBranch.map(item => [
-      item.branch_name,
-      item.conversations
-    ])
-  ] : [
-    ["Branch", "Conversations"],
-    ["No data", 0]
-  ];
+  const branchChartData =
+    conversationsByBranch.length > 0
+      ? [
+          ["Branch", "Conversations"],
+          ...conversationsByBranch.map((item) => [
+            item.branch_name,
+            item.conversations,
+          ]),
+        ]
+      : [
+          ["Branch", "Conversations"],
+          ["No data", 0],
+        ];
 
-  const cityChartData = conversationsByCity.length > 0 ? [
-    ["City", "Conversations"],
-    ...conversationsByCity.map(item => [
-      item.city,
-      item.conversations
-    ])
-  ] : [
-    ["City", "Conversations"],
-    ["No data", 0]
-  ];
+  const cityChartData =
+    conversationsByCity.length > 0
+      ? [
+          ["City", "Conversations"],
+          ...conversationsByCity.map((item) => [item.city, item.conversations]),
+        ]
+      : [
+          ["City", "Conversations"],
+          ["No data", 0],
+        ];
 
-  const trendsChartData = monthlyTrends.length > 0 ? [
-    ["Month", "Conversations", "Unique Customers"],
-    ...monthlyTrends.map(item => [
-      item.month,
-      item.conversations,
-      item.customers
-    ])
-  ] : [
-    ["Month", "Conversations", "Unique Customers"],
-    ["No data", 0, 0]
-  ];
+  const trendsChartData =
+    monthlyTrends.length > 0
+      ? [
+          ["Month", "Conversations", "Unique Customers"],
+          ...monthlyTrends.map((item) => [
+            item.month,
+            item.conversations,
+            item.customers,
+          ]),
+        ]
+      : [
+          ["Month", "Conversations", "Unique Customers"],
+          ["No data", 0, 0],
+        ];
 
   const chartOptions = {
-    backgroundColor: 'transparent',
-    titleTextStyle: { color: '#374151', fontSize: 16 },
-    legendTextStyle: { color: '#6B7280' },
-    hAxis: { textStyle: { color: '#6B7280' } },
-    vAxis: { textStyle: { color: '#6B7280' } },
-    colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
+    backgroundColor: "transparent",
+    titleTextStyle: { color: "#374151", fontSize: 16 },
+    legendTextStyle: { color: "#6B7280" },
+    hAxis: { textStyle: { color: "#6B7280" } },
+    vAxis: { textStyle: { color: "#6B7280" } },
+    colors: ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"],
   };
 
   return (
@@ -183,8 +208,12 @@ export function GoogleConversationAnalytics() {
         <div className="bg-white rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Conversations</p>
-              <p className="text-2xl font-bold text-gray-900">{(analytics.totalConversations || 0).toLocaleString()}</p>
+              <p className="text-sm font-medium text-gray-600">
+                Total Conversations
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                {(analytics.totalConversations || 0).toLocaleString()}
+              </p>
             </div>
             <MessageSquare className="h-8 w-8 text-blue-500" />
           </div>
@@ -193,8 +222,12 @@ export function GoogleConversationAnalytics() {
         <div className="bg-white rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Unique Customers</p>
-              <p className="text-2xl font-bold text-gray-900">{(analytics.uniqueCustomers || 0).toLocaleString()}</p>
+              <p className="text-sm font-medium text-gray-600">
+                Unique Customers
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                {(analytics.uniqueCustomers || 0).toLocaleString()}
+              </p>
             </div>
             <Users className="h-8 w-8 text-green-500" />
           </div>
@@ -203,8 +236,12 @@ export function GoogleConversationAnalytics() {
         <div className="bg-white rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Active Branches</p>
-              <p className="text-2xl font-bold text-gray-900">{analytics.activeBranches || 0}</p>
+              <p className="text-sm font-medium text-gray-600">
+                Active Branches
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                {analytics.activeBranches || 0}
+              </p>
             </div>
             <Building2 className="h-8 w-8 text-purple-500" />
           </div>
@@ -213,8 +250,12 @@ export function GoogleConversationAnalytics() {
         <div className="bg-white rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Today's Conversations</p>
-              <p className="text-2xl font-bold text-gray-900">{analytics.todayConversations || 0}</p>
+              <p className="text-sm font-medium text-gray-600">
+                Today's Conversations
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                {analytics.todayConversations || 0}
+              </p>
             </div>
             <TrendingUp className="h-8 w-8 text-emerald-500" />
           </div>
@@ -225,7 +266,9 @@ export function GoogleConversationAnalytics() {
       <div className="grid grid-cols-2 gap-6">
         {/* Daily Conversations Line Chart */}
         <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Conversations (Last 7 Days)</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Daily Conversations (Last 7 Days)
+          </h3>
           <Chart
             chartType="LineChart"
             width="100%"
@@ -243,7 +286,9 @@ export function GoogleConversationAnalytics() {
 
         {/* Conversations by City Pie Chart */}
         <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Conversations by City</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Conversations by City
+          </h3>
           <Chart
             chartType="PieChart"
             width="100%"
@@ -263,7 +308,9 @@ export function GoogleConversationAnalytics() {
       <div className="grid grid-cols-1 gap-6">
         {/* Conversations by Branch Bar Chart */}
         <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Conversations by Branch</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Conversations by Branch
+          </h3>
           <Chart
             chartType="ColumnChart"
             width="100%"
@@ -281,7 +328,9 @@ export function GoogleConversationAnalytics() {
 
       {/* Monthly Trends */}
       <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Trends (Last 6 Months)</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Monthly Trends (Last 6 Months)
+        </h3>
         <Chart
           chartType="ComboChart"
           width="100%"

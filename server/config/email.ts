@@ -1,14 +1,14 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 // Email configuration using provided SMTP settings
 export const emailConfig = {
-  host: 'mail.setech.pk',
+  host: "mail.setech.pk",
   port: 465,
   secure: true, // true for 465, false for other ports
   auth: {
-    user: 'no-reply@setech.pk',
-    pass: 'sachiMUCHI79513'
-  }
+    user: "no-reply@setech.pk",
+    pass: "sachiMUCHI79513",
+  },
 };
 
 // Create reusable transporter object using the email config
@@ -18,10 +18,10 @@ export const emailTransporter = nodemailer.createTransport(emailConfig);
 export const verifyEmailConnection = async (): Promise<boolean> => {
   try {
     await emailTransporter.verify();
-    console.log('✅ Email server connection verified');
+    console.log("✅ Email server connection verified");
     return true;
   } catch (error) {
-    console.error('❌ Email server connection failed:', error);
+    console.error("❌ Email server connection failed:", error);
     return false;
   }
 };
@@ -29,7 +29,7 @@ export const verifyEmailConnection = async (): Promise<boolean> => {
 // Email templates
 export const emailTemplates = {
   passwordReset: (resetLink: string, userName: string) => ({
-    subject: 'Password Reset Request - SE TECH Voice Recording System',
+    subject: "Password Reset Request - SE TECH Voice Recording System",
     html: `
       <!DOCTYPE html>
       <html>
@@ -63,7 +63,7 @@ export const emailTemplates = {
           </div>
           
           <div class="content">
-            <h2>Hello ${userName || 'User'},</h2>
+            <h2>Hello ${userName || "User"},</h2>
             
             <p>We received a request to reset your password for your SE TECH Voice Recording System account.</p>
             
@@ -103,7 +103,7 @@ export const emailTemplates = {
     text: `
       SE TECH Voice Recording System - Password Reset Request
       
-      Hello ${userName || 'User'},
+      Hello ${userName || "User"},
       
       We received a request to reset your password for your SE TECH Voice Recording System account.
       
@@ -122,16 +122,16 @@ export const emailTemplates = {
       
       © ${new Date().getFullYear()} SE TECH (Pvt.) Ltd. All rights reserved.
       This is an automated message, please do not reply to this email.
-    `
-  })
+    `,
+  }),
 };
 
 // Send email function
 export const sendEmail = async (
-  to: string, 
-  subject: string, 
-  html: string, 
-  text: string
+  to: string,
+  subject: string,
+  html: string,
+  text: string,
 ): Promise<boolean> => {
   try {
     const info = await emailTransporter.sendMail({
@@ -139,13 +139,13 @@ export const sendEmail = async (
       to,
       subject,
       html,
-      text
+      text,
     });
 
-    console.log('✅ Email sent successfully:', info.messageId);
+    console.log("✅ Email sent successfully:", info.messageId);
     return true;
   } catch (error) {
-    console.error('❌ Failed to send email:', error);
+    console.error("❌ Failed to send email:", error);
     return false;
   }
 };

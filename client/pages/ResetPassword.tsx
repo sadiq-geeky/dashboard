@@ -19,7 +19,9 @@ export function ResetPassword() {
     if (resetToken) {
       setToken(resetToken);
     } else {
-      setError("Invalid or missing reset token. Please request a new password reset.");
+      setError(
+        "Invalid or missing reset token. Please request a new password reset.",
+      );
     }
   }, []);
 
@@ -76,9 +78,9 @@ export function ResetPassword() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          token, 
-          newPassword 
+        body: JSON.stringify({
+          token,
+          newPassword,
         }),
       });
 
@@ -124,7 +126,7 @@ export function ResetPassword() {
               <p className="text-sm text-gray-600">
                 You can now sign in with your new password.
               </p>
-              
+
               <button
                 onClick={handleBackToLogin}
                 className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
@@ -242,7 +244,9 @@ export function ResetPassword() {
 
           {/* Password requirements */}
           <div className="bg-gray-50 rounded-md p-3">
-            <p className="text-xs font-medium text-gray-700 mb-2">Password must contain:</p>
+            <p className="text-xs font-medium text-gray-700 mb-2">
+              Password must contain:
+            </p>
             <ul className="text-xs text-gray-600 space-y-1">
               <li>• At least 8 characters</li>
               <li>• One uppercase letter</li>

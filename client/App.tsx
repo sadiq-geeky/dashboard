@@ -8,40 +8,52 @@ if (typeof window !== "undefined") {
   const originalLog = console.log;
 
   // Override all console methods
-  console.warn = console.error = console.log = (...args) => {
-    const message = String(args.join(" "));
+  console.warn =
+    console.error =
+    console.log =
+      (...args) => {
+        const message = String(args.join(" "));
 
-    // Suppress any defaultProps warnings related to charts
-    if (
-      message.includes("defaultProps will be removed") ||
-      message.includes("Support for defaultProps") ||
-      (message.includes("XAxis") && message.includes("defaultProps")) ||
-      (message.includes("YAxis") && message.includes("defaultProps")) ||
-      message.includes("recharts")
-    ) {
-      return; // Completely suppress these warnings
-    }
+        // Suppress any defaultProps warnings related to charts
+        if (
+          message.includes("defaultProps will be removed") ||
+          message.includes("Support for defaultProps") ||
+          (message.includes("XAxis") && message.includes("defaultProps")) ||
+          (message.includes("YAxis") && message.includes("defaultProps")) ||
+          message.includes("recharts")
+        ) {
+          return; // Completely suppress these warnings
+        }
 
-    // For non-suppressed messages, use the appropriate original method
-    if (args[0] && typeof args[0] === 'string' && args[0].includes('Warning:')) {
-      originalWarn.apply(console, args);
-    } else if (args[0] && typeof args[0] === 'string' && args[0].includes('Error:')) {
-      originalError.apply(console, args);
-    } else {
-      originalLog.apply(console, args);
-    }
-  };
+        // For non-suppressed messages, use the appropriate original method
+        if (
+          args[0] &&
+          typeof args[0] === "string" &&
+          args[0].includes("Warning:")
+        ) {
+          originalWarn.apply(console, args);
+        } else if (
+          args[0] &&
+          typeof args[0] === "string" &&
+          args[0].includes("Error:")
+        ) {
+          originalError.apply(console, args);
+        } else {
+          originalLog.apply(console, args);
+        }
+      };
 
   // Also try to suppress React's internal warning system
   if ((window as any).React) {
     try {
       const React = (window as any).React;
       if (React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED) {
-        const internals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        const internals =
+          React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         if (internals.ReactDebugCurrentFrame) {
           const originalWarn = internals.ReactDebugCurrentFrame.getCurrentStack;
           if (originalWarn) {
-            internals.ReactDebugCurrentFrame.getCurrentStack = () => '';
+            internals.ReactDebugCurrentFrame.getCurrentStack = () => "";
           }
         }
       }
@@ -51,11 +63,12 @@ if (typeof window !== "undefined") {
   }
 
   // Add global error handler for React warnings
-  window.addEventListener('error', (event) => {
-    if (event.message && (
-      event.message.includes('defaultProps will be removed') ||
-      event.message.includes('Support for defaultProps')
-    )) {
+  window.addEventListener("error", (event) => {
+    if (
+      event.message &&
+      (event.message.includes("defaultProps will be removed") ||
+        event.message.includes("Support for defaultProps"))
+    ) {
       event.preventDefault();
       event.stopPropagation();
       return false;
