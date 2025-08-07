@@ -508,7 +508,7 @@ export function ExactDashboard() {
       <div className="flex">
         {/* Main Content */}
         <div className="flex-1">
-          <div className="px-6 py-6 pt-1" style={{ padding: "24px 24px 5px" }}>
+          <div className="px-4 py-3" style={{ padding: "12px 16px 3px" }}>
             {activeTab === "home" && (
               <>
                 {/* Search and Filter Bar */}
