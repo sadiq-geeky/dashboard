@@ -393,7 +393,8 @@ export function Complaints() {
       alert("Complaint created successfully!");
     } catch (error) {
       console.error("Error creating complaint:", error);
-      alert("Failed to create complaint. Please try again.");
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      alert(`Failed to create complaint: ${errorMessage}`);
     }
   };
 
