@@ -210,5 +210,8 @@ export function createServer() {
   // Sample data population (development/testing only)
   app.post("/api/populate-sample-data", populateData);
 
+  // Debug endpoint for audio files (development only)
+  app.get("/api/debug/audio-files", debugAudioFiles);
+
   return app;
 }
