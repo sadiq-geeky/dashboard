@@ -1810,15 +1810,15 @@ export function Complaints() {
                       {/* Enhanced Summary */}
                       <div className="mt-6 grid grid-cols-3 gap-4 pt-4 border-t border-gray-200">
                         <div className="text-center">
-                          <div className="text-lg font-bold text-emerald-600">3</div>
+                          <div className="text-lg font-bold text-emerald-600">19</div>
                           <div className="text-xs text-gray-500">Total Conversations</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-bold text-blue-600">Week 1</div>
+                          <div className="text-lg font-bold text-purple-600">Week 3</div>
                           <div className="text-xs text-gray-500">Most Active</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-bold text-orange-600">0.10</div>
+                          <div className="text-lg font-bold text-orange-600">0.61</div>
                           <div className="text-xs text-gray-500">Avg/Day</div>
                         </div>
                       </div>
