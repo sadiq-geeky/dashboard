@@ -79,6 +79,22 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
       ORDER BY month ASC
     `;
 
+    // Get daily voice streams for current month
+    const dailyCurrentMonthQuery = `
+      SELECT
+        DATE(r.start_time) as date,
+        COUNT(*) as voice_streams
+      FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE YEAR(r.start_time) = YEAR(CURDATE())
+        AND MONTH(r.start_time) = MONTH(CURDATE())
+        ${branchFilterCondition}
+      GROUP BY DATE(r.start_time)
+      ORDER BY date ASC
+    `;
+
     // Execute all queries in parallel
     const [
       totalResult,
