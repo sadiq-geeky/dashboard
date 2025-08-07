@@ -79,8 +79,16 @@ export function Complaints() {
   const { isAdmin, isManager, isAdminOrManager, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Read initial tab from URL
+  const getInitialTab = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get("tab");
+    return tab === "analytics" ? "analytics" : "complaints";
+  };
+
   const [activeTab, setActiveTab] = useState<"complaints" | "analytics">(
-    "complaints",
+    getInitialTab(),
   );
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [stats, setStats] = useState<ComplaintsStats | null>(null);
