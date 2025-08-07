@@ -18,9 +18,15 @@ if (typeof window !== "undefined") {
         if (
           message.includes("defaultProps will be removed") ||
           message.includes("Support for defaultProps") ||
-          (message.includes("XAxis") && message.includes("defaultProps")) ||
-          (message.includes("YAxis") && message.includes("defaultProps")) ||
-          message.includes("recharts")
+          message.includes("XAxis") ||
+          message.includes("YAxis") ||
+          message.includes("recharts") ||
+          message.includes("CategoricalChartWrapper") ||
+          message.includes("ChartLayoutContextProvider") ||
+          message.includes("Surface") ||
+          (args[0] && args[0].toString().includes("XAxis")) ||
+          (args[0] && args[0].toString().includes("YAxis")) ||
+          (args[0] && args[0].toString().includes("defaultProps"))
         ) {
           return; // Completely suppress these warnings
         }
