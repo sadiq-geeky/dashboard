@@ -348,7 +348,7 @@ export function Complaints() {
 
       {/* Navigation Tabs */}
       <div className="bg-white border-b border-gray-200">
-        <div className="flex items-center justify-between h-12 px-4">
+        <div className="flex items-center justify-center h-12 px-4">
           <div className="flex items-center space-x-0.5">
             <button
               onClick={() => navigate("/")}
@@ -359,63 +359,11 @@ export function Complaints() {
             </button>
 
             <button
-              onClick={() => navigate("/recordings")}
-              className="flex flex-col items-center p-2 rounded-md text-gray-500 hover:bg-gray-100"
-            >
-              <MessageSquare className="w-4 h-4 mb-0.5" />
-              <span className="text-xs">Recordings</span>
-            </button>
-
-            <button
               className="flex flex-col items-center p-2 rounded-md text-gray-700 bg-white border border-gray-300"
             >
               <Mail className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Complaints</span>
             </button>
-
-            {isAdmin() && (
-              <>
-                <button
-                  onClick={() => navigate("/conversation-analytics")}
-                  className="flex flex-col items-center p-2 rounded-md text-gray-500 hover:bg-gray-100"
-                >
-                  <BarChart3 className="w-4 h-4 mb-0.5" />
-                  <span className="text-xs">Analytics</span>
-                </button>
-
-                <button
-                  onClick={() => navigate("/device-management")}
-                  className="flex flex-col items-center p-2 rounded-md text-gray-500 hover:bg-gray-100"
-                >
-                  <Monitor className="w-4 h-4 mb-0.5" />
-                  <span className="text-xs">Devices</span>
-                </button>
-
-                <button
-                  onClick={() => navigate("/branch-management")}
-                  className="flex flex-col items-center p-2 rounded-md text-gray-500 hover:bg-gray-100"
-                >
-                  <Building2 className="w-4 h-4 mb-0.5" />
-                  <span className="text-xs">Branches</span>
-                </button>
-
-                <button
-                  onClick={() => navigate("/user-management")}
-                  className="flex flex-col items-center p-2 rounded-md text-gray-500 hover:bg-gray-100"
-                >
-                  <User className="w-4 h-4 mb-0.5" />
-                  <span className="text-xs">Users</span>
-                </button>
-
-                <button
-                  onClick={() => navigate("/deployment")}
-                  className="flex flex-col items-center p-2 rounded-md text-gray-500 hover:bg-gray-100"
-                >
-                  <Settings className="w-4 h-4 mb-0.5" />
-                  <span className="text-xs">Deployment</span>
-                </button>
-              </>
-            )}
           </div>
         </div>
       </div>
