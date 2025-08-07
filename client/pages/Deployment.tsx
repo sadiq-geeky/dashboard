@@ -665,22 +665,25 @@ export function Deployment() {
                     </Select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Select Branch *
                     </label>
-                    <select
-                      value={selectedBranch}
-                      onChange={(e) => setSelectedBranch(e.target.value)}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    >
-                      <option value="">Choose a branch</option>
-                      {availableBranches.map((branch) => (
-                        <option key={branch.id} value={branch.id}>
-                          {branch.branch_name} ({branch.branch_code})
-                        </option>
-                      ))}
-                    </select>
+                    <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose a branch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableBranches.map((branch) => (
+                          <SelectItem key={branch.id} value={branch.id}>
+                            <div className="flex items-center space-x-2">
+                              <Building2 className="h-4 w-4 text-green-500" />
+                              <span className="font-medium">{branch.branch_name}</span>
+                              <span className="text-gray-500">({branch.branch_code})</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
