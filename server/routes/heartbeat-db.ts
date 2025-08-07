@@ -39,15 +39,28 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
           WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 5 THEN 'online'
           WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 15 THEN 'problematic'
           ELSE 'offline'
-        END AS status
+        END AS status,
+        CONCAT(
+          FLOOR(IFNULL(u.heartbeat_count, 0) * 30 / 3600), 'h ',
+          FLOOR(MOD(IFNULL(u.heartbeat_count, 0) * 30, 3600) / 60), 'm'
+        ) AS uptime_duration_24h
       FROM (
         SELECT
           mac_address,
-          MAX(ip_address) as ip_address,
-          MAX(created_on) as last_seen
-        FROM heartbeat WHERE mac_address IS NOT NULL
+          MAX(ip_address) AS ip_address,
+          MAX(created_on) AS last_seen
+        FROM heartbeat
+        WHERE mac_address IS NOT NULL
         GROUP BY mac_address
       ) h
+      LEFT JOIN (
+        SELECT
+          mac_address,
+          COUNT(*) AS heartbeat_count
+        FROM heartbeat
+        WHERE created_on >= NOW() - INTERVAL 1 DAY
+        GROUP BY mac_address
+      ) u ON u.mac_address = h.mac_address
       LEFT JOIN devices d ON d.device_mac = h.mac_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id COLLATE utf8mb4_0900_ai_ci = d.id COLLATE utf8mb4_0900_ai_ci
       LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
