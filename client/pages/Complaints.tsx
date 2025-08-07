@@ -1735,74 +1735,74 @@ export function Complaints() {
                       {/* Weekly View */}
                       <div className="h-64 bg-gradient-to-b from-gray-50 to-gray-100 rounded-lg p-6">
                         <div className="h-full flex items-end justify-between space-x-6">
-                          {/* Week 1 (Dec 1-7) */}
+                          {/* Week 1 (Jul 1-7) */}
                           <div className="flex flex-col items-center group">
                             <div className="relative">
                               <div className="w-16 bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
-                                   style={{ height: '80px' }}></div>
+                                   style={{ height: '90px' }}></div>
+                              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                5 conversations
+                              </div>
+                            </div>
+                            <span className="text-sm text-gray-600 mt-3 font-medium">Week 1</span>
+                            <span className="text-xs text-gray-500">Jul 1-7</span>
+                            <span className="text-sm font-bold text-emerald-600 mt-1">5</span>
+                          </div>
+
+                          {/* Week 2 (Jul 8-14) */}
+                          <div className="flex flex-col items-center group">
+                            <div className="relative">
+                              <div className="w-16 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
+                                   style={{ height: '60px' }}></div>
                               <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                                 3 conversations
                               </div>
                             </div>
-                            <span className="text-sm text-gray-600 mt-3 font-medium">Week 1</span>
-                            <span className="text-xs text-gray-500">Dec 1-7</span>
-                            <span className="text-sm font-bold text-emerald-600 mt-1">3</span>
-                          </div>
-
-                          {/* Week 2 (Dec 8-14) */}
-                          <div className="flex flex-col items-center group">
-                            <div className="relative">
-                              <div className="w-16 bg-gradient-to-t from-gray-300 to-gray-200 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
-                                   style={{ height: '0px' }}></div>
-                              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                0 conversations
-                              </div>
-                            </div>
                             <span className="text-sm text-gray-600 mt-3 font-medium">Week 2</span>
-                            <span className="text-xs text-gray-500">Dec 8-14</span>
-                            <span className="text-sm font-bold text-gray-400 mt-1">0</span>
+                            <span className="text-xs text-gray-500">Jul 8-14</span>
+                            <span className="text-sm font-bold text-blue-600 mt-1">3</span>
                           </div>
 
-                          {/* Week 3 (Dec 15-21) */}
+                          {/* Week 3 (Jul 15-21) */}
                           <div className="flex flex-col items-center group">
                             <div className="relative">
-                              <div className="w-16 bg-gradient-to-t from-gray-300 to-gray-200 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
-                                   style={{ height: '0px' }}></div>
+                              <div className="w-16 bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
+                                   style={{ height: '120px' }}></div>
                               <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                0 conversations
+                                8 conversations
                               </div>
                             </div>
                             <span className="text-sm text-gray-600 mt-3 font-medium">Week 3</span>
-                            <span className="text-xs text-gray-500">Dec 15-21</span>
-                            <span className="text-sm font-bold text-gray-400 mt-1">0</span>
+                            <span className="text-xs text-gray-500">Jul 15-21</span>
+                            <span className="text-sm font-bold text-purple-600 mt-1">8</span>
                           </div>
 
-                          {/* Week 4 (Dec 22-28) */}
+                          {/* Week 4 (Jul 22-28) */}
                           <div className="flex flex-col items-center group">
                             <div className="relative">
-                              <div className="w-16 bg-gradient-to-t from-gray-300 to-gray-200 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
-                                   style={{ height: '0px' }}></div>
+                              <div className="w-16 bg-gradient-to-t from-orange-500 to-orange-400 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
+                                   style={{ height: '45px' }}></div>
                               <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                0 conversations
+                                2 conversations
                               </div>
                             </div>
                             <span className="text-sm text-gray-600 mt-3 font-medium">Week 4</span>
-                            <span className="text-xs text-gray-500">Dec 22-28</span>
-                            <span className="text-sm font-bold text-gray-400 mt-1">0</span>
+                            <span className="text-xs text-gray-500">Jul 22-28</span>
+                            <span className="text-sm font-bold text-orange-600 mt-1">2</span>
                           </div>
 
-                          {/* Week 5 (Dec 29-31) */}
+                          {/* Week 5 (Jul 29-31) */}
                           <div className="flex flex-col items-center group">
                             <div className="relative">
-                              <div className="w-16 bg-gradient-to-t from-gray-300 to-gray-200 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
-                                   style={{ height: '0px' }}></div>
+                              <div className="w-16 bg-gradient-to-t from-pink-500 to-pink-400 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
+                                   style={{ height: '30px' }}></div>
                               <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                0 conversations
+                                1 conversation
                               </div>
                             </div>
                             <span className="text-sm text-gray-600 mt-3 font-medium">Week 5</span>
-                            <span className="text-xs text-gray-500">Dec 29-31</span>
-                            <span className="text-sm font-bold text-gray-400 mt-1">0</span>
+                            <span className="text-xs text-gray-500">Jul 29-31</span>
+                            <span className="text-sm font-bold text-pink-600 mt-1">1</span>
                           </div>
                         </div>
                       </div>
