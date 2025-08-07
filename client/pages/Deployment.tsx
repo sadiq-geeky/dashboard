@@ -208,63 +208,71 @@ export function Deployment() {
         style={{ display: "flex", flexDirection: "column" }}
       >
         <div
-          className="flex items-center justify-between h-16 px-6"
+          className="flex items-center justify-between h-12 px-4"
           style={{ margin: "0 auto" }}
         >
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-0.5">
+            {/* First group: Home, Analytics, Device Status, Complaints */}
             <button
               onClick={() => navigate("/")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
             >
-              <Grid3X3 className="w-5 h-5 mb-1" />
+              <Grid3X3 className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Home</span>
             </button>
-            <button
-              onClick={() => navigate("/?tab=device-status")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
-            >
-              <BarChart3 className="w-5 h-5 mb-1" />
-              <span className="text-xs">Device Status</span>
-            </button>
-            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
-              <MessageSquare className="w-5 h-5 mb-1" />
-              <span className="text-xs">Live Conversation</span>
-            </button>
-            <button
-              onClick={() => navigate("/branch-management")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
-            >
-              <Building2 className="w-5 h-5 mb-1" />
-              <span className="text-xs">Branches</span>
-            </button>
-            <button
-              onClick={() => navigate("/device-management")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
-            >
-              <Monitor className="w-5 h-5 mb-1" />
-              <span className="text-xs">Devices</span>
-            </button>
-            <button className="flex flex-col items-center p-3 rounded-md text-gray-700 bg-white border border-gray-300">
-              <Settings className="w-5 h-5 mb-1" />
-              <span className="text-xs">Deployment</span>
-            </button>
+
             <button
               onClick={() => navigate("/?tab=analytics")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
             >
-              <BarChart3 className="w-5 h-5 mb-1" />
+              <BarChart3 className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Analytics</span>
             </button>
+
+            <button
+              onClick={() => navigate("/?tab=device-status")}
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Monitor className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Device Status</span>
+            </button>
+
+            <button className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md">
+              <Mail className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Complaints</span>
+            </button>
+
+            {/* Admin group separator */}
+            <div className="w-px h-8 bg-gray-300 mx-2"></div>
+
+            {/* Admin group: Branches, Devices, Users, Deployment */}
+            <button
+              onClick={() => navigate("/branch-management")}
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Building2 className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Branches</span>
+            </button>
+
+            <button
+              onClick={() => navigate("/device-management")}
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Monitor className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Devices</span>
+            </button>
+
             <button
               onClick={() => navigate("/user-management")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
             >
-              <Users className="w-5 h-5 mb-1" />
-              <span className="text-xs">User Management</span>
+              <Users className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Users</span>
             </button>
-            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
-              <Mail className="w-5 h-5 mb-1" />
-              <span className="text-xs">Complaints</span>
+
+            <button className="flex flex-col items-center p-2 rounded-md text-gray-700 bg-white border border-gray-300">
+              <Settings className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Deployment</span>
             </button>
           </div>
         </div>

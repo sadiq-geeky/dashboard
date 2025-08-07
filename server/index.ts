@@ -5,6 +5,7 @@ dotenv.config();
 console.log("🧪 ENV DB_NAME:", process.env.DB_NAME);
 
 import { initializeDatabase } from "./config/database";
+import { verifyEmailConnection } from "./config/email";
 
 // Production database routes only
 import { authenticate, addBranchFilter } from "./middleware/auth";
@@ -58,6 +59,12 @@ import {
   getUserProfile,
 } from "./routes/users-db";
 import {
+  forgotPassword,
+  resetPassword,
+  validateResetToken,
+  initPasswordResetTable,
+} from "./routes/auth";
+import {
   getDeployments,
   createDeployment,
   deleteDeployment,
@@ -71,6 +78,10 @@ export function createServer() {
   // Initialize database connection
   initializeDatabase().catch(console.error);
 
+  // Initialize password reset table and verify email connection
+  initPasswordResetTable().catch(console.error);
+  verifyEmailConnection().catch(console.error);
+
   // Middleware
   app.use(cors());
   app.use(express.json());
@@ -83,6 +94,11 @@ export function createServer() {
       timestamp: new Date().toISOString(),
     });
   });
+
+  // Authentication routes (password reset)
+  app.post("/api/auth/forgot-password", forgotPassword);
+  app.post("/api/auth/reset-password", resetPassword);
+  app.get("/api/auth/validate-token/:token", validateResetToken);
 
   // Heartbeat routes (protected with branch filtering)
   app.get("/api/heartbeats", authenticate, addBranchFilter(), getHeartbeats);

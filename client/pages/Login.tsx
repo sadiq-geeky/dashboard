@@ -147,7 +147,14 @@ export function Login() {
             </button>
           </div>
 
-          <div className="text-center">
+          <div className="text-center space-y-2">
+            <button
+              type="button"
+              onClick={() => (window.location.href = "/forgot-password")}
+              className="text-sm text-red-600 hover:text-red-500 font-medium"
+            >
+              Forgot your password?
+            </button>
             <p className="text-xs text-gray-500">
               Contact your administrator for account access
             </p>

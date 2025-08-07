@@ -6,8 +6,8 @@ import {
 } from "@shared/api";
 import { cn } from "@/lib/utils";
 import { authFetch } from "@/lib/api";
-import { RecordingsAnalytics } from "./RecordingsAnalytics";
-import { ConversationAnalytics } from "./ConversationAnalytics";
+import { GoogleRecordingsAnalytics } from "./GoogleRecordingsAnalytics";
+import { GoogleConversationAnalytics } from "./GoogleConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "./Header";
@@ -42,7 +42,16 @@ import {
   Edit2,
   Trash2,
   Building2,
+  X,
+  CheckCircle,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Fetch recordings from API with retry logic
 const fetchRecordings = async (
@@ -194,6 +203,10 @@ export function ExactDashboard() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCity, setSelectedCity] = useState<string>("all");
+  const [selectedBranchNo, setSelectedBranchNo] = useState<string>("all");
+  const [uniqueCities, setUniqueCities] = useState<string[]>([]);
+  const [uniqueBranchNos, setUniqueBranchNos] = useState<string[]>([]);
   const [selectedRecording, setSelectedRecording] =
     useState<RecordingHistory | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -201,13 +214,40 @@ export function ExactDashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const itemsPerPage = 8;
+  const itemsPerPage = 12;
 
   const loadRecordings = async () => {
     try {
       const recordingData = await fetchRecordings(user);
       setRecordings(recordingData);
       setFilteredRecordings(recordingData);
+
+      // Extract unique cities and branch numbers
+      const cities = [
+        ...new Set(
+          recordingData
+            .map((r) => r.branch_address)
+            .filter(
+              (address) => address && address.trim() !== "" && address !== "NA",
+            )
+            .map((address) => {
+              // Extract city from address (assuming it's the last part after comma)
+              const parts = address.split(",").map((part) => part.trim());
+              return parts[parts.length - 1];
+            }),
+        ),
+      ].sort();
+
+      const branchNos = [
+        ...new Set(
+          recordingData
+            .map((r) => r.branch_no || r.device_name)
+            .filter((branchNo) => branchNo && branchNo.trim() !== ""),
+        ),
+      ].sort();
+
+      setUniqueCities(cities);
+      setUniqueBranchNos(branchNos);
     } catch (error) {
       console.error("Failed to load recordings:", error);
     }
@@ -254,28 +294,54 @@ export function ExactDashboard() {
   const offlineCount = devices.filter((d) => d.status === "offline").length;
 
   useEffect(() => {
+    let filtered = recordings;
+
+    // Apply search filter
     if (searchQuery) {
-      const filtered = recordings.filter(
+      filtered = filtered.filter(
         (recording) =>
           recording.cnic?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           recording.device_name
             ?.toLowerCase()
             .includes(searchQuery.toLowerCase()),
       );
-      setFilteredRecordings(filtered);
-    } else {
-      setFilteredRecordings(recordings);
     }
 
+    // Apply city filter
+    if (selectedCity !== "all") {
+      filtered = filtered.filter((recording) => {
+        if (!recording.branch_address) return false;
+        const parts = recording.branch_address
+          .split(",")
+          .map((part) => part.trim());
+        const city = parts[parts.length - 1];
+        return city === selectedCity;
+      });
+    }
+
+    // Apply branch number filter
+    if (selectedBranchNo !== "all") {
+      filtered = filtered.filter((recording) => {
+        const branchNo = recording.branch_no || recording.device_name;
+        return branchNo === selectedBranchNo;
+      });
+    }
+
+    setFilteredRecordings(filtered);
+
     // Reset to page 1 if current page exceeds available pages
-    const totalPages = Math.ceil(
-      (searchQuery ? filteredRecordings.length : recordings.length) /
-        itemsPerPage,
-    );
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
-  }, [searchQuery, recordings, currentPage, itemsPerPage]);
+  }, [
+    searchQuery,
+    selectedCity,
+    selectedBranchNo,
+    recordings,
+    currentPage,
+    itemsPerPage,
+  ]);
 
   const formatLastSeen = (dateString: string) => {
     const date = new Date(dateString);
@@ -406,6 +472,7 @@ export function ExactDashboard() {
           style={{ margin: "0 auto" }}
         >
           <div className="flex items-center space-x-0.5">
+            {/* First group: Home, Analytics, Device Status, Complaints */}
             <button
               onClick={() => {
                 setActiveTab("home");
@@ -421,54 +488,7 @@ export function ExactDashboard() {
               <Grid3X3 className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Home</span>
             </button>
-            {isAdmin() && (
-              <button
-                onClick={() => {
-                  setActiveTab("device-status");
-                  navigate("/?tab=device-status", { replace: true });
-                }}
-                className={cn(
-                  "flex flex-col items-center p-2 rounded-md",
-                  activeTab === "device-status"
-                    ? "text-gray-700 bg-white border border-gray-300"
-                    : "text-gray-500 hover:bg-gray-100",
-                )}
-              >
-                <BarChart3 className="w-4 h-4 mb-0.5" />
-                <span className="text-xs">Device Status</span>
-              </button>
-            )}
-            <button className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md">
-              <MessageSquare className="w-4 h-4 mb-0.5" />
-              <span className="text-xs">Live Conversation</span>
-            </button>
-            {isAdmin() && (
-              <button
-                onClick={() => navigate("/branch-management")}
-                className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
-              >
-                <Building2 className="w-4 h-4 mb-0.5" />
-                <span className="text-xs">Branches</span>
-              </button>
-            )}
-            {isAdmin() && (
-              <button
-                onClick={() => navigate("/device-management")}
-                className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
-              >
-                <Monitor className="w-4 h-4 mb-0.5" />
-                <span className="text-xs">Devices</span>
-              </button>
-            )}
-            {isAdmin() && (
-              <button
-                onClick={() => navigate("/deployment")}
-                className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
-              >
-                <Settings className="w-4 h-4 mb-0.5" />
-                <span className="text-xs">Deployment</span>
-              </button>
-            )}
+
             {isAdmin() && (
               <button
                 onClick={() => {
@@ -486,19 +506,73 @@ export function ExactDashboard() {
                 <span className="text-xs">Analytics</span>
               </button>
             )}
+
             {isAdmin() && (
               <button
-                onClick={() => navigate("/user-management")}
-                className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+                onClick={() => {
+                  setActiveTab("device-status");
+                  navigate("/?tab=device-status", { replace: true });
+                }}
+                className={cn(
+                  "flex flex-col items-center p-2 rounded-md",
+                  activeTab === "device-status"
+                    ? "text-gray-700 bg-white border border-gray-300"
+                    : "text-gray-500 hover:bg-gray-100",
+                )}
               >
-                <Users className="w-4 h-4 mb-0.5" />
-                <span className="text-xs">User Management</span>
+                <Monitor className="w-4 h-4 mb-0.5" />
+                <span className="text-xs">Device Status</span>
               </button>
             )}
+
             <button className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md">
               <Mail className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Complaints</span>
             </button>
+
+            {/* Admin group separator */}
+            {isAdmin() && <div className="w-px h-8 bg-gray-300 mx-2"></div>}
+
+            {/* Admin group: Branches, Devices, Users, Deployment */}
+            {isAdmin() && (
+              <button
+                onClick={() => navigate("/branch-management")}
+                className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+              >
+                <Building2 className="w-4 h-4 mb-0.5" />
+                <span className="text-xs">Branches</span>
+              </button>
+            )}
+
+            {isAdmin() && (
+              <button
+                onClick={() => navigate("/device-management")}
+                className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+              >
+                <Monitor className="w-4 h-4 mb-0.5" />
+                <span className="text-xs">Devices</span>
+              </button>
+            )}
+
+            {isAdmin() && (
+              <button
+                onClick={() => navigate("/user-management")}
+                className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+              >
+                <Users className="w-4 h-4 mb-0.5" />
+                <span className="text-xs">Users</span>
+              </button>
+            )}
+
+            {isAdmin() && (
+              <button
+                onClick={() => navigate("/deployment")}
+                className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+              >
+                <Settings className="w-4 h-4 mb-0.5" />
+                <span className="text-xs">Deployment</span>
+              </button>
+            )}
           </div>
 
           <div className="flex items-center space-x-4" />
@@ -521,18 +595,65 @@ export function ExactDashboard() {
                       <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         type="text"
-                        placeholder="Search"
+                        placeholder="Search by CNIC or Device"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-8 pr-3 py-1.5 w-64 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
 
-                    <button className="flex items-center space-x-1.5 px-2.5 py-1.5 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
-                      <Filter className="w-4 h-4" />
-                      <span>Filter</span>
-                      <ChevronDown className="w-4 h-4" />
-                    </button>
+                    {/* City Filter */}
+                    <Select
+                      value={selectedCity}
+                      onValueChange={setSelectedCity}
+                    >
+                      <SelectTrigger className="w-40 h-8 text-sm">
+                        <SelectValue placeholder="Filter by City" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Cities</SelectItem>
+                        {uniqueCities.map((city) => (
+                          <SelectItem key={city} value={city}>
+                            {city}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Branch Number Filter */}
+                    <Select
+                      value={selectedBranchNo}
+                      onValueChange={setSelectedBranchNo}
+                    >
+                      <SelectTrigger className="w-40 h-8 text-sm">
+                        <SelectValue placeholder="Filter by Branch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Branches</SelectItem>
+                        {uniqueBranchNos.map((branchNo) => (
+                          <SelectItem key={branchNo} value={branchNo}>
+                            {branchNo}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Clear Filters Button */}
+                    {(selectedCity !== "all" ||
+                      selectedBranchNo !== "all" ||
+                      searchQuery) && (
+                      <button
+                        onClick={() => {
+                          setSelectedCity("all");
+                          setSelectedBranchNo("all");
+                          setSearchQuery("");
+                        }}
+                        className="flex items-center space-x-1 px-2 py-1.5 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50"
+                      >
+                        <X className="w-3 h-3" />
+                        <span>Clear</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -572,9 +693,7 @@ export function ExactDashboard() {
                             {startIndex + index + 1}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
-                            {recording.branch_no ||
-                              recording.device_name ||
-                              recording.ip_address}
+                            {recording.branch_no || recording.device_name}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.cnic || recording.file_name || "-"}
@@ -852,9 +971,11 @@ export function ExactDashboard() {
 
                 {/* Analytics Content */}
                 <WarningSuppressionWrapper>
-                  {analyticsSubTab === "recordings" && <RecordingsAnalytics />}
+                  {analyticsSubTab === "recordings" && (
+                    <GoogleRecordingsAnalytics />
+                  )}
                   {analyticsSubTab === "conversations" && (
-                    <ConversationAnalytics />
+                    <GoogleConversationAnalytics />
                   )}
                 </WarningSuppressionWrapper>
               </>

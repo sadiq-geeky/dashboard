@@ -20,7 +20,7 @@ import {
   Building2,
   Monitor,
   Mail,
-  Link,
+  Settings,
 } from "lucide-react";
 
 interface User {
@@ -83,7 +83,27 @@ export function UserManagement() {
     setShowEditModal(true);
   };
 
+  const isSystemAdmin = (user: User) => {
+    // Check if user is a system administrator (admin role and specific usernames)
+    return (
+      user.role === "admin" &&
+      (user.username === "admin" ||
+        user.username === "system" ||
+        user.username === "administrator" ||
+        user.emp_name === "System Administrator")
+    );
+  };
+
   const handleDeleteUser = async (uuid: string) => {
+    const user = users.find((u) => u.uuid === uuid);
+
+    if (user && isSystemAdmin(user)) {
+      alert(
+        "Cannot delete system administrator account. This action is not permitted for security reasons.",
+      );
+      return;
+    }
+
     if (!confirm("Are you sure you want to delete this user?")) {
       return;
     }
@@ -128,63 +148,71 @@ export function UserManagement() {
         style={{ display: "flex", flexDirection: "column" }}
       >
         <div
-          className="flex items-center justify-between h-16 px-6"
+          className="flex items-center justify-between h-12 px-4"
           style={{ margin: "0 auto" }}
         >
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-0.5">
+            {/* First group: Home, Analytics, Device Status, Complaints */}
             <button
               onClick={() => navigate("/")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
             >
-              <Grid3X3 className="w-5 h-5 mb-1" />
+              <Grid3X3 className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Home</span>
             </button>
-            <button
-              onClick={() => navigate("/?tab=device-status")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
-            >
-              <BarChart3 className="w-5 h-5 mb-1" />
-              <span className="text-xs">Device Status</span>
-            </button>
-            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
-              <MessageSquare className="w-5 h-5 mb-1" />
-              <span className="text-xs">Live Conversation</span>
-            </button>
-            <button
-              onClick={() => navigate("/branch-management")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
-            >
-              <Building2 className="w-5 h-5 mb-1" />
-              <span className="text-xs">Branches</span>
-            </button>
-            <button
-              onClick={() => navigate("/device-management")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
-            >
-              <Monitor className="w-5 h-5 mb-1" />
-              <span className="text-xs">Devices</span>
-            </button>
+
             <button
               onClick={() => navigate("/?tab=analytics")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
             >
-              <BarChart3 className="w-5 h-5 mb-1" />
+              <BarChart3 className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Analytics</span>
             </button>
-            <button className="flex flex-col items-center p-3 rounded-md text-gray-700 bg-white border border-gray-300">
-              <Users className="w-5 h-5 mb-1" />
-              <span className="text-xs">User Management</span>
+
+            <button
+              onClick={() => navigate("/?tab=device-status")}
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Monitor className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Device Status</span>
             </button>
+
+            <button className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md">
+              <Mail className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Complaints</span>
+            </button>
+
+            {/* Admin group separator */}
+            <div className="w-px h-8 bg-gray-300 mx-2"></div>
+
+            {/* Admin group: Branches, Devices, Users, Deployment */}
+            <button
+              onClick={() => navigate("/branch-management")}
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Building2 className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Branches</span>
+            </button>
+
+            <button
+              onClick={() => navigate("/device-management")}
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Monitor className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Devices</span>
+            </button>
+
+            <button className="flex flex-col items-center p-2 rounded-md text-gray-700 bg-white border border-gray-300">
+              <Users className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Users</span>
+            </button>
+
             <button
               onClick={() => navigate("/deployment")}
-              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
             >
-              <Link className="w-5 h-5 mb-1" />
+              <Settings className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Deployment</span>
-            </button>
-            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
-              <Mail className="w-5 h-5 mb-1" />
-              <span className="text-xs">Complaints</span>
             </button>
           </div>
           <div className="flex items-center space-x-4" />
@@ -361,12 +389,19 @@ export function UserManagement() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            user.role === "admin"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-blue-100 text-blue-800"
+                            isSystemAdmin(user)
+                              ? "bg-purple-100 text-purple-800"
+                              : user.role === "admin"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-blue-100 text-blue-800"
                           }`}
                         >
-                          {user.role === "admin" ? (
+                          {isSystemAdmin(user) ? (
+                            <>
+                              <Shield className="h-3 w-3 mr-1" />
+                              System Administrator
+                            </>
+                          ) : user.role === "admin" ? (
                             <>
                               <Shield className="h-3 w-3 mr-1" />
                               Administrator
@@ -395,15 +430,27 @@ export function UserManagement() {
                           <button
                             onClick={() => handleEditUser(user)}
                             className="text-blue-600 hover:text-blue-900"
+                            title="Edit user"
                           >
                             <Edit2 className="h-4 w-4" />
                           </button>
-                          <button
-                            onClick={() => handleDeleteUser(user.uuid)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                          {isSystemAdmin(user) ? (
+                            <button
+                              disabled
+                              className="text-gray-400 cursor-not-allowed"
+                              title="Cannot delete system administrator"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleDeleteUser(user.uuid)}
+                              className="text-red-600 hover:text-red-900"
+                              title="Delete user"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

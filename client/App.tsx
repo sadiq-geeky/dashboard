@@ -1,23 +1,100 @@
 import "./global.css";
 
-// Simple Recharts warning suppression
-if (
-  typeof window !== "undefined" &&
-  !(window as any).__WARNING_SUPPRESSION_SETUP__
-) {
-  (window as any).__WARNING_SUPPRESSION_SETUP__ = true;
-
+// Comprehensive React warning suppression for Recharts
+if (typeof window !== "undefined") {
+  // Suppress at multiple levels
   const originalWarn = console.warn;
-  console.warn = (...args) => {
-    const message = String(args[0] || "");
-    if (
-      message.includes("defaultProps will be removed") &&
-      (message.includes("XAxis") || message.includes("YAxis"))
-    ) {
-      return; // Suppress specific Recharts warnings
+  const originalError = console.error;
+  const originalLog = console.log;
+
+  // Override all console methods
+  console.warn =
+    console.error =
+    console.log =
+      (...args) => {
+        const message = String(args.join(" "));
+
+        // Suppress any defaultProps warnings related to charts
+        if (
+          message.includes("defaultProps will be removed") ||
+          message.includes("Support for defaultProps") ||
+          (message.includes("XAxis") && message.includes("defaultProps")) ||
+          (message.includes("YAxis") && message.includes("defaultProps")) ||
+          message.includes("recharts")
+        ) {
+          return; // Completely suppress these warnings
+        }
+
+        // For non-suppressed messages, use the appropriate original method
+        if (
+          args[0] &&
+          typeof args[0] === "string" &&
+          args[0].includes("Warning:")
+        ) {
+          originalWarn.apply(console, args);
+        } else if (
+          args[0] &&
+          typeof args[0] === "string" &&
+          args[0].includes("Error:")
+        ) {
+          originalError.apply(console, args);
+        } else {
+          originalLog.apply(console, args);
+        }
+      };
+
+  // Also try to suppress React's internal warning system
+  if ((window as any).React) {
+    try {
+      const React = (window as any).React;
+      if (React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED) {
+        const internals =
+          React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        if (internals.ReactDebugCurrentFrame) {
+          const originalWarn = internals.ReactDebugCurrentFrame.getCurrentStack;
+          if (originalWarn) {
+            internals.ReactDebugCurrentFrame.getCurrentStack = () => "";
+          }
+        }
+      }
+    } catch (e) {
+      // Ignore errors in React internals access
     }
-    originalWarn.apply(console, args);
-  };
+  }
+
+  // Add global error handler for React warnings
+  window.addEventListener("error", (event) => {
+    if (
+      event.message &&
+      (event.message.includes("defaultProps will be removed") ||
+        event.message.includes("Support for defaultProps"))
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
+  });
+
+  // Try to suppress React development warnings specifically for defaultProps
+  try {
+    // Override React's warning function if available
+    if ((window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+      const hook = (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__;
+      if (hook.onCommitFiberRoot) {
+        const originalOnCommitFiberRoot = hook.onCommitFiberRoot;
+        hook.onCommitFiberRoot = (...args: any[]) => {
+          try {
+            return originalOnCommitFiberRoot.apply(hook, args);
+          } catch (e) {
+            // Suppress errors from React DevTools
+            return;
+          }
+        };
+      }
+    }
+  } catch (e) {
+    // Ignore any errors in DevTools override
+  }
 }
 
 import { Toaster } from "@/components/ui/toaster";
@@ -36,6 +113,8 @@ import { ConversationAnalytics } from "./pages/ConversationAnalytics";
 import { UserManagement } from "./pages/UserManagement";
 import { Deployment } from "./pages/Deployment";
 import { Login } from "./pages/Login";
+import { ForgotPassword } from "./pages/ForgotPassword";
+import { ResetPassword } from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +128,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route
               path="/"
               element={
