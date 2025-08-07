@@ -111,7 +111,8 @@ const fetchRecordings = async (
 const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    // Increase timeout to 30 seconds for heartbeats
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
     const response = await authFetch("/api/heartbeats", {
       signal: controller.signal,
@@ -120,7 +121,8 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
     clearTimeout(timeoutId);
 
     if (response.ok) {
-      return await response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     } else {
       let errorText = "";
       try {
@@ -135,21 +137,24 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
   } catch (error) {
     console.error("Error fetching heartbeats:", error);
     if (error.name === "AbortError") {
-      console.error("Request timed out after 10 seconds");
+      console.error("Heartbeat request timed out after 30 seconds");
     }
 
-    // Retry logic for development
+    // Only retry on network errors, not on timeouts
     if (
       retries > 0 &&
+      error.name !== "AbortError" &&
       (error.name === "TypeError" || error.message?.includes("Failed to fetch"))
     ) {
       console.log(
         `Retrying heartbeats fetch, ${retries} attempts remaining...`,
       );
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       return fetchHeartbeats(retries - 1);
     }
 
+    // Return empty array instead of throwing on timeout/error
+    console.warn("Heartbeats fetch failed, returning empty array");
     return [];
   }
 };
