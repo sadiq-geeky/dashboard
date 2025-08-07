@@ -50,6 +50,18 @@ if (typeof window !== "undefined") {
     }
   }
 
+  // Add global error handler for React warnings
+  window.addEventListener('error', (event) => {
+    if (event.message && (
+      event.message.includes('defaultProps will be removed') ||
+      event.message.includes('Support for defaultProps')
+    )) {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
+  });
+
   // Try to suppress React development warnings specifically for defaultProps
   try {
     // Override React's warning function if available
