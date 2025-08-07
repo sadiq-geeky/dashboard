@@ -478,14 +478,11 @@ export function ExactDashboard() {
 
       {/* Navigation Tabs */}
       <div
-        className="bg-white border-b border-gray-200"
+        className="bg-white border-b border-gray-200 shadow-sm"
         style={{ display: "flex", flexDirection: "column" }}
       >
-        <div
-          className="flex items-center justify-between h-12 px-4"
-          style={{ margin: "0 auto" }}
-        >
-          <div className="flex items-center space-x-0.5">
+        <div className="flex items-center justify-start py-4 px-4">
+          <div className="flex items-center space-x-3">
             {/* First group: Home, Analytics, Device Status, Complaints */}
             <button
               onClick={() => {
@@ -493,33 +490,31 @@ export function ExactDashboard() {
                 navigate("/", { replace: true });
               }}
               className={cn(
-                "flex flex-col items-center p-2 rounded-md",
+                "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
                 activeTab === "home"
-                  ? "text-gray-700 bg-white border border-gray-300"
-                  : "text-gray-500 hover:bg-gray-100",
+                  ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
               )}
             >
-              <Grid3X3 className="w-4 h-4 mb-0.5" />
-              <span className="text-xs">Home</span>
+              <Grid3X3 className="w-6 h-6 mb-2" />
+              <span className="text-sm font-medium">Home</span>
             </button>
 
-            {isAdmin() && (
-              <button
-                onClick={() => {
-                  setActiveTab("analytics");
-                  navigate("/?tab=analytics", { replace: true });
-                }}
-                className={cn(
-                  "flex flex-col items-center p-2 rounded-md",
-                  activeTab === "analytics"
-                    ? "text-gray-700 bg-white border border-gray-300"
-                    : "text-gray-500 hover:bg-gray-100",
-                )}
-              >
-                <BarChart3 className="w-4 h-4 mb-0.5" />
-                <span className="text-xs">Analytics</span>
-              </button>
-            )}
+            <button
+              onClick={() => {
+                setActiveTab("analytics");
+                navigate("/?tab=analytics", { replace: true });
+              }}
+              className={cn(
+                "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
+                activeTab === "analytics"
+                  ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
+              )}
+            >
+              <BarChart3 className="w-6 h-6 mb-2" />
+              <span className="text-sm font-medium">Analytics</span>
+            </button>
 
             {isAdmin() && (
               <button
@@ -528,66 +523,66 @@ export function ExactDashboard() {
                   navigate("/?tab=device-status", { replace: true });
                 }}
                 className={cn(
-                  "flex flex-col items-center p-2 rounded-md",
+                  "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
                   activeTab === "device-status"
-                    ? "text-gray-700 bg-white border border-gray-300"
-                    : "text-gray-500 hover:bg-gray-100",
+                    ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
                 )}
               >
-                <Monitor className="w-4 h-4 mb-0.5" />
-                <span className="text-xs">Device Status</span>
+                <Monitor className="w-6 h-6 mb-2" />
+                <span className="text-sm font-medium">Device Status</span>
               </button>
             )}
 
             <button
               onClick={() => navigate("/complaints")}
-              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+              className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
             >
-              <Mail className="w-4 h-4 mb-0.5" />
-              <span className="text-xs">Complaints</span>
+              <Mail className="w-6 h-6 mb-2" />
+              <span className="text-sm font-medium">Complaints</span>
             </button>
 
             {/* Admin group separator */}
-            {isAdmin() && <div className="w-px h-8 bg-gray-300 mx-2"></div>}
+            {isAdmin() && <div className="w-px h-12 bg-gray-300 mx-4"></div>}
 
             {/* Admin group: Branches, Devices, Users, Deployment */}
             {isAdmin() && (
               <button
                 onClick={() => navigate("/branch-management")}
-                className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+                className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
               >
-                <Building2 className="w-4 h-4 mb-0.5" />
-                <span className="text-xs">Branches</span>
+                <Building2 className="w-6 h-6 mb-2" />
+                <span className="text-sm font-medium">Branches</span>
               </button>
             )}
 
             {isAdmin() && (
               <button
                 onClick={() => navigate("/device-management")}
-                className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+                className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
               >
-                <Monitor className="w-4 h-4 mb-0.5" />
-                <span className="text-xs">Devices</span>
+                <Monitor className="w-6 h-6 mb-2" />
+                <span className="text-sm font-medium">Devices</span>
               </button>
             )}
 
             {isAdmin() && (
               <button
                 onClick={() => navigate("/user-management")}
-                className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+                className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
               >
-                <Users className="w-4 h-4 mb-0.5" />
-                <span className="text-xs">Users</span>
+                <Users className="w-6 h-6 mb-2" />
+                <span className="text-sm font-medium">Users</span>
               </button>
             )}
 
             {isAdmin() && (
               <button
                 onClick={() => navigate("/deployment")}
-                className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+                className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
               >
-                <Settings className="w-4 h-4 mb-0.5" />
-                <span className="text-xs">Deployment</span>
+                <Settings className="w-6 h-6 mb-2" />
+                <span className="text-sm font-medium">Deployment</span>
               </button>
             )}
           </div>
