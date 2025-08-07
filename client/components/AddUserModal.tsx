@@ -45,13 +45,7 @@ export function AddUserModal({
     setError(null);
 
     try {
-      const response = await fetch("/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await authPost("/api/users", formData);
 
       if (!response.ok) {
         const errorData = await response.json();
