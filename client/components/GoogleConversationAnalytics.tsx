@@ -110,6 +110,36 @@ export function GoogleConversationAnalytics() {
           { month: "Sep", conversations: 1698, customers: 1421 },
           { month: "Aug", conversations: 1634, customers: 1387 },
         ],
+        conversionMetrics: {
+          totalConversions: 1834,
+          conversionRate: 85.1,
+          avgConversationDuration: 245,
+          successfulOutcomes: 1634,
+        },
+        conversionsByBranch: [
+          { branch_name: "Downtown Branch", total_conversations: 456, successful_conversions: 398, conversion_rate: 87.3 },
+          { branch_name: "North Branch", total_conversations: 387, successful_conversions: 329, conversion_rate: 85.0 },
+          { branch_name: "South Branch", total_conversations: 332, successful_conversions: 275, conversion_rate: 82.8 },
+          { branch_name: "East Branch", total_conversations: 298, successful_conversions: 248, conversion_rate: 83.2 },
+          { branch_name: "West Branch", total_conversations: 401, successful_conversions: 346, conversion_rate: 86.3 },
+          { branch_name: "Central Branch", total_conversations: 282, successful_conversions: 238, conversion_rate: 84.4 },
+        ],
+        conversionTrends: [
+          { date: "2024-01-15", conversations: 87, conversions: 74, conversion_rate: 85.1 },
+          { date: "2024-01-16", conversations: 92, conversions: 79, conversion_rate: 85.9 },
+          { date: "2024-01-17", conversations: 78, conversions: 65, conversion_rate: 83.3 },
+          { date: "2024-01-18", conversations: 95, conversions: 82, conversion_rate: 86.3 },
+          { date: "2024-01-19", conversations: 103, conversions: 88, conversion_rate: 85.4 },
+          { date: "2024-01-20", conversations: 89, conversions: 76, conversion_rate: 85.4 },
+          { date: "2024-01-21", conversations: 94, conversions: 81, conversion_rate: 86.2 },
+        ],
+        conversionFunnel: [
+          { stage: "Initial Contact", count: 2156, percentage: 100 },
+          { stage: "Information Gathered", count: 1947, percentage: 90.3 },
+          { stage: "Needs Assessment", count: 1834, percentage: 85.1 },
+          { stage: "Solution Presented", count: 1723, percentage: 79.9 },
+          { stage: "Successful Outcome", count: 1634, percentage: 75.8 },
+        ],
       });
     } finally {
       setLoading(false);
