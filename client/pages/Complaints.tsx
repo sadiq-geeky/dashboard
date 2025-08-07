@@ -337,9 +337,15 @@ export function Complaints() {
       return;
     }
 
-    if (!createComplaintData.device_id.trim() || createComplaintData.device_id === "No device assigned" || createComplaintData.device_id === "Unable to load device info") {
+    if (!createComplaintData.device_id.trim() || createComplaintData.device_id === "Unable to load device info" || createComplaintData.device_id === "No user information available") {
       alert("Device information is required. Please wait for device information to load or contact your administrator.");
       return;
+    }
+
+    // Allow "No device assigned" - user can still report general issues
+    let deviceInfo = createComplaintData.device_id;
+    if (createComplaintData.device_id === "No device assigned") {
+      deviceInfo = "General Device Issue (No specific device assigned)";
     }
 
     if (!user?.branch_id) {
