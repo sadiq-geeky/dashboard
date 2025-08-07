@@ -720,17 +720,17 @@ export function ExactDashboard() {
                   </div>
                 </div>
 
-                {/* Device List */}
-                <div className="bg-white rounded-lg border border-gray-200">
-                  <div className="px-6 py-4 border-b border-gray-200">
+                {/* Enhanced Device List */}
+                <div className="bg-white rounded-md border border-gray-200">
+                  <div className="px-4 py-2 border-b border-gray-200">
                     <div className="flex items-center justify-between">
-                      <h2 className="text-lg font-semibold text-gray-900">
-                        Device Status
+                      <h2 className="text-sm font-semibold text-gray-900">
+                        Device Status & Performance
                       </h2>
-                      <div className="flex items-center space-x-2 text-sm text-gray-500">
-                        <Clock className="h-4 w-4" />
+                      <div className="flex items-center space-x-1.5 text-xs text-gray-500">
+                        <Clock className="h-3 w-3" />
                         <span>
-                          Last updated: {lastUpdate.toLocaleTimeString()}
+                          Updated: {lastUpdate.toLocaleTimeString()}
                         </span>
                       </div>
                     </div>
