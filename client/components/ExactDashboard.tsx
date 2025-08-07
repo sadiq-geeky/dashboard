@@ -203,7 +203,7 @@ export function ExactDashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isPopulatingData, setIsPopulatingData] = useState(false);
+
   const itemsPerPage = 12;
 
   const loadRecordings = async () => {
@@ -226,37 +226,6 @@ export function ExactDashboard() {
       console.error("Failed to load devices:", error);
     } finally {
       setIsRefreshing(false);
-    }
-  };
-
-  const populateSampleData = async () => {
-    setIsPopulatingData(true);
-    try {
-      const response = await authFetch("/api/populate-sample-data", {
-        method: "POST",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to populate sample data");
-      }
-
-      const result = await response.json();
-      console.log("Sample data populated:", result);
-
-      // Reload data after population
-      await loadRecordings();
-      await loadDevices();
-
-      alert(
-        "Sample data populated successfully! Analytics should now show real data.",
-      );
-    } catch (error) {
-      console.error("Error populating sample data:", error);
-      alert(
-        "Failed to populate sample data. Please check the console for details.",
-      );
-    } finally {
-      setIsPopulatingData(false);
     }
   };
 
@@ -1000,38 +969,6 @@ export function ExactDashboard() {
                 {/* Development Tools */}
                 {analyticsSubTab === "recordings" && (
                   <div className="mb-4 space-y-3">
-                    {/* Sample Data Button */}
-                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-sm font-medium text-yellow-800">
-                            Need Sample Data?
-                          </h3>
-                          <p className="text-sm text-yellow-600 mt-1">
-                            If analytics show no data, click to populate with
-                            sample recordings, branches, and devices.
-                          </p>
-                        </div>
-                        <button
-                          onClick={populateSampleData}
-                          disabled={isPopulatingData}
-                          className="flex items-center space-x-2 px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded-md hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isPopulatingData ? (
-                            <>
-                              <RefreshCw className="w-4 h-4 animate-spin" />
-                              <span>Populating...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Plus className="w-4 h-4" />
-                              <span>Add Sample Data</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
                     {/* Fix Audio Button */}
                     <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
                       <div className="flex items-center justify-between">

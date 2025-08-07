@@ -204,6 +204,11 @@ export const getComplaint: RequestHandler = async (req, res) => {
 // Create new complaint
 export const createComplaint: RequestHandler = async (req, res) => {
   try {
+    console.log(
+      "Creating complaint with request body:",
+      JSON.stringify(req.body, null, 2),
+    );
+
     const {
       branch_id,
       branch_name,
@@ -214,13 +219,18 @@ export const createComplaint: RequestHandler = async (req, res) => {
     } = req.body;
 
     if (!branch_id || !branch_name || !complaint_text) {
+      console.log("Validation failed:", {
+        branch_id,
+        branch_name,
+        complaint_text,
+      });
       return res.status(400).json({
         error: "Branch ID, branch name, and complaint text are required",
       });
     }
 
     const complaint_id = uuidv4();
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
 
     // Ensure customer_data is stored as JSON string
     const customerDataString =
@@ -234,6 +244,17 @@ export const createComplaint: RequestHandler = async (req, res) => {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `;
 
+    console.log("Executing query with params:", {
+      complaint_id,
+      branch_id,
+      branch_name,
+      timestamp,
+      customerDataString,
+      complaint_text,
+      status,
+      priority,
+    });
+
     await executeQuery(query, [
       complaint_id,
       branch_id,
@@ -245,6 +266,8 @@ export const createComplaint: RequestHandler = async (req, res) => {
       priority,
     ]);
 
+    console.log("Complaint created successfully:", complaint_id);
+
     res.status(201).json({
       success: true,
       complaint_id,
@@ -252,7 +275,26 @@ export const createComplaint: RequestHandler = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating complaint:", error);
-    res.status(500).json({ error: "Failed to create complaint" });
+    console.error("Error type:", typeof error);
+    console.error(
+      "Error message:",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    console.error(
+      "Full error object:",
+      JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
+    );
+
+    // Return more specific error information
+    let errorMessage = "Failed to create complaint";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
+    res.status(500).json({
+      error: errorMessage,
+      details: process.env.NODE_ENV === "development" ? error : undefined,
+    });
   }
 };
 
@@ -392,5 +434,166 @@ export const getComplaintsStats: RequestHandler = async (req, res) => {
   } catch (error) {
     console.error("Error fetching complaints stats:", error);
     res.status(500).json({ error: "Failed to fetch complaints statistics" });
+  }
+};
+
+// Get detailed analytics for complaints (charts, trends, etc.)
+export const getComplaintsAnalytics: RequestHandler = async (req, res) => {
+  try {
+    const { branch_id } = req.query;
+
+    // Build WHERE clause for branch filtering
+    let whereClause = "WHERE 1=1";
+    let queryParams: any[] = [];
+
+    if (branch_id) {
+      whereClause += " AND branch_id = ?";
+      queryParams.push(branch_id);
+    }
+
+    // Get monthly trends for the last 6 months
+    const monthlyTrendsQuery = `
+      SELECT
+        DATE_FORMAT(created_on, '%Y-%m') as month,
+        COUNT(*) as total_complaints,
+        SUM(CASE WHEN status = 'resolved' OR status = 'closed' THEN 1 ELSE 0 END) as resolved_complaints
+      FROM complaints
+      ${whereClause}
+      AND created_on >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+      GROUP BY DATE_FORMAT(created_on, '%Y-%m')
+      ORDER BY month ASC
+    `;
+
+    const monthlyTrends = await executeQuery<{
+      month: string;
+      total_complaints: number;
+      resolved_complaints: number;
+    }>(monthlyTrendsQuery, queryParams);
+
+    // Get priority distribution (simplified without percentage calculation in SQL)
+    const priorityQuery = `
+      SELECT
+        priority,
+        COUNT(*) as count
+      FROM complaints
+      ${whereClause}
+      GROUP BY priority
+    `;
+
+    const priorityData = await executeQuery<{
+      priority: string;
+      count: number;
+    }>(priorityQuery, queryParams);
+
+    // Get total complaints for percentage calculation
+    const totalQuery = `
+      SELECT COUNT(*) as total
+      FROM complaints
+      ${whereClause}
+    `;
+
+    const [totalResult] = await executeQuery<{ total: number }>(
+      totalQuery,
+      queryParams,
+    );
+    const totalComplaints = totalResult?.total || 1; // Avoid division by zero
+
+    // Calculate percentages in JavaScript
+    const priorityDistribution = priorityData.map((item) => ({
+      priority: item.priority,
+      count: item.count,
+      percentage: Math.round((item.count / totalComplaints) * 100 * 10) / 10, // Round to 1 decimal
+    }));
+
+    // Get status distribution (simplified)
+    const statusQuery = `
+      SELECT
+        status,
+        COUNT(*) as count
+      FROM complaints
+      ${whereClause}
+      GROUP BY status
+    `;
+
+    const statusData = await executeQuery<{
+      status: string;
+      count: number;
+    }>(statusQuery, queryParams);
+
+    // Calculate percentages in JavaScript
+    const statusDistribution = statusData.map((item) => ({
+      status: item.status,
+      count: item.count,
+      percentage: Math.round((item.count / totalComplaints) * 100 * 10) / 10, // Round to 1 decimal
+    }));
+
+    // Calculate average resolution time (in days)
+    const resolutionTimeQuery = `
+      SELECT
+        AVG(DATEDIFF(updated_on, created_on)) as avg_resolution_days
+      FROM complaints
+      ${whereClause}
+      AND (status = 'resolved' OR status = 'closed')
+    `;
+
+    const [resolutionTimeResult] = await executeQuery<{
+      avg_resolution_days: number;
+    }>(resolutionTimeQuery, queryParams);
+
+    // Get recent activity (last 10 activities)
+    const recentActivityQuery = `
+      SELECT
+        complaint_id,
+        complaint_text,
+        status,
+        priority,
+        updated_on,
+        branch_name
+      FROM complaints
+      ${whereClause}
+      ORDER BY updated_on DESC
+      LIMIT 10
+    `;
+
+    const recentActivity = await executeQuery<{
+      complaint_id: string;
+      complaint_text: string;
+      status: string;
+      priority: string;
+      updated_on: string;
+      branch_name: string;
+    }>(recentActivityQuery, queryParams);
+
+    // Calculate satisfaction rate (placeholder - in real app this would come from feedback)
+    const satisfactionRate = 85; // Mock data
+
+    res.json({
+      monthlyTrends: monthlyTrends.map((trend) => ({
+        month: trend.month,
+        totalComplaints: trend.total_complaints,
+        resolvedComplaints: trend.resolved_complaints,
+        resolutionRate:
+          trend.total_complaints > 0
+            ? Math.round(
+                (trend.resolved_complaints / trend.total_complaints) * 100,
+              )
+            : 0,
+      })),
+      priorityDistribution,
+      statusDistribution,
+      avgResolutionTime: resolutionTimeResult?.avg_resolution_days || 0,
+      satisfactionRate,
+      recentActivity: recentActivity.map((activity) => ({
+        id: activity.complaint_id,
+        text: activity.complaint_text.substring(0, 50) + "...",
+        status: activity.status,
+        priority: activity.priority,
+        updatedOn: activity.updated_on,
+        branchName: activity.branch_name,
+      })),
+    });
+  } catch (error) {
+    console.error("Error fetching complaints analytics:", error);
+    res.status(500).json({ error: "Failed to fetch complaints analytics" });
   }
 };

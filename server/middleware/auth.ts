@@ -54,7 +54,25 @@ export const authenticate: RequestHandler = async (req: any, res, next) => {
     next();
   } catch (error) {
     console.error("Authentication error:", error);
-    res.status(500).json({ error: "Authentication failed" });
+    console.error("Error type:", typeof error);
+    console.error(
+      "Error message:",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    console.error(
+      "Full error object:",
+      JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
+    );
+
+    let errorMessage = "Authentication failed";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
+    res.status(500).json({
+      error: errorMessage,
+      details: process.env.NODE_ENV === "development" ? error : undefined,
+    });
   }
 };
 
