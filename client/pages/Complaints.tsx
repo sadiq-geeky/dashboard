@@ -1789,6 +1789,144 @@ export function Complaints() {
                   </div>
                 </div>
 
+                {/* Related Analytics from Main Dashboard */}
+                <div className="bg-white rounded-lg shadow">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <div className="flex items-center space-x-2">
+                      <Monitor className="h-5 w-5 text-blue-600" />
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {isAdmin() ? "System Overview" : `${user?.branch_city || 'Branch'} System Overview`}
+                      </h3>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">Related metrics from recordings and conversations</p>
+                  </div>
+
+                  {dashboardData.loading ? (
+                    <div className="p-6 flex items-center justify-center">
+                      <RefreshCw className="h-5 w-5 animate-spin text-blue-600 mr-2" />
+                      <span className="text-gray-600">Loading system data...</span>
+                    </div>
+                  ) : (
+                    <div className="p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        {/* Recordings Stats */}
+                        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-blue-600 text-sm font-medium">Total Recordings</p>
+                              <p className="text-2xl font-bold text-blue-900">
+                                {dashboardData.recordings?.totalStats?.totalRecordings || 0}
+                              </p>
+                            </div>
+                            <div className="p-2 bg-blue-200 rounded-lg">
+                              <MessageSquare className="h-5 w-5 text-blue-700" />
+                            </div>
+                          </div>
+                          <div className="mt-2 text-xs text-blue-600">
+                            {dashboardData.recordings?.totalStats?.todayRecordings || 0} today
+                          </div>
+                        </div>
+
+                        {/* Conversations Stats */}
+                        <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-green-600 text-sm font-medium">Conversations</p>
+                              <p className="text-2xl font-bold text-green-900">
+                                {dashboardData.conversations?.totalStats?.totalConversations || 0}
+                              </p>
+                            </div>
+                            <div className="p-2 bg-green-200 rounded-lg">
+                              <Users className="h-5 w-5 text-green-700" />
+                            </div>
+                          </div>
+                          <div className="mt-2 text-xs text-green-600">
+                            {dashboardData.conversations?.totalStats?.uniqueCustomers || 0} unique customers
+                          </div>
+                        </div>
+
+                        {/* System Health */}
+                        <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-purple-600 text-sm font-medium">System Health</p>
+                              <p className="text-2xl font-bold text-purple-900">
+                                {dashboardData.recordings?.totalStats?.completedRecordings && dashboardData.recordings?.totalStats?.totalRecordings
+                                  ? Math.round((dashboardData.recordings.totalStats.completedRecordings / dashboardData.recordings.totalStats.totalRecordings) * 100)
+                                  : 95}%
+                              </p>
+                            </div>
+                            <div className="p-2 bg-purple-200 rounded-lg">
+                              <Activity className="h-5 w-5 text-purple-700" />
+                            </div>
+                          </div>
+                          <div className="mt-2 text-xs text-purple-600">
+                            Recording success rate
+                          </div>
+                        </div>
+
+                        {/* Issue Correlation */}
+                        <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-orange-600 text-sm font-medium">Issue Rate</p>
+                              <p className="text-2xl font-bold text-orange-900">
+                                {stats && dashboardData.conversations?.totalStats?.totalConversations
+                                  ? ((stats.total_complaints / dashboardData.conversations.totalStats.totalConversations) * 100).toFixed(1)
+                                  : 0}%
+                              </p>
+                            </div>
+                            <div className="p-2 bg-orange-200 rounded-lg">
+                              <AlertTriangle className="h-5 w-5 text-orange-700" />
+                            </div>
+                          </div>
+                          <div className="mt-2 text-xs text-orange-600">
+                            Complaints per conversation
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Correlation Insights */}
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <h4 className="font-medium text-gray-900 mb-3">📊 System Insights</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          <div className="space-y-2">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Avg. Recording Duration:</span>
+                              <span className="font-medium">
+                                {dashboardData.recordings?.totalStats?.avgDuration
+                                  ? `${Math.round(dashboardData.recordings.totalStats.avgDuration / 60)}m ${dashboardData.recordings.totalStats.avgDuration % 60}s`
+                                  : 'N/A'}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Active Branches:</span>
+                              <span className="font-medium">
+                                {dashboardData.conversations?.totalStats?.activeBranches || 0}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Today's Activity:</span>
+                              <span className="font-medium">
+                                {(dashboardData.recordings?.totalStats?.todayRecordings || 0) +
+                                 (dashboardData.conversations?.totalStats?.todayConversations || 0)} events
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Customer Satisfaction:</span>
+                              <span className="font-medium text-green-600">
+                                {100 - (stats ? (stats.total_complaints / (dashboardData.conversations?.totalStats?.totalConversations || 1)) * 100 : 0).toFixed(1)}%
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Branch Performance Table (for admins) */}
                 {isAdmin() && (
                   <div className="bg-white rounded-lg shadow">
@@ -1824,41 +1962,13 @@ export function Complaints() {
                                 <span className="text-sm font-medium text-gray-900">Lahore</span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">24</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2.1 days</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                                Excellent
-                              </span>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {stats?.total_complaints || 0}
                             </td>
-                          </tr>
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                <Building2 className="h-5 w-5 text-gray-400 mr-2" />
-                                <span className="text-sm font-medium text-gray-900">Karachi</span>
-                              </div>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {stats ? Math.round(((stats.resolved_complaints + stats.closed_complaints) / stats.total_complaints) * 100) || 0 : 0}%
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">31</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">87%</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2.5 days</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
-                                Good
-                              </span>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                <Building2 className="h-5 w-5 text-gray-400 mr-2" />
-                                <span className="text-sm font-medium text-gray-900">Islamabad</span>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">18</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1.8 days</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2.3 days</td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
                                 Excellent
