@@ -20,7 +20,7 @@ import {
   Building2,
   Monitor,
   Mail,
-  Link,
+  Settings,
 } from "lucide-react";
 
 interface User {
