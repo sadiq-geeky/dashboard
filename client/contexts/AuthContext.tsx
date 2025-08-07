@@ -101,6 +101,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return user?.role === "admin";
   };
 
+  const isManager = (): boolean => {
+    return user?.role === "manager";
+  };
+
+  const isAdminOrManager = (): boolean => {
+    return user?.role === "admin" || user?.role === "manager";
+  };
+
   const canAccessBranch = (branchId?: string): boolean => {
     if (isAdmin()) {
       return true; // Admins can access all branches
