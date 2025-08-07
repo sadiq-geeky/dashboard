@@ -69,14 +69,14 @@ interface ComplaintsStats {
 }
 
 export function Complaints() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isManager, isAdminOrManager, user } = useAuth();
   const navigate = useNavigate();
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [stats, setStats] = useState<ComplaintsStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  
+
   // Filter and pagination states
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -85,14 +85,14 @@ export function Complaints() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  
+
   const itemsPerPage = 10;
 
   // Fetch complaints data
   const fetchComplaints = async () => {
     try {
       setLoading(true);
-      
+
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: itemsPerPage.toString(),
@@ -105,7 +105,7 @@ export function Complaints() {
       if (priorityFilter !== "all") params.append("priority", priorityFilter);
 
       const response = await authFetch(`/api/complaints?${params.toString()}`);
-      
+
       if (!response.ok) {
         throw new Error("Failed to fetch complaints");
       }
@@ -260,7 +260,7 @@ export function Complaints() {
                 <Mail className="h-8 w-8 text-gray-400" />
               </div>
             </div>
-            
+
             <div className="bg-white rounded-lg border p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -386,7 +386,7 @@ export function Complaints() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th 
+                  <th
                     className="text-left py-3 px-4 font-medium text-gray-900 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort("branch_name")}
                   >
@@ -400,7 +400,7 @@ export function Complaints() {
                   <th className="text-left py-3 px-4 font-medium text-gray-900">
                     Complaint ID
                   </th>
-                  <th 
+                  <th
                     className="text-left py-3 px-4 font-medium text-gray-900 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort("timestamp")}
                   >
@@ -434,7 +434,7 @@ export function Complaints() {
                   </tr>
                 ) : (
                   complaints.map((complaint) => (
-                    <tr 
+                    <tr
                       key={complaint.complaint_id}
                       className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
                       onClick={() => fetchComplaintDetails(complaint.complaint_id)}
@@ -612,7 +612,7 @@ export function Complaints() {
                           </div>
                         </div>
                       )}
-                      
+
                       {selectedComplaint.customer_data.customer_phone && (
                         <div className="flex items-center space-x-3">
                           <Phone className="h-5 w-5 text-gray-400" />
@@ -622,7 +622,7 @@ export function Complaints() {
                           </div>
                         </div>
                       )}
-                      
+
                       {selectedComplaint.customer_data.customer_email && (
                         <div className="flex items-center space-x-3">
                           <Mail className="h-5 w-5 text-gray-400" />
@@ -632,7 +632,7 @@ export function Complaints() {
                           </div>
                         </div>
                       )}
-                      
+
                       {selectedComplaint.customer_data.customer_cnic && (
                         <div className="flex items-center space-x-3">
                           <AlertCircle className="h-5 w-5 text-gray-400" />
@@ -642,7 +642,7 @@ export function Complaints() {
                           </div>
                         </div>
                       )}
-                      
+
                       {selectedComplaint.customer_data.device_used && (
                         <div className="flex items-center space-x-3">
                           <RefreshCw className="h-5 w-5 text-gray-400" />
@@ -652,7 +652,7 @@ export function Complaints() {
                           </div>
                         </div>
                       )}
-                      
+
                       {selectedComplaint.customer_data.issue_category && (
                         <div className="flex items-center space-x-3">
                           <AlertTriangle className="h-5 w-5 text-gray-400" />
