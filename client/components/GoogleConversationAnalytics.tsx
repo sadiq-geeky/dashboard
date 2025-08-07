@@ -563,25 +563,7 @@ export function GoogleConversationAnalytics() {
         </div>
       </div>
 
-      {/* Monthly Trends */}
-      <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Monthly Trends (Last 6 Months)
-        </h3>
-        <Chart
-          chartType="ComboChart"
-          width="100%"
-          height="400px"
-          data={trendsChartData}
-          options={{
-            ...chartOptions,
-            title: "",
-            seriesType: "columns",
-            series: { 1: { type: "line" } },
-            legend: { position: "top" },
-          }}
-        />
-      </div>
+
     </div>
   );
 }
