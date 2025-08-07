@@ -1423,9 +1423,6 @@ export function Complaints() {
                               placeholder="Loading your information..."
                               readOnly
                             />
-                            <p className="text-xs text-gray-500 mt-1">
-                              Automatically filled from your profile
-                            </p>
                           </div>
 
                           <div>
