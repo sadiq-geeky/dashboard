@@ -41,7 +41,7 @@ export function GoogleRecordingsAnalytics() {
     } catch (error) {
       console.error("Error fetching analytics:", error);
       setError(error instanceof Error ? error.message : "Failed to fetch analytics");
-      // Set mock data for demo purposes
+      // Set mock data for demo purposes with all required fields
       setAnalytics({
         totalRecordings: 1234,
         completedRecordings: 1156,
