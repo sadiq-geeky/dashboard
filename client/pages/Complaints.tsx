@@ -611,9 +611,30 @@ export function Complaints() {
               <span className="text-xs">Home</span>
             </button>
 
-            <button className="flex flex-col items-center p-2 rounded-md text-gray-700 bg-white border border-gray-300">
+            <button
+              onClick={() => setActiveTab('complaints')}
+              className={cn(
+                "flex flex-col items-center p-2 rounded-md",
+                activeTab === 'complaints'
+                  ? "text-gray-700 bg-white border border-gray-300"
+                  : "text-gray-500 hover:bg-gray-100"
+              )}
+            >
               <Mail className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Complaints</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={cn(
+                "flex flex-col items-center p-2 rounded-md",
+                activeTab === 'analytics'
+                  ? "text-gray-700 bg-white border border-gray-300"
+                  : "text-gray-500 hover:bg-gray-100"
+              )}
+            >
+              <BarChart3 className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Analytics</span>
             </button>
           </div>
         </div>
