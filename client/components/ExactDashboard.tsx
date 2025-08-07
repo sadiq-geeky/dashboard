@@ -801,6 +801,19 @@ export function ExactDashboard() {
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.branch_address || "NA"}
                           </td>
+                          <td className="py-1 px-1.5 text-xs">
+                            {recording.file_name ? (
+                              <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span className="text-green-600 text-xs">Audio</span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                                <span className="text-gray-500 text-xs">None</span>
+                              </div>
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
