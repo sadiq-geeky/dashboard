@@ -8,9 +8,14 @@ import fs from "fs";
 import { voiceLogger } from "../utils/logger";
 
 // Create uploads directory if it doesn't exist
-const uploadDir = path.join(process.cwd(), "uploads");
+const uploadDir = path.resolve(process.cwd(), "uploads");
+console.log(`📁 Upload directory configured at: ${uploadDir}`);
+
 if (!fs.existsSync(uploadDir)) {
+  console.log(`📁 Creating uploads directory: ${uploadDir}`);
   fs.mkdirSync(uploadDir, { recursive: true });
+} else {
+  console.log(`✅ Uploads directory exists: ${uploadDir}`);
 }
 
 // Configure multer for file uploads
