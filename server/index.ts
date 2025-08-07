@@ -214,5 +214,8 @@ export function createServer() {
   // Debug endpoint for audio files (development only)
   app.get("/api/debug/audio-files", debugAudioFiles);
 
+  // Fix audio file mappings (development only)
+  app.post("/api/fix/audio-mappings", fixAudioMappings);
+
   return app;
 }
