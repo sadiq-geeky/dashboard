@@ -535,7 +535,7 @@ export function Complaints() {
 
             {/* Report Device Issue Button */}
             <button
-              onClick={() => {
+              onClick={async () => {
                 // Debug user data
                 console.log("User data available:", {
                   emp_name: user?.emp_name,
@@ -546,11 +546,30 @@ export function Complaints() {
                   full_user: user
                 });
 
+                let phoneNo = user?.phone_no || "";
+                let emailId = user?.email_id || "";
+
+                // If phone or email is missing, try to fetch from user profile
+                if (!phoneNo || !emailId) {
+                  console.log("Phone or email missing, fetching user profile...");
+                  try {
+                    const userProfileResponse = await authFetch(`/api/users/${user?.uuid}`);
+                    if (userProfileResponse.ok) {
+                      const userProfile = await userProfileResponse.json();
+                      console.log("User profile data:", userProfile);
+                      phoneNo = userProfile.phone_no || phoneNo;
+                      emailId = userProfile.email_id || emailId;
+                    }
+                  } catch (error) {
+                    console.error("Failed to fetch user profile:", error);
+                  }
+                }
+
                 // Immediately fill user data from context
                 const initialData = {
                   customer_name: user?.emp_name || user?.username || "",
-                  customer_phone: user?.phone_no || "",
-                  customer_email: user?.email_id || "",
+                  customer_phone: phoneNo,
+                  customer_email: emailId,
                   customer_cnic: "",
                   device_id: "Loading device info...",
                   city: user?.branch_city || "",
