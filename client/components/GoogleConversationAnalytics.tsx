@@ -167,7 +167,7 @@ export function GoogleConversationAnalytics() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Conversations</p>
-              <p className="text-2xl font-bold text-gray-900">{analytics.totalConversations.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{(analytics.totalConversations || 0).toLocaleString()}</p>
             </div>
             <MessageSquare className="h-8 w-8 text-blue-500" />
           </div>
