@@ -294,6 +294,29 @@ export function ExactDashboard() {
     }
   };
 
+  const fixAudioMappings = async () => {
+    try {
+      const response = await authFetch("/api/fix/audio-mappings", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fix audio mappings");
+      }
+
+      const result = await response.json();
+      console.log("Audio mappings fixed:", result);
+
+      // Reload recordings after fixing
+      await loadRecordings();
+
+      alert(`Audio mappings fixed! ${result.summary?.recordings_updated || 0} recordings now have working audio files.`);
+    } catch (error) {
+      console.error("Error fixing audio mappings:", error);
+      alert("Failed to fix audio mappings. Please check the console for details.");
+    }
+  };
+
   // Handle URL parameter changes for tab switching
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
