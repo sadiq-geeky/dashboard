@@ -834,8 +834,12 @@ export function ExactDashboard() {
                 {/* Analytics Header */}
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h1 className="text-lg font-bold text-gray-900">Analytics Dashboard</h1>
-                    <p className="text-sm text-gray-600">Comprehensive insights and metrics</p>
+                    <h1 className="text-lg font-bold text-gray-900">
+                      {isAdmin() ? "Analytics Dashboard" : `${user?.branch_city || "Branch"} Analytics`}
+                    </h1>
+                    <p className="text-sm text-gray-600">
+                      {isAdmin() ? "Comprehensive insights and metrics" : "Analytics and insights for your branch"}
+                    </p>
                   </div>
                   <button
                     onClick={() => {
