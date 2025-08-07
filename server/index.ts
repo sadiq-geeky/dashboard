@@ -95,6 +95,11 @@ export function createServer() {
     });
   });
 
+  // Authentication routes (password reset)
+  app.post("/api/auth/forgot-password", forgotPassword);
+  app.post("/api/auth/reset-password", resetPassword);
+  app.get("/api/auth/validate-token/:token", validateResetToken);
+
   // Heartbeat routes (protected with branch filtering)
   app.get("/api/heartbeats", authenticate, addBranchFilter(), getHeartbeats);
   app.post("/api/heartbeats", postHeartbeat);
