@@ -991,10 +991,10 @@ export function ExactDashboard() {
                 {/* Analytics Content */}
                 <WarningSuppressionWrapper>
                   {analyticsSubTab === "recordings" && (
-                    <GoogleRecordingsAnalytics />
+                    <GoogleRecordingsAnalytics key={`recordings-${activeTab}-${analyticsSubTab}`} />
                   )}
                   {analyticsSubTab === "conversations" && (
-                    <GoogleConversationAnalytics />
+                    <GoogleConversationAnalytics key={`conversations-${activeTab}-${analyticsSubTab}`} />
                   )}
                 </WarningSuppressionWrapper>
               </>
