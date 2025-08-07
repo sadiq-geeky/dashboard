@@ -383,13 +383,27 @@ export function Complaints() {
     try {
       setDashboardData(prev => ({ ...prev, loading: true, error: null }));
 
-      const [recordingsResponse, conversationsResponse] = await Promise.all([
-        authFetch("/api/analytics/recordings"),
-        authFetch("/api/analytics/conversations")
-      ]);
+      // Fetch each endpoint separately with individual error handling
+      let recordings = null;
+      let conversations = null;
 
-      const recordings = recordingsResponse.ok ? await recordingsResponse.json() : null;
-      const conversations = conversationsResponse.ok ? await conversationsResponse.json() : null;
+      try {
+        const recordingsResponse = await authFetch("/api/analytics/recordings");
+        if (recordingsResponse.ok) {
+          recordings = await recordingsResponse.json();
+        }
+      } catch (recordingsError) {
+        console.warn("Failed to fetch recordings analytics:", recordingsError);
+      }
+
+      try {
+        const conversationsResponse = await authFetch("/api/analytics/conversations");
+        if (conversationsResponse.ok) {
+          conversations = await conversationsResponse.json();
+        }
+      } catch (conversationsError) {
+        console.warn("Failed to fetch conversations analytics:", conversationsError);
+      }
 
       setDashboardData(prev => ({
         ...prev,
