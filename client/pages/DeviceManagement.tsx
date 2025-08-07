@@ -74,7 +74,7 @@ export function DeviceManagement() {
   const fetchDevices = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
+      const response = await authFetch(
         `/api/devices?limit=50&search=${encodeURIComponent(searchQuery)}`,
       );
 
