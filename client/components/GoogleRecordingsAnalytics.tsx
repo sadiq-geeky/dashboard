@@ -198,7 +198,7 @@ export function GoogleRecordingsAnalytics() {
             <div>
               <p className="text-sm font-medium text-gray-600">Success Rate</p>
               <p className="text-2xl font-bold text-gray-900">
-                {Math.round((analytics.completedRecordings / analytics.totalRecordings) * 100)}%
+                {Math.round(((analytics.completedRecordings || 0) / (analytics.totalRecordings || 1)) * 100)}%
               </p>
             </div>
             <Users className="h-8 w-8 text-emerald-500" />
