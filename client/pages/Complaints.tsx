@@ -1520,6 +1520,322 @@ export function Complaints() {
             </div>
           </div>
         )}
+          </>
+        )}
+
+        {/* Analytics Tab Content */}
+        {activeTab === 'analytics' && (
+          <div className="space-y-6">
+            {/* Analytics Header */}
+            <div className="mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <BarChart3 className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    {isAdmin() ? "Complaints Analytics" : `${user?.branch_city || 'Branch'} Analytics`}
+                  </h1>
+                  <p className="text-gray-600">
+                    {isAdmin()
+                      ? "Comprehensive analytics across all branches"
+                      : "Analytics and insights for your branch"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {analyticsData.loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span className="ml-2">Loading analytics...</span>
+              </div>
+            ) : analyticsData.error ? (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-center">
+                  <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />
+                  <span className="text-red-700">{analyticsData.error}</span>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Key Metrics Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-gray-500 text-sm">Total Complaints</p>
+                        <p className="text-2xl font-bold text-gray-900">{stats?.total_complaints || 0}</p>
+                      </div>
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Mail className="h-6 w-6 text-blue-600" />
+                      </div>
+                    </div>
+                    <div className="mt-2 flex items-center text-sm">
+                      <span className="text-green-600">↗ 12% vs last month</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-gray-500 text-sm">Resolution Rate</p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          {stats ? Math.round(((stats.resolved_complaints + stats.closed_complaints) / stats.total_complaints) * 100) || 0 : 0}%
+                        </p>
+                      </div>
+                      <div className="p-2 bg-green-100 rounded-lg">
+                        <CheckCircle className="h-6 w-6 text-green-600" />
+                      </div>
+                    </div>
+                    <div className="mt-2 flex items-center text-sm">
+                      <span className="text-green-600">↗ 5% vs last month</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-gray-500 text-sm">Avg. Resolution Time</p>
+                        <p className="text-2xl font-bold text-gray-900">2.3 days</p>
+                      </div>
+                      <div className="p-2 bg-orange-100 rounded-lg">
+                        <Clock className="h-6 w-6 text-orange-600" />
+                      </div>
+                    </div>
+                    <div className="mt-2 flex items-center text-sm">
+                      <span className="text-red-600">↘ 0.5 days slower</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-gray-500 text-sm">Urgent Issues</p>
+                        <p className="text-2xl font-bold text-gray-900">{stats?.urgent_complaints || 0}</p>
+                      </div>
+                      <div className="p-2 bg-red-100 rounded-lg">
+                        <AlertTriangle className="h-6 w-6 text-red-600" />
+                      </div>
+                    </div>
+                    <div className="mt-2 flex items-center text-sm">
+                      <span className="text-red-600">↗ 3 new this week</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Charts Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                  {/* Status Distribution */}
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Complaints by Status</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                          <span className="text-gray-600">Pending</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-900 font-medium">{stats?.pending_complaints || 0}</span>
+                          <div className="w-24 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-yellow-500 h-2 rounded-full"
+                              style={{
+                                width: `${stats ? (stats.pending_complaints / stats.total_complaints) * 100 : 0}%`
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                          <span className="text-gray-600">In Progress</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-900 font-medium">{stats?.in_progress_complaints || 0}</span>
+                          <div className="w-24 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-blue-500 h-2 rounded-full"
+                              style={{
+                                width: `${stats ? (stats.in_progress_complaints / stats.total_complaints) * 100 : 0}%`
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                          <span className="text-gray-600">Resolved</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-900 font-medium">{stats?.resolved_complaints || 0}</span>
+                          <div className="w-24 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-green-500 h-2 rounded-full"
+                              style={{
+                                width: `${stats ? (stats.resolved_complaints / stats.total_complaints) * 100 : 0}%`
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-3 h-3 rounded-full bg-gray-500"></div>
+                          <span className="text-gray-600">Closed</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-900 font-medium">{stats?.closed_complaints || 0}</span>
+                          <div className="w-24 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-gray-500 h-2 rounded-full"
+                              style={{
+                                width: `${stats ? (stats.closed_complaints / stats.total_complaints) * 100 : 0}%`
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Recent Activity */}
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-start space-x-3">
+                        <div className="p-1 bg-green-100 rounded-full">
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-900">Complaint #CMP-001 resolved</p>
+                          <p className="text-xs text-gray-500">2 hours ago</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start space-x-3">
+                        <div className="p-1 bg-blue-100 rounded-full">
+                          <RefreshCw className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-900">Complaint #CMP-002 in progress</p>
+                          <p className="text-xs text-gray-500">4 hours ago</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start space-x-3">
+                        <div className="p-1 bg-red-100 rounded-full">
+                          <AlertTriangle className="h-4 w-4 text-red-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-900">New urgent complaint received</p>
+                          <p className="text-xs text-gray-500">6 hours ago</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start space-x-3">
+                        <div className="p-1 bg-yellow-100 rounded-full">
+                          <Clock className="h-4 w-4 text-yellow-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-900">Complaint #CMP-003 pending review</p>
+                          <p className="text-xs text-gray-500">1 day ago</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Branch Performance Table (for admins) */}
+                {isAdmin() && (
+                  <div className="bg-white rounded-lg shadow">
+                    <div className="px-6 py-4 border-b border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-900">Branch Performance</h3>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Branch
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Total Complaints
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Resolution Rate
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Avg. Time
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Status
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          <tr>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center">
+                                <Building2 className="h-5 w-5 text-gray-400 mr-2" />
+                                <span className="text-sm font-medium text-gray-900">Lahore</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">24</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">92%</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2.1 days</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                Excellent
+                              </span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center">
+                                <Building2 className="h-5 w-5 text-gray-400 mr-2" />
+                                <span className="text-sm font-medium text-gray-900">Karachi</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">31</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">87%</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2.5 days</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+                                Good
+                              </span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center">
+                                <Building2 className="h-5 w-5 text-gray-400 mr-2" />
+                                <span className="text-sm font-medium text-gray-900">Islamabad</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">18</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">95%</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1.8 days</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                Excellent
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
