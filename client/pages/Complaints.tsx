@@ -1493,9 +1493,6 @@ export function Complaints() {
                               placeholder="Loading city information..."
                               readOnly
                             />
-                            <p className="text-xs text-gray-500 mt-1">
-                              Automatically filled based on your branch location
-                            </p>
                           </div>
 
                           <div>
