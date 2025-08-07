@@ -337,6 +337,8 @@ export const loginUser: RequestHandler = async (req, res) => {
       branch_id: user.branch_id,
       branch_city: user.branch_city,
       emp_name: user.emp_name,
+      phone_no: user.phone_no,
+      email_id: user.email_id,
     };
 
     // In a real app, you'd create a proper session/JWT token
