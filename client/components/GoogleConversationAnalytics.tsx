@@ -85,7 +85,10 @@ export function GoogleConversationAnalytics() {
       }
 
       const data = await response.json();
-      console.log("Received analytics data:", data);
+      console.log("Received conversation analytics data:", data);
+      console.log("Data has totalStats:", !!data.totalStats);
+      console.log("Total conversations:", data.totalStats?.totalConversations);
+      console.log("Conversations by branch length:", data.conversationsByBranch?.length);
       setAnalytics(data);
     } catch (error) {
       console.error("Error fetching conversation analytics:", error);
