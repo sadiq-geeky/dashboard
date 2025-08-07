@@ -357,7 +357,9 @@ export function Complaints() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create complaint");
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        console.error("Server error response:", errorData);
+        throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
       const result = await response.json();
