@@ -508,7 +508,10 @@ export function ExactDashboard() {
       <div className="flex h-full">
         {/* Main Content */}
         <div className="flex-1 overflow-hidden">
-          <div className="px-4 py-3 h-full overflow-auto" style={{ padding: "12px 16px 3px" }}>
+          <div
+            className="px-4 py-3 h-full overflow-auto"
+            style={{ padding: "12px 16px 3px" }}
+          >
             {activeTab === "home" && (
               <>
                 {/* Search and Filter Bar */}
@@ -729,9 +732,7 @@ export function ExactDashboard() {
                       </h2>
                       <div className="flex items-center space-x-1.5 text-xs text-gray-500">
                         <Clock className="h-3 w-3" />
-                        <span>
-                          Updated: {lastUpdate.toLocaleTimeString()}
-                        </span>
+                        <span>Updated: {lastUpdate.toLocaleTimeString()}</span>
                       </div>
                     </div>
                   </div>
@@ -786,13 +787,14 @@ export function ExactDashboard() {
                               </span>
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-600 font-mono">
-                              {device.status === 'offline' ?
-                                <span className="text-gray-400">N/A</span> :
+                              {device.status === "offline" ? (
+                                <span className="text-gray-400">N/A</span>
+                              ) : (
                                 `192.168.1.${100 + index}`
-                              }
+                              )}
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-600">
-                              {device.uptime_duration_24h || '0h 0m'}
+                              {device.uptime_duration_24h || "0h 0m"}
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-500">
                               {formatLastSeen(device.last_seen)}
@@ -959,16 +961,16 @@ export function ExactDashboard() {
                         <div className="text-sm font-medium text-gray-900">
                           Ahmed Shah
                         </div>
-                        <div className="text-xs text-gray-500">
-                          ID # 239982
-                        </div>
+                        <div className="text-xs text-gray-500">ID # 239982</div>
                       </div>
                     </div>
 
                     {/* Details section - Two columns for better alignment */}
                     <div className="grid grid-cols-1 gap-y-1.5 text-xs">
                       <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">Gender:</span>
+                        <span className="text-gray-600 font-medium">
+                          Gender:
+                        </span>
                         <span className="text-gray-800">Male</span>
                       </div>
                       <div className="flex justify-between">
@@ -980,12 +982,18 @@ export function ExactDashboard() {
                         <span className="text-gray-800">61901-1234567-1</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">Phone:</span>
+                        <span className="text-gray-600 font-medium">
+                          Phone:
+                        </span>
                         <span className="text-gray-800">0321-9876543</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">Email:</span>
-                        <span className="text-gray-800 break-all">Ahmed@gmail.com</span>
+                        <span className="text-gray-600 font-medium">
+                          Email:
+                        </span>
+                        <span className="text-gray-800 break-all">
+                          Ahmed@gmail.com
+                        </span>
                       </div>
                     </div>
                   </div>
