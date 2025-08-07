@@ -293,9 +293,16 @@ export const loginUser: RequestHandler = async (req, res) => {
       });
     }
 
-    // Get user by username
-    const users = await executeQuery<User>(
-      `SELECT * FROM users WHERE username = ? AND is_active = true`,
+    // Get user by username with branch info from both users table and link table
+    const users = await executeQuery<User & {branch_id: string | null, branch_city: string | null}>(
+      `SELECT u.*,
+              COALESCE(u.branch_id, ldbu.branch_id) as branch_id,
+              COALESCE(u.branch_city, b.branch_city) as branch_city
+       FROM users u
+       LEFT JOIN link_device_branch_user ldbu ON ldbu.user_id = u.uuid
+       LEFT JOIN branches b ON b.id = ldbu.branch_id
+       WHERE u.username = ? AND u.is_active = true
+       LIMIT 1`,
       [username],
     );
 
