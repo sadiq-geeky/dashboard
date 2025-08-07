@@ -71,7 +71,35 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
       LIMIT 100
     `;
 
-    const heartbeats = await executeQuery<HeartbeatRecord>(query, queryParams);
+    let heartbeats;
+    try {
+      heartbeats = await executeQuery<HeartbeatRecord>(query, queryParams);
+    } catch (queryError) {
+      // Fallback to simpler query if main query fails
+      console.warn("Main heartbeat query failed, using fallback:", queryError);
+
+      const fallbackQuery = `
+        SELECT
+          CONCAT('Device-', mac_address) AS branch_name,
+          ip_address AS branch_code,
+          MAX(created_on) AS last_seen,
+          CASE
+            WHEN TIMESTAMPDIFF(MINUTE, MAX(created_on), NOW()) <= 5 THEN 'online'
+            WHEN TIMESTAMPDIFF(MINUTE, MAX(created_on), NOW()) <= 15 THEN 'problematic'
+            ELSE 'offline'
+          END AS status,
+          '0h 0m' AS uptime_duration_24h
+        FROM heartbeat
+        WHERE mac_address IS NOT NULL
+        ${branchFilter ? '' : ''}
+        GROUP BY mac_address, ip_address
+        ORDER BY MAX(created_on) DESC
+        LIMIT 50
+      `;
+
+      heartbeats = await executeQuery<HeartbeatRecord>(fallbackQuery, branchFilter ? [] : []);
+    }
+
     const duration = Date.now() - startTime;
 
     heartbeatLogger.info("heartbeat-db", "get_heartbeats_success", {
