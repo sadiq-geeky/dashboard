@@ -225,7 +225,7 @@ export function GoogleConversationAnalytics() {
           ["Branch", "Conversations"],
           ...conversationsByBranch.map((item) => [
             item.branch_name,
-            item.conversations,
+            item.count,
           ]),
         ]
       : [
@@ -237,26 +237,11 @@ export function GoogleConversationAnalytics() {
     conversationsByCity.length > 0
       ? [
           ["City", "Conversations"],
-          ...conversationsByCity.map((item) => [item.city, item.conversations]),
+          ...conversationsByCity.map((item) => [item.city, item.count]),
         ]
       : [
           ["City", "Conversations"],
           ["No data", 0],
-        ];
-
-  const trendsChartData =
-    monthlyTrends.length > 0
-      ? [
-          ["Month", "Conversations", "Unique Customers"],
-          ...monthlyTrends.map((item) => [
-            item.month,
-            item.conversations,
-            item.customers,
-          ]),
-        ]
-      : [
-          ["Month", "Conversations", "Unique Customers"],
-          ["No data", 0, 0],
         ];
 
   const conversionTrendsChartData =
