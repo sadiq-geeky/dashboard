@@ -308,6 +308,20 @@ export function Complaints() {
     searchQuery,
   ]);
 
+  // Debug user data on component mount
+  useEffect(() => {
+    console.log("Complaints component mounted, user data:", {
+      uuid: user?.uuid,
+      username: user?.username,
+      emp_name: user?.emp_name,
+      phone_no: user?.phone_no,
+      email_id: user?.email_id,
+      branch_city: user?.branch_city,
+      hasPhoneNo: !!user?.phone_no,
+      hasEmailId: !!user?.email_id
+    });
+  }, [user]);
+
   // Debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
