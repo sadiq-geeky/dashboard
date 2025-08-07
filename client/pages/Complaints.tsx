@@ -104,6 +104,11 @@ export function Complaints() {
       if (statusFilter !== "all") params.append("status", statusFilter);
       if (priorityFilter !== "all") params.append("priority", priorityFilter);
 
+      // For managers, filter by their branch
+      if (isManager() && user?.branch_id) {
+        params.append("branch_id", user.branch_id);
+      }
+
       const response = await authFetch(`/api/complaints?${params.toString()}`);
 
       if (!response.ok) {
