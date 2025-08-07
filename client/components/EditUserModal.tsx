@@ -97,13 +97,7 @@ export function EditUserModal({
     setError(null);
 
     try {
-      const response = await fetch(`/api/users/${user.uuid}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await authPut(`/api/users/${user.uuid}`, formData);
 
       if (!response.ok) {
         const errorData = await response.json();
