@@ -792,10 +792,7 @@ export function ExactDashboard() {
                               }
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-600">
-                              {device.status === 'offline' ?
-                                <span className="text-gray-400">-</span> :
-                                device.uptime_duration_24h || '0h 0m'
-                              }
+                              {device.uptime_duration_24h || '0h 0m'}
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-500">
                               {formatLastSeen(device.last_seen)}
