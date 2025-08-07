@@ -71,6 +71,7 @@ import {
   getDeployment,
   updateDeployment,
 } from "./routes/deployments-db";
+import { populateData } from "./routes/populate-data";
 
 export function createServer() {
   const app = express();
