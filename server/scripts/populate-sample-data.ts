@@ -45,7 +45,7 @@ export async function populateSampleData() {
       },
       {
         id: uuidv4(),
-        branch_code: "BR002", 
+        branch_code: "BR002",
         branch_name: "North Branch",
         branch_address: "456 North Avenue, Business Center",
         branch_city: "Lahore",
@@ -54,7 +54,7 @@ export async function populateSampleData() {
       {
         id: uuidv4(),
         branch_code: "BR003",
-        branch_name: "South Branch", 
+        branch_name: "South Branch",
         branch_address: "789 South Road, Commercial Area",
         branch_city: "Islamabad",
         region: "ICT"
@@ -64,7 +64,7 @@ export async function populateSampleData() {
         branch_code: "BR004",
         branch_name: "East Branch",
         branch_address: "321 East Boulevard, Tech Hub",
-        branch_city: "Faisalabad", 
+        branch_city: "Faisalabad",
         region: "Punjab"
       },
       {
@@ -81,7 +81,7 @@ export async function populateSampleData() {
     for (const branch of branches) {
       try {
         await executeQuery(`
-          INSERT IGNORE INTO branches 
+          INSERT IGNORE INTO branches
           (id, branch_code, branch_name, branch_address, branch_city, region, is_active, created_on, updated_on)
           VALUES (?, ?, ?, ?, ?, ?, true, NOW(), NOW())
         `, [branch.id, branch.branch_code, branch.branch_name, branch.branch_address, branch.branch_city, branch.region]);
@@ -105,7 +105,7 @@ export async function populateSampleData() {
     for (const device of devices) {
       try {
         await executeQuery(`
-          INSERT IGNORE INTO devices 
+          INSERT IGNORE INTO devices
           (id, device_mac, ip_address, device_name, is_active, created_on, updated_on)
           VALUES (?, ?, ?, ?, true, NOW(), NOW())
         `, [device.id, device.device_mac, device.ip_address, device.device_name]);
@@ -118,7 +118,7 @@ export async function populateSampleData() {
     for (let i = 0; i < Math.min(devices.length, branches.length); i++) {
       try {
         await executeQuery(`
-          INSERT IGNORE INTO link_device_branch_user 
+          INSERT IGNORE INTO link_device_branch_user
           (device_id, branch_id, user_id, created_on)
           VALUES (?, ?, NULL, NOW())
         `, [devices[i].id, branches[i % branches.length].id]);
@@ -137,14 +137,14 @@ export async function populateSampleData() {
     for (let day = 29; day >= 0; day--) {
       const date = new Date();
       date.setDate(date.getDate() - day);
-      
+
       // Generate 15-60 recordings per day
       const recordingsPerDay = Math.floor(Math.random() * 45) + 15;
-      
+
       for (let i = 0; i < recordingsPerDay; i++) {
         const deviceIndex = Math.floor(Math.random() * devices.length);
         const device = devices[deviceIndex];
-        
+
         // Random time during the day
         const recordingTime = new Date(date);
         recordingTime.setHours(
@@ -161,7 +161,7 @@ export async function populateSampleData() {
         }
 
         const recordingId = `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        
+
         let endTime: Date | null = null;
         let fileName: string | null = null;
         let durationSeconds: number | null = null;
@@ -199,11 +199,11 @@ export async function populateSampleData() {
     const batchSize = 100;
     for (let i = 0; i < recordings.length; i += batchSize) {
       const batch = recordings.slice(i, i + batchSize);
-      
+
       for (const recording of batch) {
         try {
           await executeQuery(`
-            INSERT IGNORE INTO recordings 
+            INSERT IGNORE INTO recordings
             (id, cnic, start_time, end_time, file_name, ip_address, mac_address, duration_seconds, CREATED_ON)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
           `, [
@@ -244,15 +244,15 @@ export async function populateSampleData() {
     console.log(`   Devices: ${deviceCount.count}`);
 
     console.log("🎉 Sample data population completed successfully!");
-    
+
   } catch (error) {
     console.error("❌ Error populating sample data:", error);
     throw error;
   }
 }
 
-// Run if called directly
-if (require.main === module) {
+// Run if called directly (ES module compatible)
+if (import.meta.url === `file://${process.argv[1]}`) {
   populateSampleData()
     .then(() => process.exit(0))
     .catch((error) => {
