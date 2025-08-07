@@ -566,7 +566,7 @@ export function ExactDashboard() {
                           className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
                           onClick={() => setSelectedRecording(recording)}
                         >
-                          <td className="py-2 px-2 text-xs text-gray-900">
+                          <td className="py-1 px-1.5 text-xs text-gray-900">
                             {startIndex + index + 1}
                           </td>
                           <td className="py-2 px-2 text-xs text-gray-500">
