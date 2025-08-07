@@ -28,6 +28,7 @@ import {
   Settings,
 } from "lucide-react";
 import { authFetch } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
