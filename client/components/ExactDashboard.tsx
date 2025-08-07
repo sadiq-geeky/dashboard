@@ -525,7 +525,7 @@ export function ExactDashboard() {
                       />
                     </div>
 
-                    <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                    <button className="flex items-center space-x-1.5 px-2.5 py-1.5 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
                       <Filter className="w-4 h-4" />
                       <span>Filter</span>
                       <ChevronDown className="w-4 h-4" />
