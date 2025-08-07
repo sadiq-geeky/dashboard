@@ -55,6 +55,12 @@ export interface ConversationAnalytics {
 // Get conversations analytics by branch
 export const getConversationsByBranch: RequestHandler = async (req, res) => {
   try {
+    // Get branch filter from middleware
+    const branchFilter = (req as any).branchFilter;
+    const branchFilterCondition = branchFilter
+      ? `AND ldbu.branch_id = '${branchFilter.value}'`
+      : '';
+
     const query = `
       SELECT
         ldbu.branch_id,
@@ -64,7 +70,7 @@ export const getConversationsByBranch: RequestHandler = async (req, res) => {
       LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
-      WHERE ldbu.branch_id IS NOT NULL
+      WHERE ldbu.branch_id IS NOT NULL ${branchFilterCondition}
       GROUP BY ldbu.branch_id
       ORDER BY count DESC
     `;
