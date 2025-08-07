@@ -337,25 +337,7 @@ export function ExactDashboard() {
       );
     }
 
-    // Apply city filter
-    if (selectedCity !== "all") {
-      filtered = filtered.filter((recording) => {
-        if (!recording.branch_address) return false;
-        const parts = recording.branch_address
-          .split(",")
-          .map((part) => part.trim());
-        const city = parts[parts.length - 1];
-        return city === selectedCity;
-      });
-    }
 
-    // Apply branch number filter
-    if (selectedBranchNo !== "all") {
-      filtered = filtered.filter((recording) => {
-        const branchNo = recording.branch_no || recording.device_name;
-        return branchNo === selectedBranchNo;
-      });
-    }
 
     setFilteredRecordings(filtered);
 
