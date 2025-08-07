@@ -457,43 +457,59 @@ export const getComplaintsAnalytics: RequestHandler = async (req, res) => {
       resolved_complaints: number;
     }>(monthlyTrendsQuery, queryParams);
 
-    // Get priority distribution
+    // Get priority distribution (simplified without percentage calculation in SQL)
     const priorityQuery = `
       SELECT
         priority,
-        COUNT(*) as count,
-        ROUND((COUNT(*) * 100.0 / (SELECT COUNT(*) FROM complaints ${whereClause})), 1) as percentage
+        COUNT(*) as count
       FROM complaints
       ${whereClause}
       GROUP BY priority
     `;
 
-    // We need to pass queryParams twice - once for the subquery and once for the main query
-    const priorityParams = [...queryParams, ...queryParams];
-    const priorityDistribution = await executeQuery<{
+    const priorityData = await executeQuery<{
       priority: string;
       count: number;
-      percentage: number;
-    }>(priorityQuery, priorityParams);
+    }>(priorityQuery, queryParams);
 
-    // Get status distribution
+    // Get total complaints for percentage calculation
+    const totalQuery = `
+      SELECT COUNT(*) as total
+      FROM complaints
+      ${whereClause}
+    `;
+
+    const [totalResult] = await executeQuery<{ total: number }>(totalQuery, queryParams);
+    const totalComplaints = totalResult?.total || 1; // Avoid division by zero
+
+    // Calculate percentages in JavaScript
+    const priorityDistribution = priorityData.map(item => ({
+      priority: item.priority,
+      count: item.count,
+      percentage: Math.round((item.count / totalComplaints) * 100 * 10) / 10 // Round to 1 decimal
+    }));
+
+    // Get status distribution (simplified)
     const statusQuery = `
       SELECT
         status,
-        COUNT(*) as count,
-        ROUND((COUNT(*) * 100.0 / (SELECT COUNT(*) FROM complaints ${whereClause})), 1) as percentage
+        COUNT(*) as count
       FROM complaints
       ${whereClause}
       GROUP BY status
     `;
 
-    // We need to pass queryParams twice - once for the subquery and once for the main query
-    const statusParams = [...queryParams, ...queryParams];
-    const statusDistribution = await executeQuery<{
+    const statusData = await executeQuery<{
       status: string;
       count: number;
-      percentage: number;
-    }>(statusQuery, statusParams);
+    }>(statusQuery, queryParams);
+
+    // Calculate percentages in JavaScript
+    const statusDistribution = statusData.map(item => ({
+      status: item.status,
+      count: item.count,
+      percentage: Math.round((item.count / totalComplaints) * 100 * 10) / 10 // Round to 1 decimal
+    }));
 
     // Calculate average resolution time (in days)
     const resolutionTimeQuery = `
