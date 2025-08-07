@@ -218,8 +218,6 @@ export function createServer() {
   app.put("/api/deployments/:uuid", updateDeployment);
   app.delete("/api/deployments/:uuid", deleteDeployment);
 
-
-
   // Debug endpoint for audio files (development only)
   app.get("/api/debug/audio-files", debugAudioFiles);
 

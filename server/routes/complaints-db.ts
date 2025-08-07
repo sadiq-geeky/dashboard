@@ -204,7 +204,10 @@ export const getComplaint: RequestHandler = async (req, res) => {
 // Create new complaint
 export const createComplaint: RequestHandler = async (req, res) => {
   try {
-    console.log("Creating complaint with request body:", JSON.stringify(req.body, null, 2));
+    console.log(
+      "Creating complaint with request body:",
+      JSON.stringify(req.body, null, 2),
+    );
 
     const {
       branch_id,
@@ -216,14 +219,18 @@ export const createComplaint: RequestHandler = async (req, res) => {
     } = req.body;
 
     if (!branch_id || !branch_name || !complaint_text) {
-      console.log("Validation failed:", { branch_id, branch_name, complaint_text });
+      console.log("Validation failed:", {
+        branch_id,
+        branch_name,
+        complaint_text,
+      });
       return res.status(400).json({
         error: "Branch ID, branch name, and complaint text are required",
       });
     }
 
     const complaint_id = uuidv4();
-    const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const timestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
 
     // Ensure customer_data is stored as JSON string
     const customerDataString =
@@ -269,8 +276,14 @@ export const createComplaint: RequestHandler = async (req, res) => {
   } catch (error) {
     console.error("Error creating complaint:", error);
     console.error("Error type:", typeof error);
-    console.error("Error message:", error instanceof Error ? error.message : "Unknown error");
-    console.error("Full error object:", JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+    console.error(
+      "Error message:",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    console.error(
+      "Full error object:",
+      JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
+    );
 
     // Return more specific error information
     let errorMessage = "Failed to create complaint";
@@ -280,7 +293,7 @@ export const createComplaint: RequestHandler = async (req, res) => {
 
     res.status(500).json({
       error: errorMessage,
-      details: process.env.NODE_ENV === "development" ? error : undefined
+      details: process.env.NODE_ENV === "development" ? error : undefined,
     });
   }
 };
@@ -479,14 +492,17 @@ export const getComplaintsAnalytics: RequestHandler = async (req, res) => {
       ${whereClause}
     `;
 
-    const [totalResult] = await executeQuery<{ total: number }>(totalQuery, queryParams);
+    const [totalResult] = await executeQuery<{ total: number }>(
+      totalQuery,
+      queryParams,
+    );
     const totalComplaints = totalResult?.total || 1; // Avoid division by zero
 
     // Calculate percentages in JavaScript
-    const priorityDistribution = priorityData.map(item => ({
+    const priorityDistribution = priorityData.map((item) => ({
       priority: item.priority,
       count: item.count,
-      percentage: Math.round((item.count / totalComplaints) * 100 * 10) / 10 // Round to 1 decimal
+      percentage: Math.round((item.count / totalComplaints) * 100 * 10) / 10, // Round to 1 decimal
     }));
 
     // Get status distribution (simplified)
@@ -505,10 +521,10 @@ export const getComplaintsAnalytics: RequestHandler = async (req, res) => {
     }>(statusQuery, queryParams);
 
     // Calculate percentages in JavaScript
-    const statusDistribution = statusData.map(item => ({
+    const statusDistribution = statusData.map((item) => ({
       status: item.status,
       count: item.count,
-      percentage: Math.round((item.count / totalComplaints) * 100 * 10) / 10 // Round to 1 decimal
+      percentage: Math.round((item.count / totalComplaints) * 100 * 10) / 10, // Round to 1 decimal
     }));
 
     // Calculate average resolution time (in days)
@@ -552,26 +568,29 @@ export const getComplaintsAnalytics: RequestHandler = async (req, res) => {
     const satisfactionRate = 85; // Mock data
 
     res.json({
-      monthlyTrends: monthlyTrends.map(trend => ({
+      monthlyTrends: monthlyTrends.map((trend) => ({
         month: trend.month,
         totalComplaints: trend.total_complaints,
         resolvedComplaints: trend.resolved_complaints,
-        resolutionRate: trend.total_complaints > 0
-          ? Math.round((trend.resolved_complaints / trend.total_complaints) * 100)
-          : 0
+        resolutionRate:
+          trend.total_complaints > 0
+            ? Math.round(
+                (trend.resolved_complaints / trend.total_complaints) * 100,
+              )
+            : 0,
       })),
       priorityDistribution,
       statusDistribution,
       avgResolutionTime: resolutionTimeResult?.avg_resolution_days || 0,
       satisfactionRate,
-      recentActivity: recentActivity.map(activity => ({
+      recentActivity: recentActivity.map((activity) => ({
         id: activity.complaint_id,
-        text: activity.complaint_text.substring(0, 50) + '...',
+        text: activity.complaint_text.substring(0, 50) + "...",
         status: activity.status,
         priority: activity.priority,
         updatedOn: activity.updated_on,
-        branchName: activity.branch_name
-      }))
+        branchName: activity.branch_name,
+      })),
     });
   } catch (error) {
     console.error("Error fetching complaints analytics:", error);

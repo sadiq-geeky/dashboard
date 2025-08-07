@@ -55,8 +55,14 @@ export const authenticate: RequestHandler = async (req: any, res, next) => {
   } catch (error) {
     console.error("Authentication error:", error);
     console.error("Error type:", typeof error);
-    console.error("Error message:", error instanceof Error ? error.message : "Unknown error");
-    console.error("Full error object:", JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+    console.error(
+      "Error message:",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    console.error(
+      "Full error object:",
+      JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
+    );
 
     let errorMessage = "Authentication failed";
     if (error instanceof Error) {
@@ -65,7 +71,7 @@ export const authenticate: RequestHandler = async (req: any, res, next) => {
 
     res.status(500).json({
       error: errorMessage,
-      details: process.env.NODE_ENV === "development" ? error : undefined
+      details: process.env.NODE_ENV === "development" ? error : undefined,
     });
   }
 };

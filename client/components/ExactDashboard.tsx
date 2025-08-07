@@ -229,8 +229,6 @@ export function ExactDashboard() {
     }
   };
 
-
-
   const fixAudioMappings = async () => {
     try {
       const response = await authFetch("/api/fix/audio-mappings", {
@@ -971,8 +969,6 @@ export function ExactDashboard() {
                 {/* Development Tools */}
                 {analyticsSubTab === "recordings" && (
                   <div className="mb-4 space-y-3">
-
-
                     {/* Fix Audio Button */}
                     <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
                       <div className="flex items-center justify-between">
