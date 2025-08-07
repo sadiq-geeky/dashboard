@@ -54,14 +54,7 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
       id: "analytics",
       label: "Analytics",
       icon: BarChart3,
-      onClick: () => {
-        // If we're on complaints page, don't navigate away - let the page handle it internally
-        if (location.pathname === "/complaints") {
-          // Don't navigate, the complaints page will handle analytics internally
-          return;
-        }
-        navigate("/?tab=analytics");
-      },
+      onClick: () => navigate("/?tab=analytics"),
       group: "core"
     },
     {
