@@ -637,13 +637,13 @@ export function ExactDashboard() {
             {activeTab === "device-status" && isAdmin() && (
               <>
                 {/* Device Status Header */}
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-lg font-bold text-gray-900">
                       Device Monitoring
                     </h1>
-                    <p className="text-gray-600">
-                      Monitor device heartbeats and connection status
+                    <p className="text-xs text-gray-500">
+                      Real-time device status & performance metrics
                     </p>
                   </div>
                   <button
