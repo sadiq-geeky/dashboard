@@ -533,7 +533,11 @@ export function Complaints() {
         errorMessage = JSON.stringify(error);
       }
 
-      alert(`Failed to create complaint: ${errorMessage}`);
+      toast({
+        title: "Error Creating Complaint",
+        description: errorMessage,
+        variant: "destructive"
+      });
     }
   };
 
