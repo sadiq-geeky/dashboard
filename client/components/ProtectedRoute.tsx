@@ -5,6 +5,7 @@ import { RefreshCw } from "lucide-react";
 interface ProtectedRouteProps {
   children: React.ReactNode;
   adminOnly?: boolean;
+  managerOrAdmin?: boolean;
 }
 
 export function ProtectedRoute({
