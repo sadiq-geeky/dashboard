@@ -100,12 +100,14 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
       totalResult,
       currentMonthResult,
       previousMonthResult,
-      monthlyResult
+      monthlyResult,
+      dailyCurrentMonthResult
     ] = await Promise.all([
       executeQuery<{ total_streams: number }>(totalQuery),
       executeQuery<{ current_month_streams: number }>(currentMonthQuery),
       executeQuery<{ previous_month_streams: number }>(previousMonthQuery),
-      executeQuery<{ month: string; voice_streams: number }>(monthlyQuery)
+      executeQuery<{ month: string; voice_streams: number }>(monthlyQuery),
+      executeQuery<{ date: string; voice_streams: number }>(dailyCurrentMonthQuery)
     ]);
 
     // Generate last 12 months array to fill missing months with 0
