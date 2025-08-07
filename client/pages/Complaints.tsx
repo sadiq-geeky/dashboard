@@ -272,6 +272,37 @@ export function Complaints() {
       } else {
         const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
         console.error("Failed to fetch deployments:", errorData);
+
+        // Try alternative approach - get devices by branch
+        if (user.branch_id) {
+          console.log("Trying branch devices endpoint as fallback...");
+          try {
+            const branchDevicesResponse = await authFetch(`/api/branches/${user.branch_id}/devices`);
+            if (branchDevicesResponse.ok) {
+              const branchDevicesData = await branchDevicesResponse.json();
+              console.log("Branch devices data:", branchDevicesData);
+
+              if (branchDevicesData.data && branchDevicesData.data.length > 0) {
+                // Use the first active device in the branch as fallback
+                const activeDevice = branchDevicesData.data.find((device: any) =>
+                  device.device_status === 'active'
+                ) || branchDevicesData.data[0];
+
+                if (activeDevice) {
+                  console.log("Using branch device as fallback:", activeDevice);
+                  setCreateComplaintData(prev => ({
+                    ...prev,
+                    device_id: activeDevice.device_name || activeDevice.device_id || "Branch Device",
+                  }));
+                  return;
+                }
+              }
+            }
+          } catch (branchError) {
+            console.error("Branch devices fallback failed:", branchError);
+          }
+        }
+
         setCreateComplaintData(prev => ({
           ...prev,
           device_id: "Unable to load device info",
