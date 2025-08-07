@@ -229,7 +229,7 @@ export function ConversationAnalytics() {
                 Total Conversations
               </p>
               <p className="text-2xl font-bold text-gray-900">
-                {totalStats.totalConversations.toLocaleString()}
+                {safeStats.totalConversations.toLocaleString()}
               </p>
             </div>
           </div>
