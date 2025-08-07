@@ -82,7 +82,7 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
         SUM(CASE WHEN DATE(rh.CREATED_ON) = CURDATE() THEN 1 ELSE 0 END) as todayRecordings
       FROM recordings rh
       WHERE rh.CREATED_ON >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
-      GROUP BY YEAR(rh.CREATED_ON), MONTH(rh.CREATED_ON)
+      GROUP BY YEAR(rh.CREATED_ON), MONTH(rh.CREATED_ON), DATE_FORMAT(rh.CREATED_ON, '%b')
       ORDER BY YEAR(rh.CREATED_ON) DESC, MONTH(rh.CREATED_ON) DESC
       LIMIT 3
     `;
