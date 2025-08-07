@@ -552,18 +552,57 @@ export function ExactDashboard() {
                       <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         type="text"
-                        placeholder="Search"
+                        placeholder="Search by CNIC or Device"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-8 pr-3 py-1.5 w-64 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
 
-                    <button className="flex items-center space-x-1.5 px-2.5 py-1.5 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
-                      <Filter className="w-4 h-4" />
-                      <span>Filter</span>
-                      <ChevronDown className="w-4 h-4" />
-                    </button>
+                    {/* City Filter */}
+                    <Select value={selectedCity} onValueChange={setSelectedCity}>
+                      <SelectTrigger className="w-40 h-8 text-sm">
+                        <SelectValue placeholder="Filter by City" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Cities</SelectItem>
+                        {uniqueCities.map((city) => (
+                          <SelectItem key={city} value={city}>
+                            {city}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Branch Number Filter */}
+                    <Select value={selectedBranchNo} onValueChange={setSelectedBranchNo}>
+                      <SelectTrigger className="w-40 h-8 text-sm">
+                        <SelectValue placeholder="Filter by Branch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Branches</SelectItem>
+                        {uniqueBranchNos.map((branchNo) => (
+                          <SelectItem key={branchNo} value={branchNo}>
+                            {branchNo}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Clear Filters Button */}
+                    {(selectedCity !== "all" || selectedBranchNo !== "all" || searchQuery) && (
+                      <button
+                        onClick={() => {
+                          setSelectedCity("all");
+                          setSelectedBranchNo("all");
+                          setSearchQuery("");
+                        }}
+                        className="flex items-center space-x-1 px-2 py-1.5 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50"
+                      >
+                        <X className="w-3 h-3" />
+                        <span>Clear</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
