@@ -908,15 +908,19 @@ export function ExactDashboard() {
                   </div>
                 )}
 
-                {/* Analytics Content */}
-                <WarningSuppressionWrapper>
-                  {analyticsSubTab === "recordings" && (
-                    <GoogleRecordingsAnalytics key={`recordings-${activeTab}-${analyticsSubTab}-${lastUpdate.getTime()}`} />
-                  )}
-                  {analyticsSubTab === "conversations" && (
-                    <GoogleConversationAnalytics key={`conversations-${activeTab}-${analyticsSubTab}-${lastUpdate.getTime()}`} />
-                  )}
-                </WarningSuppressionWrapper>
+                {/* Analytics Content - Using working implementation from Complaints */}
+                <div className="bg-white rounded-lg shadow p-6 mb-8">
+                  <div className="flex items-center space-x-2 mb-6">
+                    <Users className="h-5 w-5 text-blue-600" />
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {isAdmin()
+                        ? "Conversation Analytics"
+                        : `${user?.branch_city || "Branch"} Conversation Analytics`}
+                    </h3>
+                  </div>
+
+                  <ConversationAnalytics />
+                </div>
               </>
             )}
           </div>
