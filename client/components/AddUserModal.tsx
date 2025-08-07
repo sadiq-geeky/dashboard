@@ -14,10 +14,10 @@ export function AddUserModal({
   onUserAdded,
 }: AddUserModalProps) {
   // Calculate date restrictions
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   const eighteenYearsAgo = new Date();
   eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
-  const maxBirthDate = eighteenYearsAgo.toISOString().split('T')[0];
+  const maxBirthDate = eighteenYearsAgo.toISOString().split("T")[0];
 
   const [formData, setFormData] = useState({
     emp_name: "",
@@ -316,7 +316,6 @@ export function AddUserModal({
               </div>
             </div>
           </div>
-
 
           <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
             <button

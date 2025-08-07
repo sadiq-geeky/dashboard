@@ -5,12 +5,7 @@ import { executeQuery } from "../config/database";
 // Get recordings with pagination and CNIC search
 export const getRecordings: RequestHandler = async (req: any, res) => {
   try {
-    const {
-      page = "1",
-      limit = "10",
-      search,
-      device,
-    } = req.query;
+    const { page = "1", limit = "10", search, device } = req.query;
 
     // Get branch filter from middleware
     const branchFilter = req.branchFilter;

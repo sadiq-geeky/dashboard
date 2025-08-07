@@ -36,10 +36,10 @@ export function EditUserModal({
   user,
 }: EditUserModalProps) {
   // Calculate date restrictions
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   const eighteenYearsAgo = new Date();
   eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
-  const maxBirthDate = eighteenYearsAgo.toISOString().split('T')[0];
+  const maxBirthDate = eighteenYearsAgo.toISOString().split("T")[0];
 
   const [formData, setFormData] = useState({
     emp_name: "",
@@ -352,10 +352,8 @@ export function EditUserModal({
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-
             </div>
           </div>
-
 
           <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
             <button

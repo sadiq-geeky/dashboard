@@ -294,7 +294,9 @@ export const loginUser: RequestHandler = async (req, res) => {
     }
 
     // Get user by username with branch info from link table
-    const users = await executeQuery<User & {branch_id: string | null, branch_city: string | null}>(
+    const users = await executeQuery<
+      User & { branch_id: string | null; branch_city: string | null }
+    >(
       `SELECT u.*,
               ldbu.branch_id as branch_id,
               b.branch_city as branch_city

@@ -26,15 +26,17 @@ function getCurrentUser(): AuthenticatedUser | null {
 /**
  * Create headers with authentication for API requests
  */
-function createAuthHeaders(additionalHeaders: Record<string, string> = {}): HeadersInit {
+function createAuthHeaders(
+  additionalHeaders: Record<string, string> = {},
+): HeadersInit {
   const user = getCurrentUser();
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...additionalHeaders,
   };
 
   if (user?.uuid) {
-    headers['x-user-id'] = user.uuid;
+    headers["x-user-id"] = user.uuid;
   }
 
   return headers;
@@ -45,12 +47,16 @@ function createAuthHeaders(additionalHeaders: Record<string, string> = {}): Head
  */
 export async function authFetch(
   input: RequestInfo | URL,
-  init: RequestInit = {}
+  init: RequestInit = {},
 ): Promise<Response> {
   const { headers, ...restInit } = init;
-  
+
   const authHeaders = createAuthHeaders(
-    headers ? (typeof headers === 'object' ? headers as Record<string, string> : {}) : {}
+    headers
+      ? typeof headers === "object"
+        ? (headers as Record<string, string>)
+        : {}
+      : {},
   );
 
   const response = await fetch(input, {
@@ -73,7 +79,7 @@ export async function authFetch(
  * Helper for GET requests with authentication
  */
 export async function authGet(url: string): Promise<Response> {
-  return authFetch(url, { method: 'GET' });
+  return authFetch(url, { method: "GET" });
 }
 
 /**
@@ -81,7 +87,7 @@ export async function authGet(url: string): Promise<Response> {
  */
 export async function authPost(url: string, data?: any): Promise<Response> {
   return authFetch(url, {
-    method: 'POST',
+    method: "POST",
     body: data ? JSON.stringify(data) : undefined,
   });
 }
@@ -91,7 +97,7 @@ export async function authPost(url: string, data?: any): Promise<Response> {
  */
 export async function authPut(url: string, data?: any): Promise<Response> {
   return authFetch(url, {
-    method: 'PUT',
+    method: "PUT",
     body: data ? JSON.stringify(data) : undefined,
   });
 }
@@ -100,5 +106,5 @@ export async function authPut(url: string, data?: any): Promise<Response> {
  * Helper for DELETE requests with authentication
  */
 export async function authDelete(url: string): Promise<Response> {
-  return authFetch(url, { method: 'DELETE' });
+  return authFetch(url, { method: "DELETE" });
 }

@@ -110,24 +110,64 @@ export function createServer() {
   app.post("/api/devices", createDevice);
   app.put("/api/devices/:id", updateDevice);
   app.delete("/api/devices/:id", deleteDevice);
-  app.get("/api/branches/:branch_id/devices", authenticate, addBranchFilter(), getDevicesByBranch);
+  app.get(
+    "/api/branches/:branch_id/devices",
+    authenticate,
+    addBranchFilter(),
+    getDevicesByBranch,
+  );
 
   // Recording routes (protected with branch filtering)
   app.get("/api/recordings", authenticate, addBranchFilter(), getRecordings);
-  app.get("/api/recordings/device-names", authenticate, addBranchFilter(), getDeviceNames);
+  app.get(
+    "/api/recordings/device-names",
+    authenticate,
+    addBranchFilter(),
+    getDeviceNames,
+  );
   app.get("/api/recordings/:id", authenticate, addBranchFilter(), getRecording);
   app.post("/api/recordings", createRecording);
   app.put("/api/recordings/:id", updateRecording);
 
   // Analytics routes (protected with branch filtering)
-  app.get("/api/analytics/recordings", authenticate, addBranchFilter(), getRecordingsAnalytics);
+  app.get(
+    "/api/analytics/recordings",
+    authenticate,
+    addBranchFilter(),
+    getRecordingsAnalytics,
+  );
 
   // Conversation Analytics routes (protected with branch filtering)
-  app.get("/api/analytics/conversations", authenticate, addBranchFilter(), getConversationAnalytics);
-  app.get("/api/analytics/conversations/branch", authenticate, addBranchFilter(), getConversationsByBranch);
-  app.get("/api/analytics/conversations/city", authenticate, addBranchFilter(), getConversationsByCity);
-  app.get("/api/analytics/conversations/daily", authenticate, addBranchFilter(), getDailyConversationsLastMonth);
-  app.get("/api/analytics/conversations/cnic", authenticate, addBranchFilter(), getUniqueCnicsByMonth);
+  app.get(
+    "/api/analytics/conversations",
+    authenticate,
+    addBranchFilter(),
+    getConversationAnalytics,
+  );
+  app.get(
+    "/api/analytics/conversations/branch",
+    authenticate,
+    addBranchFilter(),
+    getConversationsByBranch,
+  );
+  app.get(
+    "/api/analytics/conversations/city",
+    authenticate,
+    addBranchFilter(),
+    getConversationsByCity,
+  );
+  app.get(
+    "/api/analytics/conversations/daily",
+    authenticate,
+    addBranchFilter(),
+    getDailyConversationsLastMonth,
+  );
+  app.get(
+    "/api/analytics/conversations/cnic",
+    authenticate,
+    addBranchFilter(),
+    getUniqueCnicsByMonth,
+  );
 
   // User Management routes
   app.post("/api/auth/login", loginUser);
@@ -140,7 +180,12 @@ export function createServer() {
   // Deployment Management routes (protected with branch filtering)
   app.get("/api/deployments", authenticate, addBranchFilter(), getDeployments);
   app.post("/api/deployments", createDeployment);
-  app.get("/api/deployments/:uuid", authenticate, addBranchFilter(), getDeployment);
+  app.get(
+    "/api/deployments/:uuid",
+    authenticate,
+    addBranchFilter(),
+    getDeployment,
+  );
   app.put("/api/deployments/:uuid", updateDeployment);
   app.delete("/api/deployments/:uuid", deleteDeployment);
 
