@@ -542,7 +542,7 @@ export function Deployment() {
                       ))}
                       {availableUsers.length === 0 && (
                         <p className="text-gray-500 text-sm text-center py-4">
-                          All users are assigned
+                          No non-admin users available
                         </p>
                       )}
                     </div>
