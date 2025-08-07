@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Contact } from "@shared/api";
+import { authPut } from "@/lib/api";
 
 interface EditContactModalProps {
   isOpen: boolean;
