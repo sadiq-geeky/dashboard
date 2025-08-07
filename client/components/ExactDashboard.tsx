@@ -5,6 +5,7 @@ import {
   HeartbeatRecord,
 } from "@shared/api";
 import { cn } from "@/lib/utils";
+import { authFetch } from "@/lib/api";
 import { RecordingsAnalytics } from "./RecordingsAnalytics";
 import { ConversationAnalytics } from "./ConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
@@ -62,11 +63,8 @@ const fetchRecordings = async (
       params.append("branch_id", user.branch_id);
     }
 
-    const response = await fetch(`/api/recordings?${params.toString()}`, {
+    const response = await authFetch(`/api/recordings?${params.toString()}`, {
       signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     clearTimeout(timeoutId);
@@ -113,11 +111,8 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    const response = await fetch("/api/heartbeats", {
+    const response = await authFetch("/api/heartbeats", {
       signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     clearTimeout(timeoutId);
