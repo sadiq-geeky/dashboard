@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { heartbeatLogger } from "../utils/logger";
 
 // Get heartbeats with status calculation
-export const getHeartbeats: RequestHandler = async (req, res) => {
+export const getHeartbeats: RequestHandler = async (req: any, res) => {
   const startTime = Date.now();
   const requestId = uuidv4();
   const clientIp = req.ip || req.connection.remoteAddress || "unknown";
@@ -18,6 +18,17 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
   });
 
   try {
+    // Get branch filter from middleware
+    const branchFilter = req.branchFilter;
+
+    let whereClause = "";
+    let queryParams: any[] = [];
+
+    if (branchFilter) {
+      whereClause = `WHERE ldbu.${branchFilter.field} = ?`;
+      queryParams.push(branchFilter.value);
+    }
+
     // Query the heartbeat table with device and branch info
     const query = `
       SELECT
@@ -40,10 +51,11 @@ export const getHeartbeats: RequestHandler = async (req, res) => {
       LEFT JOIN devices d ON d.device_mac = h.mac_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
+      ${whereClause}
       ORDER BY h.last_seen DESC
     `;
 
-    const heartbeats = await executeQuery<HeartbeatRecord>(query);
+    const heartbeats = await executeQuery<HeartbeatRecord>(query, queryParams);
     const duration = Date.now() - startTime;
 
     heartbeatLogger.info("heartbeat-db", "get_heartbeats_success", {
