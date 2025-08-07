@@ -420,8 +420,12 @@ export function InteractiveBranchChart() {
       </div>
 
       {!isDrilldown && (
-        <div className="mt-4 text-xs text-gray-500">
-          💡 Click on any bar to see detailed breakdown. "Others" shows remaining branches.
+        <div className="mt-6 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-xl p-4 border border-blue-100/30">
+          <div className="flex items-center space-x-2 text-sm text-blue-700">
+            <span className="text-lg">💡</span>
+            <span className="font-medium">Pro tip:</span>
+            <span>Click on any bar to see detailed breakdown. "Others" shows remaining branches.</span>
+          </div>
         </div>
       )}
     </div>
