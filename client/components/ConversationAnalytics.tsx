@@ -196,6 +196,16 @@ export function ConversationAnalytics() {
     todayConversations: totalStats?.todayConversations || 0,
   };
 
+  // Safe arrays with defaults
+  const safeCityData = (conversationsByCity || []).map(city => ({
+    city: city?.city || 'Unknown',
+    count: city?.count || 0,
+    branch_count: city?.branch_count || 0,
+  }));
+
+  const safeDailyData = dailyConversationsLastMonth || [];
+  const safeMonthlyData = uniqueCnicsByMonth || [];
+
   return (
     <div className="space-y-6">
       {/* Header */}
