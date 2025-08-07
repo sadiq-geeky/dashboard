@@ -207,12 +207,15 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
       ORDER BY date
     `;
 
-    // Unique CNICs count - using exact user query
+    // 4. Unique CNIC in a month (new CNICs in current month)
     const cnicQuery = `
       SELECT
         COUNT(DISTINCT REPLACE(r.cnic, '-', '')) AS unique_cnic_count
       FROM recordings r
-      WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+      WHERE YEAR(r.start_time) = YEAR(CURDATE())
+        AND MONTH(r.start_time) = MONTH(CURDATE())
+        AND r.cnic IS NOT NULL
+        AND r.cnic != ''
     `;
 
     // Total statistics
