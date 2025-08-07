@@ -91,6 +91,12 @@ export const getConversationsByBranch: RequestHandler = async (req, res) => {
 // Get conversations per branch per month for interactive chart
 export const getConversationsByBranchPerMonth: RequestHandler = async (req, res) => {
   try {
+    // Get branch filter from middleware
+    const branchFilter = (req as any).branchFilter;
+    const branchFilterCondition = branchFilter
+      ? `AND ldbu.branch_id = '${branchFilter.value}'`
+      : '';
+
     const query = `
       SELECT
         ldbu.branch_id,
@@ -104,6 +110,7 @@ export const getConversationsByBranchPerMonth: RequestHandler = async (req, res)
       LEFT JOIN branches b ON b.id = ldbu.branch_id
       WHERE ldbu.branch_id IS NOT NULL
         AND r.start_time >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+        ${branchFilterCondition}
       GROUP BY ldbu.branch_id, b.branch_address, b.branch_city, DATE_FORMAT(r.start_time, '%Y-%m')
       ORDER BY month DESC, count DESC
     `;
