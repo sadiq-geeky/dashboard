@@ -26,6 +26,8 @@ import {
   BarChart3,
   Monitor,
   Settings,
+  Users,
+  Activity,
 } from "lucide-react";
 import { authFetch } from "@/lib/api";
 import { cn } from "@/lib/utils";
