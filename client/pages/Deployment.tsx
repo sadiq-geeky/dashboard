@@ -686,22 +686,25 @@ export function Deployment() {
                     </Select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Select User *
                     </label>
-                    <select
-                      value={selectedUser}
-                      onChange={(e) => setSelectedUser(e.target.value)}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    >
-                      <option value="">Choose a user</option>
-                      {availableUsers.map((user) => (
-                        <option key={user.uuid} value={user.uuid}>
-                          {user.full_name || user.username} ({user.role})
-                        </option>
-                      ))}
-                    </select>
+                    <Select value={selectedUser} onValueChange={setSelectedUser}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose a user" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableUsers.map((user) => (
+                          <SelectItem key={user.uuid} value={user.uuid}>
+                            <div className="flex items-center space-x-2">
+                              <Users className="h-4 w-4 text-purple-500" />
+                              <span className="font-medium">{user.full_name || user.username}</span>
+                              <span className="text-gray-500 capitalize">({user.role})</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="flex justify-end space-x-3 pt-4">
                     <button
