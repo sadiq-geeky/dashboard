@@ -20,13 +20,13 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAdmin } = useAuth();
-  
+
   // Get current active page
   const getCurrentPage = () => {
     const path = location.pathname;
     const urlParams = new URLSearchParams(location.search);
     const tab = urlParams.get("tab");
-    
+
     if (path === "/" && !tab) return "home";
     if (path === "/" && tab === "analytics") return "analytics";
     if (path === "/" && tab === "device-status") return "device-status";
@@ -35,7 +35,7 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
     if (path === "/device-management") return "devices";
     if (path === "/user-management") return "users";
     if (path === "/deployment") return "deployment";
-    
+
     return "";
   };
 
@@ -108,7 +108,7 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
   ];
 
   // Filter items based on admin status
-  const visibleItems = navigationItems.filter(item => 
+  const visibleItems = navigationItems.filter(item =>
     !item.adminOnly || isAdmin()
   );
 
@@ -123,7 +123,7 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
           {coreItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
-            
+
             return (
               <button
                 key={item.id}
@@ -150,7 +150,7 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
           {adminItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
-            
+
             return (
               <button
                 key={item.id}
