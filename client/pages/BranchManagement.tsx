@@ -19,6 +19,7 @@ import {
   Grid3X3,
   BarChart3,
   MessageSquare,
+  Settings,
 } from "lucide-react";
 
 interface Branch {
