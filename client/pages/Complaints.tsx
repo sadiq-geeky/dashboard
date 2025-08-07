@@ -1982,6 +1982,421 @@ export function Complaints() {
                     </div>
                   </div>
                 )}
+
+                {/* Additional Analytics Sections */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                  {/* Monthly Trends Chart */}
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900">Monthly Trends</h3>
+                      <div className="flex items-center space-x-2 text-sm text-gray-500">
+                        <Calendar className="h-4 w-4" />
+                        <span>Last 6 months</span>
+                      </div>
+                    </div>
+                    <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+                      <div className="text-center">
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-end space-x-2">
+                            <div className="flex flex-col items-center">
+                              <div className="w-8 bg-blue-500 rounded-t" style={{ height: '60px' }}></div>
+                              <span className="text-xs text-gray-500 mt-1">Aug</span>
+                              <span className="text-xs font-medium">8</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                              <div className="w-8 bg-blue-500 rounded-t" style={{ height: '40px' }}></div>
+                              <span className="text-xs text-gray-500 mt-1">Sep</span>
+                              <span className="text-xs font-medium">5</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                              <div className="w-8 bg-blue-500 rounded-t" style={{ height: '80px' }}></div>
+                              <span className="text-xs text-gray-500 mt-1">Oct</span>
+                              <span className="text-xs font-medium">12</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                              <div className="w-8 bg-blue-500 rounded-t" style={{ height: '30px' }}></div>
+                              <span className="text-xs text-gray-500 mt-1">Nov</span>
+                              <span className="text-xs font-medium">4</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                              <div className="w-8 bg-blue-500 rounded-t" style={{ height: '50px' }}></div>
+                              <span className="text-xs text-gray-500 mt-1">Dec</span>
+                              <span className="text-xs font-medium">7</span>
+                            </div>
+                            <div className="flex flex-col items-center">
+                              <div className="w-8 bg-blue-600 rounded-t" style={{ height: '20px' }}></div>
+                              <span className="text-xs text-gray-500 mt-1">Jan</span>
+                              <span className="text-xs font-medium">2</span>
+                            </div>
+                          </div>
+                          <div className="text-xs text-gray-500">Monthly Complaints Volume</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex justify-between text-sm">
+                      <div className="text-green-600">↓ 71% vs last month</div>
+                      <div className="text-gray-500">Avg: 6.3 complaints/month</div>
+                    </div>
+                  </div>
+
+                  {/* Customer Satisfaction Breakdown */}
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Customer Satisfaction Analysis</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                          <span className="text-gray-700">Very Satisfied</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div className="bg-green-500 h-2 rounded-full w-3/4"></div>
+                          </div>
+                          <span className="text-sm font-medium w-10">75%</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                          <span className="text-gray-700">Satisfied</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div className="bg-blue-500 h-2 rounded-full w-1/5"></div>
+                          </div>
+                          <span className="text-sm font-medium w-10">20%</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-4 h-4 bg-orange-500 rounded-full"></div>
+                          <span className="text-gray-700">Neutral</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div className="bg-orange-500 h-2 rounded-full" style={{ width: '3%' }}></div>
+                          </div>
+                          <span className="text-sm font-medium w-10">3%</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                          <span className="text-gray-700">Dissatisfied</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div className="bg-red-500 h-2 rounded-full" style={{ width: '2%' }}></div>
+                          </div>
+                          <span className="text-sm font-medium w-10">2%</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-6 bg-green-50 rounded-lg p-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-green-800">Overall Score: 4.7/5.0</p>
+                          <p className="text-xs text-green-600">↗ +0.2 vs last month</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Issue Categories and Response Time Analysis */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                  {/* Issue Categories */}
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Issue Categories</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Audio Quality</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                            <div className="bg-red-500 h-1.5 rounded-full w-3/5"></div>
+                          </div>
+                          <span className="text-xs font-medium w-6">60%</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Device Issues</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                            <div className="bg-orange-500 h-1.5 rounded-full w-1/4"></div>
+                          </div>
+                          <span className="text-xs font-medium w-6">25%</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Software</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                            <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: '10%' }}></div>
+                          </div>
+                          <span className="text-xs font-medium w-6">10%</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Network</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                            <div className="bg-purple-500 h-1.5 rounded-full" style={{ width: '5%' }}></div>
+                          </div>
+                          <span className="text-xs font-medium w-6">5%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Response Time Metrics */}
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Response Times</h3>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">First Response</span>
+                        <span className="text-sm font-medium">2.4 hrs</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Resolution</span>
+                        <span className="text-sm font-medium">2.3 days</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Escalation</span>
+                        <span className="text-sm font-medium">4.1 hrs</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Follow-up</span>
+                        <span className="text-sm font-medium">24 hrs</span>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <div className="flex items-center space-x-2 text-sm">
+                        <Clock className="h-4 w-4 text-green-600" />
+                        <span className="text-green-600">98% within SLA</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Team Performance */}
+                  <div className="bg-white rounded-lg shadow p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Team Performance</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                            <User className="h-3 w-3 text-blue-600" />
+                          </div>
+                          <span className="text-sm">A. Ahmad</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex text-yellow-400">
+                            {'★'.repeat(5)}
+                          </div>
+                          <span className="text-xs text-gray-500">12 cases</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                            <User className="h-3 w-3 text-green-600" />
+                          </div>
+                          <span className="text-sm">S. Khan</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex text-yellow-400">
+                            {'★'.repeat(4)}{'☆'.repeat(1)}
+                          </div>
+                          <span className="text-xs text-gray-500">8 cases</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center">
+                            <User className="h-3 w-3 text-purple-600" />
+                          </div>
+                          <span className="text-sm">M. Ali</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex text-yellow-400">
+                            {'★'.repeat(4)}{'☆'.repeat(1)}
+                          </div>
+                          <span className="text-xs text-gray-500">6 cases</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Predictive Analytics and Recommendations */}
+                <div className="bg-white rounded-lg shadow p-6 mb-8">
+                  <div className="flex items-center space-x-2 mb-6">
+                    <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                      <BarChart3 className="h-4 w-4 text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">AI-Powered Insights & Recommendations</h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Trend Prediction */}
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
+                      <div className="flex items-center space-x-2 mb-3">
+                        <Activity className="h-5 w-5 text-blue-600" />
+                        <h4 className="font-medium text-blue-900">Trend Forecast</h4>
+                      </div>
+                      <p className="text-sm text-blue-800 mb-2">Based on current patterns, we predict:</p>
+                      <ul className="text-xs text-blue-700 space-y-1">
+                        <li>• 15% reduction in complaints next month</li>
+                        <li>• Audio quality issues may increase by 3%</li>
+                        <li>• Peak hours: 10 AM - 2 PM</li>
+                      </ul>
+                    </div>
+
+                    {/* Recommendations */}
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4">
+                      <div className="flex items-center space-x-2 mb-3">
+                        <CheckCircle className="h-5 w-5 text-green-600" />
+                        <h4 className="font-medium text-green-900">Recommendations</h4>
+                      </div>
+                      <ul className="text-xs text-green-700 space-y-1">
+                        <li>• Schedule audio equipment maintenance</li>
+                        <li>• Increase staff during peak hours</li>
+                        <li>• Implement proactive customer outreach</li>
+                        <li>• Update software to latest version</li>
+                      </ul>
+                    </div>
+
+                    {/* Risk Assessment */}
+                    <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4">
+                      <div className="flex items-center space-x-2 mb-3">
+                        <AlertTriangle className="h-5 w-5 text-orange-600" />
+                        <h4 className="font-medium text-orange-900">Risk Alerts</h4>
+                      </div>
+                      <ul className="text-xs text-orange-700 space-y-1">
+                        <li>• 🟡 Medium: Audio quality degradation</li>
+                        <li>• 🟢 Low: Response time compliance</li>
+                        <li>• 🟢 Low: Customer satisfaction risk</li>
+                        <li>• 🟡 Medium: Resource utilization</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Comparative Benchmarks */}
+                <div className="bg-white rounded-lg shadow p-6 mb-8">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-6">Performance Benchmarks</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-4">vs Industry Standards</h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Resolution Time</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-medium text-green-600">2.3 days</span>
+                            <span className="text-xs text-gray-500">(Industry: 3.1 days)</span>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Customer Satisfaction</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-medium text-green-600">4.7/5</span>
+                            <span className="text-xs text-gray-500">(Industry: 4.2/5)</span>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">First Response</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-medium text-green-600">2.4 hrs</span>
+                            <span className="text-xs text-gray-500">(Industry: 4.0 hrs)</span>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-4">vs Other Branches</h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Complaint Volume</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-medium text-green-600">Rank #1</span>
+                            <span className="text-xs text-gray-500">(Lowest)</span>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Resolution Efficiency</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-medium text-green-600">Rank #2</span>
+                            <span className="text-xs text-gray-500">(Top performing)</span>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Customer Retention</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-medium text-green-600">98.5%</span>
+                            <span className="text-xs text-gray-500">(Branch avg: 96.2%)</span>
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Operational Insights */}
+                <div className="bg-white rounded-lg shadow">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900">Operational Insights</h3>
+                    <p className="text-sm text-gray-500 mt-1">Real-time system performance and health metrics</p>
+                  </div>
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                      <div className="text-center p-4 bg-gray-50 rounded-lg">
+                        <div className="text-2xl font-bold text-gray-900">99.2%</div>
+                        <div className="text-sm text-gray-600">System Uptime</div>
+                        <div className="text-xs text-green-600 mt-1">↗ +0.3% this month</div>
+                      </div>
+                      <div className="text-center p-4 bg-gray-50 rounded-lg">
+                        <div className="text-2xl font-bold text-gray-900">1.2s</div>
+                        <div className="text-sm text-gray-600">Avg Response Time</div>
+                        <div className="text-xs text-green-600 mt-1">↓ -0.1s improved</div>
+                      </div>
+                      <div className="text-center p-4 bg-gray-50 rounded-lg">
+                        <div className="text-2xl font-bold text-gray-900">256</div>
+                        <div className="text-sm text-gray-600">Active Users</div>
+                        <div className="text-xs text-blue-600 mt-1">↗ +12 this week</div>
+                      </div>
+                      <div className="text-center p-4 bg-gray-50 rounded-lg">
+                        <div className="text-2xl font-bold text-gray-900">8.7GB</div>
+                        <div className="text-sm text-gray-600">Data Processed</div>
+                        <div className="text-xs text-gray-600 mt-1">Today</div>
+                      </div>
+                    </div>
+
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <div className="flex items-start space-x-3">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <BarChart3 className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-blue-900">Performance Summary</h4>
+                          <p className="text-sm text-blue-800 mt-1">
+                            Your branch is performing exceptionally well with 95% fewer complaints than last month,
+                            industry-leading response times, and the highest customer satisfaction score across all branches.
+                            The AI system recommends maintaining current practices while focusing on preventive maintenance
+                            to sustain this excellent performance.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
           </div>
