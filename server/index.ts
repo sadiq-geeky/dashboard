@@ -72,6 +72,7 @@ import {
   updateDeployment,
 } from "./routes/deployments-db";
 import { populateData } from "./routes/populate-data";
+import { debugAudioFiles } from "./routes/debug-audio";
 
 export function createServer() {
   const app = express();
