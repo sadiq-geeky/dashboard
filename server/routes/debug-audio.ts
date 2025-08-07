@@ -3,12 +3,12 @@ import { executeQuery } from "../config/database";
 import path from "path";
 import fs from "fs";
 
-const uploadDir = path.join(process.cwd(), "uploads");
+const uploadDir = path.resolve(process.cwd(), "uploads");
 
 export const debugAudioFiles: RequestHandler = async (req, res) => {
   try {
     console.log("🔍 Debug: Checking audio files status...");
-    
+
     // Get all recordings with file names from database
     const recordings = await executeQuery<{
       id: string;
@@ -16,9 +16,9 @@ export const debugAudioFiles: RequestHandler = async (req, res) => {
       created_on: string;
     }>(`
       SELECT id, file_name, CREATED_ON as created_on
-      FROM recordings 
-      WHERE file_name IS NOT NULL 
-      ORDER BY CREATED_ON DESC 
+      FROM recordings
+      WHERE file_name IS NOT NULL
+      ORDER BY CREATED_ON DESC
       LIMIT 20
     `);
 
@@ -27,10 +27,10 @@ export const debugAudioFiles: RequestHandler = async (req, res) => {
     // Check uploads directory
     const uploadDirExists = fs.existsSync(uploadDir);
     let filesOnDisk: string[] = [];
-    
+
     if (uploadDirExists) {
       try {
-        filesOnDisk = fs.readdirSync(uploadDir).filter(file => 
+        filesOnDisk = fs.readdirSync(uploadDir).filter(file =>
           file.endsWith('.wav') || file.endsWith('.mp3')
         );
         console.log(`📁 Found ${filesOnDisk.length} audio files on disk`);
@@ -45,7 +45,7 @@ export const debugAudioFiles: RequestHandler = async (req, res) => {
     const fileStatus = recordings.map(recording => {
       const exists = filesOnDisk.includes(recording.file_name);
       const filePath = path.join(uploadDir, recording.file_name);
-      
+
       return {
         id: recording.id,
         file_name: recording.file_name,
