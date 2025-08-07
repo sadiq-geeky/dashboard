@@ -83,7 +83,24 @@ export function UserManagement() {
     setShowEditModal(true);
   };
 
+  const isSystemAdmin = (user: User) => {
+    // Check if user is a system administrator (admin role and specific usernames)
+    return user.role === "admin" && (
+      user.username === "admin" ||
+      user.username === "system" ||
+      user.username === "administrator" ||
+      user.emp_name === "System Administrator"
+    );
+  };
+
   const handleDeleteUser = async (uuid: string) => {
+    const user = users.find(u => u.uuid === uuid);
+
+    if (user && isSystemAdmin(user)) {
+      alert("Cannot delete system administrator account. This action is not permitted for security reasons.");
+      return;
+    }
+
     if (!confirm("Are you sure you want to delete this user?")) {
       return;
     }
