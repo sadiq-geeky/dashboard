@@ -220,7 +220,7 @@ export function DeviceManagement() {
         style={{ display: "flex", flexDirection: "column" }}
       >
         <div
-          className="flex items-center justify-between h-16 px-6"
+          className="flex items-center justify-between h-12 px-4"
           style={{ margin: "0 auto" }}
         >
           <div className="flex items-center space-x-1">
