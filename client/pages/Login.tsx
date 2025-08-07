@@ -44,17 +44,21 @@ export function Login() {
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <div className="mx-auto h-32 w-32 flex items-center justify-center">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets%2F7967a1920bbf4ce0ae781c5d84b92543%2F0958e94a3cce420e957ba5a524dc2794?format=webp&width=800"
-              alt="Bank Alfalah Logo"
-              className="h-24 w-auto object-contain"
-            />
+          <div className="flex items-center justify-center gap-6 mb-6">
+            <div className="flex-shrink-0">
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2F7967a1920bbf4ce0ae781c5d84b92543%2F0958e94a3cce420e957ba5a524dc2794?format=webp&width=800"
+                alt="Bank Alfalah Logo"
+                className="h-32 w-auto object-contain"
+              />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-3xl font-extrabold text-gray-900">
+                Sign in to your account
+              </h2>
+            </div>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="text-center text-sm text-gray-600">
             Voice Recording System
           </p>
           <p className="mt-1 text-center text-xs text-gray-500">
