@@ -218,8 +218,7 @@ export function createServer() {
   app.put("/api/deployments/:uuid", updateDeployment);
   app.delete("/api/deployments/:uuid", deleteDeployment);
 
-  // Sample data population (development/testing only)
-  app.post("/api/populate-sample-data", populateData);
+
 
   // Debug endpoint for audio files (development only)
   app.get("/api/debug/audio-files", debugAudioFiles);
