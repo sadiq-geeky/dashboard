@@ -183,6 +183,41 @@ export function Complaints() {
     }
   };
 
+  // Fetch analytics data
+  const fetchAnalytics = async () => {
+    try {
+      setAnalyticsData(prev => ({ ...prev, loading: true, error: null }));
+
+      const params = new URLSearchParams();
+      if (!isAdmin() && user?.branch_id) {
+        params.append("branch_id", user.branch_id);
+      }
+
+      const url = params.toString()
+        ? `/api/complaints/analytics?${params.toString()}`
+        : "/api/complaints/analytics";
+
+      const response = await authFetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        setAnalyticsData(prev => ({
+          ...prev,
+          ...data,
+          loading: false
+        }));
+      } else {
+        throw new Error('Failed to fetch analytics');
+      }
+    } catch (error) {
+      console.error("Error fetching analytics:", error);
+      setAnalyticsData(prev => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Failed to load analytics'
+      }));
+    }
+  };
+
   // Fetch detailed complaint
   const fetchComplaintDetails = async (complaintId: string) => {
     try {
