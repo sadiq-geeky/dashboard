@@ -279,6 +279,7 @@ export function ExactDashboard() {
   // Force refresh analytics components when analytics tab becomes active
   useEffect(() => {
     if (activeTab === "analytics") {
+      console.log("Analytics tab activated, forcing component refresh");
       // Force a refresh by updating lastUpdate to trigger component remount
       setLastUpdate(new Date());
     }
