@@ -126,6 +126,37 @@ export function GoogleRecordingsAnalytics() {
   const branchStats = analytics.branchStats || [];
   const statusDistribution = analytics.statusDistribution || [];
 
+  // Check if all data is empty
+  const hasNoData =
+    dailyRecordings.length === 0 &&
+    branchStats.length === 0 &&
+    statusDistribution.length === 0 &&
+    (!analytics.totalRecordings || analytics.totalRecordings === 0);
+
+  if (hasNoData) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="h-12 w-12 text-gray-400 mx-auto mb-2">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          </div>
+          <p className="text-gray-600">No recording data found</p>
+          <p className="text-gray-500 text-sm mt-1">
+            There are no recordings to analyze yet.
+          </p>
+          <button
+            onClick={fetchAnalytics}
+            className="mt-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Refresh Data
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const dailyChartData =
     dailyRecordings.length > 0
       ? [
