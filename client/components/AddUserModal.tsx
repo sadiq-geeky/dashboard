@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
+import { authPost } from "@/lib/api";
 
 interface AddUserModalProps {
   isOpen: boolean;
