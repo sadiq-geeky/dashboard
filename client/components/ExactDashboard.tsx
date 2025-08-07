@@ -767,6 +767,9 @@ export function ExactDashboard() {
                         <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Branch Address
                         </th>
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Audio
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
