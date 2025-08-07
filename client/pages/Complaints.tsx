@@ -183,10 +183,8 @@ export function Complaints() {
   };
 
   useEffect(() => {
-    if (isAdminOrManager()) {
-      fetchComplaints();
-      fetchStats();
-    }
+    fetchComplaints();
+    fetchStats();
   }, [
     currentPage,
     sortBy,
