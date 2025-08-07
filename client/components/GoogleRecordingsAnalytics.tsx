@@ -50,55 +50,6 @@ export function GoogleRecordingsAnalytics() {
       );
       // Don't set mock data - leave analytics as null to show error state
       setAnalytics(null);
-      setAnalytics({
-        totalRecordings: 1234,
-        completedRecordings: 1156,
-        failedRecordings: 45,
-        inProgressRecordings: 33,
-        avgDuration: 204, // seconds
-        todayRecordings: 48,
-        dailyRecordings: [
-          { date: "2024-01-15", count: 42 },
-          { date: "2024-01-16", count: 38 },
-          { date: "2024-01-17", count: 55 },
-          { date: "2024-01-18", count: 47 },
-          { date: "2024-01-19", count: 61 },
-          { date: "2024-01-20", count: 48 },
-          { date: "2024-01-21", count: 52 },
-        ],
-        branchStats: [
-          { branch_name: "Downtown Branch", total_recordings: 324 },
-          { branch_name: "North Branch", total_recordings: 256 },
-          { branch_name: "South Branch", total_recordings: 198 },
-          { branch_name: "East Branch", total_recordings: 187 },
-          { branch_name: "West Branch", total_recordings: 269 },
-        ],
-        statusDistribution: [
-          { status: "completed", count: 1156 },
-          { status: "failed", count: 45 },
-          { status: "in_progress", count: 33 },
-        ],
-        monthlyTrends: [
-          {
-            month: "Jan",
-            recordings: 1234,
-            avgDuration: 204,
-            todayRecordings: 48,
-          },
-          {
-            month: "Dec",
-            recordings: 1098,
-            avgDuration: 198,
-            todayRecordings: 42,
-          },
-          {
-            month: "Nov",
-            recordings: 987,
-            avgDuration: 201,
-            todayRecordings: 39,
-          },
-        ],
-      });
     } finally {
       setLoading(false);
     }
