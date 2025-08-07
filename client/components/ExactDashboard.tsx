@@ -836,10 +836,14 @@ export function ExactDashboard() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h1 className="text-lg font-bold text-gray-900">
-                      {isAdmin() ? "Analytics Dashboard" : `${user?.branch_city || "Branch"} Analytics`}
+                      {isAdmin()
+                        ? "Analytics Dashboard"
+                        : `${user?.branch_city || "Branch"} Analytics`}
                     </h1>
                     <p className="text-sm text-gray-600">
-                      {isAdmin() ? "Comprehensive insights and metrics" : "Analytics and insights for your branch"}
+                      {isAdmin()
+                        ? "Comprehensive insights and metrics"
+                        : "Analytics and insights for your branch"}
                     </p>
                   </div>
                   <button
@@ -853,10 +857,6 @@ export function ExactDashboard() {
                     <span>Refresh Data</span>
                   </button>
                 </div>
-
-
-
-
 
                 {/* Analytics Content - Exact same as Complaints analytics */}
                 <ComplaintsStyleAnalytics />

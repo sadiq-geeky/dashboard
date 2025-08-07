@@ -31,13 +31,17 @@ export function GoogleRecordingsAnalytics() {
       setLoading(true);
       setError(null);
 
-      console.log("Fetching recordings analytics from /api/analytics/recordings");
+      console.log(
+        "Fetching recordings analytics from /api/analytics/recordings",
+      );
       const response = await authFetch("/api/analytics/recordings");
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error("API Error Response:", response.status, errorText);
-        throw new Error(`Failed to fetch analytics: ${response.status} - ${errorText}`);
+        throw new Error(
+          `Failed to fetch analytics: ${response.status} - ${errorText}`,
+        );
       }
 
       const data = await response.json();
@@ -104,14 +108,14 @@ export function GoogleRecordingsAnalytics() {
         <div className="text-center">
           <div className="h-12 w-12 text-gray-400 mx-auto mb-2">
             <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
           </div>
-          <p className="text-gray-600">No recordings analytics data available</p>
+          <p className="text-gray-600">
+            No recordings analytics data available
+          </p>
           {error && (
-            <p className="text-red-600 text-sm mt-2 mb-2">
-              Error: {error}
-            </p>
+            <p className="text-red-600 text-sm mt-2 mb-2">Error: {error}</p>
           )}
           <button
             onClick={fetchAnalytics}
@@ -142,7 +146,7 @@ export function GoogleRecordingsAnalytics() {
         <div className="text-center">
           <div className="h-12 w-12 text-gray-400 mx-auto mb-2">
             <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
           </div>
           <p className="text-gray-600">No recording data found</p>

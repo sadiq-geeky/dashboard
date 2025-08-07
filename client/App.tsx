@@ -101,8 +101,12 @@ if (typeof window !== "undefined") {
   // Try to suppress React development warnings specifically for defaultProps
   try {
     // Override React's internal warning methods
-    if ((window as any).React && (window as any).React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED) {
-      const internals = (window as any).React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+    if (
+      (window as any).React &&
+      (window as any).React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+    ) {
+      const internals = (window as any).React
+        .__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
 
       // Try to override the warning function
       if (internals.ReactDebugCurrentFrame) {
@@ -132,12 +136,12 @@ if (typeof window !== "undefined") {
     // Try to intercept console.warn at the React level
     const originalConsoleWarn = console.warn;
     console.warn = (...args) => {
-      const message = args.join(' ');
+      const message = args.join(" ");
       if (
-        message.includes('defaultProps') ||
-        message.includes('XAxis') ||
-        message.includes('YAxis') ||
-        message.includes('recharts')
+        message.includes("defaultProps") ||
+        message.includes("XAxis") ||
+        message.includes("YAxis") ||
+        message.includes("recharts")
       ) {
         return;
       }

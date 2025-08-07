@@ -75,20 +75,27 @@ export function GoogleConversationAnalytics() {
       setLoading(true);
       setError(null);
 
-      console.log("Fetching conversation analytics from /api/analytics/conversations");
+      console.log(
+        "Fetching conversation analytics from /api/analytics/conversations",
+      );
       const response = await authFetch("/api/analytics/conversations");
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error("API Error Response:", response.status, errorText);
-        throw new Error(`Failed to fetch analytics: ${response.status} - ${errorText}`);
+        throw new Error(
+          `Failed to fetch analytics: ${response.status} - ${errorText}`,
+        );
       }
 
       const data = await response.json();
       console.log("Received conversation analytics data:", data);
       console.log("Data has totalStats:", !!data.totalStats);
       console.log("Total conversations:", data.totalStats?.totalConversations);
-      console.log("Conversations by branch length:", data.conversationsByBranch?.length);
+      console.log(
+        "Conversations by branch length:",
+        data.conversationsByBranch?.length,
+      );
       setAnalytics(data);
     } catch (error) {
       console.error("Error fetching conversation analytics:", error);
@@ -143,11 +150,11 @@ export function GoogleConversationAnalytics() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-          <p className="text-gray-600">No conversation analytics data available</p>
+          <p className="text-gray-600">
+            No conversation analytics data available
+          </p>
           {error && (
-            <p className="text-red-600 text-sm mt-2 mb-2">
-              Error: {error}
-            </p>
+            <p className="text-red-600 text-sm mt-2 mb-2">Error: {error}</p>
           )}
           <button
             onClick={fetchAnalytics}

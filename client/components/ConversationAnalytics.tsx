@@ -197,8 +197,8 @@ export function ConversationAnalytics() {
   };
 
   // Safe arrays with defaults
-  const safeCityData = (conversationsByCity || []).map(city => ({
-    city: city?.city || 'Unknown',
+  const safeCityData = (conversationsByCity || []).map((city) => ({
+    city: city?.city || "Unknown",
     count: city?.count || 0,
     branch_count: city?.branch_count || 0,
   }));
@@ -500,9 +500,7 @@ export function ConversationAnalytics() {
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">Top City</p>
             <p className="text-xl font-bold text-purple-600">
-              {safeCityData.length > 0
-                ? safeCityData[0].city
-                : "N/A"}
+              {safeCityData.length > 0 ? safeCityData[0].city : "N/A"}
             </p>
           </div>
         </div>

@@ -48,14 +48,14 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
       label: "Home",
       icon: Grid3X3,
       onClick: () => navigate("/"),
-      group: "core"
+      group: "core",
     },
     {
       id: "analytics",
       label: "Analytics",
       icon: BarChart3,
       onClick: () => navigate("/?tab=analytics"),
-      group: "core"
+      group: "core",
     },
     {
       id: "device-status",
@@ -63,14 +63,14 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
       icon: Monitor,
       onClick: () => navigate("/?tab=device-status"),
       group: "core",
-      adminOnly: true
+      adminOnly: true,
     },
     {
       id: "complaints",
       label: "Complaints",
       icon: Mail,
       onClick: () => navigate("/complaints"),
-      group: "core"
+      group: "core",
     },
     // Second group: Admin management
     {
@@ -79,7 +79,7 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
       icon: Building2,
       onClick: () => navigate("/branch-management"),
       group: "admin",
-      adminOnly: true
+      adminOnly: true,
     },
     {
       id: "devices",
@@ -87,7 +87,7 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
       icon: Monitor,
       onClick: () => navigate("/device-management"),
       group: "admin",
-      adminOnly: true
+      adminOnly: true,
     },
     {
       id: "users",
@@ -95,7 +95,7 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
       icon: Users,
       onClick: () => navigate("/user-management"),
       group: "admin",
-      adminOnly: true
+      adminOnly: true,
     },
     {
       id: "deployment",
@@ -103,20 +103,22 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
       icon: Settings,
       onClick: () => navigate("/deployment"),
       group: "admin",
-      adminOnly: true
-    }
+      adminOnly: true,
+    },
   ];
 
   // Filter items based on admin status
-  const visibleItems = navigationItems.filter(item =>
-    !item.adminOnly || isAdmin()
+  const visibleItems = navigationItems.filter(
+    (item) => !item.adminOnly || isAdmin(),
   );
 
-  const coreItems = visibleItems.filter(item => item.group === "core");
-  const adminItems = visibleItems.filter(item => item.group === "admin");
+  const coreItems = visibleItems.filter((item) => item.group === "core");
+  const adminItems = visibleItems.filter((item) => item.group === "admin");
 
   return (
-    <div className={cn("bg-white border-b border-gray-200 shadow-sm", className)}>
+    <div
+      className={cn("bg-white border-b border-gray-200 shadow-sm", className)}
+    >
       <div className="flex items-center justify-start py-4 px-4">
         <div className="flex items-center space-x-3">
           {/* Core functionality group */}

@@ -1,10 +1,12 @@
-import React, { ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect } from "react";
 
 interface RechartsWarningSuppressionWrapperProps {
   children: ReactNode;
 }
 
-export function RechartsWarningSuppressionWrapper({ children }: RechartsWarningSuppressionWrapperProps) {
+export function RechartsWarningSuppressionWrapper({
+  children,
+}: RechartsWarningSuppressionWrapperProps) {
   useEffect(() => {
     // Store original console methods
     const originalWarn = console.warn;
@@ -12,14 +14,14 @@ export function RechartsWarningSuppressionWrapper({ children }: RechartsWarningS
 
     // Override console methods specifically for this component's lifecycle
     console.warn = (...args) => {
-      const message = args.join(' ');
+      const message = args.join(" ");
       if (
-        message.includes('defaultProps will be removed') ||
-        message.includes('Support for defaultProps') ||
-        message.includes('XAxis') ||
-        message.includes('YAxis') ||
-        message.includes('recharts') ||
-        message.includes('CategoricalChartWrapper')
+        message.includes("defaultProps will be removed") ||
+        message.includes("Support for defaultProps") ||
+        message.includes("XAxis") ||
+        message.includes("YAxis") ||
+        message.includes("recharts") ||
+        message.includes("CategoricalChartWrapper")
       ) {
         return; // Suppress recharts warnings
       }
@@ -27,12 +29,12 @@ export function RechartsWarningSuppressionWrapper({ children }: RechartsWarningS
     };
 
     console.error = (...args) => {
-      const message = args.join(' ');
+      const message = args.join(" ");
       if (
-        message.includes('defaultProps') ||
-        message.includes('XAxis') ||
-        message.includes('YAxis') ||
-        message.includes('recharts')
+        message.includes("defaultProps") ||
+        message.includes("XAxis") ||
+        message.includes("YAxis") ||
+        message.includes("recharts")
       ) {
         return; // Suppress recharts errors
       }

@@ -117,9 +117,7 @@ export function ComplaintsStyleAnalytics() {
         {dashboardData.loading ? (
           <div className="flex items-center justify-center py-8">
             <RefreshCw className="h-5 w-5 animate-spin text-blue-600 mr-2" />
-            <span className="text-gray-600">
-              Loading conversation data...
-            </span>
+            <span className="text-gray-600">Loading conversation data...</span>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -183,8 +181,8 @@ export function ComplaintsStyleAnalytics() {
                     Unique CNIC
                   </p>
                   <p className="text-3xl font-bold text-purple-900">
-                    {dashboardData.conversations?.totalStats
-                      ?.uniqueCustomers || "—"}
+                    {dashboardData.conversations?.totalStats?.uniqueCustomers ||
+                      "—"}
                   </p>
                 </div>
                 <div className="p-3 bg-purple-200 rounded-lg">
