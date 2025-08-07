@@ -187,7 +187,7 @@ export function GoogleConversationAnalytics() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Active Branches</p>
-              <p className="text-2xl font-bold text-gray-900">{analytics.activeBranches}</p>
+              <p className="text-2xl font-bold text-gray-900">{analytics.activeBranches || 0}</p>
             </div>
             <Building2 className="h-8 w-8 text-purple-500" />
           </div>
