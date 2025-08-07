@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { HeartbeatRecord } from "@shared/api";
 import { cn } from "@/lib/utils";
+import { authFetch } from "@/lib/api";
 import {
   Search,
   Filter,
