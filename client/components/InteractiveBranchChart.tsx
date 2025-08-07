@@ -292,34 +292,74 @@ export function InteractiveBranchChart() {
       </div>
 
       {/* Chart */}
-      <div className="h-96">
+      <div className="h-96 bg-gradient-to-b from-gray-50/30 to-white/30 rounded-xl p-4 border border-gray-100/50">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={isDrilldown ? drilldownData : chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <defs>
+              <linearGradient id="primaryGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.9} />
+                <stop offset="100%" stopColor="#1d4ed8" stopOpacity={0.8} />
+              </linearGradient>
+              <linearGradient id="othersGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.9} />
+                <stop offset="100%" stopColor="#d97706" stopOpacity={0.8} />
+              </linearGradient>
+              <linearGradient id="drilldownGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
+                <stop offset="100%" stopColor="#059669" stopOpacity={0.8} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              strokeDasharray="2 4"
+              stroke="#e5e7eb"
+              strokeOpacity={0.5}
+              vertical={false}
+            />
             <XAxis
               dataKey="name"
               angle={-45}
               textAnchor="end"
               height={80}
-              fontSize={12}
+              fontSize={11}
+              fontWeight={500}
               interval={0}
+              tick={{ fill: '#6b7280' }}
+              axisLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+              tickLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
             />
-            <YAxis fontSize={12} />
-            <Tooltip content={<CustomTooltip />} />
+            <YAxis
+              fontSize={11}
+              fontWeight={500}
+              tick={{ fill: '#6b7280' }}
+              axisLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+              tickLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+              tickFormatter={(value) => value.toLocaleString()}
+            />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }} />
             <Bar
               dataKey="conversations"
               cursor="pointer"
               onClick={isDrilldown ? undefined : handleBarClick}
+              radius={[4, 4, 0, 0]}
             >
-              {(isDrilldown ? drilldownData : chartData).map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={entry.isOthers ? "#f59e0b" : "#3b82f6"}
-                />
-              ))}
+              {(isDrilldown ? drilldownData : chartData).map((entry, index) => {
+                let fillColor = "url(#primaryGradient)";
+                if (isDrilldown) {
+                  fillColor = "url(#drilldownGradient)";
+                } else if (entry.isOthers) {
+                  fillColor = "url(#othersGradient)";
+                }
+
+                return (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={fillColor}
+                  />
+                );
+              })}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
