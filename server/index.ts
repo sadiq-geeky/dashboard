@@ -78,6 +78,10 @@ export function createServer() {
   // Initialize database connection
   initializeDatabase().catch(console.error);
 
+  // Initialize password reset table and verify email connection
+  initPasswordResetTable().catch(console.error);
+  verifyEmailConnection().catch(console.error);
+
   // Middleware
   app.use(cors());
   app.use(express.json());
