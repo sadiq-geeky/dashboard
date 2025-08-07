@@ -59,6 +59,12 @@ import {
   getUserProfile,
 } from "./routes/users-db";
 import {
+  forgotPassword,
+  resetPassword,
+  validateResetToken,
+  initPasswordResetTable
+} from "./routes/auth";
+import {
   getDeployments,
   createDeployment,
   deleteDeployment,
