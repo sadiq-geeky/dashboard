@@ -590,7 +590,7 @@ export function ExactDashboard() {
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.branch_address || "NA"}
                           </td>
-                          <td className="py-2 px-2">
+                          <td className="py-1 px-1.5">
                             <button className="text-gray-400 hover:text-gray-600">
                               <MoreHorizontal className="w-4 h-4" />
                             </button>
