@@ -51,14 +51,6 @@ export function ProtectedRoute({
   }
 
   if (managerOrAdmin && !isAdminOrManager()) {
-    console.log("Access denied debug:", {
-      managerOrAdmin,
-      user,
-      userRole: user?.role,
-      isAdmin: isAdmin(),
-      isManager: isAdminOrManager(),
-      isAdminOrManager: isAdminOrManager()
-    });
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -71,9 +63,6 @@ export function ProtectedRoute({
           <p className="text-sm text-gray-500">
             Manager or Administrator access required.
           </p>
-          <div className="mt-4 text-xs text-gray-400">
-            User role: {user?.role || 'undefined'}
-          </div>
         </div>
       </div>
     );
