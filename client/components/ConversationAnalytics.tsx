@@ -395,7 +395,7 @@ export function ConversationAnalytics() {
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
-              data={uniqueCnicsByMonth.reverse()}
+              data={safeMonthlyData.slice().reverse()}
               layout="horizontal"
               margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
             >
