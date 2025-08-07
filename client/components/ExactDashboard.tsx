@@ -948,50 +948,43 @@ export function ExactDashboard() {
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </div>
                 {selectedRecording ? (
-                  <div className="flex space-x-4">
-                    {/* Left side - Avatar and basic info */}
-                    <div className="flex-shrink-0">
-                      <div className="w-16 h-20 bg-white rounded border border-gray-200 p-2 flex flex-col items-center justify-center">
-                        <div className="w-10 h-10 bg-orange-400 rounded-full flex items-center justify-center text-white font-medium text-sm mb-1">
-                          {selectedRecording.cnic?.charAt(0).toUpperCase() ||
-                            "A"}
+                  <div className="space-y-3">
+                    {/* Top section - Avatar and name */}
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-orange-400 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                        {selectedRecording.cnic?.charAt(0).toUpperCase() || "A"}
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">
+                          Ahmed Shah
                         </div>
-                        <div className="text-center">
-                          <div className="text-xs font-medium text-gray-900">
-                            Ahmed Shah
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            ID # 239982
-                          </div>
+                        <div className="text-xs text-gray-500">
+                          ID # 239982
                         </div>
                       </div>
                     </div>
 
-                    {/* Right side - Compact details */}
-                    <div className="flex-1 space-y-1 text-xs">
-                      <div className="flex">
-                        <span className="text-gray-600 w-20">Gender :</span>
+                    {/* Details section - Two columns for better alignment */}
+                    <div className="grid grid-cols-1 gap-y-1.5 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">Gender:</span>
                         <span className="text-gray-800">Male</span>
                       </div>
-                      <div className="flex">
-                        <span className="text-gray-600 w-20">
-                          Date of Birth :
-                        </span>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">DOB:</span>
                         <span className="text-gray-800">05/09/1996</span>
                       </div>
-                      <div className="flex">
-                        <span className="text-gray-600 w-20">CNIC :</span>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">CNIC:</span>
                         <span className="text-gray-800">61901-1234567-1</span>
                       </div>
-                      <div className="flex">
-                        <span className="text-gray-600 w-20">
-                          Phone Number :
-                        </span>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">Phone:</span>
                         <span className="text-gray-800">0321-9876543</span>
                       </div>
-                      <div className="flex">
-                        <span className="text-gray-600 w-20">Email ID :</span>
-                        <span className="text-gray-800">Ahmed@gmail.com</span>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">Email:</span>
+                        <span className="text-gray-800 break-all">Ahmed@gmail.com</span>
                       </div>
                     </div>
                   </div>
