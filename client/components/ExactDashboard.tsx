@@ -670,8 +670,7 @@ export function ExactDashboard() {
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.branch_no ||
-                              recording.device_name ||
-                              recording.ip_address}
+                              recording.device_name}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.cnic || recording.file_name || "-"}
