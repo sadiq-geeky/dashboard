@@ -231,10 +231,15 @@ export function ExactDashboard() {
     setIsRefreshing(true);
     try {
       const heartbeats = await fetchHeartbeats();
-      setDevices(heartbeats);
+      // Ensure heartbeats is an array
+      const validHeartbeats = Array.isArray(heartbeats) ? heartbeats : [];
+      setDevices(validHeartbeats);
       setLastUpdate(new Date());
     } catch (error) {
       console.error("Failed to load devices:", error);
+      // Set empty array on error to prevent crashes
+      setDevices([]);
+      setLastUpdate(new Date());
     } finally {
       setIsRefreshing(false);
     }
