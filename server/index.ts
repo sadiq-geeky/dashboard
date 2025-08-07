@@ -82,6 +82,7 @@ import {
   deleteComplaint,
   getComplaintsStats,
 } from "./routes/complaints-db";
+import { promoteToManager } from "./routes/debug-manager";
 
 export function createServer() {
   const app = express();
