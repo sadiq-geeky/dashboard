@@ -421,7 +421,11 @@ export function Complaints() {
     }
 
     if (!createComplaintData.customer_name.trim()) {
-      alert("Please enter your name.");
+      toast({
+        title: "Missing Information",
+        description: "Please enter your name.",
+        variant: "destructive"
+      });
       return;
     }
 
