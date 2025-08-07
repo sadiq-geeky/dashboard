@@ -671,41 +671,41 @@ export function Complaints() {
       <Header />
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="flex items-center justify-center h-12 px-4">
-          <div className="flex items-center space-x-0.5">
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="flex items-center justify-center py-4 px-4">
+          <div className="flex items-center space-x-3">
             <button
               onClick={() => navigate("/")}
-              className="flex flex-col items-center p-2 rounded-md text-gray-500 hover:bg-gray-100"
+              className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
             >
-              <Grid3X3 className="w-4 h-4 mb-0.5" />
-              <span className="text-xs">Home</span>
+              <Grid3X3 className="w-6 h-6 mb-2" />
+              <span className="text-sm font-medium">Home</span>
             </button>
 
             <button
               onClick={() => setActiveTab("complaints")}
               className={cn(
-                "flex flex-col items-center p-2 rounded-md",
+                "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
                 activeTab === "complaints"
-                  ? "text-gray-700 bg-white border border-gray-300"
-                  : "text-gray-500 hover:bg-gray-100",
+                  ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
               )}
             >
-              <Mail className="w-4 h-4 mb-0.5" />
-              <span className="text-xs">Complaints</span>
+              <Mail className="w-6 h-6 mb-2" />
+              <span className="text-sm font-medium">Complaints</span>
             </button>
 
             <button
               onClick={() => setActiveTab("analytics")}
               className={cn(
-                "flex flex-col items-center p-2 rounded-md",
+                "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
                 activeTab === "analytics"
-                  ? "text-gray-700 bg-white border border-gray-300"
-                  : "text-gray-500 hover:bg-gray-100",
+                  ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
               )}
             >
-              <BarChart3 className="w-4 h-4 mb-0.5" />
-              <span className="text-xs">Analytics</span>
+              <BarChart3 className="w-6 h-6 mb-2" />
+              <span className="text-sm font-medium">Analytics</span>
             </button>
           </div>
         </div>
