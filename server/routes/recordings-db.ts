@@ -3,16 +3,17 @@ import { RecordingHistory, PaginatedResponse } from "@shared/api";
 import { executeQuery } from "../config/database";
 
 // Get recordings with pagination and CNIC search
-export const getRecordings: RequestHandler = async (req, res) => {
+export const getRecordings: RequestHandler = async (req: any, res) => {
   try {
     const {
       page = "1",
       limit = "10",
       search,
       device,
-      branch_id,
-      user_role,
     } = req.query;
+
+    // Get branch filter from middleware
+    const branchFilter = req.branchFilter;
 
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
@@ -40,11 +41,12 @@ export const getRecordings: RequestHandler = async (req, res) => {
       countParams.push(device);
     }
 
-    // Branch filtering for non-admin users
-    if (branch_id && user_role !== "admin") {
-      conditions.push("ldbu.branch_id = ?");
-      queryParams.push(branch_id);
-      // For count, we'll do a simpler approach without complex JOINs
+    // Branch filtering for non-admin users (from middleware)
+    if (branchFilter) {
+      conditions.push(`ldbu.${branchFilter.field} = ?`);
+      queryParams.push(branchFilter.value);
+      countConditions.push(`ldbu.${branchFilter.field} = ?`);
+      countParams.push(branchFilter.value);
     }
 
     if (conditions.length > 0) {
