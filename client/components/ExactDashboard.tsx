@@ -499,15 +499,15 @@ export function ExactDashboard() {
   const currentRecordings = filteredRecordings.slice(startIndex, endIndex);
 
   return (
-    <div className="h-screen bg-gray-50 overflow-hidden">
+    <div className="min-h-screen bg-gray-50">
       <Header />
 
       {/* Navigation */}
       <AdminNavigation />
 
-      <div className="flex h-full">
+      <div className="flex min-h-0">
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-h-0">
           <div
             className="flex-1 px-4 py-3 overflow-y-auto"
             style={{ padding: "12px 16px 3px" }}
