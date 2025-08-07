@@ -431,67 +431,98 @@ export function GoogleConversationAnalytics() {
         </div>
       </div>
 
-      {/* Charts Row 1 */}
-      <div className="grid grid-cols-2 gap-6">
-        {/* Daily Conversations Line Chart */}
-        <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Daily Conversations (Last 7 Days)
-          </h3>
-          <Chart
-            chartType="LineChart"
-            width="100%"
-            height="300px"
-            data={dailyChartData}
-            options={{
-              ...chartOptions,
-              title: "",
-              curveType: "function",
-              legend: { position: "none" },
-              pointSize: 5,
-            }}
-          />
+      {/* Specific Conversion Analytics as Requested */}
+      <div className="space-y-6">
+        <h2 className="text-xl font-bold text-gray-900 border-b border-gray-200 pb-2">
+          Requested Conversion Analytics
+        </h2>
+
+        {/* Charts Row 1: Branch and City Analytics */}
+        <div className="grid grid-cols-2 gap-6">
+          {/* 1. Number of conversations according to branch */}
+          <div className="bg-white rounded-lg border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              1. Number of Conversations by Branch
+            </h3>
+            <Chart
+              chartType="ColumnChart"
+              width="100%"
+              height="300px"
+              data={branchChartData}
+              options={{
+                ...chartOptions,
+                title: "",
+                legend: { position: "none" },
+                bar: { groupWidth: "75%" },
+                colors: ["#3B82F6"],
+              }}
+            />
+          </div>
+
+          {/* 2. Conversion number per city */}
+          <div className="bg-white rounded-lg border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              2. Conversion Number per City
+            </h3>
+            <Chart
+              chartType="ComboChart"
+              width="100%"
+              height="300px"
+              data={cityChartData}
+              options={{
+                ...chartOptions,
+                title: "",
+                seriesType: "columns",
+                series: { 1: { type: "line" } },
+                legend: { position: "top" },
+                colors: ["#10B981", "#F59E0B"],
+              }}
+            />
+          </div>
         </div>
 
-        {/* Conversations by City Pie Chart */}
-        <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Conversations by City
-          </h3>
-          <Chart
-            chartType="PieChart"
-            width="100%"
-            height="300px"
-            data={cityChartData}
-            options={{
-              ...chartOptions,
-              title: "",
-              legend: { position: "right" },
-              pieSliceText: "percentage",
-            }}
-          />
-        </div>
-      </div>
+        {/* Charts Row 2: Date and CNIC Analytics */}
+        <div className="grid grid-cols-2 gap-6">
+          {/* 3. Number of conversions according to date in last month */}
+          <div className="bg-white rounded-lg border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              3. Conversions by Date (Last Month)
+            </h3>
+            <Chart
+              chartType="ComboChart"
+              width="100%"
+              height="300px"
+              data={dailyChartData}
+              options={{
+                ...chartOptions,
+                title: "",
+                seriesType: "columns",
+                series: { 1: { type: "line" } },
+                legend: { position: "top" },
+                colors: ["#EF4444", "#8B5CF6"],
+              }}
+            />
+          </div>
 
-      {/* Charts Row 2 */}
-      <div className="grid grid-cols-1 gap-6">
-        {/* Conversations by Branch Bar Chart */}
-        <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Conversations by Branch
-          </h3>
-          <Chart
-            chartType="ColumnChart"
-            width="100%"
-            height="400px"
-            data={branchChartData}
-            options={{
-              ...chartOptions,
-              title: "",
-              legend: { position: "none" },
-              bar: { groupWidth: "75%" },
-            }}
-          />
+          {/* 4. Unique CNIC in current month */}
+          <div className="bg-white rounded-lg border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              4. Unique CNICs This Month
+            </h3>
+            <div className="flex flex-col items-center justify-center h-64">
+              <div className="text-center">
+                <div className="text-6xl font-bold text-blue-600 mb-4">
+                  {analytics.totalStats?.uniqueCustomers || 0}
+                </div>
+                <div className="text-lg text-gray-600 mb-2">
+                  New CNICs in {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
+                </div>
+                <div className="text-sm text-gray-500">
+                  Unique customer identifiers recorded this month
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
