@@ -966,15 +966,15 @@ export function Complaints() {
               {/* Modal Content */}
               <form onSubmit={handleCreateComplaint} className="p-6">
                 <div className="space-y-6">
-                  {/* Customer Information */}
+                  {/* Reporter Information */}
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-4">
-                      Customer Information
+                      Reporter Information
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Customer Name *
+                          Your Name *
                         </label>
                         <input
                           type="text"
@@ -986,14 +986,14 @@ export function Complaints() {
                             }))
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Enter customer name"
+                          placeholder="Enter your name"
                           required
                         />
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Phone Number
+                          Contact Number
                         </label>
                         <input
                           type="tel"
@@ -1008,58 +1008,49 @@ export function Complaints() {
                           placeholder="+92-300-1234567"
                         />
                       </div>
+                    </div>
+                  </div>
 
+                  {/* Device Information */}
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                      Device Information
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Email Address
+                          Device ID *
                         </label>
                         <input
-                          type="email"
-                          value={createComplaintData.customer_email}
+                          type="text"
+                          value={createComplaintData.device_id}
                           onChange={(e) =>
                             setCreateComplaintData((prev) => ({
                               ...prev,
-                              customer_email: e.target.value,
+                              device_id: e.target.value,
                             }))
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="customer@email.com"
+                          placeholder="e.g., VR-001, Recording Station 1"
+                          required
                         />
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          CNIC
+                          Device Location
                         </label>
                         <input
                           type="text"
-                          value={createComplaintData.customer_cnic}
+                          value={createComplaintData.device_location}
                           onChange={(e) =>
                             setCreateComplaintData((prev) => ({
                               ...prev,
-                              customer_cnic: e.target.value,
+                              device_location: e.target.value,
                             }))
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="42101-1234567-1"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Device Used
-                        </label>
-                        <input
-                          type="text"
-                          value={createComplaintData.device_used}
-                          onChange={(e) =>
-                            setCreateComplaintData((prev) => ({
-                              ...prev,
-                              device_used: e.target.value,
-                            }))
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Recording Device #1"
+                          placeholder="e.g., Counter 1, Manager Office"
                         />
                       </div>
 
