@@ -381,6 +381,8 @@ export function UserManagement() {
                           <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                             {user.role === "admin" ? (
                               <Shield className="h-4 w-4 text-blue-600" />
+                            ) : user.role === "manager" ? (
+                              <Settings className="h-4 w-4 text-blue-600" />
                             ) : (
                               <User className="h-4 w-4 text-blue-600" />
                             )}
