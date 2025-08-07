@@ -198,7 +198,7 @@ const App = () => (
             <Route
               path="/complaints"
               element={
-                <ProtectedRoute managerOrAdmin>
+                <ProtectedRoute>
                   <Complaints />
                 </ProtectedRoute>
               }
