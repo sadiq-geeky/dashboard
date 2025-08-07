@@ -136,7 +136,20 @@ export function GoogleConversationAnalytics() {
   }
 
   if (!analytics) {
-    return <div>No analytics data available</div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+          <p className="text-gray-600">No conversation analytics data available</p>
+          <button
+            onClick={fetchAnalytics}
+            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Retry Loading Data
+          </button>
+        </div>
+      </div>
+    );
   }
 
   // Prepare data for Google Charts with null checks and fallbacks
