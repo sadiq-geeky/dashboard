@@ -74,6 +74,14 @@ import {
 import { populateData } from "./routes/populate-data";
 import { debugAudioFiles } from "./routes/debug-audio";
 import { fixAudioMappings } from "./routes/fix-audio";
+import {
+  getComplaints,
+  getComplaint,
+  createComplaint,
+  updateComplaint,
+  deleteComplaint,
+  getComplaintsStats,
+} from "./routes/complaints-db";
 
 export function createServer() {
   const app = express();
