@@ -753,19 +753,10 @@ export function ExactDashboard() {
                             IP Address
                           </th>
                           <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                            Type
-                          </th>
-                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                            Signal
-                          </th>
-                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                             Uptime
                           </th>
                           <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                             Last Seen
-                          </th>
-                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                            Version
                           </th>
                         </tr>
                       </thead>
@@ -802,43 +793,12 @@ export function ExactDashboard() {
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-600">
                               {device.status === 'offline' ?
-                                <span className="text-gray-400">Unknown</span> :
-                                ['Recorder', 'Monitor', 'Gateway'][index % 3]
-                              }
-                            </td>
-                            <td className="px-2 py-1.5">
-                              {device.status === 'offline' ?
-                                <span className="text-xs text-gray-400">-</span> :
-                                <div className="flex items-center space-x-1">
-                                  <div className={cn(
-                                    "h-2 w-8 rounded-full",
-                                    device.status === 'online' ? 'bg-green-200' : 'bg-yellow-200'
-                                  )}>
-                                    <div className={cn(
-                                      "h-2 rounded-full",
-                                      device.status === 'online' ? 'bg-green-500' : 'bg-yellow-500'
-                                    )} style={{width: device.status === 'online' ? '85%' : '60%'}}></div>
-                                  </div>
-                                  <span className="text-xs text-gray-600">
-                                    {device.status === 'online' ? '85%' : '60%'}
-                                  </span>
-                                </div>
-                              }
-                            </td>
-                            <td className="px-2 py-1.5 text-xs text-gray-600">
-                              {device.status === 'offline' ?
                                 <span className="text-gray-400">-</span> :
-                                `${Math.floor(Math.random() * 72 + 1)}h ${Math.floor(Math.random() * 60)}m`
+                                device.uptime_duration_24h || '0h 0m'
                               }
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-500">
                               {formatLastSeen(device.last_seen)}
-                            </td>
-                            <td className="px-2 py-1.5 text-xs text-gray-500 font-mono">
-                              {device.status === 'offline' ?
-                                <span className="text-gray-400">-</span> :
-                                `v${1 + (index % 3)}.${2 + (index % 5)}.${index % 10}`
-                              }
                             </td>
                           </tr>
                         ))}
