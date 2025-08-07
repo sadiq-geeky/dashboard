@@ -214,6 +214,7 @@ export function ExactDashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isPopulatingData, setIsPopulatingData] = useState(false);
   const itemsPerPage = 12;
 
   const loadRecordings = async () => {
