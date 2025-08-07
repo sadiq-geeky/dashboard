@@ -4,6 +4,7 @@ import { executeQuery } from "../config/database";
 interface VoiceStreamMonthlyData {
   month: string;
   voice_streams: number;
+  formatted_month: string;
 }
 
 interface VoiceStreamStats {
