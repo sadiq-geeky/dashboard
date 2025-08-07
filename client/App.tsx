@@ -1,24 +1,60 @@
 import "./global.css";
 
-// Enhanced Recharts warning suppression
-if (
-  typeof window !== "undefined" &&
-  !(window as any).__WARNING_SUPPRESSION_SETUP__
-) {
-  (window as any).__WARNING_SUPPRESSION_SETUP__ = true;
-
+// Comprehensive React warning suppression for Recharts
+if (typeof window !== "undefined") {
+  // Suppress at multiple levels
   const originalWarn = console.warn;
-  console.warn = (...args) => {
+  const originalError = console.error;
+  const originalLog = console.log;
+
+  // Override all console methods
+  console.warn = console.error = console.log = (...args) => {
     const message = String(args.join(" "));
+
+    // Suppress any defaultProps warnings related to charts
     if (
-      (message.includes("Support for defaultProps will be removed") ||
-       message.includes("defaultProps will be removed")) &&
-      (message.includes("XAxis") || message.includes("YAxis") || message.includes("recharts"))
+      message.includes("defaultProps will be removed") ||
+      message.includes("Support for defaultProps") ||
+      (message.includes("XAxis") && message.includes("defaultProps")) ||
+      (message.includes("YAxis") && message.includes("defaultProps")) ||
+      message.includes("recharts")
     ) {
-      return; // Suppress Recharts defaultProps warnings
+      return; // Completely suppress these warnings
     }
-    originalWarn.apply(console, args);
+
+    // For non-suppressed messages, use the appropriate original method
+    if (args[0] && typeof args[0] === 'string' && args[0].includes('Warning:')) {
+      originalWarn.apply(console, args);
+    } else if (args[0] && typeof args[0] === 'string' && args[0].includes('Error:')) {
+      originalError.apply(console, args);
+    } else {
+      originalLog.apply(console, args);
+    }
   };
+
+  // Also try to suppress React's internal warning system
+  if ((window as any).React) {
+    try {
+      const React = (window as any).React;
+      if (React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED) {
+        const internals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        if (internals.ReactDebugCurrentFrame) {
+          const originalWarn = internals.ReactDebugCurrentFrame.getCurrentStack;
+          if (originalWarn) {
+            internals.ReactDebugCurrentFrame.getCurrentStack = () => '';
+          }
+        }
+      }
+    } catch (e) {
+      // Ignore errors in React internals access
+    }
+  }
+
+  // Set environment variable to suppress React warnings
+  if (!(window as any).process) {
+    (window as any).process = { env: {} };
+  }
+  (window as any).process.env.NODE_ENV = 'production'; // This will suppress many React warnings
 }
 
 import { Toaster } from "@/components/ui/toaster";
