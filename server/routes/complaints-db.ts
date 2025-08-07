@@ -204,6 +204,8 @@ export const getComplaint: RequestHandler = async (req, res) => {
 // Create new complaint
 export const createComplaint: RequestHandler = async (req, res) => {
   try {
+    console.log("Creating complaint with request body:", JSON.stringify(req.body, null, 2));
+
     const {
       branch_id,
       branch_name,
@@ -214,6 +216,7 @@ export const createComplaint: RequestHandler = async (req, res) => {
     } = req.body;
 
     if (!branch_id || !branch_name || !complaint_text) {
+      console.log("Validation failed:", { branch_id, branch_name, complaint_text });
       return res.status(400).json({
         error: "Branch ID, branch name, and complaint text are required",
       });
@@ -234,6 +237,17 @@ export const createComplaint: RequestHandler = async (req, res) => {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `;
 
+    console.log("Executing query with params:", {
+      complaint_id,
+      branch_id,
+      branch_name,
+      timestamp,
+      customerDataString,
+      complaint_text,
+      status,
+      priority,
+    });
+
     await executeQuery(query, [
       complaint_id,
       branch_id,
@@ -245,6 +259,8 @@ export const createComplaint: RequestHandler = async (req, res) => {
       priority,
     ]);
 
+    console.log("Complaint created successfully:", complaint_id);
+
     res.status(201).json({
       success: true,
       complaint_id,
@@ -252,7 +268,20 @@ export const createComplaint: RequestHandler = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating complaint:", error);
-    res.status(500).json({ error: "Failed to create complaint" });
+    console.error("Error type:", typeof error);
+    console.error("Error message:", error instanceof Error ? error.message : "Unknown error");
+    console.error("Full error object:", JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+
+    // Return more specific error information
+    let errorMessage = "Failed to create complaint";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
+    res.status(500).json({
+      error: errorMessage,
+      details: process.env.NODE_ENV === "development" ? error : undefined
+    });
   }
 };
 
