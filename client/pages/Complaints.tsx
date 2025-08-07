@@ -1827,7 +1827,7 @@ export function Complaints() {
                           <div>
                             <p className="text-blue-600 text-sm font-medium">Total Conversations</p>
                             <p className="text-3xl font-bold text-blue-900">
-                              {dashboardData.conversations?.totalStats?.totalConversations || 0}
+                              {dashboardData.conversations?.totalStats?.totalConversations || '—'}
                             </p>
                           </div>
                           <div className="p-3 bg-blue-200 rounded-lg">
@@ -1835,7 +1835,7 @@ export function Complaints() {
                           </div>
                         </div>
                         <div className="mt-3 text-xs text-blue-600">
-                          All time conversations recorded
+                          {dashboardData.conversations ? 'All time conversations recorded' : 'Loading conversation data...'}
                         </div>
                       </div>
 
@@ -1845,8 +1845,9 @@ export function Complaints() {
                           <div>
                             <p className="text-green-600 text-sm font-medium">This Month</p>
                             <p className="text-3xl font-bold text-green-900">
-                              {dashboardData.conversations?.totalStats?.todayConversations ||
-                               Math.round((dashboardData.conversations?.totalStats?.totalConversations || 0) * 0.3)}
+                              {dashboardData.conversations ?
+                                (dashboardData.conversations.totalStats?.todayConversations ||
+                                 Math.round((dashboardData.conversations.totalStats?.totalConversations || 0) * 0.3)) : '—'}
                             </p>
                           </div>
                           <div className="p-3 bg-green-200 rounded-lg">
@@ -1854,7 +1855,7 @@ export function Complaints() {
                           </div>
                         </div>
                         <div className="mt-3 text-xs text-green-600">
-                          Conversations in current month
+                          {dashboardData.conversations ? 'Conversations in current month' : 'Loading monthly data...'}
                         </div>
                       </div>
 
@@ -1864,7 +1865,7 @@ export function Complaints() {
                           <div>
                             <p className="text-purple-600 text-sm font-medium">Unique CNIC</p>
                             <p className="text-3xl font-bold text-purple-900">
-                              {dashboardData.conversations?.totalStats?.uniqueCustomers || 0}
+                              {dashboardData.conversations?.totalStats?.uniqueCustomers || '—'}
                             </p>
                           </div>
                           <div className="p-3 bg-purple-200 rounded-lg">
@@ -1872,7 +1873,7 @@ export function Complaints() {
                           </div>
                         </div>
                         <div className="mt-3 text-xs text-purple-600">
-                          Unique customers this month
+                          {dashboardData.conversations ? 'Unique customers this month' : 'Loading customer data...'}
                         </div>
                       </div>
                     </div>
