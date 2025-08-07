@@ -9,7 +9,7 @@ import React, {
 export interface User {
   uuid: string;
   username: string;
-  role: "admin" | "user";
+  role: "admin" | "manager" | "user";
   branch_id: string | null;
   branch_city: string | null;
   emp_name: string | null;
@@ -22,6 +22,8 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAdmin: () => boolean;
+  isManager: () => boolean;
+  isAdminOrManager: () => boolean;
   canAccessBranch: (branchId?: string) => boolean;
 }
 
@@ -99,6 +101,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return user?.role === "admin";
   };
 
+  const isManager = (): boolean => {
+    return user?.role === "manager";
+  };
+
+  const isAdminOrManager = (): boolean => {
+    return user?.role === "admin" || user?.role === "manager";
+  };
+
   const canAccessBranch = (branchId?: string): boolean => {
     if (isAdmin()) {
       return true; // Admins can access all branches
@@ -118,6 +128,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     isAdmin,
+    isManager,
+    isAdminOrManager,
     canAccessBranch,
   };
 

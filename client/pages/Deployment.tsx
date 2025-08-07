@@ -22,6 +22,13 @@ import {
   Settings,
 } from "lucide-react";
 import { authFetch, authPost, authDelete } from "@/lib/api";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Device {
   id: string;
@@ -181,9 +188,7 @@ export function Deployment() {
   const availableBranches = branches.filter(
     (b) => !getDeployedBranchIds().has(b.id),
   );
-  const availableUsers = users.filter(
-    (u) => !getDeployedUserIds().has(u.uuid) && u.role !== "admin",
-  );
+  const availableUsers = users.filter((u) => u.role !== "admin");
 
   if (!isAdmin()) {
     return (
@@ -237,7 +242,10 @@ export function Deployment() {
               <span className="text-xs">Device Status</span>
             </button>
 
-            <button className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md">
+            <button
+              onClick={() => navigate("/complaints")}
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
               <Mail className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Complaints</span>
             </button>
@@ -535,7 +543,7 @@ export function Deployment() {
                       ))}
                       {availableUsers.length === 0 && (
                         <p className="text-gray-500 text-sm text-center py-4">
-                          All users are assigned
+                          No non-admin users available
                         </p>
                       )}
                     </div>
@@ -630,67 +638,102 @@ export function Deployment() {
 
           {/* Link Modal */}
           {showLinkModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 w-full max-w-md">
-                <h2 className="text-lg font-semibold mb-4">
-                  Create New Deployment
-                </h2>
-                <form onSubmit={handleCreateDeployment} className="space-y-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-auto">
+                <div className="flex items-center space-x-2 mb-6">
+                  <div className="p-2 bg-red-100 rounded-lg">
+                    <Link className="h-5 w-5 text-red-600" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Create New Deployment
+                  </h2>
+                </div>
+                <form onSubmit={handleCreateDeployment} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Select Device *
                     </label>
-                    <select
+                    <Select
                       value={selectedDevice}
-                      onChange={(e) => setSelectedDevice(e.target.value)}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
+                      onValueChange={setSelectedDevice}
                     >
-                      <option value="">Choose a device</option>
-                      {availableDevices.map((device) => (
-                        <option key={device.id} value={device.id}>
-                          {device.device_name} ({device.device_mac || "No MAC"})
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose a device" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableDevices.map((device) => (
+                          <SelectItem key={device.id} value={device.id}>
+                            <div className="flex items-center space-x-2">
+                              <Monitor className="h-4 w-4 text-blue-500" />
+                              <span className="font-medium">
+                                {device.device_name}
+                              </span>
+                              <span className="text-gray-500">
+                                ({device.device_mac || "No MAC"})
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Select Branch *
                     </label>
-                    <select
+                    <Select
                       value={selectedBranch}
-                      onChange={(e) => setSelectedBranch(e.target.value)}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
+                      onValueChange={setSelectedBranch}
                     >
-                      <option value="">Choose a branch</option>
-                      {availableBranches.map((branch) => (
-                        <option key={branch.id} value={branch.id}>
-                          {branch.branch_name} ({branch.branch_code})
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose a branch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableBranches.map((branch) => (
+                          <SelectItem key={branch.id} value={branch.id}>
+                            <div className="flex items-center space-x-2">
+                              <Building2 className="h-4 w-4 text-green-500" />
+                              <span className="font-medium">
+                                {branch.branch_name}
+                              </span>
+                              <span className="text-gray-500">
+                                ({branch.branch_code})
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Select User *
                     </label>
-                    <select
+                    <Select
                       value={selectedUser}
-                      onChange={(e) => setSelectedUser(e.target.value)}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
+                      onValueChange={setSelectedUser}
                     >
-                      <option value="">Choose a user</option>
-                      {availableUsers.map((user) => (
-                        <option key={user.uuid} value={user.uuid}>
-                          {user.full_name || user.username} ({user.role})
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose a user" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableUsers.map((user) => (
+                          <SelectItem key={user.uuid} value={user.uuid}>
+                            <div className="flex items-center space-x-2">
+                              <Users className="h-4 w-4 text-purple-500" />
+                              <span className="font-medium">
+                                {user.full_name || user.username}
+                              </span>
+                              <span className="text-gray-500 capitalize">
+                                ({user.role})
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <div className="flex justify-end space-x-3 pt-4">
+                  <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
                     <button
                       type="button"
                       onClick={() => {
@@ -699,15 +742,16 @@ export function Deployment() {
                         setSelectedBranch("");
                         setSelectedUser("");
                       }}
-                      className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                      className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                      className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium flex items-center space-x-2"
                     >
-                      Create Deployment
+                      <Link className="h-4 w-4" />
+                      <span>Create Deployment</span>
                     </button>
                   </div>
                 </form>

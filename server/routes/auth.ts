@@ -10,7 +10,7 @@ interface User {
   password_hash: string;
   email_id: string;
   emp_name: string;
-  role: "admin" | "user";
+  role: "admin" | "manager" | "user";
   is_active: boolean;
 }
 
@@ -95,7 +95,7 @@ export const forgotPassword: RequestHandler = async (req, res) => {
 
     // Store token in database
     const insertTokenQuery = `
-      INSERT INTO password_reset_tokens (id, user_id, token, expires_at) 
+      INSERT INTO password_reset_tokens (id, user_id, token, expires_at)
       VALUES (?, ?, ?, ?)
     `;
 
@@ -168,9 +168,9 @@ export const resetPassword: RequestHandler = async (req, res) => {
 
     // Find valid token
     const tokenQuery = `
-      SELECT prt.*, u.uuid as user_uuid, u.username 
-      FROM password_reset_tokens prt 
-      JOIN users u ON prt.user_id = u.uuid 
+      SELECT prt.*, u.uuid as user_uuid, u.username
+      FROM password_reset_tokens prt
+      JOIN users u ON prt.user_id = u.uuid
       WHERE prt.token = ? AND prt.expires_at > NOW() AND u.is_active = true
     `;
 
@@ -234,9 +234,9 @@ export const validateResetToken: RequestHandler = async (req, res) => {
 
     // Check if token exists and is valid
     const tokenQuery = `
-      SELECT prt.expires_at, u.username, u.email_id 
-      FROM password_reset_tokens prt 
-      JOIN users u ON prt.user_id = u.uuid 
+      SELECT prt.expires_at, u.username, u.email_id
+      FROM password_reset_tokens prt
+      JOIN users u ON prt.user_id = u.uuid
       WHERE prt.token = ? AND prt.expires_at > NOW() AND u.is_active = true
     `;
 

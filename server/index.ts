@@ -71,6 +71,18 @@ import {
   getDeployment,
   updateDeployment,
 } from "./routes/deployments-db";
+import { populateData } from "./routes/populate-data";
+import { debugAudioFiles } from "./routes/debug-audio";
+import { fixAudioMappings } from "./routes/fix-audio";
+import {
+  getComplaints,
+  getComplaint,
+  createComplaint,
+  updateComplaint,
+  deleteComplaint,
+  getComplaintsStats,
+} from "./routes/complaints-db";
+import { promoteToManager } from "./routes/debug-manager";
 
 export function createServer() {
   const app = express();
@@ -204,6 +216,26 @@ export function createServer() {
   );
   app.put("/api/deployments/:uuid", updateDeployment);
   app.delete("/api/deployments/:uuid", deleteDeployment);
+
+  // Sample data population (development/testing only)
+  app.post("/api/populate-sample-data", populateData);
+
+  // Debug endpoint for audio files (development only)
+  app.get("/api/debug/audio-files", debugAudioFiles);
+
+  // Fix audio file mappings (development only)
+  app.post("/api/fix/audio-mappings", fixAudioMappings);
+
+  // Debug endpoint to promote user to manager (development only)
+  app.post("/api/debug/promote-to-manager", promoteToManager);
+
+  // Complaints Management routes (admin only)
+  app.get("/api/complaints", authenticate, addBranchFilter(), getComplaints);
+  app.get("/api/complaints/stats", authenticate, getComplaintsStats);
+  app.get("/api/complaints/:complaint_id", authenticate, getComplaint);
+  app.post("/api/complaints", authenticate, createComplaint);
+  app.put("/api/complaints/:complaint_id", authenticate, updateComplaint);
+  app.delete("/api/complaints/:complaint_id", authenticate, deleteComplaint);
 
   return app;
 }

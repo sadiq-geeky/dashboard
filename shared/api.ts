@@ -49,6 +49,44 @@ export interface PaginationParams {
   search?: string;
 }
 
+// Complaints Types
+export interface CustomerData {
+  customer_name: string;
+  customer_phone?: string;
+  customer_email?: string;
+  customer_cnic?: string;
+  device_used?: string;
+  issue_category?: string;
+}
+
+export interface Complaint {
+  complaint_id: string;
+  branch_id: string;
+  branch_name: string;
+  timestamp: string;
+  customer_data: CustomerData;
+  complaint_text: string;
+  status: "pending" | "in_progress" | "resolved" | "closed";
+  priority: "low" | "medium" | "high" | "urgent";
+  created_on: string;
+  updated_on: string;
+  branch_address?: string;
+  branch_city?: string;
+  branch_code?: string;
+  branch_phone?: string;
+  branch_email?: string;
+}
+
+export interface ComplaintsStats {
+  total_complaints: number;
+  pending_complaints: number;
+  in_progress_complaints: number;
+  resolved_complaints: number;
+  closed_complaints: number;
+  urgent_complaints: number;
+  today_complaints: number;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   total: number;

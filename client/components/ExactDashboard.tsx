@@ -182,7 +182,7 @@ const getStatusIcon = (status: HeartbeatRecord["status"]) => {
 };
 
 export function ExactDashboard() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, isAdminOrManager } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -214,6 +214,7 @@ export function ExactDashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isPopulatingData, setIsPopulatingData] = useState(false);
   const itemsPerPage = 12;
 
   const loadRecordings = async () => {
@@ -263,6 +264,64 @@ export function ExactDashboard() {
       console.error("Failed to load devices:", error);
     } finally {
       setIsRefreshing(false);
+    }
+  };
+
+  const populateSampleData = async () => {
+    setIsPopulatingData(true);
+    try {
+      const response = await authFetch("/api/populate-sample-data", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to populate sample data");
+      }
+
+      const result = await response.json();
+      console.log("Sample data populated:", result);
+
+      // Reload data after population
+      await loadRecordings();
+      await loadDevices();
+
+      alert(
+        "Sample data populated successfully! Analytics should now show real data.",
+      );
+    } catch (error) {
+      console.error("Error populating sample data:", error);
+      alert(
+        "Failed to populate sample data. Please check the console for details.",
+      );
+    } finally {
+      setIsPopulatingData(false);
+    }
+  };
+
+  const fixAudioMappings = async () => {
+    try {
+      const response = await authFetch("/api/fix/audio-mappings", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fix audio mappings");
+      }
+
+      const result = await response.json();
+      console.log("Audio mappings fixed:", result);
+
+      // Reload recordings after fixing
+      await loadRecordings();
+
+      alert(
+        `Audio mappings fixed! ${result.summary?.recordings_updated || 0} recordings now have working audio files.`,
+      );
+    } catch (error) {
+      console.error("Error fixing audio mappings:", error);
+      alert(
+        "Failed to fix audio mappings. Please check the console for details.",
+      );
     }
   };
 
@@ -374,10 +433,20 @@ export function ExactDashboard() {
   };
 
   // Audio control functions
-  const playAudio = () => {
+  const playAudio = async () => {
     if (audioRef && selectedRecording?.file_name) {
-      audioRef.play();
-      setIsPlaying(true);
+      try {
+        await audioRef.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.error("Error playing audio:", error);
+        alert(
+          `Cannot play audio: ${selectedRecording.file_name}. The audio file may not exist on the server.`,
+        );
+        setIsPlaying(false);
+      }
+    } else if (!selectedRecording?.file_name) {
+      alert("This recording does not have an audio file associated with it.");
     }
   };
 
@@ -434,6 +503,46 @@ export function ExactDashboard() {
         setCurrentTime(0);
       });
 
+      audio.addEventListener("error", async (e) => {
+        console.error("Audio error:", e);
+        console.error(
+          "Failed to load audio file:",
+          selectedRecording.file_name,
+        );
+
+        // Try to get more specific error information from the server
+        try {
+          const response = await fetch(
+            `/api/audio/${selectedRecording.file_name}`,
+          );
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Server error:", errorData);
+
+            if (response.status === 404) {
+              alert(
+                `Audio file missing: "${selectedRecording.file_name}"\n\nThis recording exists in the database but the actual audio file is not on the server. This can happen if:\n• The file was deleted\n• The recording was created with sample data\n• There was an upload error`,
+              );
+            } else if (response.status === 500) {
+              alert(
+                `Server error loading audio: "${selectedRecording.file_name}"\n\nError: ${errorData.error}\n\nPlease check the server logs.`,
+              );
+            } else {
+              alert(
+                `Audio loading failed: "${selectedRecording.file_name}"\n\nHTTP ${response.status}: ${errorData.error || "Unknown error"}`,
+              );
+            }
+          }
+        } catch (fetchError) {
+          console.error("Error fetching audio file info:", fetchError);
+          alert(
+            `Cannot load audio file: "${selectedRecording.file_name}"\n\nThe audio file is not available on the server.`,
+          );
+        }
+
+        setIsPlaying(false);
+      });
+
       setAudioRef(audio);
       setCurrentTime(0);
       setIsPlaying(false);
@@ -443,6 +552,7 @@ export function ExactDashboard() {
         audio.removeEventListener("loadedmetadata", () => {});
         audio.removeEventListener("timeupdate", () => {});
         audio.removeEventListener("ended", () => {});
+        audio.removeEventListener("error", () => {});
       };
     } else {
       setAudioRef(null);
@@ -525,7 +635,10 @@ export function ExactDashboard() {
               </button>
             )}
 
-            <button className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md">
+            <button
+              onClick={() => navigate("/complaints")}
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
               <Mail className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Complaints</span>
             </button>
@@ -581,9 +694,9 @@ export function ExactDashboard() {
 
       <div className="flex h-full">
         {/* Main Content */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 flex flex-col">
           <div
-            className="px-4 py-3 h-full overflow-auto"
+            className="flex-1 px-4 py-3 overflow-y-auto"
             style={{ padding: "12px 16px 3px" }}
           >
             {activeTab === "home" && (
@@ -680,6 +793,9 @@ export function ExactDashboard() {
                         <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Branch Address
                         </th>
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Audio
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -710,6 +826,23 @@ export function ExactDashboard() {
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.branch_address || "NA"}
+                          </td>
+                          <td className="py-1 px-1.5 text-xs">
+                            {recording.file_name ? (
+                              <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span className="text-green-600 text-xs">
+                                  Audio
+                                </span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                                <span className="text-gray-500 text-xs">
+                                  None
+                                </span>
+                              </div>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -756,7 +889,7 @@ export function ExactDashboard() {
               </>
             )}
 
-            {activeTab === "device-status" && isAdmin() && (
+            {activeTab === "device-status" && isAdminOrManager() && (
               <>
                 {/* Device Status Header */}
                 <div className="flex items-center justify-between mb-3">
@@ -939,7 +1072,7 @@ export function ExactDashboard() {
               </>
             )}
 
-            {activeTab === "analytics" && isAdmin() && (
+            {activeTab === "analytics" && isAdminOrManager() && (
               <>
                 {/* Analytics Sub-navigation */}
                 <div className="mb-6 border-b border-gray-200">
@@ -968,6 +1101,65 @@ export function ExactDashboard() {
                     </button>
                   </div>
                 </div>
+
+                {/* Development Tools */}
+                {analyticsSubTab === "recordings" && (
+                  <div className="mb-4 space-y-3">
+                    {/* Sample Data Button */}
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-sm font-medium text-yellow-800">
+                            Need Sample Data?
+                          </h3>
+                          <p className="text-sm text-yellow-600 mt-1">
+                            If analytics show no data, click to populate with
+                            sample recordings, branches, and devices.
+                          </p>
+                        </div>
+                        <button
+                          onClick={populateSampleData}
+                          disabled={isPopulatingData}
+                          className="flex items-center space-x-2 px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded-md hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isPopulatingData ? (
+                            <>
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                              <span>Populating...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="w-4 h-4" />
+                              <span>Add Sample Data</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Fix Audio Button */}
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-sm font-medium text-blue-800">
+                            Audio Files Not Playing?
+                          </h3>
+                          <p className="text-sm text-blue-600 mt-1">
+                            Fix recordings by mapping them to real audio files
+                            that exist on the server.
+                          </p>
+                        </div>
+                        <button
+                          onClick={fixAudioMappings}
+                          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                          <span>Fix Audio Files</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Analytics Content */}
                 <WarningSuppressionWrapper>

@@ -8,9 +8,14 @@ import fs from "fs";
 import { voiceLogger } from "../utils/logger";
 
 // Create uploads directory if it doesn't exist
-const uploadDir = path.join(process.cwd(), "uploads");
+const uploadDir = path.resolve(process.cwd(), "uploads");
+console.log(`📁 Upload directory configured at: ${uploadDir}`);
+
 if (!fs.existsSync(uploadDir)) {
+  console.log(`📁 Creating uploads directory: ${uploadDir}`);
   fs.mkdirSync(uploadDir, { recursive: true });
+} else {
+  console.log(`✅ Uploads directory exists: ${uploadDir}`);
 }
 
 // Configure multer for file uploads
@@ -252,6 +257,10 @@ export const serveAudio: RequestHandler = (req, res) => {
   const userAgent = req.get("User-Agent") || "unknown";
   const { filename } = req.params;
 
+  // Log the request
+  console.log(`🎵 Audio request: ${filename} from ${clientIp}`);
+  console.log(`📁 Upload directory: ${uploadDir}`);
+
   voiceLogger.info("voice-upload", "serve_audio_request", {
     request_id: requestId,
     ip_address: clientIp,
@@ -261,15 +270,42 @@ export const serveAudio: RequestHandler = (req, res) => {
 
   try {
     const filepath = path.join(uploadDir, filename);
+    console.log(`🔍 Looking for file at: ${filepath}`);
+
+    // Check if uploads directory exists
+    if (!fs.existsSync(uploadDir)) {
+      console.error(`❌ Uploads directory does not exist: ${uploadDir}`);
+      return res.status(500).json({
+        error: "Server configuration error: uploads directory not found",
+        debug: { uploadDir, exists: false },
+      });
+    }
+
+    // List all files in uploads directory for debugging
+    try {
+      const files = fs.readdirSync(uploadDir);
+      console.log(`📂 Files in uploads directory (${files.length}):`, files);
+    } catch (err) {
+      console.error(`❌ Cannot read uploads directory:`, err);
+    }
 
     if (!fs.existsSync(filepath)) {
+      console.log(`❌ File not found: ${filename}`);
       voiceLogger.warn("voice-upload", "audio_file_not_found", {
         request_id: requestId,
         ip_address: clientIp,
         file_name: filename,
-        details: { file_path: filepath },
+        details: { file_path: filepath, upload_dir: uploadDir },
       });
-      return res.status(404).json({ error: "Audio file not found" });
+      return res.status(404).json({
+        error: "Audio file not found",
+        debug: {
+          requested_file: filename,
+          full_path: filepath,
+          upload_dir: uploadDir,
+          upload_dir_exists: fs.existsSync(uploadDir),
+        },
+      });
     }
 
     // Get file stats for logging

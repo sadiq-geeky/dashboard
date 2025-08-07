@@ -16,7 +16,7 @@ export interface User {
   email_id: string | null;
   username: string;
   password_hash: string;
-  role: "admin" | "user";
+  role: "admin" | "manager" | "user";
   is_active: boolean;
   created_on: string | null;
   updated_on: string | null;
@@ -25,7 +25,9 @@ export interface User {
 export interface UserSession {
   uuid: string;
   username: string;
-  role: "admin" | "user";
+  role: "admin" | "manager" | "user";
+  branch_id: string | null;
+  branch_city: string | null;
   emp_name: string | null;
 }
 
