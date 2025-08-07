@@ -676,53 +676,7 @@ export function Complaints() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
-      {/* Internal Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="flex items-center justify-start py-4 px-4">
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={() => navigate("/")}
-              className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
-            >
-              <Grid3X3 className="w-6 h-6 mb-2" />
-              <span className="text-sm font-medium">Home</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab("analytics");
-                navigate("/complaints?tab=analytics", { replace: true });
-              }}
-              className={cn(
-                "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
-                activeTab === "analytics"
-                  ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
-              )}
-            >
-              <BarChart3 className="w-6 h-6 mb-2" />
-              <span className="text-sm font-medium">Analytics</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab("complaints");
-                navigate("/complaints", { replace: true });
-              }}
-              className={cn(
-                "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
-                activeTab === "complaints"
-                  ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
-              )}
-            >
-              <Mail className="w-6 h-6 mb-2" />
-              <span className="text-sm font-medium">Complaints</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <AdminNavigation />
 
       <div className="px-6 py-6">
         {/* Complaints Tab Content */}
