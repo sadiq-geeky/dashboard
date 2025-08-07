@@ -528,11 +528,12 @@ export function Complaints() {
                   username: user?.username,
                   phone_no: user?.phone_no,
                   email_id: user?.email_id,
-                  branch_city: user?.branch_city
+                  branch_city: user?.branch_city,
+                  full_user: user
                 });
 
                 // Immediately fill user data from context
-                setCreateComplaintData({
+                const initialData = {
                   customer_name: user?.emp_name || user?.username || "",
                   customer_phone: user?.phone_no || "",
                   customer_email: user?.email_id || "",
@@ -541,8 +542,11 @@ export function Complaints() {
                   city: user?.branch_city || "",
                   issue_category: "",
                   complaint_text: "",
-                  priority: "medium",
-                });
+                  priority: "medium" as "low" | "medium" | "high" | "urgent",
+                };
+
+                console.log("Setting initial form data:", initialData);
+                setCreateComplaintData(initialData);
                 setShowCreateModal(true);
                 // Then try to get device info
                 fetchUserDeviceInfo();
