@@ -226,6 +226,9 @@ export function createServer() {
   // Fix audio file mappings (development only)
   app.post("/api/fix/audio-mappings", fixAudioMappings);
 
+  // Debug endpoint to promote user to manager (development only)
+  app.post("/api/debug/promote-to-manager", promoteToManager);
+
   // Complaints Management routes (admin only)
   app.get("/api/complaints", authenticate, addBranchFilter(), getComplaints);
   app.get("/api/complaints/stats", authenticate, getComplaintsStats);
