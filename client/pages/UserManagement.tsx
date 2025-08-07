@@ -420,6 +420,8 @@ export function UserManagement() {
                               ? "bg-purple-100 text-purple-800"
                               : user.role === "admin"
                                 ? "bg-red-100 text-red-800"
+                                : user.role === "manager"
+                                ? "bg-green-100 text-green-800"
                                 : "bg-blue-100 text-blue-800"
                           }`}
                         >
@@ -432,6 +434,11 @@ export function UserManagement() {
                             <>
                               <Shield className="h-3 w-3 mr-1" />
                               Administrator
+                            </>
+                          ) : user.role === "manager" ? (
+                            <>
+                              <Settings className="h-3 w-3 mr-1" />
+                              Manager
                             </>
                           ) : (
                             <>
