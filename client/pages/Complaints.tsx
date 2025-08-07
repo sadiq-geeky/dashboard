@@ -186,21 +186,31 @@ export function Complaints() {
   // Fetch user's device information
   const fetchUserDeviceInfo = async () => {
     try {
-      if (!user?.uuid) return;
+      console.log("Fetching device info for user:", user?.uuid);
+
+      if (!user?.uuid) {
+        console.error("No user UUID available");
+        return;
+      }
 
       // Query the deployments to get user's device
       const response = await authFetch(`/api/deployments`);
+
       if (response.ok) {
         const data = await response.json();
+        console.log("Deployments data:", data);
+
         const userDeployment = data.data?.find((deployment: any) =>
           deployment.user_id === user.uuid
         );
 
-        if (userDeployment) {
+        console.log("User deployment found:", userDeployment);
+
+        if (userDeployment && userDeployment.device_name) {
           setCreateComplaintData(prev => ({
             ...prev,
-            device_id: userDeployment.device_name || userDeployment.device_id || "",
-            city: user.branch_city || "",
+            device_id: userDeployment.device_name,
+            city: user.branch_city || userDeployment.branch_city || "",
             customer_name: user.emp_name || user.username || "",
           }));
         } else {
@@ -211,7 +221,18 @@ export function Complaints() {
             customer_name: user.emp_name || user.username || "",
             device_id: "No device assigned",
           }));
+          console.warn("No device deployment found for user");
         }
+      } else {
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        console.error("Failed to fetch deployments:", errorData);
+        // Fill what we can from user context
+        setCreateComplaintData(prev => ({
+          ...prev,
+          city: user.branch_city || "",
+          customer_name: user.emp_name || user.username || "",
+          device_id: "Unable to load device info",
+        }));
       }
     } catch (error) {
       console.error("Error fetching user device info:", error);
