@@ -188,6 +188,14 @@ export function ConversationAnalytics() {
     uniqueCnicsByMonth,
   } = analytics;
 
+  // Safe defaults to prevent undefined errors
+  const safeStats = {
+    totalConversations: totalStats?.totalConversations || 0,
+    uniqueCustomers: totalStats?.uniqueCustomers || 0,
+    activeBranches: totalStats?.activeBranches || 0,
+    todayConversations: totalStats?.todayConversations || 0,
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
