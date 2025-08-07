@@ -53,6 +53,14 @@ export async function initializeTables() {
       console.log("⚠️  Could not check users table - may not exist");
     }
 
+    // Initialize complaints table
+    try {
+      const { initializeComplaintsTable } = await import("../scripts/init-complaints-table");
+      await initializeComplaintsTable();
+    } catch (error) {
+      console.error("⚠️  Could not initialize complaints table:", error);
+    }
+
     console.log("🚀 Database initialization completed - using existing schema");
   } catch (error) {
     console.error("❌ Database initialization failed:", error);
