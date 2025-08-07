@@ -15,6 +15,7 @@ import {
   Shield,
   User,
   RefreshCw,
+  Settings,
 } from "lucide-react";
 
 interface User {
