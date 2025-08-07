@@ -442,7 +442,7 @@ export function ConversationAnalytics() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {conversationsByCity.map((city, index) => (
+              {safeCityData.map((city, index) => (
                 <tr
                   key={index}
                   className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
