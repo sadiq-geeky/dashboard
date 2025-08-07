@@ -681,7 +681,10 @@ export function Complaints() {
             </button>
 
             <button
-              onClick={() => setActiveTab("analytics")}
+              onClick={() => {
+                setActiveTab("analytics");
+                navigate("/complaints?tab=analytics", { replace: true });
+              }}
               className={cn(
                 "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
                 activeTab === "analytics"
