@@ -641,24 +641,27 @@ export function Complaints() {
       </div>
 
       <div className="px-6 py-6">
-        {/* Header Section */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Mail className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {isAdmin() ? "Complaints Management" : "My Branch Complaints"}
-                </h1>
-                <p className="text-gray-600">
-                  {isAdmin()
-                    ? "Monitor and manage customer complaints from all branches"
-                    : "View and create complaints for your branch"}
-                </p>
-              </div>
-            </div>
+        {/* Complaints Tab Content */}
+        {activeTab === 'complaints' && (
+          <>
+            {/* Header Section */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <Mail className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-gray-900">
+                      {isAdmin() ? "Complaints Management" : "My Branch Complaints"}
+                    </h1>
+                    <p className="text-gray-600">
+                      {isAdmin()
+                        ? "Monitor and manage customer complaints from all branches"
+                        : "View and create complaints for your branch"}
+                    </p>
+                  </div>
+                </div>
 
             {/* Report Device Issue Button */}
             <button
