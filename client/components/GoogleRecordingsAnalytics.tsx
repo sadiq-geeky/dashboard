@@ -30,20 +30,26 @@ export function GoogleRecordingsAnalytics() {
     try {
       setLoading(true);
       setError(null);
+
+      console.log("Fetching recordings analytics from /api/analytics/recordings");
       const response = await authFetch("/api/analytics/recordings");
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch analytics: ${response.status}`);
+        const errorText = await response.text();
+        console.error("API Error Response:", response.status, errorText);
+        throw new Error(`Failed to fetch analytics: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
+      console.log("Received recordings analytics data:", data);
       setAnalytics(data);
     } catch (error) {
-      console.error("Error fetching analytics:", error);
+      console.error("Error fetching recordings analytics:", error);
       setError(
         error instanceof Error ? error.message : "Failed to fetch analytics",
       );
-      // Set mock data for demo purposes with all required fields
+      // Don't set mock data - leave analytics as null to show error state
+      setAnalytics(null);
       setAnalytics({
         totalRecordings: 1234,
         completedRecordings: 1156,
