@@ -420,15 +420,27 @@ export function UserManagement() {
                           <button
                             onClick={() => handleEditUser(user)}
                             className="text-blue-600 hover:text-blue-900"
+                            title="Edit user"
                           >
                             <Edit2 className="h-4 w-4" />
                           </button>
-                          <button
-                            onClick={() => handleDeleteUser(user.uuid)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                          {isSystemAdmin(user) ? (
+                            <button
+                              disabled
+                              className="text-gray-400 cursor-not-allowed"
+                              title="Cannot delete system administrator"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleDeleteUser(user.uuid)}
+                              className="text-red-600 hover:text-red-900"
+                              title="Delete user"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
