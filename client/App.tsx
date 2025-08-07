@@ -112,6 +112,7 @@ import { Recordings } from "./pages/Recordings";
 import { ConversationAnalytics } from "./pages/ConversationAnalytics";
 import { UserManagement } from "./pages/UserManagement";
 import { Deployment } from "./pages/Deployment";
+import { Complaints } from "./pages/Complaints";
 import { Login } from "./pages/Login";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
