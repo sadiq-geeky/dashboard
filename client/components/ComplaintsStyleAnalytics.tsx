@@ -212,6 +212,9 @@ export function ComplaintsStyleAnalytics() {
           </div>
         )}
       </div>
+
+      {/* Interactive Branch Chart - Admin Only */}
+      {isAdmin() && <InteractiveBranchChart />}
     </div>
   );
 }
