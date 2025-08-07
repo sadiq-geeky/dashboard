@@ -153,7 +153,7 @@ export function Complaints() {
   };
 
   useEffect(() => {
-    if (isAdmin()) {
+    if (isAdminOrManager()) {
       fetchComplaints();
       fetchStats();
     }
