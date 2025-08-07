@@ -355,12 +355,13 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
       })),
       conversationsByCity: conversationsByCity.map((row) => ({
         city: row.city || "Unknown City",
-        count: row.count,
-        branch_count: row.branch_count,
+        conversion_count: row.conversion_count,
+        total_conversations: row.total_conversations,
       })),
       dailyConversationsLastMonth: dailyConversationsLastMonth.map((row) => ({
         date: row.date,
-        count: row.count,
+        conversion_count: row.conversion_count,
+        total_conversations: row.total_conversations,
       })),
       uniqueCnicsByMonth: [
         {
