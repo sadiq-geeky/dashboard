@@ -116,10 +116,10 @@ export function GoogleConversationAnalytics() {
     return <div>No analytics data available</div>;
   }
 
-  // Prepare data for Google Charts
+  // Prepare data for Google Charts with null checks
   const dailyChartData = [
     ["Date", "Conversations"],
-    ...analytics.dailyConversations.map(item => [
+    ...(analytics.dailyConversations || []).map(item => [
       formatDate(item.date),
       item.count
     ])
@@ -127,7 +127,7 @@ export function GoogleConversationAnalytics() {
 
   const branchChartData = [
     ["Branch", "Conversations"],
-    ...analytics.conversationsByBranch.map(item => [
+    ...(analytics.conversationsByBranch || []).map(item => [
       item.branch_name,
       item.conversations
     ])
@@ -135,7 +135,7 @@ export function GoogleConversationAnalytics() {
 
   const cityChartData = [
     ["City", "Conversations"],
-    ...analytics.conversationsByCity.map(item => [
+    ...(analytics.conversationsByCity || []).map(item => [
       item.city,
       item.conversations
     ])
@@ -143,7 +143,7 @@ export function GoogleConversationAnalytics() {
 
   const trendsChartData = [
     ["Month", "Conversations", "Unique Customers"],
-    ...analytics.monthlyTrends.map(item => [
+    ...(analytics.monthlyTrends || []).map(item => [
       item.month,
       item.conversations,
       item.customers
