@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "../components/Header";
+import { AdminNavigation } from "../components/AdminNavigation";
 import { AddUserModal } from "../components/AddUserModal";
 import { EditUserModal } from "../components/EditUserModal";
 import { cn } from "@/lib/utils";
@@ -14,13 +15,6 @@ import {
   Shield,
   User,
   RefreshCw,
-  Grid3X3,
-  BarChart3,
-  MessageSquare,
-  Building2,
-  Monitor,
-  Mail,
-  Settings,
 } from "lucide-react";
 
 interface User {
