@@ -54,26 +54,34 @@ export function Login() {
               />
               <div className="space-y-3">
                 <h1 className="text-3xl font-bold text-gray-900 leading-tight">
-                  Voice Recording<br />
+                  Voice Recording
+                  <br />
                   <span className="text-red-600">Management System</span>
                 </h1>
                 <p className="text-base text-gray-600 leading-relaxed">
-                  Secure access to your voice recording dashboard. Monitor, analyze, and manage all recording activities.
+                  Secure access to your voice recording dashboard. Monitor,
+                  analyze, and manage all recording activities.
                 </p>
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-red-600 rounded-full"></div>
-                <span className="text-sm text-gray-600">Real-time monitoring</span>
+                <span className="text-sm text-gray-600">
+                  Real-time monitoring
+                </span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-red-600 rounded-full"></div>
-                <span className="text-sm text-gray-600">Advanced analytics</span>
+                <span className="text-sm text-gray-600">
+                  Advanced analytics
+                </span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-red-600 rounded-full"></div>
-                <span className="text-sm text-gray-600">Secure data handling</span>
+                <span className="text-sm text-gray-600">
+                  Secure data handling
+                </span>
               </div>
             </div>
           </div>

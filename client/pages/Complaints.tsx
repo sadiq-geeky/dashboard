@@ -340,8 +340,6 @@ export function Complaints() {
     }
   };
 
-
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -358,9 +356,7 @@ export function Complaints() {
               <span className="text-xs">Home</span>
             </button>
 
-            <button
-              className="flex flex-col items-center p-2 rounded-md text-gray-700 bg-white border border-gray-300"
-            >
+            <button className="flex flex-col items-center p-2 rounded-md text-gray-700 bg-white border border-gray-300">
               <Mail className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Complaints</span>
             </button>
