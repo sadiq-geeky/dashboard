@@ -808,6 +808,222 @@ export function Complaints() {
             </div>
           </div>
         )}
+
+        {/* Create Complaint Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              {/* Modal Header */}
+              <div className="border-b border-gray-200 p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <Plus className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-semibold text-gray-900">
+                        Create New Complaint
+                      </h2>
+                      <p className="text-sm text-gray-500">
+                        Report a device issue or service complaint
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowCreateModal(false)}
+                    className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Content */}
+              <form onSubmit={handleCreateComplaint} className="p-6">
+                <div className="space-y-6">
+                  {/* Customer Information */}
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Customer Information</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Customer Name *
+                        </label>
+                        <input
+                          type="text"
+                          value={createComplaintData.customer_name}
+                          onChange={(e) => setCreateComplaintData(prev => ({
+                            ...prev,
+                            customer_name: e.target.value
+                          }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter customer name"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          value={createComplaintData.customer_phone}
+                          onChange={(e) => setCreateComplaintData(prev => ({
+                            ...prev,
+                            customer_phone: e.target.value
+                          }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="+92-300-1234567"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          value={createComplaintData.customer_email}
+                          onChange={(e) => setCreateComplaintData(prev => ({
+                            ...prev,
+                            customer_email: e.target.value
+                          }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="customer@email.com"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          CNIC
+                        </label>
+                        <input
+                          type="text"
+                          value={createComplaintData.customer_cnic}
+                          onChange={(e) => setCreateComplaintData(prev => ({
+                            ...prev,
+                            customer_cnic: e.target.value
+                          }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="42101-1234567-1"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Device Used
+                        </label>
+                        <input
+                          type="text"
+                          value={createComplaintData.device_used}
+                          onChange={(e) => setCreateComplaintData(prev => ({
+                            ...prev,
+                            device_used: e.target.value
+                          }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Recording Device #1"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Issue Category
+                        </label>
+                        <Select
+                          value={createComplaintData.issue_category}
+                          onValueChange={(value) => setCreateComplaintData(prev => ({
+                            ...prev,
+                            issue_category: value
+                          }))}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Technical Issue">Technical Issue</SelectItem>
+                            <SelectItem value="Equipment Malfunction">Equipment Malfunction</SelectItem>
+                            <SelectItem value="Audio Quality">Audio Quality</SelectItem>
+                            <SelectItem value="Service Quality">Service Quality</SelectItem>
+                            <SelectItem value="System Error">System Error</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Complaint Details */}
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Complaint Details</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Priority Level
+                        </label>
+                        <Select
+                          value={createComplaintData.priority}
+                          onValueChange={(value: "low" | "medium" | "high" | "urgent") => setCreateComplaintData(prev => ({
+                            ...prev,
+                            priority: value
+                          }))}
+                        >
+                          <SelectTrigger className="w-full md:w-48">
+                            <SelectValue placeholder="Select priority" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="urgent">Urgent</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Complaint Description *
+                        </label>
+                        <textarea
+                          value={createComplaintData.complaint_text}
+                          onChange={(e) => setCreateComplaintData(prev => ({
+                            ...prev,
+                            complaint_text: e.target.value
+                          }))}
+                          rows={4}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Please describe the issue in detail..."
+                          required
+                        />
+                        <p className="text-sm text-gray-500 mt-1">
+                          Provide a detailed description of the issue, including when it occurred and any relevant circumstances.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Modal Footer */}
+                <div className="border-t border-gray-200 mt-6 pt-6 flex justify-end space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateModal(false)}
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>Create Complaint</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
