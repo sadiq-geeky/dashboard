@@ -644,22 +644,25 @@ export function Deployment() {
                 </h2>
                 <form onSubmit={handleCreateDeployment} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Select Device *
                     </label>
-                    <select
-                      value={selectedDevice}
-                      onChange={(e) => setSelectedDevice(e.target.value)}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    >
-                      <option value="">Choose a device</option>
-                      {availableDevices.map((device) => (
-                        <option key={device.id} value={device.id}>
-                          {device.device_name} ({device.device_mac || "No MAC"})
-                        </option>
-                      ))}
-                    </select>
+                    <Select value={selectedDevice} onValueChange={setSelectedDevice}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose a device" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableDevices.map((device) => (
+                          <SelectItem key={device.id} value={device.id}>
+                            <div className="flex items-center space-x-2">
+                              <Monitor className="h-4 w-4 text-blue-500" />
+                              <span className="font-medium">{device.device_name}</span>
+                              <span className="text-gray-500">({device.device_mac || "No MAC"})</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
