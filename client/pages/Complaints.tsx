@@ -1728,7 +1728,7 @@ export function Complaints() {
                         <h3 className="text-lg font-semibold text-gray-900">Conversations Last Month</h3>
                         <div className="flex items-center space-x-2 text-sm text-gray-500">
                           <Calendar className="h-4 w-4" />
-                          <span>December 2024</span>
+                          <span>July 2025</span>
                         </div>
                       </div>
 
