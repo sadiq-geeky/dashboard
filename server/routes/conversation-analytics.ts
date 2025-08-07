@@ -82,6 +82,41 @@ export const getConversationsByBranch: RequestHandler = async (req, res) => {
   }
 };
 
+// Get conversations per branch per month for interactive chart
+export const getConversationsByBranchPerMonth: RequestHandler = async (req, res) => {
+  try {
+    const query = `
+      SELECT
+        ldbu.branch_id,
+        COALESCE(MAX(b.branch_address), 'Unknown Branch') as branch_name,
+        COALESCE(b.branch_city, 'Unknown City') as branch_city,
+        DATE_FORMAT(r.start_time, '%Y-%m') as month,
+        COUNT(r.id) AS count
+      FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE ldbu.branch_id IS NOT NULL
+        AND r.start_time >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+      GROUP BY ldbu.branch_id, b.branch_address, b.branch_city, DATE_FORMAT(r.start_time, '%Y-%m')
+      ORDER BY month DESC, count DESC
+    `;
+
+    const result = await executeQuery<{
+      branch_id: string;
+      branch_name: string;
+      branch_city: string;
+      month: string;
+      count: number;
+    }>(query);
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching conversations by branch per month:", error);
+    res.status(500).json({ error: "Failed to fetch conversations by branch per month" });
+  }
+};
+
 // Get conversations analytics by city
 export const getConversationsByCity: RequestHandler = async (req, res) => {
   try {
