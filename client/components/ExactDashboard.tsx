@@ -46,7 +46,6 @@ import {
   CheckCircle,
 } from "lucide-react";
 
-
 // Fetch recordings from API with retry logic
 const fetchRecordings = async (
   user: any,
@@ -212,8 +211,6 @@ export function ExactDashboard() {
       const recordingData = await fetchRecordings(user);
       setRecordings(recordingData);
       setFilteredRecordings(recordingData);
-
-
     } catch (error) {
       console.error("Failed to load recordings:", error);
     }
@@ -331,8 +328,6 @@ export function ExactDashboard() {
       );
     }
 
-
-
     setFilteredRecordings(filtered);
 
     // Reset to page 1 if current page exceeds available pages
@@ -340,12 +335,7 @@ export function ExactDashboard() {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
-  }, [
-    searchQuery,
-    recordings,
-    currentPage,
-    itemsPerPage,
-  ]);
+  }, [searchQuery, recordings, currentPage, itemsPerPage]);
 
   const formatLastSeen = (dateString: string) => {
     const date = new Date(dateString);

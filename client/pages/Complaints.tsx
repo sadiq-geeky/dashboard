@@ -190,7 +190,7 @@ export function Complaints() {
 
       if (!user?.uuid) {
         console.error("No user UUID available");
-        setCreateComplaintData(prev => ({
+        setCreateComplaintData((prev) => ({
           ...prev,
           device_id: "No user information available",
         }));
@@ -200,13 +200,13 @@ export function Complaints() {
       // Step 1: Get deployments and devices data
       const [deploymentsResponse, devicesResponse] = await Promise.all([
         authFetch("/api/deployments"),
-        authFetch("/api/devices?limit=100")
+        authFetch("/api/devices?limit=100"),
       ]);
 
       if (deploymentsResponse.ok && devicesResponse.ok) {
         const [deploymentsData, devicesData] = await Promise.all([
           deploymentsResponse.json(),
-          devicesResponse.json()
+          devicesResponse.json(),
         ]);
 
         console.log("Deployments data:", deploymentsData.data);
@@ -214,28 +214,31 @@ export function Complaints() {
         console.log("Looking for user UUID:", user.uuid);
 
         // Step 2: Find user's deployment
-        const userDeployment = deploymentsData.data?.find((deployment: any) =>
-          deployment.user_id === user.uuid
+        const userDeployment = deploymentsData.data?.find(
+          (deployment: any) => deployment.user_id === user.uuid,
         );
 
         console.log("User deployment found:", userDeployment);
 
         if (userDeployment) {
           // Step 3: Find the device details using device_id from deployment
-          const device = devicesData.data?.find((device: any) =>
-            device.id === userDeployment.device_id
+          const device = devicesData.data?.find(
+            (device: any) => device.id === userDeployment.device_id,
           );
 
           console.log("Device found:", device);
 
           if (device) {
-            setCreateComplaintData(prev => ({
+            setCreateComplaintData((prev) => ({
               ...prev,
               device_id: device.device_name || device.id,
             }));
-            console.log("Successfully set device:", device.device_name || device.id);
+            console.log(
+              "Successfully set device:",
+              device.device_name || device.id,
+            );
           } else {
-            setCreateComplaintData(prev => ({
+            setCreateComplaintData((prev) => ({
               ...prev,
               device_id: `Device ID: ${userDeployment.device_id}`,
             }));
@@ -243,35 +246,43 @@ export function Complaints() {
           }
         } else {
           console.warn("No deployment found for user");
-          setCreateComplaintData(prev => ({
+          setCreateComplaintData((prev) => ({
             ...prev,
             device_id: "No device assigned",
           }));
         }
       } else {
-        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: "Unknown error" }));
         console.error("Failed to fetch deployments:", errorData);
 
         // Try alternative approach - get devices by branch
         if (user.branch_id) {
           console.log("Trying branch devices endpoint as fallback...");
           try {
-            const branchDevicesResponse = await authFetch(`/api/branches/${user.branch_id}/devices`);
+            const branchDevicesResponse = await authFetch(
+              `/api/branches/${user.branch_id}/devices`,
+            );
             if (branchDevicesResponse.ok) {
               const branchDevicesData = await branchDevicesResponse.json();
               console.log("Branch devices data:", branchDevicesData);
 
               if (branchDevicesData.data && branchDevicesData.data.length > 0) {
                 // Use the first active device in the branch as fallback
-                const activeDevice = branchDevicesData.data.find((device: any) =>
-                  device.device_status === 'active'
-                ) || branchDevicesData.data[0];
+                const activeDevice =
+                  branchDevicesData.data.find(
+                    (device: any) => device.device_status === "active",
+                  ) || branchDevicesData.data[0];
 
                 if (activeDevice) {
                   console.log("Using branch device as fallback:", activeDevice);
-                  setCreateComplaintData(prev => ({
+                  setCreateComplaintData((prev) => ({
                     ...prev,
-                    device_id: activeDevice.device_name || activeDevice.device_id || "Branch Device",
+                    device_id:
+                      activeDevice.device_name ||
+                      activeDevice.device_id ||
+                      "Branch Device",
                   }));
                   return;
                 }
@@ -282,14 +293,14 @@ export function Complaints() {
           }
         }
 
-        setCreateComplaintData(prev => ({
+        setCreateComplaintData((prev) => ({
           ...prev,
           device_id: "Unable to load device info",
         }));
       }
     } catch (error) {
       console.error("Error fetching user device info:", error);
-      setCreateComplaintData(prev => ({
+      setCreateComplaintData((prev) => ({
         ...prev,
         device_id: "Unable to load device info",
       }));
@@ -318,7 +329,7 @@ export function Complaints() {
       email_id: user?.email_id,
       branch_city: user?.branch_city,
       hasPhoneNo: !!user?.phone_no,
-      hasEmailId: !!user?.email_id
+      hasEmailId: !!user?.email_id,
     });
   }, [user]);
 
@@ -408,8 +419,14 @@ export function Complaints() {
       return;
     }
 
-    if (!createComplaintData.device_id.trim() || createComplaintData.device_id === "Unable to load device info" || createComplaintData.device_id === "No user information available") {
-      alert("Device information is required. Please wait for device information to load or contact your administrator.");
+    if (
+      !createComplaintData.device_id.trim() ||
+      createComplaintData.device_id === "Unable to load device info" ||
+      createComplaintData.device_id === "No user information available"
+    ) {
+      alert(
+        "Device information is required. Please wait for device information to load or contact your administrator.",
+      );
       return;
     }
 
@@ -420,7 +437,9 @@ export function Complaints() {
     }
 
     if (!user?.branch_id) {
-      alert("Branch information is missing. Please contact your administrator.");
+      alert(
+        "Branch information is missing. Please contact your administrator.",
+      );
       return;
     }
 
@@ -455,7 +474,9 @@ export function Complaints() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: "Unknown error" }));
         console.error("Server error response:", errorData);
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
@@ -484,7 +505,8 @@ export function Complaints() {
       alert("Complaint created successfully!");
     } catch (error) {
       console.error("Error creating complaint:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
       alert(`Failed to create complaint: ${errorMessage}`);
     }
   };
@@ -543,7 +565,7 @@ export function Complaints() {
                   phone_no: user?.phone_no,
                   email_id: user?.email_id,
                   branch_city: user?.branch_city,
-                  full_user: user
+                  full_user: user,
                 });
 
                 let phoneNo = user?.phone_no || "";
@@ -551,9 +573,13 @@ export function Complaints() {
 
                 // If phone or email is missing, try to fetch from user profile
                 if (!phoneNo || !emailId) {
-                  console.log("Phone or email missing, fetching user profile...");
+                  console.log(
+                    "Phone or email missing, fetching user profile...",
+                  );
                   try {
-                    const userProfileResponse = await authFetch(`/api/users/${user?.uuid}`);
+                    const userProfileResponse = await authFetch(
+                      `/api/users/${user?.uuid}`,
+                    );
                     if (userProfileResponse.ok) {
                       const userProfile = await userProfileResponse.json();
                       console.log("User profile data:", userProfile);
@@ -1356,7 +1382,9 @@ export function Complaints() {
                           required
                         />
                         <p className="text-sm text-gray-500 mt-1">
-                          Provide details about the device problem, including when it started, what you were doing, and any error messages.
+                          Provide details about the device problem, including
+                          when it started, what you were doing, and any error
+                          messages.
                         </p>
                       </div>
                     </div>

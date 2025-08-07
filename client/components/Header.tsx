@@ -23,8 +23,14 @@ export function Header() {
   const goBackToDashboard = () => navigate("/");
 
   return (
-    <div className="bg-white border-b border-gray-200 px-5 py-1" style={{padding: "5px 24px 5px 20px"}}>
-      <div className="flex items-center justify-between" style={{fontWeight: "300"}}>
+    <div
+      className="bg-white border-b border-gray-200 px-5 py-1"
+      style={{ padding: "5px 24px 5px 20px" }}
+    >
+      <div
+        className="flex items-center justify-between"
+        style={{ fontWeight: "300" }}
+      >
         <div className="flex items-center space-x-3">
           {/* Clickable logo */}
           <button
