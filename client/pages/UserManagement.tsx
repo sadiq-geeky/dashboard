@@ -3,6 +3,7 @@ import { Header } from "../components/Header";
 import { AddUserModal } from "../components/AddUserModal";
 import { EditUserModal } from "../components/EditUserModal";
 import { cn } from "@/lib/utils";
+import { authDelete } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import {
   Users,
