@@ -1483,9 +1483,6 @@ export function Complaints() {
                               placeholder="Loading device information..."
                               readOnly
                             />
-                            <p className="text-xs text-gray-500 mt-1">
-                              Automatically filled based on your assigned device
-                            </p>
                           </div>
 
                           <div>
