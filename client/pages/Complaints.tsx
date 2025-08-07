@@ -190,6 +190,10 @@ export function Complaints() {
 
       if (!user?.uuid) {
         console.error("No user UUID available");
+        setCreateComplaintData(prev => ({
+          ...prev,
+          device_id: "No user information available",
+        }));
         return;
       }
 
@@ -210,19 +214,10 @@ export function Complaints() {
           setCreateComplaintData(prev => ({
             ...prev,
             device_id: userDeployment.device_name,
-            city: user.branch_city || userDeployment.branch_city || "",
-            customer_name: user.emp_name || user.username || "",
-            customer_phone: user.phone_no || "",
-            customer_email: user.email_id || "",
           }));
         } else {
-          // If no device assigned, still fill branch info
           setCreateComplaintData(prev => ({
             ...prev,
-            city: user.branch_city || "",
-            customer_name: user.emp_name || user.username || "",
-            customer_phone: user.phone_no || "",
-            customer_email: user.email_id || "",
             device_id: "No device assigned",
           }));
           console.warn("No device deployment found for user");
@@ -230,25 +225,15 @@ export function Complaints() {
       } else {
         const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
         console.error("Failed to fetch deployments:", errorData);
-        // Fill what we can from user context
         setCreateComplaintData(prev => ({
           ...prev,
-          city: user.branch_city || "",
-          customer_name: user.emp_name || user.username || "",
-          customer_phone: user.phone_no || "",
-          customer_email: user.email_id || "",
           device_id: "Unable to load device info",
         }));
       }
     } catch (error) {
       console.error("Error fetching user device info:", error);
-      // Fill what we can from user context
       setCreateComplaintData(prev => ({
         ...prev,
-        city: user?.branch_city || "",
-        customer_name: user?.emp_name || user?.username || "",
-        customer_phone: user?.phone_no || "",
-        customer_email: user?.email_id || "",
         device_id: "Unable to load device info",
       }));
     }
