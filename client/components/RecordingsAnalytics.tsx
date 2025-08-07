@@ -14,6 +14,7 @@ import {
   Line,
 } from "recharts";
 import { TrendingUp, Users, Clock, CheckCircle, RefreshCw } from "lucide-react";
+import { authFetch } from "@/lib/api";
 
 interface RecordingAnalytics {
   dailyRecordings: Array<{ date: string; count: number }>;
