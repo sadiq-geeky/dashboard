@@ -180,6 +180,12 @@ export function createServer() {
     getConversationsByBranch,
   );
   app.get(
+    "/api/analytics/conversations/branch-monthly",
+    authenticate,
+    addBranchFilter(),
+    getConversationsByBranchPerMonth,
+  );
+  app.get(
     "/api/analytics/conversations/city",
     authenticate,
     addBranchFilter(),
