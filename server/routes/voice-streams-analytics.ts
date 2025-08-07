@@ -28,7 +28,7 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
     const branchFilter = (req as any).branchFilter;
     const branchFilterCondition = branchFilter
       ? `AND ldbu.branch_id = '${branchFilter.value}'`
-      : '';
+      : "";
 
     // Get total voice streams count
     const totalQuery = `
@@ -101,13 +101,15 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
       currentMonthResult,
       previousMonthResult,
       monthlyResult,
-      dailyCurrentMonthResult
+      dailyCurrentMonthResult,
     ] = await Promise.all([
       executeQuery<{ total_streams: number }>(totalQuery),
       executeQuery<{ current_month_streams: number }>(currentMonthQuery),
       executeQuery<{ previous_month_streams: number }>(previousMonthQuery),
       executeQuery<{ month: string; voice_streams: number }>(monthlyQuery),
-      executeQuery<{ date: string; voice_streams: number }>(dailyCurrentMonthQuery)
+      executeQuery<{ date: string; voice_streams: number }>(
+        dailyCurrentMonthQuery,
+      ),
     ]);
 
     // Generate last 12 months array to fill missing months with 0
@@ -116,16 +118,18 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
       const date = new Date();
       date.setMonth(date.getMonth() - i);
       const monthKey = date.toISOString().slice(0, 7); // YYYY-MM format
-      const formattedMonth = date.toLocaleDateString('en-US', {
-        month: 'short',
-        year: 'numeric'
+      const formattedMonth = date.toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
       });
 
-      const existingData = monthlyResult.find(item => item.month === monthKey);
+      const existingData = monthlyResult.find(
+        (item) => item.month === monthKey,
+      );
       last12Months.push({
         month: monthKey,
         voice_streams: existingData ? existingData.voice_streams : 0,
-        formatted_month: formattedMonth
+        formatted_month: formattedMonth,
       });
     }
 
@@ -139,25 +143,28 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentYear, currentMonth, day);
       const dateKey = date.toISOString().slice(0, 10); // YYYY-MM-DD format
-      const formattedDate = date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric'
+      const formattedDate = date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
       });
 
-      const existingData = dailyCurrentMonthResult.find(item => item.date === dateKey);
+      const existingData = dailyCurrentMonthResult.find(
+        (item) => item.date === dateKey,
+      );
       dailyCurrentMonth.push({
         date: dateKey,
         voice_streams: existingData ? existingData.voice_streams : 0,
-        formatted_date: formattedDate
+        formatted_date: formattedDate,
       });
     }
 
     const response: VoiceStreamStats = {
       total_streams: totalResult[0]?.total_streams || 0,
       current_month_streams: currentMonthResult[0]?.current_month_streams || 0,
-      previous_month_streams: previousMonthResult[0]?.previous_month_streams || 0,
+      previous_month_streams:
+        previousMonthResult[0]?.previous_month_streams || 0,
       monthly_data: last12Months,
-      daily_current_month: dailyCurrentMonth
+      daily_current_month: dailyCurrentMonth,
     };
 
     res.json(response);
@@ -165,7 +172,8 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
     console.error("Error fetching voice streams analytics:", error);
     res.status(500).json({
       error: "Failed to fetch voice streams analytics",
-      details: process.env.NODE_ENV === "development" ? error.message : undefined
+      details:
+        process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };

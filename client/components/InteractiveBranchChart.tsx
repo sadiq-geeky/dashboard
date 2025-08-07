@@ -54,7 +54,9 @@ export function InteractiveBranchChart() {
 
   // Get available months from data
   const getAvailableMonths = () => {
-    const months = [...new Set(rawData.map(item => item.month))].sort().reverse();
+    const months = [...new Set(rawData.map((item) => item.month))]
+      .sort()
+      .reverse();
     return months;
   };
 
@@ -63,7 +65,9 @@ export function InteractiveBranchChart() {
       setLoading(true);
       setError(null);
 
-      const response = await authFetch("/api/analytics/conversations/branch-monthly");
+      const response = await authFetch(
+        "/api/analytics/conversations/branch-monthly",
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch branch monthly data");
       }
@@ -72,7 +76,9 @@ export function InteractiveBranchChart() {
       setRawData(data);
 
       // Set default month to the latest available
-      const availableMonths = [...new Set(data.map(item => item.month))].sort().reverse();
+      const availableMonths = [...new Set(data.map((item) => item.month))]
+        .sort()
+        .reverse();
       if (availableMonths.length > 0 && !selectedMonth) {
         setSelectedMonth(availableMonths[0]);
       }
@@ -89,26 +95,31 @@ export function InteractiveBranchChart() {
     if (!selectedMonth || rawData.length === 0) return;
 
     // Filter data for selected month
-    const monthData = rawData.filter(item => item.month === selectedMonth);
+    const monthData = rawData.filter((item) => item.month === selectedMonth);
 
     // Group by branch and sum conversations
-    const branchTotals = monthData.reduce((acc, item) => {
-      const key = item.branch_name;
-      if (!acc[key]) {
-        acc[key] = {
-          name: item.branch_name,
-          conversations: 0,
-          branch_id: item.branch_id,
-          details: []
-        };
-      }
-      acc[key].conversations += item.count;
-      acc[key].details.push(item);
-      return acc;
-    }, {} as Record<string, ChartData>);
+    const branchTotals = monthData.reduce(
+      (acc, item) => {
+        const key = item.branch_name;
+        if (!acc[key]) {
+          acc[key] = {
+            name: item.branch_name,
+            conversations: 0,
+            branch_id: item.branch_id,
+            details: [],
+          };
+        }
+        acc[key].conversations += item.count;
+        acc[key].details.push(item);
+        return acc;
+      },
+      {} as Record<string, ChartData>,
+    );
 
     // Sort by conversations count
-    const sortedBranches = Object.values(branchTotals).sort((a, b) => b.conversations - a.conversations);
+    const sortedBranches = Object.values(branchTotals).sort(
+      (a, b) => b.conversations - a.conversations,
+    );
 
     // Take top 20 and group others
     const top20 = sortedBranches.slice(0, 20);
@@ -118,12 +129,15 @@ export function InteractiveBranchChart() {
 
     // Add "Others" group if there are more than 20 branches
     if (others.length > 0) {
-      const othersTotal = others.reduce((sum, branch) => sum + branch.conversations, 0);
+      const othersTotal = others.reduce(
+        (sum, branch) => sum + branch.conversations,
+        0,
+      );
       chartData.push({
         name: "Others",
         conversations: othersTotal,
         isOthers: true,
-        details: others.flatMap(branch => branch.details || [])
+        details: others.flatMap((branch) => branch.details || []),
       });
     }
 
@@ -135,21 +149,23 @@ export function InteractiveBranchChart() {
     if (data.isOthers) {
       // Show breakdown of "Others" branches
       const othersBreakdown = rawData
-        .filter(item => item.month === selectedMonth)
+        .filter((item) => item.month === selectedMonth)
         .reduce((acc, item) => {
-          const existing = acc.find(x => x.name === item.branch_name);
+          const existing = acc.find((x) => x.name === item.branch_name);
           if (existing) {
             existing.conversations += item.count;
           } else {
             acc.push({
               name: item.branch_name,
               conversations: item.count,
-              month: item.month
+              month: item.month,
             });
           }
           return acc;
         }, [] as DrilldownData[])
-        .filter(item => !chartData.slice(0, 20).find(c => c.name === item.name))
+        .filter(
+          (item) => !chartData.slice(0, 20).find((c) => c.name === item.name),
+        )
         .sort((a, b) => b.conversations - a.conversations);
 
       setDrilldownData(othersBreakdown);
@@ -158,11 +174,11 @@ export function InteractiveBranchChart() {
     } else {
       // Show monthly breakdown for specific branch
       const branchMonthly = rawData
-        .filter(item => item.branch_name === data.name)
-        .map(item => ({
+        .filter((item) => item.branch_name === data.name)
+        .map((item) => ({
           name: item.month,
           conversations: item.count,
-          month: item.month
+          month: item.month,
         }))
         .sort((a, b) => b.month.localeCompare(a.month));
 
@@ -181,7 +197,9 @@ export function InteractiveBranchChart() {
       return (
         <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl p-4 min-w-[200px]">
           <div className="flex items-center space-x-2 mb-2">
-            <div className={`w-3 h-3 rounded-full ${isOthers ? 'bg-gradient-to-r from-amber-400 to-orange-500' : 'bg-gradient-to-r from-blue-500 to-indigo-600'}`} />
+            <div
+              className={`w-3 h-3 rounded-full ${isOthers ? "bg-gradient-to-r from-amber-400 to-orange-500" : "bg-gradient-to-r from-blue-500 to-indigo-600"}`}
+            />
             <p className="font-semibold text-gray-900 text-sm">{label}</p>
           </div>
           <div className="space-y-1">
@@ -223,11 +241,19 @@ export function InteractiveBranchChart() {
             </div>
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-indigo-600/20 rounded-xl blur animate-pulse"></div>
           </div>
-          <span className="text-gray-600 font-medium">Loading branch analytics...</span>
+          <span className="text-gray-600 font-medium">
+            Loading branch analytics...
+          </span>
           <div className="mt-3 flex space-x-1">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-            <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-            <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+            <div
+              className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"
+              style={{ animationDelay: "0.1s" }}
+            ></div>
+            <div
+              className="w-2 h-2 bg-purple-500 rounded-full animate-bounce"
+              style={{ animationDelay: "0.2s" }}
+            ></div>
           </div>
         </div>
       </div>
@@ -243,7 +269,9 @@ export function InteractiveBranchChart() {
               <BarChart3 className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h4 className="font-semibold text-red-800">Failed to load analytics</h4>
+              <h4 className="font-semibold text-red-800">
+                Failed to load analytics
+              </h4>
               <p className="text-red-600 text-sm">{error}</p>
             </div>
           </div>
@@ -296,11 +324,11 @@ export function InteractiveBranchChart() {
               onChange={(e) => setSelectedMonth(e.target.value)}
               className="bg-transparent border-none outline-none text-sm font-medium text-gray-700 cursor-pointer"
             >
-              {availableMonths.map(month => (
+              {availableMonths.map((month) => (
                 <option key={month} value={month}>
-                  {new Date(month + '-01').toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long'
+                  {new Date(month + "-01").toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
                   })}
                 </option>
               ))}
@@ -325,7 +353,13 @@ export function InteractiveBranchChart() {
                 <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.9} />
                 <stop offset="100%" stopColor="#d97706" stopOpacity={0.8} />
               </linearGradient>
-              <linearGradient id="drilldownGradient" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient
+                id="drilldownGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
                 <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
                 <stop offset="100%" stopColor="#059669" stopOpacity={0.8} />
               </linearGradient>
@@ -344,19 +378,22 @@ export function InteractiveBranchChart() {
               fontSize={11}
               fontWeight={500}
               interval={0}
-              tick={{ fill: '#6b7280' }}
-              axisLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
-              tickLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+              tick={{ fill: "#6b7280" }}
+              axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
+              tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
             />
             <YAxis
               fontSize={11}
               fontWeight={500}
-              tick={{ fill: '#6b7280' }}
-              axisLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
-              tickLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+              tick={{ fill: "#6b7280" }}
+              axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
+              tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
               tickFormatter={(value) => value.toLocaleString()}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }} />
+            <Tooltip
+              content={<CustomTooltip />}
+              cursor={{ fill: "rgba(59, 130, 246, 0.05)" }}
+            />
             <Bar
               dataKey="conversations"
               cursor="pointer"
@@ -371,12 +408,7 @@ export function InteractiveBranchChart() {
                   fillColor = "url(#othersGradient)";
                 }
 
-                return (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={fillColor}
-                  />
-                );
+                return <Cell key={`cell-${index}`} fill={fillColor} />;
               })}
             </Bar>
           </BarChart>
@@ -407,7 +439,9 @@ export function InteractiveBranchChart() {
               <div className="p-2 bg-gradient-to-br from-emerald-500 to-green-600 rounded-lg">
                 <BarChart3 className="h-4 w-4 text-white" />
               </div>
-              <span className="text-sm font-medium text-emerald-700">Total Conversations</span>
+              <span className="text-sm font-medium text-emerald-700">
+                Total Conversations
+              </span>
             </div>
           </div>
           <p className="text-2xl font-bold text-emerald-900">
@@ -423,16 +457,20 @@ export function InteractiveBranchChart() {
               <div className="p-2 bg-gradient-to-br from-purple-500 to-violet-600 rounded-lg">
                 <Calendar className="h-4 w-4 text-white" />
               </div>
-              <span className="text-sm font-medium text-purple-700">Period</span>
+              <span className="text-sm font-medium text-purple-700">
+                Period
+              </span>
             </div>
           </div>
           <p className="text-2xl font-bold text-purple-900">
             {isDrilldown && drilldownTitle.includes("Monthly")
               ? "Last 12M"
-              : selectedMonth ? new Date(selectedMonth + '-01').toLocaleDateString('en-US', {
-                  month: 'short',
-                  year: 'numeric'
-                }) : "—"}
+              : selectedMonth
+                ? new Date(selectedMonth + "-01").toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "numeric",
+                  })
+                : "—"}
           </p>
         </div>
       </div>
@@ -442,7 +480,10 @@ export function InteractiveBranchChart() {
           <div className="flex items-center space-x-2 text-sm text-blue-700">
             <span className="text-lg">💡</span>
             <span className="font-medium">Pro tip:</span>
-            <span>Click on any bar to see detailed breakdown. "Others" shows remaining branches.</span>
+            <span>
+              Click on any bar to see detailed breakdown. "Others" shows
+              remaining branches.
+            </span>
           </div>
         </div>
       )}

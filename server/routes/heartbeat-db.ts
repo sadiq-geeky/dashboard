@@ -91,13 +91,16 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
           '0h 0m' AS uptime_duration_24h
         FROM heartbeat
         WHERE mac_address IS NOT NULL
-        ${branchFilter ? '' : ''}
+        ${branchFilter ? "" : ""}
         GROUP BY mac_address, ip_address
         ORDER BY MAX(created_on) DESC
         LIMIT 50
       `;
 
-      heartbeats = await executeQuery<HeartbeatRecord>(fallbackQuery, branchFilter ? [] : []);
+      heartbeats = await executeQuery<HeartbeatRecord>(
+        fallbackQuery,
+        branchFilter ? [] : [],
+      );
     }
 
     const duration = Date.now() - startTime;

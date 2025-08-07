@@ -59,7 +59,7 @@ export const getConversationsByBranch: RequestHandler = async (req, res) => {
     const branchFilter = (req as any).branchFilter;
     const branchFilterCondition = branchFilter
       ? `AND ldbu.branch_id = '${branchFilter.value}'`
-      : '';
+      : "";
 
     const query = `
       SELECT
@@ -89,13 +89,16 @@ export const getConversationsByBranch: RequestHandler = async (req, res) => {
 };
 
 // Get conversations per branch per month for interactive chart
-export const getConversationsByBranchPerMonth: RequestHandler = async (req, res) => {
+export const getConversationsByBranchPerMonth: RequestHandler = async (
+  req,
+  res,
+) => {
   try {
     // Get branch filter from middleware
     const branchFilter = (req as any).branchFilter;
     const branchFilterCondition = branchFilter
       ? `AND ldbu.branch_id = '${branchFilter.value}'`
-      : '';
+      : "";
 
     const query = `
       SELECT
@@ -126,7 +129,9 @@ export const getConversationsByBranchPerMonth: RequestHandler = async (req, res)
     res.json(result);
   } catch (error) {
     console.error("Error fetching conversations by branch per month:", error);
-    res.status(500).json({ error: "Failed to fetch conversations by branch per month" });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch conversations by branch per month" });
   }
 };
 
@@ -137,7 +142,7 @@ export const getConversationsByCity: RequestHandler = async (req, res) => {
     const branchFilter = (req as any).branchFilter;
     const branchFilterCondition = branchFilter
       ? `AND ldbu.branch_id = '${branchFilter.value}'`
-      : '';
+      : "";
 
     const query = `
       SELECT
@@ -176,7 +181,7 @@ export const getDailyConversationsLastMonth: RequestHandler = async (
     const branchFilter = (req as any).branchFilter;
     const branchFilterCondition = branchFilter
       ? `AND ldbu.branch_id = '${branchFilter.value}'`
-      : '';
+      : "";
 
     const query = `
       SELECT
@@ -211,7 +216,7 @@ export const getUniqueCnicsByMonth: RequestHandler = async (req, res) => {
     const branchFilter = (req as any).branchFilter;
     const branchFilterCondition = branchFilter
       ? `AND ldbu.branch_id = '${branchFilter.value}'`
-      : '';
+      : "";
 
     const query = `
       SELECT
@@ -247,7 +252,7 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
     const branchFilter = (req as any).branchFilter;
     const branchFilterCondition = branchFilter
       ? `AND ldbu.branch_id = '${branchFilter.value}'`
-      : '';
+      : "";
 
     // 1. Number of conversations according to branch
     const branchQuery = `

@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { authFetch } from "@/lib/api";
-import {
-  RefreshCw,
-  Mic,
-  Calendar,
-  TrendingUp,
-  BarChart3,
-} from "lucide-react";
+import { RefreshCw, Mic, Calendar, TrendingUp, BarChart3 } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -116,7 +110,9 @@ export function BranchVoiceStreamsAnalytics() {
               </div>
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-indigo-600/20 rounded-xl blur animate-pulse"></div>
             </div>
-            <span className="text-gray-600 font-medium">Loading voice stream analytics...</span>
+            <span className="text-gray-600 font-medium">
+              Loading voice stream analytics...
+            </span>
           </div>
         </div>
       </div>
@@ -133,7 +129,9 @@ export function BranchVoiceStreamsAnalytics() {
                 <Mic className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h4 className="font-semibold text-red-800">Failed to load voice stream analytics</h4>
+                <h4 className="font-semibold text-red-800">
+                  Failed to load voice stream analytics
+                </h4>
                 <p className="text-red-600 text-sm">{error}</p>
               </div>
             </div>
@@ -154,9 +152,14 @@ export function BranchVoiceStreamsAnalytics() {
   }
 
   // Calculate growth percentage
-  const growthPercentage = data.previous_month_streams > 0
-    ? ((data.current_month_streams - data.previous_month_streams) / data.previous_month_streams) * 100
-    : data.current_month_streams > 0 ? 100 : 0;
+  const growthPercentage =
+    data.previous_month_streams > 0
+      ? ((data.current_month_streams - data.previous_month_streams) /
+          data.previous_month_streams) *
+        100
+      : data.current_month_streams > 0
+        ? 100
+        : 0;
 
   return (
     <div className="space-y-6">
@@ -187,8 +190,12 @@ export function BranchVoiceStreamsAnalytics() {
                 <Mic className="h-5 w-5 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-blue-700">Total Voice Streams</p>
-                <p className="text-2xl font-bold text-blue-900">{data.total_streams.toLocaleString()}</p>
+                <p className="text-sm font-medium text-blue-700">
+                  Total Voice Streams
+                </p>
+                <p className="text-2xl font-bold text-blue-900">
+                  {data.total_streams.toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
@@ -203,8 +210,12 @@ export function BranchVoiceStreamsAnalytics() {
                 <Calendar className="h-5 w-5 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-emerald-700">This Month</p>
-                <p className="text-2xl font-bold text-emerald-900">{data.current_month_streams.toLocaleString()}</p>
+                <p className="text-sm font-medium text-emerald-700">
+                  This Month
+                </p>
+                <p className="text-2xl font-bold text-emerald-900">
+                  {data.current_month_streams.toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
@@ -219,9 +230,14 @@ export function BranchVoiceStreamsAnalytics() {
                 <TrendingUp className="h-5 w-5 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-purple-700">Monthly Growth</p>
-                <p className={`text-2xl font-bold ${growthPercentage >= 0 ? 'text-purple-900' : 'text-red-600'}`}>
-                  {growthPercentage >= 0 ? '+' : ''}{growthPercentage.toFixed(1)}%
+                <p className="text-sm font-medium text-purple-700">
+                  Monthly Growth
+                </p>
+                <p
+                  className={`text-2xl font-bold ${growthPercentage >= 0 ? "text-purple-900" : "text-red-600"}`}
+                >
+                  {growthPercentage >= 0 ? "+" : ""}
+                  {growthPercentage.toFixed(1)}%
                 </p>
               </div>
             </div>
@@ -256,9 +272,19 @@ export function BranchVoiceStreamsAnalytics() {
                 margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
               >
                 <defs>
-                  <linearGradient id="voiceStreamGradient" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient
+                    id="voiceStreamGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
                     <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.05} />
+                    <stop
+                      offset="100%"
+                      stopColor="#3b82f6"
+                      stopOpacity={0.05}
+                    />
                   </linearGradient>
                 </defs>
                 <CartesianGrid
@@ -271,17 +297,17 @@ export function BranchVoiceStreamsAnalytics() {
                   dataKey="formatted_month"
                   fontSize={9}
                   fontWeight={500}
-                  tick={{ fill: '#6b7280' }}
-                  axisLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
-                  tickLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+                  tick={{ fill: "#6b7280" }}
+                  axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
+                  tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   interval="preserveStartEnd"
                 />
                 <YAxis
                   fontSize={9}
                   fontWeight={500}
-                  tick={{ fill: '#6b7280' }}
-                  axisLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
-                  tickLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+                  tick={{ fill: "#6b7280" }}
+                  axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
+                  tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   tickFormatter={(value) => value.toLocaleString()}
                 />
                 <Tooltip content={<CustomTooltip />} />
@@ -301,16 +327,22 @@ export function BranchVoiceStreamsAnalytics() {
             <div className="bg-gray-50/70 rounded-lg p-2 text-center">
               <p className="text-xs text-gray-500 mb-1">Peak Month</p>
               <p className="text-sm font-semibold text-gray-900">
-                {data.monthly_data.reduce((max, curr) =>
-                  curr.voice_streams > max.voice_streams ? curr : max,
-                  data.monthly_data[0]
-                )?.formatted_month || '—'}
+                {data.monthly_data.reduce(
+                  (max, curr) =>
+                    curr.voice_streams > max.voice_streams ? curr : max,
+                  data.monthly_data[0],
+                )?.formatted_month || "—"}
               </p>
             </div>
             <div className="bg-gray-50/70 rounded-lg p-2 text-center">
               <p className="text-xs text-gray-500 mb-1">Average/Month</p>
               <p className="text-sm font-semibold text-gray-900">
-                {Math.round(data.monthly_data.reduce((sum, d) => sum + d.voice_streams, 0) / data.monthly_data.length).toLocaleString()}
+                {Math.round(
+                  data.monthly_data.reduce(
+                    (sum, d) => sum + d.voice_streams,
+                    0,
+                  ) / data.monthly_data.length,
+                ).toLocaleString()}
               </p>
             </div>
           </div>
@@ -327,7 +359,11 @@ export function BranchVoiceStreamsAnalytics() {
                 Voice Streams This Month
               </h3>
               <p className="text-gray-600 text-xs mt-1">
-                Daily activity for {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                Daily activity for{" "}
+                {new Date().toLocaleDateString("en-US", {
+                  month: "long",
+                  year: "numeric",
+                })}
               </p>
             </div>
           </div>
@@ -340,7 +376,13 @@ export function BranchVoiceStreamsAnalytics() {
                 margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
               >
                 <defs>
-                  <linearGradient id="dailyVoiceStreamGradient" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient
+                    id="dailyVoiceStreamGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
                     <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
                     <stop offset="100%" stopColor="#059669" stopOpacity={0.8} />
                   </linearGradient>
@@ -355,17 +397,17 @@ export function BranchVoiceStreamsAnalytics() {
                   dataKey="formatted_date"
                   fontSize={9}
                   fontWeight={500}
-                  tick={{ fill: '#6b7280' }}
-                  axisLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
-                  tickLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+                  tick={{ fill: "#6b7280" }}
+                  axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
+                  tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   interval="preserveStartEnd"
                 />
                 <YAxis
                   fontSize={9}
                   fontWeight={500}
-                  tick={{ fill: '#6b7280' }}
-                  axisLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
-                  tickLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
+                  tick={{ fill: "#6b7280" }}
+                  axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
+                  tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   tickFormatter={(value) => value.toLocaleString()}
                 />
                 <Tooltip content={<CustomTooltip />} />
@@ -383,16 +425,20 @@ export function BranchVoiceStreamsAnalytics() {
             <div className="bg-gray-50/70 rounded-lg p-2 text-center">
               <p className="text-xs text-gray-500 mb-1">Peak Day</p>
               <p className="text-sm font-semibold text-gray-900">
-                {data.daily_current_month.reduce((max, curr) =>
-                  curr.voice_streams > max.voice_streams ? curr : max,
-                  data.daily_current_month[0]
-                )?.formatted_date || '—'}
+                {data.daily_current_month.reduce(
+                  (max, curr) =>
+                    curr.voice_streams > max.voice_streams ? curr : max,
+                  data.daily_current_month[0],
+                )?.formatted_date || "—"}
               </p>
             </div>
             <div className="bg-gray-50/70 rounded-lg p-2 text-center">
               <p className="text-xs text-gray-500 mb-1">Active Days</p>
               <p className="text-sm font-semibold text-gray-900">
-                {data.daily_current_month.filter(d => d.voice_streams > 0).length}
+                {
+                  data.daily_current_month.filter((d) => d.voice_streams > 0)
+                    .length
+                }
               </p>
             </div>
           </div>
