@@ -1134,7 +1134,7 @@ export function Complaints() {
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Complaint Description *
+                          Issue Description *
                         </label>
                         <textarea
                           value={createComplaintData.complaint_text}
@@ -1146,12 +1146,11 @@ export function Complaints() {
                           }
                           rows={4}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Please describe the issue in detail..."
+                          placeholder="Describe the device issue: What happened? When did it start? Any error messages?"
                           required
                         />
                         <p className="text-sm text-gray-500 mt-1">
-                          Provide a detailed description of the issue, including
-                          when it occurred and any relevant circumstances.
+                          Provide details about the device problem, including when it started, what you were doing, and any error messages.
                         </p>
                       </div>
                     </div>
