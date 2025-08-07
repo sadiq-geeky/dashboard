@@ -19,8 +19,8 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
   try {
     // Get branch filter from middleware
     const branchFilter = (req as any).branchFilter;
-    const branchFilterCondition = branchFilter 
-      ? `AND ldbu.branch_id = '${branchFilter.value}'` 
+    const branchFilterCondition = branchFilter
+      ? `AND ldbu.branch_id = '${branchFilter.value}'`
       : '';
 
     // Get total voice streams count
@@ -40,8 +40,8 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
       LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
-      WHERE YEAR(r.start_time) = YEAR(CURDATE()) 
-        AND MONTH(r.start_time) = MONTH(CURDATE()) 
+      WHERE YEAR(r.start_time) = YEAR(CURDATE())
+        AND MONTH(r.start_time) = MONTH(CURDATE())
         ${branchFilterCondition}
     `;
 
@@ -61,8 +61,7 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
     const monthlyQuery = `
       SELECT
         DATE_FORMAT(r.start_time, '%Y-%m') as month,
-        COUNT(*) as voice_streams,
-        DATE_FORMAT(r.start_time, '%b %Y') as formatted_month
+        COUNT(*) as voice_streams
       FROM recordings r
       LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
@@ -92,11 +91,11 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
       const date = new Date();
       date.setMonth(date.getMonth() - i);
       const monthKey = date.toISOString().slice(0, 7); // YYYY-MM format
-      const formattedMonth = date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        year: 'numeric' 
+      const formattedMonth = date.toLocaleDateString('en-US', {
+        month: 'short',
+        year: 'numeric'
       });
-      
+
       const existingData = monthlyResult.find(item => item.month === monthKey);
       last12Months.push({
         month: monthKey,
@@ -115,7 +114,7 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
     res.json(response);
   } catch (error) {
     console.error("Error fetching voice streams analytics:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Failed to fetch voice streams analytics",
       details: process.env.NODE_ENV === "development" ? error.message : undefined
     });
