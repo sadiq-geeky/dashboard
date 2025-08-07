@@ -668,7 +668,6 @@ export function Complaints() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <AdminNavigation />
 
       {/* Internal Navigation Tabs */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
