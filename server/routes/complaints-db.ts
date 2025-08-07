@@ -223,7 +223,7 @@ export const createComplaint: RequestHandler = async (req, res) => {
     }
 
     const complaint_id = uuidv4();
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
     // Ensure customer_data is stored as JSON string
     const customerDataString =
