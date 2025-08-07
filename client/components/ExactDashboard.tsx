@@ -219,32 +219,7 @@ export function ExactDashboard() {
       setRecordings(recordingData);
       setFilteredRecordings(recordingData);
 
-      // Extract unique cities and branch numbers
-      const cities = [
-        ...new Set(
-          recordingData
-            .map((r) => r.branch_address)
-            .filter(
-              (address) => address && address.trim() !== "" && address !== "NA",
-            )
-            .map((address) => {
-              // Extract city from address (assuming it's the last part after comma)
-              const parts = address.split(",").map((part) => part.trim());
-              return parts[parts.length - 1];
-            }),
-        ),
-      ].sort();
 
-      const branchNos = [
-        ...new Set(
-          recordingData
-            .map((r) => r.branch_no || r.device_name)
-            .filter((branchNo) => branchNo && branchNo.trim() !== ""),
-        ),
-      ].sort();
-
-      setUniqueCities(cities);
-      setUniqueBranchNos(branchNos);
     } catch (error) {
       console.error("Failed to load recordings:", error);
     }
