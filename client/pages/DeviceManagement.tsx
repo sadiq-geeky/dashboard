@@ -162,9 +162,7 @@ export function DeviceManagement() {
     if (!confirm("Are you sure you want to delete this device?")) return;
 
     try {
-      const response = await fetch(`/api/devices/${id}`, {
-        method: "DELETE",
-      });
+      const response = await authDelete(`/api/devices/${id}`);
 
       if (!response.ok) throw new Error("Failed to delete device");
       await fetchDevices();
