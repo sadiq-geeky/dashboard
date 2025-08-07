@@ -3,6 +3,7 @@ import { Header } from "../components/Header";
 import { AddUserModal } from "../components/AddUserModal";
 import { EditUserModal } from "../components/EditUserModal";
 import { cn } from "@/lib/utils";
+import { authDelete } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import {
   Users,
@@ -19,6 +20,7 @@ import {
   Building2,
   Monitor,
   Mail,
+  Link,
 } from "lucide-react";
 
 interface User {
@@ -87,9 +89,7 @@ export function UserManagement() {
     }
 
     try {
-      const response = await fetch(`/api/users/${uuid}`, {
-        method: "DELETE",
-      });
+      const response = await authDelete(`/api/users/${uuid}`);
 
       if (response.ok) {
         loadUsers(); // Refresh the list
@@ -174,6 +174,13 @@ export function UserManagement() {
             <button className="flex flex-col items-center p-3 rounded-md text-gray-700 bg-white border border-gray-300">
               <Users className="w-5 h-5 mb-1" />
               <span className="text-xs">User Management</span>
+            </button>
+            <button
+              onClick={() => navigate("/deployment")}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Link className="w-5 h-5 mb-1" />
+              <span className="text-xs">Deployment</span>
             </button>
             <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
               <Mail className="w-5 h-5 mb-1" />

@@ -26,6 +26,7 @@ import {
   RefreshCw,
   TrendingUp,
 } from "lucide-react";
+import { authFetch } from "@/lib/api";
 
 interface ConversationAnalytics {
   conversationsByBranch: Array<{
@@ -84,7 +85,7 @@ export function ConversationAnalytics() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch("/api/analytics/conversations");
+      const response = await authFetch("/api/analytics/conversations");
 
       if (!response.ok) {
         throw new Error("Failed to fetch conversation analytics");

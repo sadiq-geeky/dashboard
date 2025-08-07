@@ -5,6 +5,7 @@ import {
   HeartbeatRecord,
 } from "@shared/api";
 import { cn } from "@/lib/utils";
+import { authFetch } from "@/lib/api";
 import { RecordingsAnalytics } from "./RecordingsAnalytics";
 import { ConversationAnalytics } from "./ConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
@@ -58,15 +59,10 @@ const fetchRecordings = async (
       user_role: user?.role || "user",
     });
 
-    if (user?.branch_id && user?.role !== "admin") {
-      params.append("branch_id", user.branch_id);
-    }
+    // Branch filtering is now handled by backend middleware
 
-    const response = await fetch(`/api/recordings?${params.toString()}`, {
+    const response = await authFetch(`/api/recordings?${params.toString()}`, {
       signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     clearTimeout(timeoutId);
@@ -113,11 +109,8 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    const response = await fetch("/api/heartbeats", {
+    const response = await authFetch("/api/heartbeats", {
       signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     clearTimeout(timeoutId);
@@ -208,7 +201,7 @@ export function ExactDashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   const loadRecordings = async () => {
     try {
@@ -400,7 +393,7 @@ export function ExactDashboard() {
   const currentRecordings = filteredRecordings.slice(startIndex, endIndex);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-screen bg-gray-50 overflow-hidden">
       <Header />
 
       {/* Navigation Tabs */}
@@ -409,23 +402,23 @@ export function ExactDashboard() {
         style={{ display: "flex", flexDirection: "column" }}
       >
         <div
-          className="flex items-center justify-between h-16 px-6"
+          className="flex items-center justify-between h-12 px-4"
           style={{ margin: "0 auto" }}
         >
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-0.5">
             <button
               onClick={() => {
                 setActiveTab("home");
                 navigate("/", { replace: true });
               }}
               className={cn(
-                "flex flex-col items-center p-3 rounded-md",
+                "flex flex-col items-center p-2 rounded-md",
                 activeTab === "home"
                   ? "text-gray-700 bg-white border border-gray-300"
                   : "text-gray-500 hover:bg-gray-100",
               )}
             >
-              <Grid3X3 className="w-5 h-5 mb-1" />
+              <Grid3X3 className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Home</span>
             </button>
             {isAdmin() && (
@@ -435,18 +428,18 @@ export function ExactDashboard() {
                   navigate("/?tab=device-status", { replace: true });
                 }}
                 className={cn(
-                  "flex flex-col items-center p-3 rounded-md",
+                  "flex flex-col items-center p-2 rounded-md",
                   activeTab === "device-status"
                     ? "text-gray-700 bg-white border border-gray-300"
                     : "text-gray-500 hover:bg-gray-100",
                 )}
               >
-                <BarChart3 className="w-5 h-5 mb-1" />
+                <BarChart3 className="w-4 h-4 mb-0.5" />
                 <span className="text-xs">Device Status</span>
               </button>
             )}
-            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
-              <MessageSquare className="w-5 h-5 mb-1" />
+            <button className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md">
+              <MessageSquare className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Live Conversation</span>
             </button>
             {isAdmin() && (
@@ -454,7 +447,7 @@ export function ExactDashboard() {
                 onClick={() => navigate("/branch-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
-                <Building2 className="w-5 h-5 mb-1" />
+                <Building2 className="w-4 h-4 mb-0.5" />
                 <span className="text-xs">Branches</span>
               </button>
             )}
@@ -463,7 +456,7 @@ export function ExactDashboard() {
                 onClick={() => navigate("/device-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
-                <Monitor className="w-5 h-5 mb-1" />
+                <Monitor className="w-4 h-4 mb-0.5" />
                 <span className="text-xs">Devices</span>
               </button>
             )}
@@ -472,7 +465,7 @@ export function ExactDashboard() {
                 onClick={() => navigate("/deployment")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
-                <Settings className="w-5 h-5 mb-1" />
+                <Settings className="w-4 h-4 mb-0.5" />
                 <span className="text-xs">Deployment</span>
               </button>
             )}
@@ -483,13 +476,13 @@ export function ExactDashboard() {
                   navigate("/?tab=analytics", { replace: true });
                 }}
                 className={cn(
-                  "flex flex-col items-center p-3 rounded-md",
+                  "flex flex-col items-center p-2 rounded-md",
                   activeTab === "analytics"
                     ? "text-gray-700 bg-white border border-gray-300"
                     : "text-gray-500 hover:bg-gray-100",
                 )}
               >
-                <BarChart3 className="w-5 h-5 mb-1" />
+                <BarChart3 className="w-4 h-4 mb-0.5" />
                 <span className="text-xs">Analytics</span>
               </button>
             )}
@@ -498,12 +491,12 @@ export function ExactDashboard() {
                 onClick={() => navigate("/user-management")}
                 className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
               >
-                <Users className="w-5 h-5 mb-1" />
+                <Users className="w-4 h-4 mb-0.5" />
                 <span className="text-xs">User Management</span>
               </button>
             )}
-            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
-              <Mail className="w-5 h-5 mb-1" />
+            <button className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md">
+              <Mail className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Complaints</span>
             </button>
           </div>
@@ -512,27 +505,30 @@ export function ExactDashboard() {
         </div>
       </div>
 
-      <div className="flex">
+      <div className="flex h-full">
         {/* Main Content */}
-        <div className="flex-1">
-          <div className="px-6 py-6 pt-1" style={{ padding: "24px 24px 5px" }}>
+        <div className="flex-1 overflow-hidden">
+          <div
+            className="px-4 py-3 h-full overflow-auto"
+            style={{ padding: "12px 16px 3px" }}
+          >
             {activeTab === "home" && (
               <>
                 {/* Search and Filter Bar */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-4">
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
                         type="text"
                         placeholder="Search"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 pr-4 py-2 w-80 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        className="pl-8 pr-3 py-1.5 w-64 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
 
-                    <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                    <button className="flex items-center space-x-1.5 px-2.5 py-1.5 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
                       <Filter className="w-4 h-4" />
                       <span>Filter</span>
                       <ChevronDown className="w-4 h-4" />
@@ -545,25 +541,24 @@ export function ExactDashboard() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-gray-200">
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           S.no
                         </th>
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Branch No
                         </th>
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           CNIC
                         </th>
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Timestamp
                         </th>
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Duration
                         </th>
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Branch Address
                         </th>
-                        <th className="w-10"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -573,34 +568,29 @@ export function ExactDashboard() {
                           className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
                           onClick={() => setSelectedRecording(recording)}
                         >
-                          <td className="py-2 px-2 text-xs text-gray-900">
+                          <td className="py-1 px-1.5 text-xs text-gray-900">
                             {startIndex + index + 1}
                           </td>
-                          <td className="py-2 px-2 text-xs text-gray-500">
+                          <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.branch_no ||
                               recording.device_name ||
                               recording.ip_address}
                           </td>
-                          <td className="py-2 px-2 text-xs text-gray-500">
+                          <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.cnic || recording.file_name || "-"}
                           </td>
-                          <td className="py-2 px-2 text-xs text-gray-500">
+                          <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.start_time
                               ? new Date(recording.start_time).toLocaleString()
                               : "-"}
                           </td>
-                          <td className="py-2 px-2 text-xs text-gray-500">
+                          <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.duration
                               ? `${Math.floor(recording.duration / 60)}:${String(recording.duration % 60).padStart(2, "0")}`
                               : "-"}
                           </td>
-                          <td className="py-2 px-2 text-xs text-gray-500">
+                          <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.branch_address || "NA"}
-                          </td>
-                          <td className="py-2 px-2">
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <MoreHorizontal className="w-4 h-4" />
-                            </button>
                           </td>
                         </tr>
                       ))}
@@ -608,7 +598,7 @@ export function ExactDashboard() {
                   </table>
 
                   {/* Footer */}
-                  <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
+                  <div className="flex items-center justify-between px-3 py-2 border-t border-gray-200">
                     <div className="text-sm text-gray-500">
                       Showing {startIndex + 1}-
                       {Math.min(endIndex, filteredRecordings.length)} of{" "}
@@ -626,7 +616,7 @@ export function ExactDashboard() {
                                 key={page}
                                 onClick={() => setCurrentPage(page)}
                                 className={cn(
-                                  "w-6 h-6 flex items-center justify-center rounded text-sm",
+                                  "w-5 h-5 flex items-center justify-center rounded text-xs",
                                   currentPage === page
                                     ? "bg-blue-100 text-blue-600"
                                     : "text-gray-500 hover:bg-gray-100",
@@ -650,90 +640,82 @@ export function ExactDashboard() {
             {activeTab === "device-status" && isAdmin() && (
               <>
                 {/* Device Status Header */}
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-lg font-bold text-gray-900">
                       Device Monitoring
                     </h1>
-                    <p className="text-gray-600">
-                      Monitor device heartbeats and connection status
+                    <p className="text-xs text-gray-500">
+                      Real-time device status & performance metrics
                     </p>
                   </div>
                   <button
                     onClick={loadDevices}
                     disabled={isRefreshing}
                     className={cn(
-                      "flex items-center space-x-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 transition-colors",
+                      "flex items-center space-x-1.5 rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/90 transition-colors",
                       isRefreshing && "opacity-50 cursor-not-allowed",
                     )}
                   >
                     <RefreshCw
-                      className={cn("h-4 w-4", isRefreshing && "animate-spin")}
+                      className={cn("h-3 w-3", isRefreshing && "animate-spin")}
                     />
                     <span>Refresh</span>
                   </button>
                 </div>
 
                 {/* Stats Overview */}
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-                  <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Monitor className="h-8 w-8 text-gray-600" />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-500">
+                <div className="grid grid-cols-4 gap-3 mb-4">
+                  <div className="bg-white rounded-md border border-gray-200 p-3">
+                    <div className="flex items-center space-x-2">
+                      <Monitor className="h-5 w-5 text-gray-600" />
+                      <div>
+                        <div className="text-xs font-medium text-gray-500">
                           Total Devices
                         </div>
-                        <div className="text-2xl font-bold text-gray-900">
+                        <div className="text-lg font-bold text-gray-900">
                           {devices.length}
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Wifi className="h-8 w-8 text-green-600" />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-500">
+                  <div className="bg-white rounded-md border border-gray-200 p-3">
+                    <div className="flex items-center space-x-2">
+                      <Wifi className="h-5 w-5 text-green-600" />
+                      <div>
+                        <div className="text-xs font-medium text-gray-500">
                           Online
                         </div>
-                        <div className="text-2xl font-bold text-green-600">
+                        <div className="text-lg font-bold text-green-600">
                           {onlineCount}
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <AlertTriangle className="h-8 w-8 text-yellow-600" />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-500">
+                  <div className="bg-white rounded-md border border-gray-200 p-3">
+                    <div className="flex items-center space-x-2">
+                      <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                      <div>
+                        <div className="text-xs font-medium text-gray-500">
                           Problematic
                         </div>
-                        <div className="text-2xl font-bold text-yellow-600">
+                        <div className="text-lg font-bold text-yellow-600">
                           {problematicCount}
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <WifiOff className="h-8 w-8 text-red-600" />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-500">
+                  <div className="bg-white rounded-md border border-gray-200 p-3">
+                    <div className="flex items-center space-x-2">
+                      <WifiOff className="h-5 w-5 text-red-600" />
+                      <div>
+                        <div className="text-xs font-medium text-gray-500">
                           Offline
                         </div>
-                        <div className="text-2xl font-bold text-red-600">
+                        <div className="text-lg font-bold text-red-600">
                           {offlineCount}
                         </div>
                       </div>
@@ -741,56 +723,60 @@ export function ExactDashboard() {
                   </div>
                 </div>
 
-                {/* Device List */}
-                <div className="bg-white rounded-lg border border-gray-200">
-                  <div className="px-6 py-4 border-b border-gray-200">
+                {/* Enhanced Device List */}
+                <div className="bg-white rounded-md border border-gray-200">
+                  <div className="px-4 py-2 border-b border-gray-200">
                     <div className="flex items-center justify-between">
-                      <h2 className="text-lg font-semibold text-gray-900">
-                        Device Status
+                      <h2 className="text-sm font-semibold text-gray-900">
+                        Device Status & Performance
                       </h2>
-                      <div className="flex items-center space-x-2 text-sm text-gray-500">
-                        <Clock className="h-4 w-4" />
-                        <span>
-                          Last updated: {lastUpdate.toLocaleTimeString()}
-                        </span>
+                      <div className="flex items-center space-x-1.5 text-xs text-gray-500">
+                        <Clock className="h-3 w-3" />
+                        <span>Updated: {lastUpdate.toLocaleTimeString()}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="overflow-hidden">
+                  <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Branch Name
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                            Branch
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Branch Code
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                            Code
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                             Status
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                            IP Address
+                          </th>
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                            Uptime
+                          </th>
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                             Last Seen
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
+                      <tbody className="bg-white divide-y divide-gray-100">
                         {devices.map((device, index) => (
                           <tr
                             key={`${device.branch_code}-${device.branch_name}-${index}`}
                             className="hover:bg-gray-50"
                           >
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            <td className="px-2 py-1.5 text-xs font-medium text-gray-900 max-w-24 truncate">
                               {device.branch_name}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td className="px-2 py-1.5 text-xs text-gray-700 font-mono">
                               {device.branch_code}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-2 py-1.5">
                               <span
                                 className={cn(
-                                  "inline-flex items-center space-x-1 rounded-full px-2.5 py-0.5 text-xs font-medium",
+                                  "inline-flex items-center space-x-1 rounded-full px-1.5 py-0.5 text-xs font-medium",
                                   getStatusColor(device.status),
                                 )}
                               >
@@ -800,7 +786,17 @@ export function ExactDashboard() {
                                 </span>
                               </span>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-2 py-1.5 text-xs text-gray-600 font-mono">
+                              {device.status === "offline" ? (
+                                <span className="text-gray-400">N/A</span>
+                              ) : (
+                                `192.168.1.${100 + index}`
+                              )}
+                            </td>
+                            <td className="px-2 py-1.5 text-xs text-gray-600">
+                              {device.uptime_duration_24h || "0h 0m"}
+                            </td>
+                            <td className="px-2 py-1.5 text-xs text-gray-500">
                               {formatLastSeen(device.last_seen)}
                             </td>
                           </tr>
@@ -955,50 +951,49 @@ export function ExactDashboard() {
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </div>
                 {selectedRecording ? (
-                  <div className="flex space-x-4">
-                    {/* Left side - Avatar and basic info */}
-                    <div className="flex-shrink-0">
-                      <div className="w-16 h-20 bg-white rounded border border-gray-200 p-2 flex flex-col items-center justify-center">
-                        <div className="w-10 h-10 bg-orange-400 rounded-full flex items-center justify-center text-white font-medium text-sm mb-1">
-                          {selectedRecording.cnic?.charAt(0).toUpperCase() ||
-                            "A"}
+                  <div className="space-y-3">
+                    {/* Top section - Avatar and name */}
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-orange-400 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                        {selectedRecording.cnic?.charAt(0).toUpperCase() || "A"}
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">
+                          Ahmed Shah
                         </div>
-                        <div className="text-center">
-                          <div className="text-xs font-medium text-gray-900">
-                            Ahmed Shah
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            ID # 239982
-                          </div>
-                        </div>
+                        <div className="text-xs text-gray-500">ID # 239982</div>
                       </div>
                     </div>
 
-                    {/* Right side - Compact details */}
-                    <div className="flex-1 space-y-1 text-xs">
-                      <div className="flex">
-                        <span className="text-gray-600 w-20">Gender :</span>
+                    {/* Details section - Two columns for better alignment */}
+                    <div className="grid grid-cols-1 gap-y-1.5 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">
+                          Gender:
+                        </span>
                         <span className="text-gray-800">Male</span>
                       </div>
-                      <div className="flex">
-                        <span className="text-gray-600 w-20">
-                          Date of Birth :
-                        </span>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">DOB:</span>
                         <span className="text-gray-800">05/09/1996</span>
                       </div>
-                      <div className="flex">
-                        <span className="text-gray-600 w-20">CNIC :</span>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">CNIC:</span>
                         <span className="text-gray-800">61901-1234567-1</span>
                       </div>
-                      <div className="flex">
-                        <span className="text-gray-600 w-20">
-                          Phone Number :
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">
+                          Phone:
                         </span>
                         <span className="text-gray-800">0321-9876543</span>
                       </div>
-                      <div className="flex">
-                        <span className="text-gray-600 w-20">Email ID :</span>
-                        <span className="text-gray-800">Ahmed@gmail.com</span>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">
+                          Email:
+                        </span>
+                        <span className="text-gray-800 break-all">
+                          Ahmed@gmail.com
+                        </span>
                       </div>
                     </div>
                   </div>

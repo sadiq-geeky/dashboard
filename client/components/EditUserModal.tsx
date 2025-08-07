@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { authPut } from "@/lib/api";
 
 interface User {
   uuid: string;
@@ -34,6 +35,12 @@ export function EditUserModal({
   onUserUpdated,
   user,
 }: EditUserModalProps) {
+  // Calculate date restrictions
+  const today = new Date().toISOString().split("T")[0];
+  const eighteenYearsAgo = new Date();
+  eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+  const maxBirthDate = eighteenYearsAgo.toISOString().split("T")[0];
+
   const [formData, setFormData] = useState({
     emp_name: "",
     gender: "",
@@ -96,13 +103,7 @@ export function EditUserModal({
     setError(null);
 
     try {
-      const response = await fetch(`/api/users/${user.uuid}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await authPut(`/api/users/${user.uuid}`, formData);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -297,6 +298,7 @@ export function EditUserModal({
                   name="date_of_birth"
                   value={formData.date_of_birth}
                   onChange={handleInputChange}
+                  max={maxBirthDate}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -346,13 +348,12 @@ export function EditUserModal({
                   name="joining_date"
                   value={formData.joining_date}
                   onChange={handleInputChange}
+                  max={today}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-
             </div>
           </div>
-
 
           <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
             <button

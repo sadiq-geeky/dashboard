@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "../components/Header";
 import { cn } from "@/lib/utils";
+import { authDelete } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import {
   Search,
@@ -161,9 +162,7 @@ export function DeviceManagement() {
     if (!confirm("Are you sure you want to delete this device?")) return;
 
     try {
-      const response = await fetch(`/api/devices/${id}`, {
-        method: "DELETE",
-      });
+      const response = await authDelete(`/api/devices/${id}`);
 
       if (!response.ok) throw new Error("Failed to delete device");
       await fetchDevices();

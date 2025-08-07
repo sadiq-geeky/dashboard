@@ -293,9 +293,18 @@ export const loginUser: RequestHandler = async (req, res) => {
       });
     }
 
-    // Get user by username
-    const users = await executeQuery<User>(
-      `SELECT * FROM users WHERE username = ? AND is_active = true`,
+    // Get user by username with branch info from link table
+    const users = await executeQuery<
+      User & { branch_id: string | null; branch_city: string | null }
+    >(
+      `SELECT u.*,
+              ldbu.branch_id as branch_id,
+              b.branch_city as branch_city
+       FROM users u
+       LEFT JOIN link_device_branch_user ldbu ON ldbu.user_id COLLATE utf8mb4_0900_ai_ci = u.uuid COLLATE utf8mb4_0900_ai_ci
+       LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
+       WHERE u.username = ? AND u.is_active = true
+       LIMIT 1`,
       [username],
     );
 

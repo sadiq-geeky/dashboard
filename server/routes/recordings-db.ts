@@ -3,16 +3,12 @@ import { RecordingHistory, PaginatedResponse } from "@shared/api";
 import { executeQuery } from "../config/database";
 
 // Get recordings with pagination and CNIC search
-export const getRecordings: RequestHandler = async (req, res) => {
+export const getRecordings: RequestHandler = async (req: any, res) => {
   try {
-    const {
-      page = "1",
-      limit = "10",
-      search,
-      device,
-      branch_id,
-      user_role,
-    } = req.query;
+    const { page = "1", limit = "10", search, device } = req.query;
+
+    // Get branch filter from middleware
+    const branchFilter = req.branchFilter;
 
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
@@ -40,11 +36,12 @@ export const getRecordings: RequestHandler = async (req, res) => {
       countParams.push(device);
     }
 
-    // Branch filtering for non-admin users
-    if (branch_id && user_role !== "admin") {
-      conditions.push("ldbu.branch_id = ?");
-      queryParams.push(branch_id);
-      // For count, we'll do a simpler approach without complex JOINs
+    // Branch filtering for non-admin users (from middleware)
+    if (branchFilter) {
+      conditions.push(`ldbu.${branchFilter.field} = ?`);
+      queryParams.push(branchFilter.value);
+      countConditions.push(`ldbu.${branchFilter.field} = ?`);
+      countParams.push(branchFilter.value);
     }
 
     if (conditions.length > 0) {
@@ -55,10 +52,13 @@ export const getRecordings: RequestHandler = async (req, res) => {
       countWhereClause = `WHERE ${countConditions.join(" AND ")}`;
     }
 
-    // Get total count (simplified to avoid collation issues)
+    // Get total count with proper JOINs for branch filtering
     const countQuery = `
       SELECT COUNT(*) as total
       FROM recordings rh
+      LEFT JOIN devices d ON d.device_mac = rh.mac_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id COLLATE utf8mb4_0900_ai_ci = d.id COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
       ${countWhereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
@@ -91,8 +91,8 @@ export const getRecordings: RequestHandler = async (req, res) => {
         END AS status
       FROM recordings rh
       LEFT JOIN devices d ON d.device_mac = rh.mac_address
-      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
-      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id COLLATE utf8mb4_0900_ai_ci = d.id COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
       ${whereClause}
       ORDER BY start_time DESC
       LIMIT ${limitNum} OFFSET ${offset}

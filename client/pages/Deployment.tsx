@@ -21,6 +21,7 @@ import {
   ArrowRight,
   Settings,
 } from "lucide-react";
+import { authFetch, authPost, authDelete } from "@/lib/api";
 
 interface Device {
   id: string;
@@ -77,10 +78,10 @@ export function Deployment() {
       setLoading(true);
       const [devicesRes, branchesRes, usersRes, deploymentsRes] =
         await Promise.all([
-          fetch("/api/devices?limit=100"),
-          fetch("/api/branches?limit=100&active=true"),
-          fetch("/api/users?limit=100"),
-          fetch("/api/deployments"),
+          authFetch("/api/devices?limit=100"),
+          authFetch("/api/branches?limit=100&active=true"),
+          authFetch("/api/users?limit=100"),
+          authFetch("/api/deployments"),
         ]);
 
       // Check if all responses are OK before parsing JSON
@@ -125,16 +126,10 @@ export function Deployment() {
     }
 
     try {
-      const response = await fetch("/api/deployments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          device_id: selectedDevice,
-          branch_id: selectedBranch,
-          user_id: selectedUser,
-        }),
+      const response = await authPost("/api/deployments", {
+        device_id: selectedDevice,
+        branch_id: selectedBranch,
+        user_id: selectedUser,
       });
 
       if (!response.ok) {
@@ -157,9 +152,7 @@ export function Deployment() {
     if (!confirm("Are you sure you want to remove this deployment?")) return;
 
     try {
-      const response = await fetch(`/api/deployments/${uuid}`, {
-        method: "DELETE",
-      });
+      const response = await authDelete(`/api/deployments/${uuid}`);
 
       if (!response.ok) {
         try {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
+import { authPost } from "@/lib/api";
 
 interface AddUserModalProps {
   isOpen: boolean;
@@ -12,6 +13,12 @@ export function AddUserModal({
   onClose,
   onUserAdded,
 }: AddUserModalProps) {
+  // Calculate date restrictions
+  const today = new Date().toISOString().split("T")[0];
+  const eighteenYearsAgo = new Date();
+  eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+  const maxBirthDate = eighteenYearsAgo.toISOString().split("T")[0];
+
   const [formData, setFormData] = useState({
     emp_name: "",
     gender: "",
@@ -44,13 +51,7 @@ export function AddUserModal({
     setError(null);
 
     try {
-      const response = await fetch("/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await authPost("/api/users", formData);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -255,6 +256,7 @@ export function AddUserModal({
                   name="date_of_birth"
                   value={formData.date_of_birth}
                   onChange={handleInputChange}
+                  max={maxBirthDate}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -307,13 +309,13 @@ export function AddUserModal({
                   name="joining_date"
                   value={formData.joining_date}
                   onChange={handleInputChange}
+                  max={today}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
           </div>
-
 
           <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
             <button

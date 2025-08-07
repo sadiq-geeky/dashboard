@@ -62,9 +62,10 @@ export const getDevices: RequestHandler = async (req, res) => {
 
     // Get total count
     const countQuery = `
-      SELECT COUNT(*) as total
+      SELECT COUNT(DISTINCT d.id) as total
       FROM devices d
-      ${whereClause.replace("d.branch_id", "branch_id")}
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id COLLATE utf8mb4_0900_ai_ci = d.id COLLATE utf8mb4_0900_ai_ci
+      ${whereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
       countQuery,
@@ -72,14 +73,16 @@ export const getDevices: RequestHandler = async (req, res) => {
     );
     const total = countResult.total;
 
-    // Get paginated results (without branch join for now)
+    // Get paginated results with branch information
     const dataQuery = `
-      SELECT
+      SELECT DISTINCT
         d.*,
-        NULL as branch_name,
-        NULL as branch_code
+        b.branch_address as branch_name,
+        b.branch_code
       FROM devices d
-      ${whereClause.replace("d.branch_id", "branch_id")}
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id COLLATE utf8mb4_0900_ai_ci = d.id COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
+      ${whereClause}
       ORDER BY d.device_name ASC
       LIMIT ${limitNum} OFFSET ${offset}
     `;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Contact } from "@shared/api";
+import { authPut } from "@/lib/api";
 
 interface EditContactModalProps {
   isOpen: boolean;
@@ -75,13 +76,7 @@ export function EditContactModal({
     setError(null);
 
     try {
-      const response = await fetch(`/api/contacts/${contact.uuid}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await authPut(`/api/contacts/${contact.uuid}`, formData);
 
       if (!response.ok) {
         const errorData = await response.json();

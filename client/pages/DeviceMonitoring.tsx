@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { HeartbeatRecord } from "@shared/api";
 import { cn } from "@/lib/utils";
+import { authFetch } from "@/lib/api";
 import {
   RefreshCw,
   Wifi,
@@ -16,11 +17,8 @@ const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-    const response = await fetch("/api/heartbeats", {
+    const response = await authFetch("/api/heartbeats", {
       signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     clearTimeout(timeoutId);

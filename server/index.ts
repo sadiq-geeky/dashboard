@@ -7,6 +7,7 @@ console.log("🧪 ENV DB_NAME:", process.env.DB_NAME);
 import { initializeDatabase } from "./config/database";
 
 // Production database routes only
+import { authenticate, addBranchFilter } from "./middleware/auth";
 import { getHeartbeats, postHeartbeat } from "./routes/heartbeat-db";
 import {
   getRecordings,
@@ -83,8 +84,8 @@ export function createServer() {
     });
   });
 
-  // Heartbeat routes
-  app.get("/api/heartbeats", getHeartbeats);
+  // Heartbeat routes (protected with branch filtering)
+  app.get("/api/heartbeats", authenticate, addBranchFilter(), getHeartbeats);
   app.post("/api/heartbeats", postHeartbeat);
 
   // PHP-equivalent heartbeat submit route
@@ -103,30 +104,70 @@ export function createServer() {
   app.put("/api/branches/:id", updateBranch);
   app.delete("/api/branches/:id", deleteBranch);
 
-  // Device management routes
-  app.get("/api/devices", getDevices);
-  app.get("/api/devices/:id", getDevice);
+  // Device management routes (protected with branch filtering)
+  app.get("/api/devices", authenticate, addBranchFilter(), getDevices);
+  app.get("/api/devices/:id", authenticate, addBranchFilter(), getDevice);
   app.post("/api/devices", createDevice);
   app.put("/api/devices/:id", updateDevice);
   app.delete("/api/devices/:id", deleteDevice);
-  app.get("/api/branches/:branch_id/devices", getDevicesByBranch);
+  app.get(
+    "/api/branches/:branch_id/devices",
+    authenticate,
+    addBranchFilter(),
+    getDevicesByBranch,
+  );
 
-  // Recording routes
-  app.get("/api/recordings", getRecordings);
-  app.get("/api/recordings/device-names", getDeviceNames);
-  app.get("/api/recordings/:id", getRecording);
+  // Recording routes (protected with branch filtering)
+  app.get("/api/recordings", authenticate, addBranchFilter(), getRecordings);
+  app.get(
+    "/api/recordings/device-names",
+    authenticate,
+    addBranchFilter(),
+    getDeviceNames,
+  );
+  app.get("/api/recordings/:id", authenticate, addBranchFilter(), getRecording);
   app.post("/api/recordings", createRecording);
   app.put("/api/recordings/:id", updateRecording);
 
-  // Analytics routes
-  app.get("/api/analytics/recordings", getRecordingsAnalytics);
+  // Analytics routes (protected with branch filtering)
+  app.get(
+    "/api/analytics/recordings",
+    authenticate,
+    addBranchFilter(),
+    getRecordingsAnalytics,
+  );
 
-  // Conversation Analytics routes
-  app.get("/api/analytics/conversations", getConversationAnalytics);
-  app.get("/api/analytics/conversations/branch", getConversationsByBranch);
-  app.get("/api/analytics/conversations/city", getConversationsByCity);
-  app.get("/api/analytics/conversations/daily", getDailyConversationsLastMonth);
-  app.get("/api/analytics/conversations/cnic", getUniqueCnicsByMonth);
+  // Conversation Analytics routes (protected with branch filtering)
+  app.get(
+    "/api/analytics/conversations",
+    authenticate,
+    addBranchFilter(),
+    getConversationAnalytics,
+  );
+  app.get(
+    "/api/analytics/conversations/branch",
+    authenticate,
+    addBranchFilter(),
+    getConversationsByBranch,
+  );
+  app.get(
+    "/api/analytics/conversations/city",
+    authenticate,
+    addBranchFilter(),
+    getConversationsByCity,
+  );
+  app.get(
+    "/api/analytics/conversations/daily",
+    authenticate,
+    addBranchFilter(),
+    getDailyConversationsLastMonth,
+  );
+  app.get(
+    "/api/analytics/conversations/cnic",
+    authenticate,
+    addBranchFilter(),
+    getUniqueCnicsByMonth,
+  );
 
   // User Management routes
   app.post("/api/auth/login", loginUser);
@@ -136,10 +177,15 @@ export function createServer() {
   app.delete("/api/users/:uuid", deleteUser);
   app.get("/api/users/:uuid", getUserProfile);
 
-  // Deployment Management routes
-  app.get("/api/deployments", getDeployments);
+  // Deployment Management routes (protected with branch filtering)
+  app.get("/api/deployments", authenticate, addBranchFilter(), getDeployments);
   app.post("/api/deployments", createDeployment);
-  app.get("/api/deployments/:uuid", getDeployment);
+  app.get(
+    "/api/deployments/:uuid",
+    authenticate,
+    addBranchFilter(),
+    getDeployment,
+  );
   app.put("/api/deployments/:uuid", updateDeployment);
   app.delete("/api/deployments/:uuid", deleteDeployment);
 

@@ -17,6 +17,7 @@ export interface HeartbeatRecord {
   branch_code: string;
   status: "online" | "problematic" | "offline";
   last_seen: string;
+  uptime_duration_24h: string;
 }
 
 export interface DeviceMapping {

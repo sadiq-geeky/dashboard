@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { Contact } from "@shared/api";
+import { authPost } from "@/lib/api";
 
 interface AddContactModalProps {
   isOpen: boolean;
@@ -46,13 +47,7 @@ export function AddContactModal({
     setError(null);
 
     try {
-      const response = await fetch("/api/contacts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await authPost("/api/contacts", formData);
 
       if (!response.ok) {
         const errorData = await response.json();

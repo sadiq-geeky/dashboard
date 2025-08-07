@@ -24,7 +24,7 @@ export const authenticate: RequestHandler = async (req: any, res, next) => {
       return res.status(401).json({ error: "Authentication required" });
     }
 
-    // Get user from database
+    // Get user from database with branch info from link table
     const users = await executeQuery<{
       uuid: string;
       username: string;
@@ -34,8 +34,15 @@ export const authenticate: RequestHandler = async (req: any, res, next) => {
       emp_name: string | null;
       is_active: boolean;
     }>(
-      `SELECT uuid, username, role, branch_id, branch_city, emp_name, is_active 
-       FROM users WHERE uuid = ? AND is_active = true`,
+      `SELECT u.uuid, u.username, u.role,
+              ldbu.branch_id as branch_id,
+              b.branch_city as branch_city,
+              u.emp_name, u.is_active
+       FROM users u
+       LEFT JOIN link_device_branch_user ldbu ON ldbu.user_id COLLATE utf8mb4_0900_ai_ci = u.uuid COLLATE utf8mb4_0900_ai_ci
+       LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
+       WHERE u.uuid = ? AND u.is_active = true
+       LIMIT 1`,
       [userId],
     );
 
