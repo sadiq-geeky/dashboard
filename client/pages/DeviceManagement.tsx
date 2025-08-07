@@ -110,7 +110,7 @@ export function DeviceManagement() {
         : "/api/devices";
       const method = editingDevice ? "PUT" : "POST";
 
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
