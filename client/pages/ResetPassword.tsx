@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Lock, Eye, EyeOff, Check } from "lucide-react";
-import { useLocation } from "react-router-dom";
 
 export function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
