@@ -402,10 +402,18 @@ export function ExactDashboard() {
   };
 
   // Audio control functions
-  const playAudio = () => {
+  const playAudio = async () => {
     if (audioRef && selectedRecording?.file_name) {
-      audioRef.play();
-      setIsPlaying(true);
+      try {
+        await audioRef.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.error("Error playing audio:", error);
+        alert(`Cannot play audio: ${selectedRecording.file_name}. The audio file may not exist on the server.`);
+        setIsPlaying(false);
+      }
+    } else if (!selectedRecording?.file_name) {
+      alert("This recording does not have an audio file associated with it.");
     }
   };
 
