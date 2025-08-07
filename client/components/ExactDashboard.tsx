@@ -6,8 +6,8 @@ import {
 } from "@shared/api";
 import { cn } from "@/lib/utils";
 import { authFetch } from "@/lib/api";
-import { RecordingsAnalytics } from "./RecordingsAnalytics";
-import { ConversationAnalytics } from "./ConversationAnalytics";
+import { GoogleRecordingsAnalytics } from "./GoogleRecordingsAnalytics";
+import { GoogleConversationAnalytics } from "./GoogleConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "./Header";
