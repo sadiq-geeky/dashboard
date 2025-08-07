@@ -516,7 +516,11 @@ export function Complaints() {
       fetchComplaints();
       fetchStats();
 
-      alert("Complaint created successfully!");
+      toast({
+        title: "Success",
+        description: "Complaint created successfully! We will review your issue shortly.",
+        variant: "default"
+      });
     } catch (error) {
       console.error("Error creating complaint:", error);
       let errorMessage = "Unknown error occurred";
