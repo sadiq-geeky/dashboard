@@ -482,8 +482,7 @@ export function ExactDashboard() {
         style={{ display: "flex", flexDirection: "column" }}
       >
         <div
-          className="flex items-center justify-between py-4 px-4"
-          style={{ margin: "0 auto" }}
+          className="flex items-center justify-start py-4 px-4"
         >
           <div className="flex items-center space-x-3">
             {/* First group: Home, Analytics, Device Status, Complaints */}
