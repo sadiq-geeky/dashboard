@@ -1029,34 +1029,29 @@ export function Complaints() {
                         <input
                           type="text"
                           value={createComplaintData.device_id}
-                          onChange={(e) =>
-                            setCreateComplaintData((prev) => ({
-                              ...prev,
-                              device_id: e.target.value,
-                            }))
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="e.g., VR-001, Recording Station 1"
-                          required
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                          placeholder="Loading device information..."
+                          readOnly
                         />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Automatically filled based on your assigned device
+                        </p>
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Device Location
+                          City
                         </label>
                         <input
                           type="text"
-                          value={createComplaintData.device_location}
-                          onChange={(e) =>
-                            setCreateComplaintData((prev) => ({
-                              ...prev,
-                              device_location: e.target.value,
-                            }))
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="e.g., Counter 1, Manager Office"
+                          value={createComplaintData.city}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                          placeholder="Loading city information..."
+                          readOnly
                         />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Automatically filled based on your branch location
+                        </p>
                       </div>
 
                       <div>
