@@ -495,7 +495,7 @@ export function ExactDashboard() {
                 <span className="text-xs">User Management</span>
               </button>
             )}
-            <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
+            <button className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md">
               <Mail className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Complaints</span>
             </button>
