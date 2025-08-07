@@ -261,7 +261,7 @@ export function ConversationAnalytics() {
                 Active Branches
               </p>
               <p className="text-2xl font-bold text-gray-900">
-                {totalStats.activeBranches.toLocaleString()}
+                {safeStats.activeBranches.toLocaleString()}
               </p>
             </div>
           </div>
