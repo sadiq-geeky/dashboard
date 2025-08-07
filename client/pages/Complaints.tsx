@@ -947,10 +947,10 @@ export function Complaints() {
                     </div>
                     <div>
                       <h2 className="text-xl font-semibold text-gray-900">
-                        Create New Complaint
+                        Report Device Issue
                       </h2>
                       <p className="text-sm text-gray-500">
-                        Report a device issue or service complaint
+                        Report problems with voice recording devices
                       </p>
                     </div>
                   </div>
