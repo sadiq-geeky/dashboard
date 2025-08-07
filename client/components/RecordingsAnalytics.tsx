@@ -317,6 +317,11 @@ export function RecordingsAnalytics() {
               allowDataOverflow={false}
               allowDecimals={true}
               allowDuplicatedCategory={true}
+              scale="auto"
+              orientation="bottom"
+              domain={[]}
+              includeHidden={false}
+              hide={false}
             />
             <YAxis
               dataKey="branch_name"
@@ -329,6 +334,11 @@ export function RecordingsAnalytics() {
               reversed={false}
               allowDataOverflow={false}
               allowDecimals={true}
+              scale="auto"
+              orientation="left"
+              domain={[]}
+              includeHidden={false}
+              hide={false}
               allowDuplicatedCategory={true}
             />
             <Tooltip formatter={(value: number) => [value, "Recordings"]} />
