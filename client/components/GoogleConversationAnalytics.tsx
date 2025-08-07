@@ -22,6 +22,30 @@ interface ConversationAnalytics {
     conversations: number;
     customers: number;
   }>;
+  // Conversion Analytics
+  conversionMetrics: {
+    totalConversions: number;
+    conversionRate: number;
+    avgConversationDuration: number;
+    successfulOutcomes: number;
+  };
+  conversionsByBranch: Array<{
+    branch_name: string;
+    total_conversations: number;
+    successful_conversions: number;
+    conversion_rate: number;
+  }>;
+  conversionTrends: Array<{
+    date: string;
+    conversations: number;
+    conversions: number;
+    conversion_rate: number;
+  }>;
+  conversionFunnel: Array<{
+    stage: string;
+    count: number;
+    percentage: number;
+  }>;
 }
 
 export function GoogleConversationAnalytics() {
