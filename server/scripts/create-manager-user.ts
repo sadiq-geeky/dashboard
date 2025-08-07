@@ -27,14 +27,13 @@ export async function createManagerUser() {
     if (regularUsers.length > 0) {
       const user = regularUsers[0];
       await executeQuery(
-        "UPDATE users SET role = 'manager', branch_id = ? WHERE uuid = ?",
-        [branch.id, user.uuid]
+        "UPDATE users SET role = 'manager' WHERE uuid = ?",
+        [user.uuid]
       );
       console.log(`✅ Updated user '${user.username}' to manager role`);
       console.log(`📋 Manager login credentials:`);
       console.log(`   Username: ${user.username}`);
       console.log(`   Password: user123 (if default) or check existing password`);
-      console.log(`   Branch: ${branch.branch_name}`);
     } else {
       console.log("⚠️ No regular users found to convert to manager");
     }
