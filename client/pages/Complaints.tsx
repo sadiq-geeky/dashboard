@@ -449,9 +449,11 @@ export function Complaints() {
     }
 
     if (!user?.branch_id) {
-      alert(
-        "Branch information is missing. Please contact your administrator.",
-      );
+      toast({
+        title: "Configuration Error",
+        description: "Branch information is missing. Please contact your administrator.",
+        variant: "destructive"
+      });
       return;
     }
 
