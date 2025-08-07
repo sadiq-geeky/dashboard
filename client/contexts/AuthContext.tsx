@@ -128,6 +128,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     isAdmin,
+    isManager,
+    isAdminOrManager,
     canAccessBranch,
   };
 
