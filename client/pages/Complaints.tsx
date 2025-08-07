@@ -325,15 +325,35 @@ export function Complaints() {
       <div className="px-6 py-6">
         {/* Header Section */}
         <div className="mb-6">
-          <div className="flex items-center space-x-3 mb-2">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Mail className="h-6 w-6 text-blue-600" />
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Mail className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {isAdmin() ? "Complaints Management" : "My Branch Complaints"}
+                </h1>
+                <p className="text-gray-600">
+                  {isAdmin()
+                    ? "Monitor and manage customer complaints from all branches"
+                    : "View and create complaints for your branch"
+                  }
+                </p>
+              </div>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Complaints Management</h1>
+
+            {/* Create Complaint Button for Managers */}
+            {isManager() && (
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Create Complaint</span>
+              </button>
+            )}
           </div>
-          <p className="text-gray-600">
-            Monitor and manage customer complaints from all branches
-          </p>
         </div>
 
         {/* Statistics Cards */}
