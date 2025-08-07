@@ -1009,10 +1009,10 @@ export function ExactDashboard() {
                 {/* Analytics Content */}
                 <WarningSuppressionWrapper>
                   {analyticsSubTab === "recordings" && (
-                    <GoogleRecordingsAnalytics key={`recordings-${activeTab}-${analyticsSubTab}`} />
+                    <GoogleRecordingsAnalytics key={`recordings-${activeTab}-${analyticsSubTab}-${lastUpdate.getTime()}`} />
                   )}
                   {analyticsSubTab === "conversations" && (
-                    <GoogleConversationAnalytics key={`conversations-${activeTab}-${analyticsSubTab}`} />
+                    <GoogleConversationAnalytics key={`conversations-${activeTab}-${analyticsSubTab}-${lastUpdate.getTime()}`} />
                   )}
                 </WarningSuppressionWrapper>
               </>
