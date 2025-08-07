@@ -488,11 +488,11 @@ export function ConversationAnalytics() {
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">Peak Day</p>
             <p className="text-xl font-bold text-green-600">
-              {dailyConversationsLastMonth.length > 0
+              {safeDailyData.length > 0
                 ? formatDate(
-                    dailyConversationsLastMonth.reduce((max, current) =>
-                      current.count > max.count ? current : max,
-                    ).date,
+                    safeDailyData.reduce((max, current) =>
+                      (current?.count || 0) > (max?.count || 0) ? current : max,
+                    )?.date || "",
                   )
                 : "N/A"}
             </p>
