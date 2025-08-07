@@ -125,10 +125,10 @@ export function GoogleRecordingsAnalytics() {
     return <div>No analytics data available</div>;
   }
 
-  // Prepare data for Google Charts
+  // Prepare data for Google Charts with null checks
   const dailyChartData = [
     ["Date", "Recordings"],
-    ...analytics.dailyRecordings.map(item => [
+    ...(analytics.dailyRecordings || []).map(item => [
       formatDate(item.date),
       item.count
     ])
@@ -136,7 +136,7 @@ export function GoogleRecordingsAnalytics() {
 
   const branchChartData = [
     ["Branch", "Total Recordings"],
-    ...analytics.branchStats.map(item => [
+    ...(analytics.branchStats || []).map(item => [
       item.branch_name,
       item.total_recordings
     ])
@@ -144,7 +144,7 @@ export function GoogleRecordingsAnalytics() {
 
   const statusChartData = [
     ["Status", "Count"],
-    ...analytics.statusDistribution.map(item => [
+    ...(analytics.statusDistribution || []).map(item => [
       item.status.charAt(0).toUpperCase() + item.status.slice(1),
       item.count
     ])
