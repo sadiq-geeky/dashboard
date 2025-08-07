@@ -323,8 +323,13 @@ export function Complaints() {
       return;
     }
 
-    if (!createComplaintData.device_id.trim()) {
-      alert("Please enter the device ID.");
+    if (!createComplaintData.device_id.trim() || createComplaintData.device_id === "No device assigned" || createComplaintData.device_id === "Unable to load device info") {
+      alert("Device information is required. Please wait for device information to load or contact your administrator.");
+      return;
+    }
+
+    if (!user?.branch_id) {
+      alert("Branch information is missing. Please contact your administrator.");
       return;
     }
 
@@ -340,8 +345,8 @@ export function Complaints() {
       };
 
       const payload = {
-        branch_id: user?.branch_id,
-        branch_name: user?.branch_city || "Unknown Branch",
+        branch_id: user.branch_id,
+        branch_name: user.branch_city || "Unknown Branch",
         customer_data,
         complaint_text: createComplaintData.complaint_text,
         priority: createComplaintData.priority,
