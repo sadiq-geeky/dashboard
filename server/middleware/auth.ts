@@ -39,8 +39,8 @@ export const authenticate: RequestHandler = async (req: any, res, next) => {
               b.branch_city as branch_city,
               u.emp_name, u.is_active
        FROM users u
-       LEFT JOIN link_device_branch_user ldbu ON ldbu.user_id = u.uuid
-       LEFT JOIN branches b ON b.id = ldbu.branch_id
+       LEFT JOIN link_device_branch_user ldbu ON ldbu.user_id COLLATE utf8mb4_0900_ai_ci = u.uuid COLLATE utf8mb4_0900_ai_ci
+       LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
        WHERE u.uuid = ? AND u.is_active = true
        LIMIT 1`,
       [userId],
