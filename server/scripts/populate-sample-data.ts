@@ -114,16 +114,27 @@ export async function populateSampleData() {
       }
     }
 
-    // Link devices to branches (assuming first device goes to first branch, etc.)
-    for (let i = 0; i < Math.min(devices.length, branches.length); i++) {
+    // Link devices to branches - distribute devices across branches
+    for (let i = 0; i < devices.length; i++) {
+      const branchIndex = i % branches.length;
       try {
+        // Update device to set branch_id
         await executeQuery(`
-          INSERT IGNORE INTO link_device_branch_user
-          (device_id, branch_id, user_id, created_on)
-          VALUES (?, ?, NULL, NOW())
-        `, [devices[i].id, branches[i % branches.length].id]);
+          UPDATE devices SET branch_id = ? WHERE id = ?
+        `, [branches[branchIndex].id, devices[i].id]);
+
+        // Also create entry in link table if it exists
+        try {
+          await executeQuery(`
+            INSERT IGNORE INTO link_device_branch_user
+            (device_id, branch_id, user_id)
+            VALUES (?, ?, NULL)
+          `, [devices[i].id, branches[branchIndex].id]);
+        } catch (linkError) {
+          // Link table might not exist or have different structure
+        }
       } catch (error) {
-        console.log(`Device-branch link might already exist`);
+        console.log(`Device-branch link might already exist for device ${i}`);
       }
     }
 
