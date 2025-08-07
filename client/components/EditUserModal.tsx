@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { authPut } from "@/lib/api";
 
 interface User {
   uuid: string;
