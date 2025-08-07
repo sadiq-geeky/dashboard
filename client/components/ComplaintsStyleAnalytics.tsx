@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { authFetch } from "@/lib/api";
+import { InteractiveBranchChart } from "./InteractiveBranchChart";
 import {
   RefreshCw,
   MessageSquare,
