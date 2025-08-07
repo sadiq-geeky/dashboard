@@ -683,19 +683,6 @@ export function Complaints() {
             </button>
 
             <button
-              onClick={() => setActiveTab("complaints")}
-              className={cn(
-                "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
-                activeTab === "complaints"
-                  ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
-              )}
-            >
-              <Mail className="w-6 h-6 mb-2" />
-              <span className="text-sm font-medium">Complaints</span>
-            </button>
-
-            <button
               onClick={() => setActiveTab("analytics")}
               className={cn(
                 "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
@@ -706,6 +693,19 @@ export function Complaints() {
             >
               <BarChart3 className="w-6 h-6 mb-2" />
               <span className="text-sm font-medium">Analytics</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("complaints")}
+              className={cn(
+                "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
+                activeTab === "complaints"
+                  ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
+              )}
+            >
+              <Mail className="w-6 h-6 mb-2" />
+              <span className="text-sm font-medium">Complaints</span>
             </button>
           </div>
         </div>
