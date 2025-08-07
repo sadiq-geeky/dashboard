@@ -348,6 +348,8 @@ export function Complaints() {
         status: "pending",
       };
 
+      console.log("Creating complaint with payload:", payload);
+
       const response = await authFetch("/api/complaints", {
         method: "POST",
         headers: {
