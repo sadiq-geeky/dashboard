@@ -412,7 +412,7 @@ export function ExactDashboard() {
                 navigate("/", { replace: true });
               }}
               className={cn(
-                "flex flex-col items-center p-3 rounded-md",
+                "flex flex-col items-center p-2 rounded-md",
                 activeTab === "home"
                   ? "text-gray-700 bg-white border border-gray-300"
                   : "text-gray-500 hover:bg-gray-100",
@@ -428,7 +428,7 @@ export function ExactDashboard() {
                   navigate("/?tab=device-status", { replace: true });
                 }}
                 className={cn(
-                  "flex flex-col items-center p-3 rounded-md",
+                  "flex flex-col items-center p-2 rounded-md",
                   activeTab === "device-status"
                     ? "text-gray-700 bg-white border border-gray-300"
                     : "text-gray-500 hover:bg-gray-100",
@@ -476,7 +476,7 @@ export function ExactDashboard() {
                   navigate("/?tab=analytics", { replace: true });
                 }}
                 className={cn(
-                  "flex flex-col items-center p-3 rounded-md",
+                  "flex flex-col items-center p-2 rounded-md",
                   activeTab === "analytics"
                     ? "text-gray-700 bg-white border border-gray-300"
                     : "text-gray-500 hover:bg-gray-100",
