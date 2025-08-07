@@ -475,12 +475,12 @@ export function ConversationAnalytics() {
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">Avg Conversations/Day</p>
             <p className="text-xl font-bold text-blue-600">
-              {dailyConversationsLastMonth.length > 0
+              {safeDailyData.length > 0
                 ? (
-                    dailyConversationsLastMonth.reduce(
-                      (sum, day) => sum + day.count,
+                    safeDailyData.reduce(
+                      (sum, day) => sum + (day?.count || 0),
                       0,
-                    ) / dailyConversationsLastMonth.length
+                    ) / safeDailyData.length
                   ).toFixed(1)
                 : "0"}
             </p>
