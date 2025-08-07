@@ -293,7 +293,7 @@ export function Complaints() {
         customer_email: createComplaintData.customer_email,
         customer_cnic: createComplaintData.customer_cnic,
         device_used: createComplaintData.device_id,
-        device_location: createComplaintData.device_location,
+        device_location: createComplaintData.city,
         issue_category: createComplaintData.issue_category,
       };
 
