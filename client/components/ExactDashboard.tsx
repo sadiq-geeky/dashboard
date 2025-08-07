@@ -481,9 +481,7 @@ export function ExactDashboard() {
         className="bg-white border-b border-gray-200 shadow-sm"
         style={{ display: "flex", flexDirection: "column" }}
       >
-        <div
-          className="flex items-center justify-start py-4 px-4"
-        >
+        <div className="flex items-center justify-start py-4 px-4">
           <div className="flex items-center space-x-3">
             {/* First group: Home, Analytics, Device Status, Complaints */}
             <button
