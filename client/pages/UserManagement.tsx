@@ -175,6 +175,13 @@ export function UserManagement() {
               <Users className="w-5 h-5 mb-1" />
               <span className="text-xs">User Management</span>
             </button>
+            <button
+              onClick={() => navigate("/deployment")}
+              className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
+              <Link className="w-5 h-5 mb-1" />
+              <span className="text-xs">Deployment</span>
+            </button>
             <button className="flex flex-col items-center p-3 text-gray-500 hover:bg-gray-100 rounded-md">
               <Mail className="w-5 h-5 mb-1" />
               <span className="text-xs">Complaints</span>
