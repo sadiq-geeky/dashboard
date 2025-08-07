@@ -133,6 +133,12 @@ export const getConversationsByBranchPerMonth: RequestHandler = async (req, res)
 // Get conversations analytics by city
 export const getConversationsByCity: RequestHandler = async (req, res) => {
   try {
+    // Get branch filter from middleware
+    const branchFilter = (req as any).branchFilter;
+    const branchFilterCondition = branchFilter
+      ? `AND ldbu.branch_id = '${branchFilter.value}'`
+      : '';
+
     const query = `
       SELECT
         b.branch_city as city,
@@ -142,7 +148,7 @@ export const getConversationsByCity: RequestHandler = async (req, res) => {
       LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
-      WHERE b.branch_city IS NOT NULL
+      WHERE b.branch_city IS NOT NULL ${branchFilterCondition}
       GROUP BY b.branch_city
       ORDER BY count DESC
     `;
@@ -166,12 +172,22 @@ export const getDailyConversationsLastMonth: RequestHandler = async (
   res,
 ) => {
   try {
+    // Get branch filter from middleware
+    const branchFilter = (req as any).branchFilter;
+    const branchFilterCondition = branchFilter
+      ? `AND ldbu.branch_id = '${branchFilter.value}'`
+      : '';
+
     const query = `
       SELECT
         DATE(r.start_time) AS date,
         COUNT(r.id) AS count
       FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
       WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+        ${branchFilterCondition}
       GROUP BY DATE(r.start_time)
       ORDER BY date
     `;
@@ -191,11 +207,21 @@ export const getDailyConversationsLastMonth: RequestHandler = async (
 // Get unique CNICs by month
 export const getUniqueCnicsByMonth: RequestHandler = async (req, res) => {
   try {
+    // Get branch filter from middleware
+    const branchFilter = (req as any).branchFilter;
+    const branchFilterCondition = branchFilter
+      ? `AND ldbu.branch_id = '${branchFilter.value}'`
+      : '';
+
     const query = `
       SELECT
         COUNT(DISTINCT REPLACE(r.cnic, '-', '')) AS unique_cnic_count
       FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
       WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+        ${branchFilterCondition}
     `;
 
     const result = await executeQuery<{
