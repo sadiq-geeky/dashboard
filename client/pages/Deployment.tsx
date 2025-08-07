@@ -711,7 +711,7 @@ export function Deployment() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex justify-end space-x-3 pt-4">
+                  <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
                     <button
                       type="button"
                       onClick={() => {
@@ -720,15 +720,16 @@ export function Deployment() {
                         setSelectedBranch("");
                         setSelectedUser("");
                       }}
-                      className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                      className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                      className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium flex items-center space-x-2"
                     >
-                      Create Deployment
+                      <Link className="h-4 w-4" />
+                      <span>Create Deployment</span>
                     </button>
                   </div>
                 </form>
