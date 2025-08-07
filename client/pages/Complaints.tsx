@@ -1092,6 +1092,22 @@ export function Complaints() {
                           Automatically filled from your profile
                         </p>
                       </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          value={createComplaintData.customer_email}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                          placeholder="Loading email information..."
+                          readOnly
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Automatically filled from your profile
+                        </p>
+                      </div>
                     </div>
                   </div>
 
