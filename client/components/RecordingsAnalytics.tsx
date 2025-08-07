@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
+  XAxis,
+  YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
@@ -11,7 +13,6 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import { XAxis, YAxis } from "@/components/ui/chart";
 import { TrendingUp, Users, Clock, CheckCircle, RefreshCw } from "lucide-react";
 import { authFetch } from "@/lib/api";
 
