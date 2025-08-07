@@ -470,10 +470,30 @@ export function ExactDashboard() {
         setCurrentTime(0);
       });
 
-      audio.addEventListener("error", (e) => {
+      audio.addEventListener("error", async (e) => {
         console.error("Audio error:", e);
         console.error("Failed to load audio file:", selectedRecording.file_name);
-        alert(`Audio file not found: ${selectedRecording.file_name}. This recording may not have an actual audio file on the server.`);
+
+        // Try to get more specific error information from the server
+        try {
+          const response = await fetch(`/api/audio/${selectedRecording.file_name}`);
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Server error:", errorData);
+
+            if (response.status === 404) {
+              alert(`Audio file missing: "${selectedRecording.file_name}"\n\nThis recording exists in the database but the actual audio file is not on the server. This can happen if:\n• The file was deleted\n• The recording was created with sample data\n• There was an upload error`);
+            } else if (response.status === 500) {
+              alert(`Server error loading audio: "${selectedRecording.file_name}"\n\nError: ${errorData.error}\n\nPlease check the server logs.`);
+            } else {
+              alert(`Audio loading failed: "${selectedRecording.file_name}"\n\nHTTP ${response.status}: ${errorData.error || 'Unknown error'}`);
+            }
+          }
+        } catch (fetchError) {
+          console.error("Error fetching audio file info:", fetchError);
+          alert(`Cannot load audio file: "${selectedRecording.file_name}"\n\nThe audio file is not available on the server.`);
+        }
+
         setIsPlaying(false);
       });
 
