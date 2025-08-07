@@ -182,7 +182,7 @@ const getStatusIcon = (status: HeartbeatRecord["status"]) => {
 };
 
 export function ExactDashboard() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, isAdminOrManager } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
