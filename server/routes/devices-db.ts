@@ -64,7 +64,7 @@ export const getDevices: RequestHandler = async (req, res) => {
     const countQuery = `
       SELECT COUNT(DISTINCT d.id) as total
       FROM devices d
-      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id COLLATE utf8mb4_0900_ai_ci = d.id COLLATE utf8mb4_0900_ai_ci
       ${whereClause}
     `;
     const [countResult] = await executeQuery<{ total: number }>(
@@ -80,8 +80,8 @@ export const getDevices: RequestHandler = async (req, res) => {
         b.branch_address as branch_name,
         b.branch_code
       FROM devices d
-      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
-      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id COLLATE utf8mb4_0900_ai_ci = d.id COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
       ${whereClause}
       ORDER BY d.device_name ASC
       LIMIT ${limitNum} OFFSET ${offset}
