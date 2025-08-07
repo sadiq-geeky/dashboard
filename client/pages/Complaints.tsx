@@ -505,8 +505,16 @@ export function Complaints() {
       alert("Complaint created successfully!");
     } catch (error) {
       console.error("Error creating complaint:", error);
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
+      let errorMessage = "Unknown error occurred";
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      } else if (typeof error === "object" && error !== null) {
+        errorMessage = JSON.stringify(error);
+      }
+
       alert(`Failed to create complaint: ${errorMessage}`);
     }
   };
