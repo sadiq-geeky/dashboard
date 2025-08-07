@@ -9,6 +9,7 @@ import { authFetch } from "@/lib/api";
 import { GoogleRecordingsAnalytics } from "./GoogleRecordingsAnalytics";
 import { GoogleConversationAnalytics } from "./GoogleConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
+import { ConversationAnalytics } from "./ConversationAnalytics";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "./Header";
 import { AdminNavigation } from "./AdminNavigation";
