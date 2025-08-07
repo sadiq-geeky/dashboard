@@ -569,25 +569,25 @@ export function ExactDashboard() {
                           <td className="py-1 px-1.5 text-xs text-gray-900">
                             {startIndex + index + 1}
                           </td>
-                          <td className="py-2 px-2 text-xs text-gray-500">
+                          <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.branch_no ||
                               recording.device_name ||
                               recording.ip_address}
                           </td>
-                          <td className="py-2 px-2 text-xs text-gray-500">
+                          <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.cnic || recording.file_name || "-"}
                           </td>
-                          <td className="py-2 px-2 text-xs text-gray-500">
+                          <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.start_time
                               ? new Date(recording.start_time).toLocaleString()
                               : "-"}
                           </td>
-                          <td className="py-2 px-2 text-xs text-gray-500">
+                          <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.duration
                               ? `${Math.floor(recording.duration / 60)}:${String(recording.duration % 60).padStart(2, "0")}`
                               : "-"}
                           </td>
-                          <td className="py-2 px-2 text-xs text-gray-500">
+                          <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.branch_address || "NA"}
                           </td>
                           <td className="py-2 px-2">
