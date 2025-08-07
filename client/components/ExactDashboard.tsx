@@ -619,7 +619,7 @@ export function ExactDashboard() {
                                 key={page}
                                 onClick={() => setCurrentPage(page)}
                                 className={cn(
-                                  "w-6 h-6 flex items-center justify-center rounded text-sm",
+                                  "w-5 h-5 flex items-center justify-center rounded text-xs",
                                   currentPage === page
                                     ? "bg-blue-100 text-blue-600"
                                     : "text-gray-500 hover:bg-gray-100",
