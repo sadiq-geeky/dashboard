@@ -829,7 +829,7 @@ export function ExactDashboard() {
               </>
             )}
 
-            {activeTab === "analytics" && isAdminOrManager() && (
+            {activeTab === "analytics" && (
               <>
                 {/* Analytics Header */}
                 <div className="flex items-center justify-between mb-4">
