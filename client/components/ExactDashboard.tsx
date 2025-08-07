@@ -650,12 +650,12 @@ export function ExactDashboard() {
                     onClick={loadDevices}
                     disabled={isRefreshing}
                     className={cn(
-                      "flex items-center space-x-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 transition-colors",
+                      "flex items-center space-x-1.5 rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/90 transition-colors",
                       isRefreshing && "opacity-50 cursor-not-allowed",
                     )}
                   >
                     <RefreshCw
-                      className={cn("h-4 w-4", isRefreshing && "animate-spin")}
+                      className={cn("h-3 w-3", isRefreshing && "animate-spin")}
                     />
                     <span>Refresh</span>
                   </button>
