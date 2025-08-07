@@ -301,12 +301,13 @@ export function ExactDashboard() {
     }
   }, [activeTab]);
 
-  // Device status counts
-  const onlineCount = devices.filter((d) => d.status === "online").length;
-  const problematicCount = devices.filter(
+  // Device status counts with safety checks
+  const safeDevices = Array.isArray(devices) ? devices : [];
+  const onlineCount = safeDevices.filter((d) => d.status === "online").length;
+  const problematicCount = safeDevices.filter(
     (d) => d.status === "problematic",
   ).length;
-  const offlineCount = devices.filter((d) => d.status === "offline").length;
+  const offlineCount = safeDevices.filter((d) => d.status === "offline").length;
 
   useEffect(() => {
     let filtered = recordings;
