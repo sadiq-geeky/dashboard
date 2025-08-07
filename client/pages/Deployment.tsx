@@ -22,6 +22,13 @@ import {
   Settings,
 } from "lucide-react";
 import { authFetch, authPost, authDelete } from "@/lib/api";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Device {
   id: string;
