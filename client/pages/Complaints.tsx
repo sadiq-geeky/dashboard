@@ -1071,20 +1071,26 @@ export function Complaints() {
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Technical Issue">
-                              Technical Issue
+                            <SelectItem value="Device Not Recording">
+                              Device Not Recording
                             </SelectItem>
-                            <SelectItem value="Equipment Malfunction">
-                              Equipment Malfunction
+                            <SelectItem value="Poor Audio Quality">
+                              Poor Audio Quality
                             </SelectItem>
-                            <SelectItem value="Audio Quality">
-                              Audio Quality
+                            <SelectItem value="Connection Issues">
+                              Connection Issues
                             </SelectItem>
-                            <SelectItem value="Service Quality">
-                              Service Quality
+                            <SelectItem value="Device Freezing/Hanging">
+                              Device Freezing/Hanging
                             </SelectItem>
-                            <SelectItem value="System Error">
-                              System Error
+                            <SelectItem value="Hardware Malfunction">
+                              Hardware Malfunction
+                            </SelectItem>
+                            <SelectItem value="Software Error">
+                              Software Error
+                            </SelectItem>
+                            <SelectItem value="Network Connectivity">
+                              Network Connectivity
                             </SelectItem>
                             <SelectItem value="Other">Other</SelectItem>
                           </SelectContent>
