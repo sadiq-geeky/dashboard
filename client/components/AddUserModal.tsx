@@ -13,6 +13,12 @@ export function AddUserModal({
   onClose,
   onUserAdded,
 }: AddUserModalProps) {
+  // Calculate date restrictions
+  const today = new Date().toISOString().split('T')[0];
+  const eighteenYearsAgo = new Date();
+  eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+  const maxBirthDate = eighteenYearsAgo.toISOString().split('T')[0];
+
   const [formData, setFormData] = useState({
     emp_name: "",
     gender: "",
