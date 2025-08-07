@@ -79,6 +79,7 @@ export function Complaints() {
   const { isAdmin, isManager, isAdminOrManager, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'complaints' | 'analytics'>('complaints');
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [stats, setStats] = useState<ComplaintsStats | null>(null);
   const [loading, setLoading] = useState(true);
