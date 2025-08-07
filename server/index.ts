@@ -46,6 +46,7 @@ import { getRecordingsAnalytics } from "./routes/analytics-db";
 import {
   getConversationAnalytics,
   getConversationsByBranch,
+  getConversationsByBranchPerMonth,
   getConversationsByCity,
   getDailyConversationsLastMonth,
   getUniqueCnicsByMonth,
