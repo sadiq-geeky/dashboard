@@ -462,6 +462,13 @@ export function ExactDashboard() {
         setCurrentTime(0);
       });
 
+      audio.addEventListener("error", (e) => {
+        console.error("Audio error:", e);
+        console.error("Failed to load audio file:", selectedRecording.file_name);
+        alert(`Audio file not found: ${selectedRecording.file_name}. This recording may not have an actual audio file on the server.`);
+        setIsPlaying(false);
+      });
+
       setAudioRef(audio);
       setCurrentTime(0);
       setIsPlaying(false);
@@ -471,6 +478,7 @@ export function ExactDashboard() {
         audio.removeEventListener("loadedmetadata", () => {});
         audio.removeEventListener("timeupdate", () => {});
         audio.removeEventListener("ended", () => {});
+        audio.removeEventListener("error", () => {});
       };
     } else {
       setAudioRef(null);
