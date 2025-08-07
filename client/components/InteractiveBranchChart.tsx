@@ -172,16 +172,27 @@ export function InteractiveBranchChart() {
     }
   };
 
-  // Custom tooltip
+  // Custom tooltip with enhanced design
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
+      const value = payload[0].value;
+      const isOthers = payload[0].payload?.isOthers;
+
       return (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3">
-          <p className="font-medium text-gray-900">{`${label}`}</p>
-          <p className="text-blue-600">
-            {`Conversations: ${payload[0].value.toLocaleString()}`}
-          </p>
-          <p className="text-xs text-gray-500 mt-1">Click to drill down</p>
+        <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl p-4 min-w-[200px]">
+          <div className="flex items-center space-x-2 mb-2">
+            <div className={`w-3 h-3 rounded-full ${isOthers ? 'bg-gradient-to-r from-amber-400 to-orange-500' : 'bg-gradient-to-r from-blue-500 to-indigo-600'}`} />
+            <p className="font-semibold text-gray-900 text-sm">{label}</p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              {value.toLocaleString()} conversations
+            </p>
+            <p className="text-xs text-gray-500 flex items-center space-x-1">
+              <span>🔍</span>
+              <span>Click to explore details</span>
+            </p>
+          </div>
         </div>
       );
     }
@@ -252,8 +263,8 @@ export function InteractiveBranchChart() {
               {isDrilldown ? drilldownTitle : "Conversations by Branch"}
             </h3>
             <p className="text-gray-600">
-              {isDrilldown 
-                ? "Detailed breakdown view" 
+              {isDrilldown
+                ? "Detailed breakdown view"
                 : "Interactive chart showing top 20 branches + others"}
             </p>
           </div>
@@ -269,9 +280,9 @@ export function InteractiveBranchChart() {
             >
               {availableMonths.map(month => (
                 <option key={month} value={month}>
-                  {new Date(month + '-01').toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long' 
+                  {new Date(month + '-01').toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long'
                   })}
                 </option>
               ))}
@@ -288,8 +299,8 @@ export function InteractiveBranchChart() {
             margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis 
-              dataKey="name" 
+            <XAxis
+              dataKey="name"
               angle={-45}
               textAnchor="end"
               height={80}
@@ -298,14 +309,14 @@ export function InteractiveBranchChart() {
             />
             <YAxis fontSize={12} />
             <Tooltip content={<CustomTooltip />} />
-            <Bar 
-              dataKey="conversations" 
+            <Bar
+              dataKey="conversations"
               cursor="pointer"
               onClick={isDrilldown ? undefined : handleBarClick}
             >
               {(isDrilldown ? drilldownData : chartData).map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
+                <Cell
+                  key={`cell-${index}`}
                   fill={entry.isOthers ? "#f59e0b" : "#3b82f6"}
                 />
               ))}
@@ -346,11 +357,11 @@ export function InteractiveBranchChart() {
             <span className="text-sm text-gray-600">Period</span>
           </div>
           <p className="text-lg font-semibold text-gray-900">
-            {isDrilldown && drilldownTitle.includes("Monthly") 
-              ? "Last 12 Months" 
-              : selectedMonth ? new Date(selectedMonth + '-01').toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long' 
+            {isDrilldown && drilldownTitle.includes("Monthly")
+              ? "Last 12 Months"
+              : selectedMonth ? new Date(selectedMonth + '-01').toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long'
                 }) : "—"}
           </p>
         </div>
