@@ -90,7 +90,8 @@ export function Complaints() {
     customer_phone: "",
     customer_email: "",
     customer_cnic: "",
-    device_used: "",
+    device_id: "",
+    city: "",
     issue_category: "",
     complaint_text: "",
     priority: "medium" as "low" | "medium" | "high" | "urgent",
@@ -182,11 +183,133 @@ export function Complaints() {
     }
   };
 
-  useEffect(() => {
-    if (isAdminOrManager()) {
-      fetchComplaints();
-      fetchStats();
+  // Fetch user's device information
+  const fetchUserDeviceInfo = async () => {
+    try {
+      console.log("Fetching device info for user:", user?.uuid);
+
+      if (!user?.uuid) {
+        console.error("No user UUID available");
+        setCreateComplaintData((prev) => ({
+          ...prev,
+          device_id: "No user information available",
+        }));
+        return;
+      }
+
+      // Step 1: Get deployments and devices data
+      const [deploymentsResponse, devicesResponse] = await Promise.all([
+        authFetch("/api/deployments"),
+        authFetch("/api/devices?limit=100"),
+      ]);
+
+      if (deploymentsResponse.ok && devicesResponse.ok) {
+        const [deploymentsData, devicesData] = await Promise.all([
+          deploymentsResponse.json(),
+          devicesResponse.json(),
+        ]);
+
+        console.log("Deployments data:", deploymentsData.data);
+        console.log("Devices data:", devicesData.data);
+        console.log("Looking for user UUID:", user.uuid);
+
+        // Step 2: Find user's deployment
+        const userDeployment = deploymentsData.data?.find(
+          (deployment: any) => deployment.user_id === user.uuid,
+        );
+
+        console.log("User deployment found:", userDeployment);
+
+        if (userDeployment) {
+          // Step 3: Find the device details using device_id from deployment
+          const device = devicesData.data?.find(
+            (device: any) => device.id === userDeployment.device_id,
+          );
+
+          console.log("Device found:", device);
+
+          if (device) {
+            setCreateComplaintData((prev) => ({
+              ...prev,
+              device_id: device.device_name || device.id,
+            }));
+            console.log(
+              "Successfully set device:",
+              device.device_name || device.id,
+            );
+          } else {
+            setCreateComplaintData((prev) => ({
+              ...prev,
+              device_id: `Device ID: ${userDeployment.device_id}`,
+            }));
+            console.warn("Deployment found but device details not found");
+          }
+        } else {
+          console.warn("No deployment found for user");
+          setCreateComplaintData((prev) => ({
+            ...prev,
+            device_id: "No device assigned",
+          }));
+        }
+      } else {
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: "Unknown error" }));
+        console.error("Failed to fetch deployments:", errorData);
+
+        // Try alternative approach - get devices by branch
+        if (user.branch_id) {
+          console.log("Trying branch devices endpoint as fallback...");
+          try {
+            const branchDevicesResponse = await authFetch(
+              `/api/branches/${user.branch_id}/devices`,
+            );
+            if (branchDevicesResponse.ok) {
+              const branchDevicesData = await branchDevicesResponse.json();
+              console.log("Branch devices data:", branchDevicesData);
+
+              if (branchDevicesData.data && branchDevicesData.data.length > 0) {
+                // Use the first active device in the branch as fallback
+                const activeDevice =
+                  branchDevicesData.data.find(
+                    (device: any) => device.device_status === "active",
+                  ) || branchDevicesData.data[0];
+
+                if (activeDevice) {
+                  console.log("Using branch device as fallback:", activeDevice);
+                  setCreateComplaintData((prev) => ({
+                    ...prev,
+                    device_id:
+                      activeDevice.device_name ||
+                      activeDevice.device_id ||
+                      "Branch Device",
+                  }));
+                  return;
+                }
+              }
+            }
+          } catch (branchError) {
+            console.error("Branch devices fallback failed:", branchError);
+          }
+        }
+
+        setCreateComplaintData((prev) => ({
+          ...prev,
+          device_id: "Unable to load device info",
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching user device info:", error);
+      setCreateComplaintData((prev) => ({
+        ...prev,
+        device_id: "Unable to load device info",
+      }));
     }
+  };
+
+  useEffect(() => {
+    fetchComplaints();
+    fetchStats();
   }, [
     currentPage,
     sortBy,
@@ -195,6 +318,20 @@ export function Complaints() {
     priorityFilter,
     searchQuery,
   ]);
+
+  // Debug user data on component mount
+  useEffect(() => {
+    console.log("Complaints component mounted, user data:", {
+      uuid: user?.uuid,
+      username: user?.username,
+      emp_name: user?.emp_name,
+      phone_no: user?.phone_no,
+      email_id: user?.email_id,
+      branch_city: user?.branch_city,
+      hasPhoneNo: !!user?.phone_no,
+      hasEmailId: !!user?.email_id,
+    });
+  }, [user]);
 
   // Debounced search
   useEffect(() => {
@@ -273,12 +410,36 @@ export function Complaints() {
     e.preventDefault();
 
     if (!createComplaintData.complaint_text.trim()) {
-      alert("Please enter a complaint description.");
+      alert("Please describe the device issue.");
       return;
     }
 
     if (!createComplaintData.customer_name.trim()) {
-      alert("Please enter the customer name.");
+      alert("Please enter your name.");
+      return;
+    }
+
+    if (
+      !createComplaintData.device_id.trim() ||
+      createComplaintData.device_id === "Unable to load device info" ||
+      createComplaintData.device_id === "No user information available"
+    ) {
+      alert(
+        "Device information is required. Please wait for device information to load or contact your administrator.",
+      );
+      return;
+    }
+
+    // Allow "No device assigned" - user can still report general issues
+    let deviceInfo = createComplaintData.device_id;
+    if (createComplaintData.device_id === "No device assigned") {
+      deviceInfo = "General Device Issue (No specific device assigned)";
+    }
+
+    if (!user?.branch_id) {
+      alert(
+        "Branch information is missing. Please contact your administrator.",
+      );
       return;
     }
 
@@ -288,18 +449,21 @@ export function Complaints() {
         customer_phone: createComplaintData.customer_phone,
         customer_email: createComplaintData.customer_email,
         customer_cnic: createComplaintData.customer_cnic,
-        device_used: createComplaintData.device_used,
+        device_used: deviceInfo,
+        device_location: createComplaintData.city,
         issue_category: createComplaintData.issue_category,
       };
 
       const payload = {
-        branch_id: user?.branch_id,
-        branch_name: user?.branch_city || "Unknown Branch",
+        branch_id: user.branch_id,
+        branch_name: user.branch_city || "Unknown Branch",
         customer_data,
         complaint_text: createComplaintData.complaint_text,
         priority: createComplaintData.priority,
         status: "pending",
       };
+
+      console.log("Creating complaint with payload:", payload);
 
       const response = await authFetch("/api/complaints", {
         method: "POST",
@@ -310,7 +474,11 @@ export function Complaints() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create complaint");
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: "Unknown error" }));
+        console.error("Server error response:", errorData);
+        throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
       const result = await response.json();
@@ -322,7 +490,8 @@ export function Complaints() {
         customer_phone: "",
         customer_email: "",
         customer_cnic: "",
-        device_used: "",
+        device_id: "",
+        city: "",
         issue_category: "",
         complaint_text: "",
         priority: "medium",
@@ -336,7 +505,9 @@ export function Complaints() {
       alert("Complaint created successfully!");
     } catch (error) {
       console.error("Error creating complaint:", error);
-      alert("Failed to create complaint. Please try again.");
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      alert(`Failed to create complaint: ${errorMessage}`);
     }
   };
 
@@ -384,16 +555,66 @@ export function Complaints() {
               </div>
             </div>
 
-            {/* Create Complaint Button for Managers */}
-            {isManager() && (
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Plus className="h-4 w-4" />
-                <span>Create Complaint</span>
-              </button>
-            )}
+            {/* Report Device Issue Button */}
+            <button
+              onClick={async () => {
+                // Debug user data
+                console.log("User data available:", {
+                  emp_name: user?.emp_name,
+                  username: user?.username,
+                  phone_no: user?.phone_no,
+                  email_id: user?.email_id,
+                  branch_city: user?.branch_city,
+                  full_user: user,
+                });
+
+                let phoneNo = user?.phone_no || "";
+                let emailId = user?.email_id || "";
+
+                // If phone or email is missing, try to fetch from user profile
+                if (!phoneNo || !emailId) {
+                  console.log(
+                    "Phone or email missing, fetching user profile...",
+                  );
+                  try {
+                    const userProfileResponse = await authFetch(
+                      `/api/users/${user?.uuid}`,
+                    );
+                    if (userProfileResponse.ok) {
+                      const userProfile = await userProfileResponse.json();
+                      console.log("User profile data:", userProfile);
+                      phoneNo = userProfile.phone_no || phoneNo;
+                      emailId = userProfile.email_id || emailId;
+                    }
+                  } catch (error) {
+                    console.error("Failed to fetch user profile:", error);
+                  }
+                }
+
+                // Immediately fill user data from context
+                const initialData = {
+                  customer_name: user?.emp_name || user?.username || "",
+                  customer_phone: phoneNo,
+                  customer_email: emailId,
+                  customer_cnic: "",
+                  device_id: "Loading device info...",
+                  city: user?.branch_city || "",
+                  issue_category: "",
+                  complaint_text: "",
+                  priority: "medium" as "low" | "medium" | "high" | "urgent",
+                };
+
+                console.log("Setting initial form data:", initialData);
+                setCreateComplaintData(initialData);
+                setShowCreateModal(true);
+                // Then try to get device info
+                fetchUserDeviceInfo();
+              }}
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Report Device Issue</span>
+            </button>
           </div>
         </div>
 
@@ -948,10 +1169,10 @@ export function Complaints() {
                     </div>
                     <div>
                       <h2 className="text-xl font-semibold text-gray-900">
-                        Create New Complaint
+                        Report Device Issue
                       </h2>
                       <p className="text-sm text-gray-500">
-                        Report a device issue or service complaint
+                        Report problems with voice recording devices
                       </p>
                     </div>
                   </div>
@@ -967,34 +1188,31 @@ export function Complaints() {
               {/* Modal Content */}
               <form onSubmit={handleCreateComplaint} className="p-6">
                 <div className="space-y-6">
-                  {/* Customer Information */}
+                  {/* Reporter Information */}
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-4">
-                      Customer Information
+                      Reporter Information
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Customer Name *
+                          Your Name *
                         </label>
                         <input
                           type="text"
                           value={createComplaintData.customer_name}
-                          onChange={(e) =>
-                            setCreateComplaintData((prev) => ({
-                              ...prev,
-                              customer_name: e.target.value,
-                            }))
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Enter customer name"
-                          required
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                          placeholder="Loading your information..."
+                          readOnly
                         />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Automatically filled from your profile
+                        </p>
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Phone Number
+                          Contact Number
                         </label>
                         <input
                           type="tel"
@@ -1024,44 +1242,48 @@ export function Complaints() {
                             }))
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="customer@email.com"
+                          placeholder="your.email@example.com"
                         />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Device Information */}
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                      Device Information
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Device ID *
+                        </label>
+                        <input
+                          type="text"
+                          value={createComplaintData.device_id}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                          placeholder="Loading device information..."
+                          readOnly
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Automatically filled based on your assigned device
+                        </p>
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          CNIC
+                          City
                         </label>
                         <input
                           type="text"
-                          value={createComplaintData.customer_cnic}
-                          onChange={(e) =>
-                            setCreateComplaintData((prev) => ({
-                              ...prev,
-                              customer_cnic: e.target.value,
-                            }))
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="42101-1234567-1"
+                          value={createComplaintData.city}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                          placeholder="Loading city information..."
+                          readOnly
                         />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Device Used
-                        </label>
-                        <input
-                          type="text"
-                          value={createComplaintData.device_used}
-                          onChange={(e) =>
-                            setCreateComplaintData((prev) => ({
-                              ...prev,
-                              device_used: e.target.value,
-                            }))
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Recording Device #1"
-                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Automatically filled based on your branch location
+                        </p>
                       </div>
 
                       <div>
@@ -1081,20 +1303,26 @@ export function Complaints() {
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Technical Issue">
-                              Technical Issue
+                            <SelectItem value="Device Not Recording">
+                              Device Not Recording
                             </SelectItem>
-                            <SelectItem value="Equipment Malfunction">
-                              Equipment Malfunction
+                            <SelectItem value="Poor Audio Quality">
+                              Poor Audio Quality
                             </SelectItem>
-                            <SelectItem value="Audio Quality">
-                              Audio Quality
+                            <SelectItem value="Connection Issues">
+                              Connection Issues
                             </SelectItem>
-                            <SelectItem value="Service Quality">
-                              Service Quality
+                            <SelectItem value="Device Freezing/Hanging">
+                              Device Freezing/Hanging
                             </SelectItem>
-                            <SelectItem value="System Error">
-                              System Error
+                            <SelectItem value="Hardware Malfunction">
+                              Hardware Malfunction
+                            </SelectItem>
+                            <SelectItem value="Software Error">
+                              Software Error
+                            </SelectItem>
+                            <SelectItem value="Network Connectivity">
+                              Network Connectivity
                             </SelectItem>
                             <SelectItem value="Other">Other</SelectItem>
                           </SelectContent>
@@ -1138,7 +1366,7 @@ export function Complaints() {
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Complaint Description *
+                          Issue Description *
                         </label>
                         <textarea
                           value={createComplaintData.complaint_text}
@@ -1150,12 +1378,13 @@ export function Complaints() {
                           }
                           rows={4}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Please describe the issue in detail..."
+                          placeholder="Describe the device issue: What happened? When did it start? Any error messages?"
                           required
                         />
                         <p className="text-sm text-gray-500 mt-1">
-                          Provide a detailed description of the issue, including
-                          when it occurred and any relevant circumstances.
+                          Provide details about the device problem, including
+                          when it started, what you were doing, and any error
+                          messages.
                         </p>
                       </div>
                     </div>
@@ -1176,7 +1405,7 @@ export function Complaints() {
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
                   >
                     <Plus className="h-4 w-4" />
-                    <span>Create Complaint</span>
+                    <span>Report Issue</span>
                   </button>
                 </div>
               </form>

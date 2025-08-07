@@ -23,8 +23,14 @@ export function Header() {
   const goBackToDashboard = () => navigate("/");
 
   return (
-    <div className="bg-white border-b border-gray-200 px-5 py-1" style={{padding: "5px 24px 5px 20px"}}>
-      <div className="flex items-center justify-between" style={{fontWeight: "300"}}>
+    <div
+      className="bg-white border-b border-gray-200 px-5 py-1"
+      style={{ padding: "5px 24px 5px 20px" }}
+    >
+      <div
+        className="flex items-center justify-between"
+        style={{ fontWeight: "300" }}
+      >
         <div className="flex items-center space-x-3">
           {/* Clickable logo */}
           <button
@@ -52,13 +58,10 @@ export function Header() {
           {/* User Info */}
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2 text-sm text-gray-600">
-              {user.branch_id && (
+              {user.branch_city && (
                 <div className="flex items-center space-x-1">
                   <Building2 className="h-4 w-4" />
-                  <span>Branch: {user.branch_id}</span>
-                  {user.branch_city && (
-                    <span className="text-gray-400">({user.branch_city})</span>
-                  )}
+                  <span>Branch: {user.branch_city}</span>
                 </div>
               )}
             </div>

@@ -13,6 +13,8 @@ export interface User {
   branch_id: string | null;
   branch_city: string | null;
   emp_name: string | null;
+  phone_no: string | null;
+  email_id: string | null;
 }
 
 interface AuthContextType {

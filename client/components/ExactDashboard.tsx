@@ -45,13 +45,6 @@ import {
   X,
   CheckCircle,
 } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 // Fetch recordings from API with retry logic
 const fetchRecordings = async (
@@ -203,10 +196,6 @@ export function ExactDashboard() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCity, setSelectedCity] = useState<string>("all");
-  const [selectedBranchNo, setSelectedBranchNo] = useState<string>("all");
-  const [uniqueCities, setUniqueCities] = useState<string[]>([]);
-  const [uniqueBranchNos, setUniqueBranchNos] = useState<string[]>([]);
   const [selectedRecording, setSelectedRecording] =
     useState<RecordingHistory | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -222,33 +211,6 @@ export function ExactDashboard() {
       const recordingData = await fetchRecordings(user);
       setRecordings(recordingData);
       setFilteredRecordings(recordingData);
-
-      // Extract unique cities and branch numbers
-      const cities = [
-        ...new Set(
-          recordingData
-            .map((r) => r.branch_address)
-            .filter(
-              (address) => address && address.trim() !== "" && address !== "NA",
-            )
-            .map((address) => {
-              // Extract city from address (assuming it's the last part after comma)
-              const parts = address.split(",").map((part) => part.trim());
-              return parts[parts.length - 1];
-            }),
-        ),
-      ].sort();
-
-      const branchNos = [
-        ...new Set(
-          recordingData
-            .map((r) => r.branch_no || r.device_name)
-            .filter((branchNo) => branchNo && branchNo.trim() !== ""),
-        ),
-      ].sort();
-
-      setUniqueCities(cities);
-      setUniqueBranchNos(branchNos);
     } catch (error) {
       console.error("Failed to load recordings:", error);
     }
@@ -366,26 +328,6 @@ export function ExactDashboard() {
       );
     }
 
-    // Apply city filter
-    if (selectedCity !== "all") {
-      filtered = filtered.filter((recording) => {
-        if (!recording.branch_address) return false;
-        const parts = recording.branch_address
-          .split(",")
-          .map((part) => part.trim());
-        const city = parts[parts.length - 1];
-        return city === selectedCity;
-      });
-    }
-
-    // Apply branch number filter
-    if (selectedBranchNo !== "all") {
-      filtered = filtered.filter((recording) => {
-        const branchNo = recording.branch_no || recording.device_name;
-        return branchNo === selectedBranchNo;
-      });
-    }
-
     setFilteredRecordings(filtered);
 
     // Reset to page 1 if current page exceeds available pages
@@ -393,14 +335,7 @@ export function ExactDashboard() {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
-  }, [
-    searchQuery,
-    selectedCity,
-    selectedBranchNo,
-    recordings,
-    currentPage,
-    itemsPerPage,
-  ]);
+  }, [searchQuery, recordings, currentPage, itemsPerPage]);
 
   const formatLastSeen = (dateString: string) => {
     const date = new Date(dateString);
@@ -715,50 +650,10 @@ export function ExactDashboard() {
                       />
                     </div>
 
-                    {/* City Filter */}
-                    <Select
-                      value={selectedCity}
-                      onValueChange={setSelectedCity}
-                    >
-                      <SelectTrigger className="w-40 h-8 text-sm">
-                        <SelectValue placeholder="Filter by City" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Cities</SelectItem>
-                        {uniqueCities.map((city) => (
-                          <SelectItem key={city} value={city}>
-                            {city}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
-                    {/* Branch Number Filter */}
-                    <Select
-                      value={selectedBranchNo}
-                      onValueChange={setSelectedBranchNo}
-                    >
-                      <SelectTrigger className="w-40 h-8 text-sm">
-                        <SelectValue placeholder="Filter by Branch" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Branches</SelectItem>
-                        {uniqueBranchNos.map((branchNo) => (
-                          <SelectItem key={branchNo} value={branchNo}>
-                            {branchNo}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
                     {/* Clear Filters Button */}
-                    {(selectedCity !== "all" ||
-                      selectedBranchNo !== "all" ||
-                      searchQuery) && (
+                    {searchQuery && (
                       <button
                         onClick={() => {
-                          setSelectedCity("all");
-                          setSelectedBranchNo("all");
                           setSearchQuery("");
                         }}
                         className="flex items-center space-x-1 px-2 py-1.5 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50"
