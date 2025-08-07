@@ -870,7 +870,9 @@ export function ExactDashboard() {
                     </h3>
                   </div>
 
-                  <ConversationAnalytics />
+                  <RechartsWarningSuppressionWrapper>
+                    <ConversationAnalytics />
+                  </RechartsWarningSuppressionWrapper>
                 </div>
               </>
             )}
