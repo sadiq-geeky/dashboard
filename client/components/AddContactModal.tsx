@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { Contact } from "@shared/api";
+import { authPost } from "@/lib/api";
 
 interface AddContactModalProps {
   isOpen: boolean;
