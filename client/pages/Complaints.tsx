@@ -197,77 +197,56 @@ export function Complaints() {
         return;
       }
 
-      // Query the deployments to get user's device
-      const response = await authFetch(`/api/deployments`);
+      // Step 1: Get deployments and devices data
+      const [deploymentsResponse, devicesResponse] = await Promise.all([
+        authFetch("/api/deployments"),
+        authFetch("/api/devices?limit=100")
+      ]);
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Full deployments response:", data);
-        console.log("Deployments array:", data.data);
+      if (deploymentsResponse.ok && devicesResponse.ok) {
+        const [deploymentsData, devicesData] = await Promise.all([
+          deploymentsResponse.json(),
+          devicesResponse.json()
+        ]);
+
+        console.log("Deployments data:", deploymentsData.data);
+        console.log("Devices data:", devicesData.data);
         console.log("Looking for user UUID:", user.uuid);
 
-        // Log all deployments to see the structure
-        if (data.data) {
-          data.data.forEach((deployment: any, index: number) => {
-            console.log(`Deployment ${index}:`, {
-              user_id: deployment.user_id,
-              device_id: deployment.device_id,
-              device_name: deployment.device_name,
-              username: deployment.username,
-              emp_name: deployment.emp_name
-            });
-          });
-        }
-
-        const userDeployment = data.data?.find((deployment: any) =>
+        // Step 2: Find user's deployment
+        const userDeployment = deploymentsData.data?.find((deployment: any) =>
           deployment.user_id === user.uuid
         );
 
         console.log("User deployment found:", userDeployment);
 
-        if (userDeployment && userDeployment.device_name) {
-          setCreateComplaintData(prev => ({
-            ...prev,
-            device_id: userDeployment.device_name,
-          }));
-        } else {
-          // Try alternative lookup approaches
-          console.log("No exact user_id match found, trying alternative lookups...");
-
-          // Try matching by username
-          const userByUsername = data.data?.find((deployment: any) =>
-            deployment.username === user.username
+        if (userDeployment) {
+          // Step 3: Find the device details using device_id from deployment
+          const device = devicesData.data?.find((device: any) =>
+            device.id === userDeployment.device_id
           );
 
-          // Try matching by emp_name
-          const userByEmpName = data.data?.find((deployment: any) =>
-            deployment.emp_name === user.emp_name
-          );
+          console.log("Device found:", device);
 
-          console.log("Alternative lookups:", {
-            byUsername: userByUsername,
-            byEmpName: userByEmpName
-          });
-
-          if (userByUsername && userByUsername.device_name) {
-            console.log("Found device by username match");
+          if (device) {
             setCreateComplaintData(prev => ({
               ...prev,
-              device_id: userByUsername.device_name,
+              device_id: device.device_name || device.id,
             }));
-          } else if (userByEmpName && userByEmpName.device_name) {
-            console.log("Found device by emp_name match");
-            setCreateComplaintData(prev => ({
-              ...prev,
-              device_id: userByEmpName.device_name,
-            }));
+            console.log("Successfully set device:", device.device_name || device.id);
           } else {
             setCreateComplaintData(prev => ({
               ...prev,
-              device_id: "No device assigned",
+              device_id: `Device ID: ${userDeployment.device_id}`,
             }));
-            console.warn("No device deployment found for user by any lookup method");
+            console.warn("Deployment found but device details not found");
           }
+        } else {
+          console.warn("No deployment found for user");
+          setCreateComplaintData(prev => ({
+            ...prev,
+            device_id: "No device assigned",
+          }));
         }
       } else {
         const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
