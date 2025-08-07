@@ -47,7 +47,7 @@ export function RecordingsAnalytics() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch("/api/analytics/recordings");
+      const response = await authFetch("/api/analytics/recordings");
 
       if (!response.ok) {
         throw new Error("Failed to fetch analytics");
