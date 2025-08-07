@@ -21,6 +21,7 @@ import {
   ArrowRight,
   Settings,
 } from "lucide-react";
+import { authFetch, authPost, authDelete } from "@/lib/api";
 
 interface Device {
   id: string;
