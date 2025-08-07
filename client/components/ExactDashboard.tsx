@@ -11,16 +11,13 @@ import { GoogleConversationAnalytics } from "./GoogleConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "./Header";
+import { AdminNavigation } from "./AdminNavigation";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Search,
   Filter,
   MoreHorizontal,
-  Grid3X3,
-  BarChart3,
   Calendar,
-  Settings,
-  Mail,
   MessageSquare,
   Bell,
   User,
@@ -41,7 +38,6 @@ import {
   Plus,
   Edit2,
   Trash2,
-  Building2,
   X,
   CheckCircle,
 } from "lucide-react";
