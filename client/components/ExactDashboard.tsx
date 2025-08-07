@@ -538,22 +538,22 @@ export function ExactDashboard() {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-gray-200">
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           S.no
                         </th>
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Branch No
                         </th>
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           CNIC
                         </th>
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Timestamp
                         </th>
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Duration
                         </th>
-                        <th className="text-left py-2 px-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Branch Address
                         </th>
                         <th className="w-10"></th>
