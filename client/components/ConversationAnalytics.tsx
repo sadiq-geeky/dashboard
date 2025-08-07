@@ -26,6 +26,7 @@ import {
   RefreshCw,
   TrendingUp,
 } from "lucide-react";
+import { authFetch } from "@/lib/api";
 
 interface ConversationAnalytics {
   conversationsByBranch: Array<{
