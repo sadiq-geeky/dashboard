@@ -26,34 +26,32 @@ export async function createManagerUser() {
 
     if (existingManager.length > 0) {
       console.log("👤 Manager user already exists. Updating role and branch...");
-      
+
       // Update existing user to manager role
       await executeQuery(
         "UPDATE users SET role = 'manager', branch_id = ? WHERE username = 'manager'",
         [branch.id]
       );
-      
+
       console.log("✅ Updated existing user 'manager' to manager role");
     } else {
       console.log("👤 Creating new manager user...");
-      
+
       // Create new manager user
       const hashedPassword = await bcrypt.hash("manager123", 10);
       const managerId = uuidv4();
 
       await executeQuery(`
-        INSERT INTO users 
-        (uuid, username, email, password, role, branch_id, full_name, created_on, updated_on)
-        VALUES (?, ?, ?, ?, 'manager', ?, ?, NOW(), NOW())
+        INSERT INTO users
+        (uuid, username, password, role, branch_id, created_on, updated_on)
+        VALUES (?, ?, ?, 'manager', ?, NOW(), NOW())
       `, [
         managerId,
         "manager",
-        "manager@company.com",
         hashedPassword,
-        branch.id,
-        "Branch Manager"
+        branch.id
       ]);
-      
+
       console.log("✅ Created new manager user");
     }
 
