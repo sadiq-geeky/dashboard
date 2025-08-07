@@ -933,6 +933,24 @@ export function ExactDashboard() {
 
             {activeTab === "analytics" && isAdminOrManager() && (
               <>
+                {/* Analytics Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h1 className="text-lg font-bold text-gray-900">Analytics Dashboard</h1>
+                    <p className="text-sm text-gray-600">Comprehensive insights and metrics</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      // Force re-render by updating key
+                      setLastUpdate(new Date());
+                    }}
+                    className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    <span>Refresh Data</span>
+                  </button>
+                </div>
+
                 {/* Analytics Sub-navigation */}
                 <div className="mb-6 border-b border-gray-200">
                   <div className="flex space-x-8">
