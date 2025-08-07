@@ -129,11 +129,35 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
       });
     }
 
+    // Generate daily data for current month (fill missing days with 0)
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+    const dailyCurrentMonth: VoiceStreamDailyData[] = [];
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(currentYear, currentMonth, day);
+      const dateKey = date.toISOString().slice(0, 10); // YYYY-MM-DD format
+      const formattedDate = date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+
+      const existingData = dailyCurrentMonthResult.find(item => item.date === dateKey);
+      dailyCurrentMonth.push({
+        date: dateKey,
+        voice_streams: existingData ? existingData.voice_streams : 0,
+        formatted_date: formattedDate
+      });
+    }
+
     const response: VoiceStreamStats = {
       total_streams: totalResult[0]?.total_streams || 0,
       current_month_streams: currentMonthResult[0]?.current_month_streams || 0,
       previous_month_streams: previousMonthResult[0]?.previous_month_streams || 0,
-      monthly_data: last12Months
+      monthly_data: last12Months,
+      daily_current_month: dailyCurrentMonth
     };
 
     res.json(response);
