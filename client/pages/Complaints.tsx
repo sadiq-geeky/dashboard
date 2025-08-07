@@ -221,14 +221,14 @@ export function Complaints() {
     });
   };
 
-  if (!isAdmin()) {
+  if (!isAdminOrManager()) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <AlertTriangle className="h-12 w-12 mx-auto mb-3 text-red-500" />
-            <p className="text-gray-600">Access denied. Admin privileges required.</p>
+            <p className="text-gray-600">Access denied. Manager or Administrator privileges required.</p>
           </div>
         </div>
       </div>
