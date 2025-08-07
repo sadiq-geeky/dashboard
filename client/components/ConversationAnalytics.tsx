@@ -500,8 +500,8 @@ export function ConversationAnalytics() {
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">Top City</p>
             <p className="text-xl font-bold text-purple-600">
-              {conversationsByCity.length > 0
-                ? conversationsByCity[0].city
+              {safeCityData.length > 0
+                ? safeCityData[0].city
                 : "N/A"}
             </p>
           </div>
