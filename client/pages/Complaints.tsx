@@ -22,8 +22,13 @@ import {
   ChevronUp,
   AlertCircle,
   Plus,
+  Grid3X3,
+  BarChart3,
+  Monitor,
+  Settings,
 } from "lucide-react";
 import { authFetch } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -118,8 +123,8 @@ export function Complaints() {
       if (statusFilter !== "all") params.append("status", statusFilter);
       if (priorityFilter !== "all") params.append("priority", priorityFilter);
 
-      // For managers, filter by their branch
-      if (isManager() && user?.branch_id) {
+      // Filter by user's branch for all users (except admins who can see all)
+      if (!isAdmin() && user?.branch_id) {
         params.append("branch_id", user.branch_id);
       }
 
@@ -142,7 +147,18 @@ export function Complaints() {
   // Fetch complaints statistics
   const fetchStats = async () => {
     try {
-      const response = await authFetch("/api/complaints/stats");
+      const params = new URLSearchParams();
+
+      // Filter stats by user's branch for all users (except admins who can see all)
+      if (!isAdmin() && user?.branch_id) {
+        params.append("branch_id", user.branch_id);
+      }
+
+      const url = params.toString()
+        ? `/api/complaints/stats?${params.toString()}`
+        : "/api/complaints/stats";
+
+      const response = await authFetch(url);
       if (response.ok) {
         const data = await response.json();
         setStats(data);
@@ -324,25 +340,29 @@ export function Complaints() {
     }
   };
 
-  if (!isAdminOrManager()) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <AlertTriangle className="h-12 w-12 mx-auto mb-3 text-red-500" />
-            <p className="text-gray-600">
-              Access denied. Manager or Administrator privileges required.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+
+      {/* Navigation Tabs */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="flex items-center justify-center h-12 px-4">
+          <div className="flex items-center space-x-0.5">
+            <button
+              onClick={() => navigate("/")}
+              className="flex flex-col items-center p-2 rounded-md text-gray-500 hover:bg-gray-100"
+            >
+              <Grid3X3 className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Home</span>
+            </button>
+
+            <button className="flex flex-col items-center p-2 rounded-md text-gray-700 bg-white border border-gray-300">
+              <Mail className="w-4 h-4 mb-0.5" />
+              <span className="text-xs">Complaints</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div className="px-6 py-6">
         {/* Header Section */}

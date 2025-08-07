@@ -102,7 +102,7 @@ export const getComplaints: RequestHandler = async (req, res) => {
 
     // Get paginated results
     const dataQuery = `
-      SELECT 
+      SELECT
         c.complaint_id,
         c.branch_id,
         c.branch_name,
@@ -143,7 +143,7 @@ export const getComplaint: RequestHandler = async (req, res) => {
     const { complaint_id } = req.params;
 
     const query = `
-      SELECT 
+      SELECT
         c.complaint_id,
         c.branch_id,
         c.branch_name,
@@ -229,8 +229,8 @@ export const createComplaint: RequestHandler = async (req, res) => {
         : customer_data || "{}";
 
     const query = `
-      INSERT INTO complaints 
-      (complaint_id, branch_id, branch_name, timestamp, customer_data, complaint_text, status, priority, created_on, updated_on) 
+      INSERT INTO complaints
+      (complaint_id, branch_id, branch_name, timestamp, customer_data, complaint_text, status, priority, created_on, updated_on)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `;
 
@@ -298,7 +298,7 @@ export const updateComplaint: RequestHandler = async (req, res) => {
     updateValues.push(complaint_id);
 
     const query = `
-      UPDATE complaints 
+      UPDATE complaints
       SET ${updateFields.join(", ")}
       WHERE complaint_id = ?
     `;
@@ -344,8 +344,19 @@ export const deleteComplaint: RequestHandler = async (req, res) => {
 // Get complaints statistics for dashboard
 export const getComplaintsStats: RequestHandler = async (req, res) => {
   try {
+    const { branch_id } = req.query;
+
+    // Build WHERE clause for branch filtering
+    let whereClause = "WHERE 1=1";
+    let queryParams: any[] = [];
+
+    if (branch_id) {
+      whereClause += " AND branch_id = ?";
+      queryParams.push(branch_id);
+    }
+
     const statsQuery = `
-      SELECT 
+      SELECT
         COUNT(*) as total_complaints,
         SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_complaints,
         SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress_complaints,
@@ -354,6 +365,7 @@ export const getComplaintsStats: RequestHandler = async (req, res) => {
         SUM(CASE WHEN priority = 'urgent' THEN 1 ELSE 0 END) as urgent_complaints,
         SUM(CASE WHEN DATE(created_on) = CURDATE() THEN 1 ELSE 0 END) as today_complaints
       FROM complaints
+      ${whereClause}
     `;
 
     const [stats] = await executeQuery<{
@@ -364,7 +376,7 @@ export const getComplaintsStats: RequestHandler = async (req, res) => {
       closed_complaints: number;
       urgent_complaints: number;
       today_complaints: number;
-    }>(statsQuery);
+    }>(statsQuery, queryParams);
 
     res.json(
       stats || {

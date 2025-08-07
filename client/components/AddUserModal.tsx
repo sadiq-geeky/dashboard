@@ -158,6 +158,7 @@ export function AddUserModal({
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="user">User</option>
+                  <option value="manager">Manager</option>
                   <option value="admin">Administrator</option>
                 </select>
               </div>
