@@ -369,6 +369,65 @@ export function GoogleConversationAnalytics() {
         </div>
       </div>
 
+      {/* Conversion Metrics */}
+      <div className="grid grid-cols-4 gap-4">
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-green-700">
+                Total Conversions
+              </p>
+              <p className="text-2xl font-bold text-green-900">
+                {(analytics.conversionMetrics?.totalConversions || 0).toLocaleString()}
+              </p>
+            </div>
+            <Target className="h-8 w-8 text-green-600" />
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-blue-700">
+                Conversion Rate
+              </p>
+              <p className="text-2xl font-bold text-blue-900">
+                {(analytics.conversionMetrics?.conversionRate || 0).toFixed(1)}%
+              </p>
+            </div>
+            <Percent className="h-8 w-8 text-blue-600" />
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg border border-purple-200 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-purple-700">
+                Avg Duration
+              </p>
+              <p className="text-2xl font-bold text-purple-900">
+                {Math.floor((analytics.conversionMetrics?.avgConversationDuration || 0) / 60)}m {((analytics.conversionMetrics?.avgConversationDuration || 0) % 60)}s
+              </p>
+            </div>
+            <Clock className="h-8 w-8 text-purple-600" />
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg border border-amber-200 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-amber-700">
+                Successful Outcomes
+              </p>
+              <p className="text-2xl font-bold text-amber-900">
+                {(analytics.conversionMetrics?.successfulOutcomes || 0).toLocaleString()}
+              </p>
+            </div>
+            <CheckCircle className="h-8 w-8 text-amber-600" />
+          </div>
+        </div>
+      </div>
+
       {/* Charts Row 1 */}
       <div className="grid grid-cols-2 gap-6">
         {/* Daily Conversations Line Chart */}
