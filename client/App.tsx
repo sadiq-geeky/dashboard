@@ -73,10 +73,27 @@ if (typeof window !== "undefined") {
     if (
       event.message &&
       (event.message.includes("defaultProps will be removed") ||
-        event.message.includes("Support for defaultProps"))
+        event.message.includes("Support for defaultProps") ||
+        event.message.includes("XAxis") ||
+        event.message.includes("YAxis") ||
+        event.message.includes("recharts"))
     ) {
       event.preventDefault();
       event.stopPropagation();
+      return false;
+    }
+  });
+
+  // Also handle unhandled warning events
+  window.addEventListener("unhandledrejection", (event) => {
+    if (
+      event.reason &&
+      typeof event.reason === "string" &&
+      (event.reason.includes("defaultProps") ||
+        event.reason.includes("XAxis") ||
+        event.reason.includes("YAxis"))
+    ) {
+      event.preventDefault();
       return false;
     }
   });
