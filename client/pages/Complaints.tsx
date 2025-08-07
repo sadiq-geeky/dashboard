@@ -477,7 +477,7 @@ export function Complaints() {
         const errorData = await response
           .json()
           .catch(() => ({ error: "Unknown error" }));
-        console.error("Server error response:", errorData);
+        console.error("Server error response:", JSON.stringify(errorData, null, 2));
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
