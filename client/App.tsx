@@ -50,11 +50,26 @@ if (typeof window !== "undefined") {
     }
   }
 
-  // Set environment variable to suppress React warnings
-  if (!(window as any).process) {
-    (window as any).process = { env: {} };
+  // Try to suppress React development warnings specifically for defaultProps
+  try {
+    // Override React's warning function if available
+    if ((window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+      const hook = (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__;
+      if (hook.onCommitFiberRoot) {
+        const originalOnCommitFiberRoot = hook.onCommitFiberRoot;
+        hook.onCommitFiberRoot = (...args: any[]) => {
+          try {
+            return originalOnCommitFiberRoot.apply(hook, args);
+          } catch (e) {
+            // Suppress errors from React DevTools
+            return;
+          }
+        };
+      }
+    }
+  } catch (e) {
+    // Ignore any errors in DevTools override
   }
-  (window as any).process.env.NODE_ENV = 'production'; // This will suppress many React warnings
 }
 
 import { Toaster } from "@/components/ui/toaster";
