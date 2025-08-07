@@ -492,6 +492,86 @@ export function GoogleConversationAnalytics() {
         </div>
       </div>
 
+      {/* Conversion Analytics Section */}
+      <div className="space-y-6">
+        <h2 className="text-xl font-bold text-gray-900 border-b border-gray-200 pb-2">
+          Conversion Analytics
+        </h2>
+
+        {/* Conversion Trends */}
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Daily Conversion Trends (Last 7 Days)
+          </h3>
+          <Chart
+            chartType="ComboChart"
+            width="100%"
+            height="400px"
+            data={conversionTrendsChartData}
+            options={{
+              ...chartOptions,
+              title: "",
+              seriesType: "columns",
+              series: { 2: { type: "line", targetAxisIndex: 1 } },
+              legend: { position: "top" },
+              vAxes: {
+                0: { title: "Count" },
+                1: { title: "Conversion Rate (%)", textStyle: { color: "#3B82F6" } }
+              },
+            }}
+          />
+        </div>
+
+        {/* Conversion Funnel */}
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Conversion Funnel
+          </h3>
+          <Chart
+            chartType="ColumnChart"
+            width="100%"
+            height="400px"
+            data={funnelChartData}
+            options={{
+              ...chartOptions,
+              title: "",
+              legend: { position: "none" },
+              bar: { groupWidth: "50%" },
+              colors: ["#10B981"],
+              hAxis: {
+                title: "Conversion Stages",
+                textStyle: { fontSize: 12 }
+              },
+              vAxis: { title: "Count" },
+            }}
+          />
+        </div>
+
+        {/* Conversion by Branch */}
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Conversion Performance by Branch
+          </h3>
+          <Chart
+            chartType="ComboChart"
+            width="100%"
+            height="400px"
+            data={conversionByBranchChartData}
+            options={{
+              ...chartOptions,
+              title: "",
+              seriesType: "columns",
+              series: { 2: { type: "line", targetAxisIndex: 1 } },
+              legend: { position: "top" },
+              vAxes: {
+                0: { title: "Conversations" },
+                1: { title: "Conversion Rate (%)", textStyle: { color: "#EF4444" } }
+              },
+            }}
+          />
+        </div>
+      </div>
+
       {/* Monthly Trends */}
       <div className="bg-white rounded-lg border p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
