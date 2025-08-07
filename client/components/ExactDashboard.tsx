@@ -612,7 +612,10 @@ export function ExactDashboard() {
               </button>
             )}
 
-            <button className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md">
+            <button
+              onClick={() => navigate("/complaints")}
+              className="flex flex-col items-center p-2 text-gray-500 hover:bg-gray-100 rounded-md"
+            >
               <Mail className="w-4 h-4 mb-0.5" />
               <span className="text-xs">Complaints</span>
             </button>
