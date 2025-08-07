@@ -245,7 +245,7 @@ export function ConversationAnalytics() {
                 Unique Customers
               </p>
               <p className="text-2xl font-bold text-gray-900">
-                {totalStats.uniqueCustomers.toLocaleString()}
+                {safeStats.uniqueCustomers.toLocaleString()}
               </p>
             </div>
           </div>
