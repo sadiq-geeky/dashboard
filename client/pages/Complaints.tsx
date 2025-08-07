@@ -235,6 +235,8 @@ export function Complaints() {
           ...prev,
           city: user.branch_city || "",
           customer_name: user.emp_name || user.username || "",
+          customer_phone: user.phone_no || "",
+          customer_email: user.email_id || "",
           device_id: "Unable to load device info",
         }));
       }
