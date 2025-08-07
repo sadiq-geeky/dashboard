@@ -1084,15 +1084,13 @@ export function Complaints() {
                         <input
                           type="tel"
                           value={createComplaintData.customer_phone}
-                          onChange={(e) =>
-                            setCreateComplaintData((prev) => ({
-                              ...prev,
-                              customer_phone: e.target.value,
-                            }))
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="+92-300-1234567"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                          placeholder="Loading contact information..."
+                          readOnly
                         />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Automatically filled from your profile
+                        </p>
                       </div>
                     </div>
                   </div>
