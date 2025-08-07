@@ -165,6 +165,33 @@ export function GoogleConversationAnalytics() {
   const conversionTrends = analytics.conversionTrends || [];
   const conversionFunnel = analytics.conversionFunnel || [];
 
+  // Check if all data is empty
+  const hasNoData =
+    dailyConversations.length === 0 &&
+    conversationsByBranch.length === 0 &&
+    conversationsByCity.length === 0 &&
+    (!analytics.totalStats || analytics.totalStats.totalConversations === 0);
+
+  if (hasNoData) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+          <p className="text-gray-600">No conversation data found</p>
+          <p className="text-gray-500 text-sm mt-1">
+            There are no recorded conversations to analyze yet.
+          </p>
+          <button
+            onClick={fetchAnalytics}
+            className="mt-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Refresh Data
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // 3. Number of conversions according to date in last month
   const dailyChartData =
     dailyConversations.length > 0
