@@ -198,10 +198,9 @@ export function GoogleConversationAnalytics() {
   }
 
   // Prepare data for Google Charts with null checks and fallbacks
-  const dailyConversations = analytics.dailyConversations || [];
+  const dailyConversations = analytics.dailyConversationsLastMonth || [];
   const conversationsByBranch = analytics.conversationsByBranch || [];
   const conversationsByCity = analytics.conversationsByCity || [];
-  const monthlyTrends = analytics.monthlyTrends || [];
   const conversionsByBranch = analytics.conversionsByBranch || [];
   const conversionTrends = analytics.conversionTrends || [];
   const conversionFunnel = analytics.conversionFunnel || [];
