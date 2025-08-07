@@ -22,6 +22,10 @@ import {
   ChevronUp,
   AlertCircle,
   Plus,
+  Grid3X3,
+  BarChart3,
+  Monitor,
+  Settings,
 } from "lucide-react";
 import { authFetch } from "@/lib/api";
 import {
