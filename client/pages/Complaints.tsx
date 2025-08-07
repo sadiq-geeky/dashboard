@@ -1029,16 +1029,13 @@ export function Complaints() {
                         <input
                           type="text"
                           value={createComplaintData.customer_name}
-                          onChange={(e) =>
-                            setCreateComplaintData((prev) => ({
-                              ...prev,
-                              customer_name: e.target.value,
-                            }))
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Enter your name"
-                          required
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                          placeholder="Loading your information..."
+                          readOnly
                         />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Automatically filled from your profile
+                        </p>
                       </div>
 
                       <div>
