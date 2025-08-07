@@ -85,7 +85,7 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
     ]);
 
     // Generate last 12 months array to fill missing months with 0
-    const last12Months = [];
+    const last12Months: VoiceStreamMonthlyData[] = [];
     for (let i = 11; i >= 0; i--) {
       const date = new Date();
       date.setMonth(date.getMonth() - i);
