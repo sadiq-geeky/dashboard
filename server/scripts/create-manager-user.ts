@@ -19,40 +19,24 @@ export async function createManagerUser() {
     const branch = branches[0];
     console.log(`📍 Using branch: ${branch.branch_name} (${branch.id})`);
 
-    // Check if manager user already exists
-    const existingManager = await executeQuery<{ uuid: string }>(
-      "SELECT uuid FROM users WHERE username = 'manager' LIMIT 1"
+    // Update an existing regular user to manager role
+    const regularUsers = await executeQuery<{ uuid: string; username: string }>(
+      "SELECT uuid, username FROM users WHERE role = 'user' LIMIT 1"
     );
 
-    if (existingManager.length > 0) {
-      console.log("👤 Manager user already exists. Updating role and branch...");
-
-      // Update existing user to manager role
+    if (regularUsers.length > 0) {
+      const user = regularUsers[0];
       await executeQuery(
-        "UPDATE users SET role = 'manager', branch_id = ? WHERE username = 'manager'",
-        [branch.id]
+        "UPDATE users SET role = 'manager', branch_id = ? WHERE uuid = ?",
+        [branch.id, user.uuid]
       );
-
-      console.log("✅ Updated existing user 'manager' to manager role");
+      console.log(`✅ Updated user '${user.username}' to manager role`);
+      console.log(`📋 Manager login credentials:`);
+      console.log(`   Username: ${user.username}`);
+      console.log(`   Password: user123 (if default) or check existing password`);
+      console.log(`   Branch: ${branch.branch_name}`);
     } else {
-      console.log("👤 Creating new manager user...");
-
-      // Create new manager user
-      const hashedPassword = await bcrypt.hash("manager123", 10);
-      const managerId = uuidv4();
-
-      await executeQuery(`
-        INSERT INTO users
-        (uuid, username, password, role, branch_id, created_on, updated_on)
-        VALUES (?, ?, ?, 'manager', ?, NOW(), NOW())
-      `, [
-        managerId,
-        "manager",
-        hashedPassword,
-        branch.id
-      ]);
-
-      console.log("✅ Created new manager user");
+      console.log("⚠️ No regular users found to convert to manager");
     }
 
     // Also update an existing regular user to manager if needed
