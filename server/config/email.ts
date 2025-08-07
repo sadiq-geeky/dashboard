@@ -12,7 +12,7 @@ export const emailConfig = {
 };
 
 // Create reusable transporter object using the email config
-export const emailTransporter = nodemailer.createTransporter(emailConfig);
+export const emailTransporter = nodemailer.createTransport(emailConfig);
 
 // Verify connection configuration
 export const verifyEmailConnection = async (): Promise<boolean> => {
