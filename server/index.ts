@@ -5,6 +5,7 @@ dotenv.config();
 console.log("🧪 ENV DB_NAME:", process.env.DB_NAME);
 
 import { initializeDatabase } from "./config/database";
+import { verifyEmailConnection } from "./config/email";
 
 // Production database routes only
 import { authenticate, addBranchFilter } from "./middleware/auth";
