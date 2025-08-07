@@ -183,6 +183,48 @@ export function Complaints() {
     }
   };
 
+  // Fetch user's device information
+  const fetchUserDeviceInfo = async () => {
+    try {
+      if (!user?.uuid) return;
+
+      // Query the deployments to get user's device
+      const response = await authFetch(`/api/deployments`);
+      if (response.ok) {
+        const data = await response.json();
+        const userDeployment = data.data?.find((deployment: any) =>
+          deployment.user_id === user.uuid
+        );
+
+        if (userDeployment) {
+          setCreateComplaintData(prev => ({
+            ...prev,
+            device_id: userDeployment.device_name || userDeployment.device_id || "",
+            city: user.branch_city || "",
+            customer_name: user.emp_name || user.username || "",
+          }));
+        } else {
+          // If no device assigned, still fill branch info
+          setCreateComplaintData(prev => ({
+            ...prev,
+            city: user.branch_city || "",
+            customer_name: user.emp_name || user.username || "",
+            device_id: "No device assigned",
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user device info:", error);
+      // Fill what we can from user context
+      setCreateComplaintData(prev => ({
+        ...prev,
+        city: user?.branch_city || "",
+        customer_name: user?.emp_name || user?.username || "",
+        device_id: "Unable to load device info",
+      }));
+    }
+  };
+
   useEffect(() => {
     fetchComplaints();
     fetchStats();
