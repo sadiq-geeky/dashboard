@@ -212,6 +212,8 @@ export function Complaints() {
             device_id: userDeployment.device_name,
             city: user.branch_city || userDeployment.branch_city || "",
             customer_name: user.emp_name || user.username || "",
+            customer_phone: user.phone_no || "",
+            customer_email: user.email_id || "",
           }));
         } else {
           // If no device assigned, still fill branch info
@@ -219,6 +221,8 @@ export function Complaints() {
             ...prev,
             city: user.branch_city || "",
             customer_name: user.emp_name || user.username || "",
+            customer_phone: user.phone_no || "",
+            customer_email: user.email_id || "",
             device_id: "No device assigned",
           }));
           console.warn("No device deployment found for user");
