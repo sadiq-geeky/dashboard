@@ -83,6 +83,17 @@ export function Complaints() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [stats, setStats] = useState<ComplaintsStats | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Analytics data
+  const [analyticsData, setAnalyticsData] = useState({
+    monthlyTrends: [],
+    priorityDistribution: [],
+    statusDistribution: [],
+    avgResolutionTime: 0,
+    satisfactionRate: 0,
+    loading: false,
+    error: null
+  });
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(
     null,
   );
