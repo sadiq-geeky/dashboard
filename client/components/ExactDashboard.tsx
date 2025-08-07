@@ -948,9 +948,29 @@ export function ExactDashboard() {
 
                 {/* Analytics Content */}
                 <WarningSuppressionWrapper>
-                  {analyticsSubTab === "recordings" && <RecordingsAnalytics />}
+                  {analyticsSubTab === "recordings" && (
+                    <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                      <div className="text-center">
+                        <BarChart3 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">Analytics Temporarily Disabled</h3>
+                        <p className="text-sm text-gray-500 max-w-md">
+                          Recording analytics are temporarily disabled to prevent console warnings from the charting library.
+                          This will be restored once the library is updated.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   {analyticsSubTab === "conversations" && (
-                    <ConversationAnalytics />
+                    <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                      <div className="text-center">
+                        <MessageSquare className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">Analytics Temporarily Disabled</h3>
+                        <p className="text-sm text-gray-500 max-w-md">
+                          Conversation analytics are temporarily disabled to prevent console warnings from the charting library.
+                          This will be restored once the library is updated.
+                        </p>
+                      </div>
+                    </div>
                   )}
                 </WarningSuppressionWrapper>
               </>
