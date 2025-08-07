@@ -77,6 +77,7 @@ interface ComplaintsStats {
 
 export function Complaints() {
   const { isAdmin, isManager, isAdminOrManager, user } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [stats, setStats] = useState<ComplaintsStats | null>(null);
