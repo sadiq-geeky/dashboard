@@ -232,6 +232,78 @@ export function Complaints() {
     });
   };
 
+  // Create new complaint
+  const handleCreateComplaint = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!createComplaintData.complaint_text.trim()) {
+      alert("Please enter a complaint description.");
+      return;
+    }
+
+    if (!createComplaintData.customer_name.trim()) {
+      alert("Please enter the customer name.");
+      return;
+    }
+
+    try {
+      const customer_data = {
+        customer_name: createComplaintData.customer_name,
+        customer_phone: createComplaintData.customer_phone,
+        customer_email: createComplaintData.customer_email,
+        customer_cnic: createComplaintData.customer_cnic,
+        device_used: createComplaintData.device_used,
+        issue_category: createComplaintData.issue_category,
+      };
+
+      const payload = {
+        branch_id: user?.branch_id,
+        branch_name: user?.branch_city || "Unknown Branch",
+        customer_data,
+        complaint_text: createComplaintData.complaint_text,
+        priority: createComplaintData.priority,
+        status: "pending"
+      };
+
+      const response = await authFetch("/api/complaints", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create complaint");
+      }
+
+      const result = await response.json();
+      console.log("Complaint created:", result);
+
+      // Reset form and close modal
+      setCreateComplaintData({
+        customer_name: "",
+        customer_phone: "",
+        customer_email: "",
+        customer_cnic: "",
+        device_used: "",
+        issue_category: "",
+        complaint_text: "",
+        priority: "medium"
+      });
+      setShowCreateModal(false);
+
+      // Refresh data
+      fetchComplaints();
+      fetchStats();
+
+      alert("Complaint created successfully!");
+    } catch (error) {
+      console.error("Error creating complaint:", error);
+      alert("Failed to create complaint. Please try again.");
+    }
+  };
+
   if (!isAdminOrManager()) {
     return (
       <div className="min-h-screen bg-gray-50">
