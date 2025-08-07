@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { RecordingHistory, PaginatedResponse } from "@shared/api";
 import { cn } from "@/lib/utils";
+import { authFetch } from "@/lib/api";
 import {
   Play,
   Download,
@@ -54,7 +55,7 @@ const fetchRecordings = async (
       params.append("branch_id", user.branch_id);
     }
 
-    const response = await fetch(`/api/recordings?${params}`);
+    const response = await authFetch(`/api/recordings?${params}`);
     if (!response.ok) throw new Error("Failed to fetch recordings");
 
     return await response.json();
@@ -73,7 +74,7 @@ const fetchRecordings = async (
 // API function to fetch device names
 const fetchDeviceNames = async (): Promise<string[]> => {
   try {
-    const response = await fetch("/api/recordings/device-names");
+    const response = await authFetch("/api/recordings/device-names");
     if (!response.ok) throw new Error("Failed to fetch device names");
     return await response.json();
   } catch (error) {
