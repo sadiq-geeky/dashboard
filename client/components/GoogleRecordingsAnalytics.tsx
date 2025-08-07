@@ -125,29 +125,42 @@ export function GoogleRecordingsAnalytics() {
     return <div>No analytics data available</div>;
   }
 
-  // Prepare data for Google Charts with null checks
-  const dailyChartData = [
+  // Prepare data for Google Charts with null checks and fallbacks
+  const dailyRecordings = analytics.dailyRecordings || [];
+  const branchStats = analytics.branchStats || [];
+  const statusDistribution = analytics.statusDistribution || [];
+
+  const dailyChartData = dailyRecordings.length > 0 ? [
     ["Date", "Recordings"],
-    ...(analytics.dailyRecordings || []).map(item => [
+    ...dailyRecordings.map(item => [
       formatDate(item.date),
       item.count
     ])
+  ] : [
+    ["Date", "Recordings"],
+    ["No data", 0]
   ];
 
-  const branchChartData = [
+  const branchChartData = branchStats.length > 0 ? [
     ["Branch", "Total Recordings"],
-    ...(analytics.branchStats || []).map(item => [
+    ...branchStats.map(item => [
       item.branch_name,
       item.total_recordings
     ])
+  ] : [
+    ["Branch", "Total Recordings"],
+    ["No data", 0]
   ];
 
-  const statusChartData = [
+  const statusChartData = statusDistribution.length > 0 ? [
     ["Status", "Count"],
-    ...(analytics.statusDistribution || []).map(item => [
+    ...statusDistribution.map(item => [
       item.status.charAt(0).toUpperCase() + item.status.slice(1),
       item.count
     ])
+  ] : [
+    ["Status", "Count"],
+    ["No data", 0]
   ];
 
   const chartOptions = {
