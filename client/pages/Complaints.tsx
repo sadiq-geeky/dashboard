@@ -1673,6 +1673,7 @@ export function Complaints() {
                     </div>
                   )}
                 </div>
+              </>
             )}
           </div>
         )}
