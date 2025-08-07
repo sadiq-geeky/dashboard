@@ -81,7 +81,7 @@ export const getVoiceStreamsAnalytics: RequestHandler = async (req, res) => {
       executeQuery<{ total_streams: number }>(totalQuery),
       executeQuery<{ current_month_streams: number }>(currentMonthQuery),
       executeQuery<{ previous_month_streams: number }>(previousMonthQuery),
-      executeQuery<VoiceStreamMonthlyData>(monthlyQuery)
+      executeQuery<{ month: string; voice_streams: number }>(monthlyQuery)
     ]);
 
     // Generate last 12 months array to fill missing months with 0
