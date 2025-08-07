@@ -16,6 +16,7 @@ import {
   CheckCircle,
   AlertCircle,
   ArrowRight,
+  Settings,
 } from "lucide-react";
 import { authFetch, authPost, authDelete } from "@/lib/api";
 import {
