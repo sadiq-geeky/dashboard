@@ -289,10 +289,10 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
       executeQuery<{ branch_id: string; branch_name: string; count: number }>(
         branchQuery,
       ),
-      executeQuery<{ city: string; count: number; branch_count: number }>(
+      executeQuery<{ city: string; conversion_count: number; total_conversations: number }>(
         cityQuery,
       ),
-      executeQuery<{ date: string; count: number }>(dailyQuery),
+      executeQuery<{ date: string; conversion_count: number; total_conversations: number }>(dailyQuery),
       executeQuery<{ unique_cnic_count: number }>(cnicQuery),
       executeQuery<{
         totalConversations: number;
