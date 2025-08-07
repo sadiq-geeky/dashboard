@@ -215,10 +215,20 @@ export function InteractiveBranchChart() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex items-center justify-center py-8">
-          <RefreshCw className="h-5 w-5 animate-spin text-blue-600 mr-2" />
-          <span className="text-gray-600">Loading branch analytics...</span>
+      <div className="bg-gradient-to-br from-white to-gray-50/50 rounded-2xl shadow-lg border border-gray-100/50 p-8">
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="relative">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mb-4">
+              <RefreshCw className="h-6 w-6 animate-spin text-white" />
+            </div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-indigo-600/20 rounded-xl blur animate-pulse"></div>
+          </div>
+          <span className="text-gray-600 font-medium">Loading branch analytics...</span>
+          <div className="mt-3 flex space-x-1">
+            <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+            <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+          </div>
         </div>
       </div>
     );
@@ -226,14 +236,22 @@ export function InteractiveBranchChart() {
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-600">Error: {error}</p>
+      <div className="bg-gradient-to-br from-white to-gray-50/50 rounded-2xl shadow-lg border border-gray-100/50 p-8">
+        <div className="bg-gradient-to-br from-red-50 to-red-100/50 border border-red-200/50 rounded-xl p-6">
+          <div className="flex items-center space-x-3 mb-3">
+            <div className="p-2 bg-red-500 rounded-lg">
+              <BarChart3 className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-red-800">Failed to load analytics</h4>
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          </div>
           <button
             onClick={fetchData}
-            className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className="mt-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium shadow-md"
           >
-            Retry
+            Try Again
           </button>
         </div>
       </div>
