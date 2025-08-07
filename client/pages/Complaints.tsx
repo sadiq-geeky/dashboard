@@ -434,9 +434,11 @@ export function Complaints() {
       createComplaintData.device_id === "Unable to load device info" ||
       createComplaintData.device_id === "No user information available"
     ) {
-      alert(
-        "Device information is required. Please wait for device information to load or contact your administrator.",
-      );
+      toast({
+        title: "Device Information Required",
+        description: "Please wait for device information to load or contact your administrator.",
+        variant: "destructive"
+      });
       return;
     }
 
