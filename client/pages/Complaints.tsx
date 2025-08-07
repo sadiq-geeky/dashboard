@@ -202,7 +202,22 @@ export function Complaints() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Deployments data:", data);
+        console.log("Full deployments response:", data);
+        console.log("Deployments array:", data.data);
+        console.log("Looking for user UUID:", user.uuid);
+
+        // Log all deployments to see the structure
+        if (data.data) {
+          data.data.forEach((deployment: any, index: number) => {
+            console.log(`Deployment ${index}:`, {
+              user_id: deployment.user_id,
+              device_id: deployment.device_id,
+              device_name: deployment.device_name,
+              username: deployment.username,
+              emp_name: deployment.emp_name
+            });
+          });
+        }
 
         const userDeployment = data.data?.find((deployment: any) =>
           deployment.user_id === user.uuid
