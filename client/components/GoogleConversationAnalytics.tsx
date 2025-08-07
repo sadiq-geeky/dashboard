@@ -310,7 +310,7 @@ export function GoogleConversationAnalytics() {
                 Total Conversations
               </p>
               <p className="text-2xl font-bold text-gray-900">
-                {(analytics.totalConversations || 0).toLocaleString()}
+                {(analytics.totalStats?.totalConversations || 0).toLocaleString()}
               </p>
             </div>
             <MessageSquare className="h-8 w-8 text-blue-500" />
@@ -324,7 +324,7 @@ export function GoogleConversationAnalytics() {
                 Unique Customers
               </p>
               <p className="text-2xl font-bold text-gray-900">
-                {(analytics.uniqueCustomers || 0).toLocaleString()}
+                {(analytics.totalStats?.uniqueCustomers || 0).toLocaleString()}
               </p>
             </div>
             <Users className="h-8 w-8 text-green-500" />
@@ -338,7 +338,7 @@ export function GoogleConversationAnalytics() {
                 Active Branches
               </p>
               <p className="text-2xl font-bold text-gray-900">
-                {analytics.activeBranches || 0}
+                {analytics.totalStats?.activeBranches || 0}
               </p>
             </div>
             <Building2 className="h-8 w-8 text-purple-500" />
@@ -352,7 +352,7 @@ export function GoogleConversationAnalytics() {
                 Today's Conversations
               </p>
               <p className="text-2xl font-bold text-gray-900">
-                {analytics.todayConversations || 0}
+                {analytics.totalStats?.todayConversations || 0}
               </p>
             </div>
             <TrendingUp className="h-8 w-8 text-emerald-500" />
