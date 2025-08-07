@@ -856,32 +856,7 @@ export function ExactDashboard() {
 
 
 
-                {/* Development Tools */}
-                {analyticsSubTab === "recordings" && (
-                  <div className="mb-4 space-y-3">
-                    {/* Fix Audio Button */}
-                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-sm font-medium text-blue-800">
-                            Audio Files Not Playing?
-                          </h3>
-                          <p className="text-sm text-blue-600 mt-1">
-                            Fix recordings by mapping them to real audio files
-                            that exist on the server.
-                          </p>
-                        </div>
-                        <button
-                          onClick={fixAudioMappings}
-                          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
-                        >
-                          <CheckCircle className="w-4 h-4" />
-                          <span>Fix Audio Files</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
+
 
                 {/* Analytics Content - Using working implementation from Complaints */}
                 <div className="bg-white rounded-lg shadow p-6 mb-8">
