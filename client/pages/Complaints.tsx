@@ -465,13 +465,22 @@ export function Complaints() {
             {/* Report Device Issue Button */}
             <button
               onClick={() => {
+                // Debug user data
+                console.log("User data available:", {
+                  emp_name: user?.emp_name,
+                  username: user?.username,
+                  phone_no: user?.phone_no,
+                  email_id: user?.email_id,
+                  branch_city: user?.branch_city
+                });
+
                 // Immediately fill user data from context
                 setCreateComplaintData({
                   customer_name: user?.emp_name || user?.username || "",
                   customer_phone: user?.phone_no || "",
                   customer_email: user?.email_id || "",
                   customer_cnic: "",
-                  device_id: "",
+                  device_id: "Loading device info...",
                   city: user?.branch_city || "",
                   issue_category: "",
                   complaint_text: "",
