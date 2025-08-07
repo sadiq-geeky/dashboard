@@ -412,7 +412,11 @@ export function Complaints() {
     e.preventDefault();
 
     if (!createComplaintData.complaint_text.trim()) {
-      alert("Please describe the device issue.");
+      toast({
+        title: "Missing Information",
+        description: "Please describe the device issue.",
+        variant: "destructive"
+      });
       return;
     }
 
