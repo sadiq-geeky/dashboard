@@ -96,8 +96,8 @@ export const getRecordings: RequestHandler = async (req: any, res) => {
         END AS status
       FROM recordings rh
       LEFT JOIN devices d ON d.device_mac = rh.mac_address
-      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
-      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id COLLATE utf8mb4_0900_ai_ci = d.id COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
       ${whereClause}
       ORDER BY start_time DESC
       LIMIT ${limitNum} OFFSET ${offset}
