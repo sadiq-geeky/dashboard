@@ -142,7 +142,18 @@ export function Complaints() {
   // Fetch complaints statistics
   const fetchStats = async () => {
     try {
-      const response = await authFetch("/api/complaints/stats");
+      const params = new URLSearchParams();
+
+      // Filter stats by user's branch for all users (except admins who can see all)
+      if (!isAdmin() && user?.branch_id) {
+        params.append("branch_id", user.branch_id);
+      }
+
+      const url = params.toString()
+        ? `/api/complaints/stats?${params.toString()}`
+        : "/api/complaints/stats";
+
+      const response = await authFetch(url);
       if (response.ok) {
         const data = await response.json();
         setStats(data);
