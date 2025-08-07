@@ -1198,26 +1198,12 @@ export function Complaints() {
                         <input
                           type="text"
                           value={createComplaintData.device_id}
-                          onChange={(e) =>
-                            setCreateComplaintData((prev) => ({
-                              ...prev,
-                              device_id: e.target.value,
-                            }))
-                          }
-                          className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${
-                            createComplaintData.device_id === "Loading device info..." ||
-                            createComplaintData.device_id === "No device assigned" ||
-                            createComplaintData.device_id === "Unable to load device info"
-                              ? "bg-yellow-50 border-yellow-300"
-                              : ""
-                          }`}
-                          placeholder="Enter device ID (e.g., VR-001, Recording Station 1)"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+                          placeholder="Loading device information..."
+                          readOnly
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                          {createComplaintData.device_id === "No device assigned" ||
-                           createComplaintData.device_id === "Unable to load device info"
-                            ? "Please enter the device ID manually"
-                            : "Automatically filled when device is assigned to you"}
+                          Automatically filled based on your assigned device
                         </p>
                       </div>
 
