@@ -44,11 +44,11 @@ export function Login() {
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <div className="mx-auto h-20 w-20 flex items-center justify-center">
+          <div className="mx-auto h-32 w-32 flex items-center justify-center">
             <img
               src="https://cdn.builder.io/api/v1/image/assets%2F7967a1920bbf4ce0ae781c5d84b92543%2F0958e94a3cce420e957ba5a524dc2794?format=webp&width=800"
               alt="Bank Alfalah Logo"
-              className="h-16 w-auto object-contain"
+              className="h-24 w-auto object-contain"
             />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
