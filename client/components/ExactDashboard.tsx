@@ -505,10 +505,10 @@ export function ExactDashboard() {
         </div>
       </div>
 
-      <div className="flex">
+      <div className="flex h-full">
         {/* Main Content */}
-        <div className="flex-1">
-          <div className="px-4 py-3" style={{ padding: "12px 16px 3px" }}>
+        <div className="flex-1 overflow-hidden">
+          <div className="px-4 py-3 h-full overflow-auto" style={{ padding: "12px 16px 3px" }}>
             {activeTab === "home" && (
               <>
                 {/* Search and Filter Bar */}
