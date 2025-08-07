@@ -81,6 +81,7 @@ import {
   updateComplaint,
   deleteComplaint,
   getComplaintsStats,
+  getComplaintsAnalytics,
 } from "./routes/complaints-db";
 import { promoteToManager } from "./routes/debug-manager";
 
