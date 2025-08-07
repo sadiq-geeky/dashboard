@@ -663,16 +663,14 @@ export function ExactDashboard() {
 
                 {/* Stats Overview */}
                 <div className="grid grid-cols-4 gap-3 mb-4">
-                  <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Monitor className="h-8 w-8 text-gray-600" />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-500">
+                  <div className="bg-white rounded-md border border-gray-200 p-3">
+                    <div className="flex items-center space-x-2">
+                      <Monitor className="h-5 w-5 text-gray-600" />
+                      <div>
+                        <div className="text-xs font-medium text-gray-500">
                           Total Devices
                         </div>
-                        <div className="text-2xl font-bold text-gray-900">
+                        <div className="text-lg font-bold text-gray-900">
                           {devices.length}
                         </div>
                       </div>
