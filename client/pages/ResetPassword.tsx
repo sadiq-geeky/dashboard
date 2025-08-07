@@ -10,19 +10,18 @@ export function ResetPassword() {
   const [error, setError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [token, setToken] = useState("");
-  const location = useLocation();
 
   useEffect(() => {
     // Extract token from URL parameters
-    const urlParams = new URLSearchParams(location.search);
+    const urlParams = new URLSearchParams(window.location.search);
     const resetToken = urlParams.get("token");
-    
+
     if (resetToken) {
       setToken(resetToken);
     } else {
       setError("Invalid or missing reset token. Please request a new password reset.");
     }
-  }, [location]);
+  }, []);
 
   const validatePassword = (password: string) => {
     if (password.length < 8) {
