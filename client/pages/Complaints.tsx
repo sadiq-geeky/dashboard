@@ -272,12 +272,17 @@ export function Complaints() {
     e.preventDefault();
 
     if (!createComplaintData.complaint_text.trim()) {
-      alert("Please enter a complaint description.");
+      alert("Please describe the device issue.");
       return;
     }
 
     if (!createComplaintData.customer_name.trim()) {
-      alert("Please enter the customer name.");
+      alert("Please enter your name.");
+      return;
+    }
+
+    if (!createComplaintData.device_id.trim()) {
+      alert("Please enter the device ID.");
       return;
     }
 
