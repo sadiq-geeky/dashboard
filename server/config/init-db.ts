@@ -61,6 +61,14 @@ export async function initializeTables() {
       console.error("⚠️  Could not initialize complaints table:", error);
     }
 
+    // Create manager user for testing
+    try {
+      const { createManagerUser } = await import("../scripts/create-manager-user");
+      await createManagerUser();
+    } catch (error) {
+      console.error("⚠️  Could not create manager user:", error);
+    }
+
     console.log("🚀 Database initialization completed - using existing schema");
   } catch (error) {
     console.error("❌ Database initialization failed:", error);
