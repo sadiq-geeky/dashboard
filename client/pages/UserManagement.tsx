@@ -36,7 +36,7 @@ interface User {
   email_id: string | null;
   username: string;
   password_hash?: string;
-  role: "admin" | "user";
+  role: "admin" | "manager" | "user";
   is_active: boolean;
   created_on: string | null;
   updated_on: string | null;
