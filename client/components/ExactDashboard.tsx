@@ -601,7 +601,7 @@ export function ExactDashboard() {
                   </table>
 
                   {/* Footer */}
-                  <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
+                  <div className="flex items-center justify-between px-3 py-2 border-t border-gray-200">
                     <div className="text-sm text-gray-500">
                       Showing {startIndex + 1}-
                       {Math.min(endIndex, filteredRecordings.length)} of{" "}
