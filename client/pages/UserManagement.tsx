@@ -386,12 +386,19 @@ export function UserManagement() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            user.role === "admin"
+                            isSystemAdmin(user)
+                              ? "bg-purple-100 text-purple-800"
+                              : user.role === "admin"
                               ? "bg-red-100 text-red-800"
                               : "bg-blue-100 text-blue-800"
                           }`}
                         >
-                          {user.role === "admin" ? (
+                          {isSystemAdmin(user) ? (
+                            <>
+                              <Shield className="h-3 w-3 mr-1" />
+                              System Administrator
+                            </>
+                          ) : user.role === "admin" ? (
                             <>
                               <Shield className="h-3 w-3 mr-1" />
                               Administrator
