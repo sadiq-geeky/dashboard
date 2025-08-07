@@ -76,6 +76,17 @@ export function Complaints() {
   const [loading, setLoading] = useState(true);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createComplaintData, setCreateComplaintData] = useState({
+    customer_name: "",
+    customer_phone: "",
+    customer_email: "",
+    customer_cnic: "",
+    device_used: "",
+    issue_category: "",
+    complaint_text: "",
+    priority: "medium" as "low" | "medium" | "high" | "urgent"
+  });
 
   // Filter and pagination states
   const [searchQuery, setSearchQuery] = useState("");
