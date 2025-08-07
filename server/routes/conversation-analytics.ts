@@ -165,7 +165,7 @@ export const getUniqueCnicsByMonth: RequestHandler = async (req, res) => {
 // Get complete conversation analytics
 export const getConversationAnalytics: RequestHandler = async (req, res) => {
   try {
-    // Conversations by branch - using exact user query
+    // 1. Number of conversations according to branch
     const branchQuery = `
       SELECT
         ldbu.branch_id,
@@ -180,26 +180,27 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
       ORDER BY count DESC
     `;
 
-    // Conversations by city - using exact user query
+    // 2. Conversion number per city (successful recordings per city)
     const cityQuery = `
       SELECT
         b.branch_city as city,
-        COUNT(r.id) AS count,
-        COUNT(DISTINCT ldbu.branch_id) as branch_count
+        COUNT(CASE WHEN r.end_time IS NOT NULL AND r.file_name IS NOT NULL THEN 1 END) AS conversion_count,
+        COUNT(r.id) AS total_conversations
       FROM recordings r
       LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
       WHERE b.branch_city IS NOT NULL
       GROUP BY b.branch_city
-      ORDER BY count DESC
+      ORDER BY conversion_count DESC
     `;
 
-    // Daily conversations last month - using exact user query
+    // 3. Number of conversions according to date in last month
     const dailyQuery = `
       SELECT
         DATE(r.start_time) AS date,
-        COUNT(r.id) AS count
+        COUNT(CASE WHEN r.end_time IS NOT NULL AND r.file_name IS NOT NULL THEN 1 END) AS conversion_count,
+        COUNT(r.id) AS total_conversations
       FROM recordings r
       WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
       GROUP BY DATE(r.start_time)
