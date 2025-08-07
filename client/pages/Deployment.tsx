@@ -637,12 +637,17 @@ export function Deployment() {
 
           {/* Link Modal */}
           {showLinkModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 w-full max-w-md">
-                <h2 className="text-lg font-semibold mb-4">
-                  Create New Deployment
-                </h2>
-                <form onSubmit={handleCreateDeployment} className="space-y-4">
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-auto">
+                <div className="flex items-center space-x-2 mb-6">
+                  <div className="p-2 bg-red-100 rounded-lg">
+                    <Link className="h-5 w-5 text-red-600" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Create New Deployment
+                  </h2>
+                </div>
+                <form onSubmit={handleCreateDeployment} className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Select Device *
