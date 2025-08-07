@@ -116,38 +116,55 @@ export function GoogleConversationAnalytics() {
     return <div>No analytics data available</div>;
   }
 
-  // Prepare data for Google Charts with null checks
-  const dailyChartData = [
+  // Prepare data for Google Charts with null checks and fallbacks
+  const dailyConversations = analytics.dailyConversations || [];
+  const conversationsByBranch = analytics.conversationsByBranch || [];
+  const conversationsByCity = analytics.conversationsByCity || [];
+  const monthlyTrends = analytics.monthlyTrends || [];
+
+  const dailyChartData = dailyConversations.length > 0 ? [
     ["Date", "Conversations"],
-    ...(analytics.dailyConversations || []).map(item => [
+    ...dailyConversations.map(item => [
       formatDate(item.date),
       item.count
     ])
+  ] : [
+    ["Date", "Conversations"],
+    ["No data", 0]
   ];
 
-  const branchChartData = [
+  const branchChartData = conversationsByBranch.length > 0 ? [
     ["Branch", "Conversations"],
-    ...(analytics.conversationsByBranch || []).map(item => [
+    ...conversationsByBranch.map(item => [
       item.branch_name,
       item.conversations
     ])
+  ] : [
+    ["Branch", "Conversations"],
+    ["No data", 0]
   ];
 
-  const cityChartData = [
+  const cityChartData = conversationsByCity.length > 0 ? [
     ["City", "Conversations"],
-    ...(analytics.conversationsByCity || []).map(item => [
+    ...conversationsByCity.map(item => [
       item.city,
       item.conversations
     ])
+  ] : [
+    ["City", "Conversations"],
+    ["No data", 0]
   ];
 
-  const trendsChartData = [
+  const trendsChartData = monthlyTrends.length > 0 ? [
     ["Month", "Conversations", "Unique Customers"],
-    ...(analytics.monthlyTrends || []).map(item => [
+    ...monthlyTrends.map(item => [
       item.month,
       item.conversations,
       item.customers
     ])
+  ] : [
+    ["Month", "Conversations", "Unique Customers"],
+    ["No data", 0, 0]
   ];
 
   const chartOptions = {
