@@ -285,28 +285,45 @@ export function ExactDashboard() {
   const offlineCount = devices.filter((d) => d.status === "offline").length;
 
   useEffect(() => {
+    let filtered = recordings;
+
+    // Apply search filter
     if (searchQuery) {
-      const filtered = recordings.filter(
+      filtered = filtered.filter(
         (recording) =>
           recording.cnic?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           recording.device_name
             ?.toLowerCase()
             .includes(searchQuery.toLowerCase()),
       );
-      setFilteredRecordings(filtered);
-    } else {
-      setFilteredRecordings(recordings);
     }
 
+    // Apply city filter
+    if (selectedCity !== "all") {
+      filtered = filtered.filter((recording) => {
+        if (!recording.branch_address) return false;
+        const parts = recording.branch_address.split(',').map(part => part.trim());
+        const city = parts[parts.length - 1];
+        return city === selectedCity;
+      });
+    }
+
+    // Apply branch number filter
+    if (selectedBranchNo !== "all") {
+      filtered = filtered.filter((recording) => {
+        const branchNo = recording.branch_no || recording.device_name;
+        return branchNo === selectedBranchNo;
+      });
+    }
+
+    setFilteredRecordings(filtered);
+
     // Reset to page 1 if current page exceeds available pages
-    const totalPages = Math.ceil(
-      (searchQuery ? filteredRecordings.length : recordings.length) /
-        itemsPerPage,
-    );
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
-  }, [searchQuery, recordings, currentPage, itemsPerPage]);
+  }, [searchQuery, selectedCity, selectedBranchNo, recordings, currentPage, itemsPerPage]);
 
   const formatLastSeen = (dateString: string) => {
     const date = new Date(dateString);
