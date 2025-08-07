@@ -59,9 +59,7 @@ const fetchRecordings = async (
       user_role: user?.role || "user",
     });
 
-    if (user?.branch_id && user?.role !== "admin") {
-      params.append("branch_id", user.branch_id);
-    }
+    // Branch filtering is now handled by backend middleware
 
     const response = await authFetch(`/api/recordings?${params.toString()}`, {
       signal: controller.signal,
