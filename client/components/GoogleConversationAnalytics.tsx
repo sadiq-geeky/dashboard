@@ -14,18 +14,25 @@ import {
 import { authFetch } from "@/lib/api";
 
 interface ConversationAnalytics {
-  totalConversations: number;
-  uniqueCustomers: number;
-  activeBranches: number;
-  todayConversations: number;
-  conversationsByBranch: Array<{ branch_name: string; conversations: number }>;
-  conversationsByCity: Array<{ city: string; conversations: number }>;
-  dailyConversations: Array<{ date: string; count: number }>;
-  monthlyTrends: Array<{
+  conversationsByBranch: Array<{
+    branch_id: string;
+    branch_name: string;
+    count: number;
     month: string;
-    conversations: number;
-    customers: number;
   }>;
+  conversationsByCity: Array<{
+    city: string;
+    count: number;
+    branch_count: number;
+  }>;
+  dailyConversationsLastMonth: Array<{ date: string; count: number }>;
+  uniqueCnicsByMonth: Array<{ month: string; unique_cnic_count: number }>;
+  totalStats: {
+    totalConversations: number;
+    uniqueCustomers: number;
+    activeBranches: number;
+    todayConversations: number;
+  };
   // Conversion Analytics
   conversionMetrics: {
     totalConversions: number;
