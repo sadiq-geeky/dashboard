@@ -94,6 +94,14 @@ export function Complaints() {
     loading: false,
     error: null
   });
+
+  // Related dashboard analytics
+  const [dashboardData, setDashboardData] = useState({
+    recordings: null,
+    conversations: null,
+    loading: false,
+    error: null
+  });
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(
     null,
   );
