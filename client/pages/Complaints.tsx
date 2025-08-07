@@ -376,10 +376,40 @@ export function Complaints() {
     searchQuery,
   ]);
 
+  // Fetch related dashboard analytics
+  const fetchDashboardAnalytics = async () => {
+    try {
+      setDashboardData(prev => ({ ...prev, loading: true, error: null }));
+
+      const [recordingsResponse, conversationsResponse] = await Promise.all([
+        authFetch("/api/analytics/recordings"),
+        authFetch("/api/analytics/conversations")
+      ]);
+
+      const recordings = recordingsResponse.ok ? await recordingsResponse.json() : null;
+      const conversations = conversationsResponse.ok ? await conversationsResponse.json() : null;
+
+      setDashboardData(prev => ({
+        ...prev,
+        recordings,
+        conversations,
+        loading: false
+      }));
+    } catch (error) {
+      console.error("Error fetching dashboard analytics:", error);
+      setDashboardData(prev => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Failed to load dashboard data'
+      }));
+    }
+  };
+
   // Fetch analytics when analytics tab is active
   useEffect(() => {
     if (activeTab === 'analytics') {
       fetchAnalytics();
+      fetchDashboardAnalytics();
     }
   }, [activeTab, user?.branch_id]);
 
