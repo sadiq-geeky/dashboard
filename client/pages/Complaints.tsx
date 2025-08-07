@@ -118,8 +118,8 @@ export function Complaints() {
       if (statusFilter !== "all") params.append("status", statusFilter);
       if (priorityFilter !== "all") params.append("priority", priorityFilter);
 
-      // For managers, filter by their branch
-      if (isManager() && user?.branch_id) {
+      // Filter by user's branch for all users (except admins who can see all)
+      if (!isAdmin() && user?.branch_id) {
         params.append("branch_id", user.branch_id);
       }
 
