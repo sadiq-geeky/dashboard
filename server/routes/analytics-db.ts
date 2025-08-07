@@ -1,17 +1,23 @@
 import { RequestHandler } from "express";
 import { executeQuery } from "../config/database";
 
-// Analytics interface
+// Analytics interface matching frontend expectations
 export interface RecordingAnalytics {
+  totalRecordings: number;
+  completedRecordings: number;
+  failedRecordings: number;
+  inProgressRecordings: number;
+  avgDuration: number;
+  todayRecordings: number;
   dailyRecordings: Array<{ date: string; count: number }>;
-  recordingsByStatus: Array<{ status: string; count: number }>;
-  recordingsByBranch: Array<{ branch_name: string; count: number }>;
-  totalStats: {
-    totalRecordings: number;
-    completedRecordings: number;
+  branchStats: Array<{ branch_name: string; total_recordings: number }>;
+  statusDistribution: Array<{ status: string; count: number }>;
+  monthlyTrends: Array<{
+    month: string;
+    recordings: number;
     avgDuration: number;
     todayRecordings: number;
-  };
+  }>;
 }
 
 // Get recordings analytics
@@ -19,7 +25,7 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
   try {
     // Get daily recordings for the last 30 days
     const dailyRecordingsQuery = `
-      SELECT 
+      SELECT
         DATE(rh.CREATED_ON) as date,
         COUNT(*) as count
       FROM recordings rh
@@ -31,7 +37,7 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
 
     // Get recordings by status
     const statusQuery = `
-      SELECT 
+      SELECT
         CASE
           WHEN rh.end_time IS NOT NULL AND rh.file_name IS NOT NULL THEN 'completed'
           WHEN rh.start_time IS NOT NULL AND rh.end_time IS NULL THEN 'in_progress'
@@ -58,7 +64,7 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
 
     // Get total statistics
     const totalStatsQuery = `
-      SELECT 
+      SELECT
         COUNT(*) as totalRecordings,
         SUM(CASE WHEN rh.end_time IS NOT NULL AND rh.file_name IS NOT NULL THEN 1 ELSE 0 END) as completedRecordings,
         AVG(CASE WHEN rh.end_time IS NOT NULL THEN TIMESTAMPDIFF(SECOND, rh.start_time, rh.end_time) ELSE NULL END) as avgDuration,
