@@ -213,7 +213,7 @@ export function ExactDashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const itemsPerPage = 15;
+  const itemsPerPage = 12;
 
   const loadRecordings = async () => {
     try {
