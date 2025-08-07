@@ -1056,35 +1056,59 @@ export function ExactDashboard() {
                   </div>
                 </div>
 
-                {/* Sample Data Button for Development */}
+                {/* Development Tools */}
                 {analyticsSubTab === "recordings" && (
-                  <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-sm font-medium text-yellow-800">
-                          Need Sample Data?
-                        </h3>
-                        <p className="text-sm text-yellow-600 mt-1">
-                          If analytics show no data, click to populate with sample recordings, branches, and devices.
-                        </p>
+                  <div className="mb-4 space-y-3">
+                    {/* Sample Data Button */}
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-sm font-medium text-yellow-800">
+                            Need Sample Data?
+                          </h3>
+                          <p className="text-sm text-yellow-600 mt-1">
+                            If analytics show no data, click to populate with sample recordings, branches, and devices.
+                          </p>
+                        </div>
+                        <button
+                          onClick={populateSampleData}
+                          disabled={isPopulatingData}
+                          className="flex items-center space-x-2 px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded-md hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isPopulatingData ? (
+                            <>
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                              <span>Populating...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="w-4 h-4" />
+                              <span>Add Sample Data</span>
+                            </>
+                          )}
+                        </button>
                       </div>
-                      <button
-                        onClick={populateSampleData}
-                        disabled={isPopulatingData}
-                        className="flex items-center space-x-2 px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded-md hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isPopulatingData ? (
-                          <>
-                            <RefreshCw className="w-4 h-4 animate-spin" />
-                            <span>Populating...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Plus className="w-4 h-4" />
-                            <span>Add Sample Data</span>
-                          </>
-                        )}
-                      </button>
+                    </div>
+
+                    {/* Fix Audio Button */}
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-sm font-medium text-blue-800">
+                            Audio Files Not Playing?
+                          </h3>
+                          <p className="text-sm text-blue-600 mt-1">
+                            Fix recordings by mapping them to real audio files that exist on the server.
+                          </p>
+                        </div>
+                        <button
+                          onClick={fixAudioMappings}
+                          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                          <span>Fix Audio Files</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
