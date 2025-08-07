@@ -243,26 +243,26 @@ export function InteractiveBranchChart() {
   const availableMonths = getAvailableMonths();
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-gradient-to-br from-white to-gray-50/50 rounded-2xl shadow-lg border border-gray-100/50 p-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-3">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center space-x-4">
           {isDrilldown && (
             <button
               onClick={() => setIsDrilldown(false)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-3 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-50 rounded-xl transition-all duration-200 group"
             >
-              <ChevronLeft className="h-5 w-5 text-gray-600" />
+              <ChevronLeft className="h-5 w-5 text-gray-600 group-hover:text-gray-800 transition-colors" />
             </button>
           )}
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <BarChart3 className="h-6 w-6 text-blue-600" />
+          <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-md">
+            <BarChart3 className="h-7 w-7 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
               {isDrilldown ? drilldownTitle : "Conversations by Branch"}
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm mt-1">
               {isDrilldown
                 ? "Detailed breakdown view"
                 : "Interactive chart showing top 20 branches + others"}
@@ -271,12 +271,12 @@ export function InteractiveBranchChart() {
         </div>
 
         {!isDrilldown && (
-          <div className="flex items-center space-x-2">
-            <Calendar className="h-4 w-4 text-gray-500" />
+          <div className="flex items-center space-x-3 bg-white/70 backdrop-blur-sm rounded-xl px-4 py-2 border border-gray-200/50">
+            <Calendar className="h-4 w-4 text-indigo-500" />
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="border border-gray-200 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="bg-transparent border-none outline-none text-sm font-medium text-gray-700 cursor-pointer"
             >
               {availableMonths.map(month => (
                 <option key={month} value={month}>
