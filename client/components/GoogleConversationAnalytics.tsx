@@ -253,6 +253,52 @@ export function GoogleConversationAnalytics() {
           ["No data", 0, 0],
         ];
 
+  const conversionTrendsChartData =
+    conversionTrends.length > 0
+      ? [
+          ["Date", "Conversations", "Conversions", "Conversion Rate %"],
+          ...conversionTrends.map((item) => [
+            formatDate(item.date),
+            item.conversations,
+            item.conversions,
+            item.conversion_rate,
+          ]),
+        ]
+      : [
+          ["Date", "Conversations", "Conversions", "Conversion Rate %"],
+          ["No data", 0, 0, 0],
+        ];
+
+  const conversionByBranchChartData =
+    conversionsByBranch.length > 0
+      ? [
+          ["Branch", "Total Conversations", "Successful Conversions", "Conversion Rate %"],
+          ...conversionsByBranch.map((item) => [
+            item.branch_name,
+            item.total_conversations,
+            item.successful_conversions,
+            item.conversion_rate,
+          ]),
+        ]
+      : [
+          ["Branch", "Total Conversations", "Successful Conversions", "Conversion Rate %"],
+          ["No data", 0, 0, 0],
+        ];
+
+  const funnelChartData =
+    conversionFunnel.length > 0
+      ? [
+          ["Stage", "Count"],
+          ...conversionFunnel.map((item) => [
+            item.stage,
+            item.count,
+          ]),
+        ]
+      : [
+          ["Stage", "Count"],
+          ["No data", 0],
+        ];
+
   const chartOptions = {
     backgroundColor: "transparent",
     titleTextStyle: { color: "#374151", fontSize: 16 },
