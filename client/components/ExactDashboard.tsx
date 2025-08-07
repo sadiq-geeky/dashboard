@@ -862,7 +862,7 @@ export function ExactDashboard() {
               </>
             )}
 
-            {activeTab === "device-status" && isAdmin() && (
+            {activeTab === "device-status" && isAdminOrManager() && (
               <>
                 {/* Device Status Header */}
                 <div className="flex items-center justify-between mb-3">
