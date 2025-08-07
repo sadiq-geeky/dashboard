@@ -22,12 +22,10 @@ import {
   ChevronUp,
   AlertCircle,
   Plus,
-  Grid3X3,
   BarChart3,
-  Monitor,
-  Settings,
-  Users,
   Activity,
+  Grid3X3,
+  Users,
 } from "lucide-react";
 import { authFetch } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -81,8 +79,16 @@ export function Complaints() {
   const { isAdmin, isManager, isAdminOrManager, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Read initial tab from URL
+  const getInitialTab = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get("tab");
+    return tab === "analytics" ? "analytics" : "complaints";
+  };
+
   const [activeTab, setActiveTab] = useState<"complaints" | "analytics">(
-    "complaints",
+    getInitialTab(),
   );
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [stats, setStats] = useState<ComplaintsStats | null>(null);
@@ -670,7 +676,7 @@ export function Complaints() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      {/* Navigation Tabs */}
+      {/* Internal Navigation Tabs */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="flex items-center justify-start py-4 px-4">
           <div className="flex items-center space-x-3">
@@ -683,7 +689,10 @@ export function Complaints() {
             </button>
 
             <button
-              onClick={() => setActiveTab("analytics")}
+              onClick={() => {
+                setActiveTab("analytics");
+                navigate("/complaints?tab=analytics", { replace: true });
+              }}
               className={cn(
                 "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
                 activeTab === "analytics"
@@ -696,7 +705,10 @@ export function Complaints() {
             </button>
 
             <button
-              onClick={() => setActiveTab("complaints")}
+              onClick={() => {
+                setActiveTab("complaints");
+                navigate("/complaints", { replace: true });
+              }}
               className={cn(
                 "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
                 activeTab === "complaints"

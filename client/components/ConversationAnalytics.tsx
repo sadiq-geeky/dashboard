@@ -188,6 +188,24 @@ export function ConversationAnalytics() {
     uniqueCnicsByMonth,
   } = analytics;
 
+  // Safe defaults to prevent undefined errors
+  const safeStats = {
+    totalConversations: totalStats?.totalConversations || 0,
+    uniqueCustomers: totalStats?.uniqueCustomers || 0,
+    activeBranches: totalStats?.activeBranches || 0,
+    todayConversations: totalStats?.todayConversations || 0,
+  };
+
+  // Safe arrays with defaults
+  const safeCityData = (conversationsByCity || []).map((city) => ({
+    city: city?.city || "Unknown",
+    count: city?.count || 0,
+    branch_count: city?.branch_count || 0,
+  }));
+
+  const safeDailyData = dailyConversationsLastMonth || [];
+  const safeMonthlyData = uniqueCnicsByMonth || [];
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -221,7 +239,7 @@ export function ConversationAnalytics() {
                 Total Conversations
               </p>
               <p className="text-2xl font-bold text-gray-900">
-                {totalStats.totalConversations.toLocaleString()}
+                {safeStats.totalConversations.toLocaleString()}
               </p>
             </div>
           </div>
@@ -237,7 +255,7 @@ export function ConversationAnalytics() {
                 Unique Customers
               </p>
               <p className="text-2xl font-bold text-gray-900">
-                {totalStats.uniqueCustomers.toLocaleString()}
+                {safeStats.uniqueCustomers.toLocaleString()}
               </p>
             </div>
           </div>
@@ -253,7 +271,7 @@ export function ConversationAnalytics() {
                 Active Branches
               </p>
               <p className="text-2xl font-bold text-gray-900">
-                {totalStats.activeBranches.toLocaleString()}
+                {safeStats.activeBranches.toLocaleString()}
               </p>
             </div>
           </div>
@@ -267,7 +285,7 @@ export function ConversationAnalytics() {
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Today</p>
               <p className="text-2xl font-bold text-gray-900">
-                {totalStats.todayConversations.toLocaleString()}
+                {safeStats.todayConversations.toLocaleString()}
               </p>
             </div>
           </div>
@@ -311,7 +329,7 @@ export function ConversationAnalytics() {
           </h3>
           <ResponsiveContainer width="100%" height={400}>
             <LineChart
-              data={conversationsByCity.slice(0, 10)}
+              data={safeCityData.slice(0, 10)}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
@@ -351,7 +369,7 @@ export function ConversationAnalytics() {
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <ScatterChart
-              data={dailyConversationsLastMonth.reverse()}
+              data={safeDailyData.slice().reverse()}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
@@ -377,7 +395,7 @@ export function ConversationAnalytics() {
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
-              data={uniqueCnicsByMonth.reverse()}
+              data={safeMonthlyData.slice().reverse()}
               layout="horizontal"
               margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
             >
@@ -424,7 +442,7 @@ export function ConversationAnalytics() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {conversationsByCity.map((city, index) => (
+              {safeCityData.map((city, index) => (
                 <tr
                   key={index}
                   className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
@@ -457,12 +475,12 @@ export function ConversationAnalytics() {
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">Avg Conversations/Day</p>
             <p className="text-xl font-bold text-blue-600">
-              {dailyConversationsLastMonth.length > 0
+              {safeDailyData.length > 0
                 ? (
-                    dailyConversationsLastMonth.reduce(
-                      (sum, day) => sum + day.count,
+                    safeDailyData.reduce(
+                      (sum, day) => sum + (day?.count || 0),
                       0,
-                    ) / dailyConversationsLastMonth.length
+                    ) / safeDailyData.length
                   ).toFixed(1)
                 : "0"}
             </p>
@@ -470,11 +488,11 @@ export function ConversationAnalytics() {
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">Peak Day</p>
             <p className="text-xl font-bold text-green-600">
-              {dailyConversationsLastMonth.length > 0
+              {safeDailyData.length > 0
                 ? formatDate(
-                    dailyConversationsLastMonth.reduce((max, current) =>
-                      current.count > max.count ? current : max,
-                    ).date,
+                    safeDailyData.reduce((max, current) =>
+                      (current?.count || 0) > (max?.count || 0) ? current : max,
+                    )?.date || "",
                   )
                 : "N/A"}
             </p>
@@ -482,9 +500,7 @@ export function ConversationAnalytics() {
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600">Top City</p>
             <p className="text-xl font-bold text-purple-600">
-              {conversationsByCity.length > 0
-                ? conversationsByCity[0].city
-                : "N/A"}
+              {safeCityData.length > 0 ? safeCityData[0].city : "N/A"}
             </p>
           </div>
         </div>

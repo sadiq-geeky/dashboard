@@ -30,69 +30,33 @@ export function GoogleRecordingsAnalytics() {
     try {
       setLoading(true);
       setError(null);
+
+      console.log(
+        "Fetching recordings analytics from /api/analytics/recordings",
+      );
       const response = await authFetch("/api/analytics/recordings");
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch analytics: ${response.status}`);
+        const errorText = await response.text();
+        console.error("API Error Response:", response.status, errorText);
+        throw new Error(
+          `Failed to fetch analytics: ${response.status} - ${errorText}`,
+        );
       }
 
       const data = await response.json();
+      console.log("Received recordings analytics data:", data);
+      console.log("Total recordings:", data.totalRecordings);
+      console.log("Daily recordings length:", data.dailyRecordings?.length);
+      console.log("Branch stats length:", data.branchStats?.length);
       setAnalytics(data);
     } catch (error) {
-      console.error("Error fetching analytics:", error);
+      console.error("Error fetching recordings analytics:", error);
       setError(
         error instanceof Error ? error.message : "Failed to fetch analytics",
       );
-      // Set mock data for demo purposes with all required fields
-      setAnalytics({
-        totalRecordings: 1234,
-        completedRecordings: 1156,
-        failedRecordings: 45,
-        inProgressRecordings: 33,
-        avgDuration: 204, // seconds
-        todayRecordings: 48,
-        dailyRecordings: [
-          { date: "2024-01-15", count: 42 },
-          { date: "2024-01-16", count: 38 },
-          { date: "2024-01-17", count: 55 },
-          { date: "2024-01-18", count: 47 },
-          { date: "2024-01-19", count: 61 },
-          { date: "2024-01-20", count: 48 },
-          { date: "2024-01-21", count: 52 },
-        ],
-        branchStats: [
-          { branch_name: "Downtown Branch", total_recordings: 324 },
-          { branch_name: "North Branch", total_recordings: 256 },
-          { branch_name: "South Branch", total_recordings: 198 },
-          { branch_name: "East Branch", total_recordings: 187 },
-          { branch_name: "West Branch", total_recordings: 269 },
-        ],
-        statusDistribution: [
-          { status: "completed", count: 1156 },
-          { status: "failed", count: 45 },
-          { status: "in_progress", count: 33 },
-        ],
-        monthlyTrends: [
-          {
-            month: "Jan",
-            recordings: 1234,
-            avgDuration: 204,
-            todayRecordings: 48,
-          },
-          {
-            month: "Dec",
-            recordings: 1098,
-            avgDuration: 198,
-            todayRecordings: 42,
-          },
-          {
-            month: "Nov",
-            recordings: 987,
-            avgDuration: 201,
-            todayRecordings: 39,
-          },
-        ],
-      });
+      // Don't set mock data - leave analytics as null to show error state
+      setAnalytics(null);
     } finally {
       setLoading(false);
     }
@@ -139,13 +103,66 @@ export function GoogleRecordingsAnalytics() {
   }
 
   if (!analytics) {
-    return <div>No analytics data available</div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="h-12 w-12 text-gray-400 mx-auto mb-2">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg>
+          </div>
+          <p className="text-gray-600">
+            No recordings analytics data available
+          </p>
+          {error && (
+            <p className="text-red-600 text-sm mt-2 mb-2">Error: {error}</p>
+          )}
+          <button
+            onClick={fetchAnalytics}
+            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            {loading ? "Loading..." : "Retry Loading Data"}
+          </button>
+        </div>
+      </div>
+    );
   }
 
   // Prepare data for Google Charts with null checks and fallbacks
   const dailyRecordings = analytics.dailyRecordings || [];
   const branchStats = analytics.branchStats || [];
   const statusDistribution = analytics.statusDistribution || [];
+
+  // Check if all data is empty
+  const hasNoData =
+    dailyRecordings.length === 0 &&
+    branchStats.length === 0 &&
+    statusDistribution.length === 0 &&
+    (!analytics.totalRecordings || analytics.totalRecordings === 0);
+
+  if (hasNoData) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="h-12 w-12 text-gray-400 mx-auto mb-2">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg>
+          </div>
+          <p className="text-gray-600">No recording data found</p>
+          <p className="text-gray-500 text-sm mt-1">
+            There are no recordings to analyze yet.
+          </p>
+          <button
+            onClick={fetchAnalytics}
+            className="mt-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Refresh Data
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const dailyChartData =
     dailyRecordings.length > 0

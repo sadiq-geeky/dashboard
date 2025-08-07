@@ -9,18 +9,16 @@ import { authFetch } from "@/lib/api";
 import { GoogleRecordingsAnalytics } from "./GoogleRecordingsAnalytics";
 import { GoogleConversationAnalytics } from "./GoogleConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
+import { ComplaintsStyleAnalytics } from "./ComplaintsStyleAnalytics";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "./Header";
+import { AdminNavigation } from "./AdminNavigation";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Search,
   Filter,
   MoreHorizontal,
-  Grid3X3,
-  BarChart3,
   Calendar,
-  Settings,
-  Mail,
   MessageSquare,
   Bell,
   User,
@@ -41,9 +39,13 @@ import {
   Plus,
   Edit2,
   Trash2,
-  Building2,
   X,
   CheckCircle,
+  Grid3X3,
+  BarChart3,
+  Mail,
+  Building2,
+  Settings,
 } from "lucide-react";
 
 // Fetch recordings from API with retry logic
@@ -276,6 +278,15 @@ export function ExactDashboard() {
     };
   }, []);
 
+  // Force refresh analytics components when analytics tab becomes active
+  useEffect(() => {
+    if (activeTab === "analytics") {
+      console.log("Analytics tab activated, forcing component refresh");
+      // Force a refresh by updating lastUpdate to trigger component remount
+      setLastUpdate(new Date());
+    }
+  }, [activeTab]);
+
   // Device status counts
   const onlineCount = devices.filter((d) => d.status === "online").length;
   const problematicCount = devices.filter(
@@ -476,120 +487,8 @@ export function ExactDashboard() {
     <div className="h-screen bg-gray-50 overflow-hidden">
       <Header />
 
-      {/* Navigation Tabs */}
-      <div
-        className="bg-white border-b border-gray-200 shadow-sm"
-        style={{ display: "flex", flexDirection: "column" }}
-      >
-        <div className="flex items-center justify-start py-4 px-4">
-          <div className="flex items-center space-x-3">
-            {/* First group: Home, Analytics, Device Status, Complaints */}
-            <button
-              onClick={() => {
-                setActiveTab("home");
-                navigate("/", { replace: true });
-              }}
-              className={cn(
-                "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
-                activeTab === "home"
-                  ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
-              )}
-            >
-              <Grid3X3 className="w-6 h-6 mb-2" />
-              <span className="text-sm font-medium">Home</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab("analytics");
-                navigate("/?tab=analytics", { replace: true });
-              }}
-              className={cn(
-                "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
-                activeTab === "analytics"
-                  ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
-              )}
-            >
-              <BarChart3 className="w-6 h-6 mb-2" />
-              <span className="text-sm font-medium">Analytics</span>
-            </button>
-
-            {isAdmin() && (
-              <button
-                onClick={() => {
-                  setActiveTab("device-status");
-                  navigate("/?tab=device-status", { replace: true });
-                }}
-                className={cn(
-                  "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
-                  activeTab === "device-status"
-                    ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
-                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
-                )}
-              >
-                <Monitor className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">Device Status</span>
-              </button>
-            )}
-
-            <button
-              onClick={() => navigate("/complaints")}
-              className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
-            >
-              <Mail className="w-6 h-6 mb-2" />
-              <span className="text-sm font-medium">Complaints</span>
-            </button>
-
-            {/* Admin group separator */}
-            {isAdmin() && <div className="w-px h-12 bg-gray-300 mx-4"></div>}
-
-            {/* Admin group: Branches, Devices, Users, Deployment */}
-            {isAdmin() && (
-              <button
-                onClick={() => navigate("/branch-management")}
-                className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
-              >
-                <Building2 className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">Branches</span>
-              </button>
-            )}
-
-            {isAdmin() && (
-              <button
-                onClick={() => navigate("/device-management")}
-                className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
-              >
-                <Monitor className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">Devices</span>
-              </button>
-            )}
-
-            {isAdmin() && (
-              <button
-                onClick={() => navigate("/user-management")}
-                className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
-              >
-                <Users className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">Users</span>
-              </button>
-            )}
-
-            {isAdmin() && (
-              <button
-                onClick={() => navigate("/deployment")}
-                className="flex flex-col items-center px-6 py-4 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-all duration-200 min-w-[90px]"
-              >
-                <Settings className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">Deployment</span>
-              </button>
-            )}
-          </div>
-
-          <div className="flex items-center space-x-4" />
-        </div>
-      </div>
+      {/* Navigation */}
+      <AdminNavigation />
 
       <div className="flex h-full">
         {/* Main Content */}
@@ -931,72 +830,36 @@ export function ExactDashboard() {
               </>
             )}
 
-            {activeTab === "analytics" && isAdminOrManager() && (
+            {activeTab === "analytics" && (
               <>
-                {/* Analytics Sub-navigation */}
-                <div className="mb-6 border-b border-gray-200">
-                  <div className="flex space-x-8">
-                    <button
-                      onClick={() => setAnalyticsSubTab("recordings")}
-                      className={cn(
-                        "py-2 px-1 border-b-2 font-medium text-sm",
-                        analyticsSubTab === "recordings"
-                          ? "border-blue-500 text-blue-600"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                      )}
-                    >
-                      Recording Analytics
-                    </button>
-                    <button
-                      onClick={() => setAnalyticsSubTab("conversations")}
-                      className={cn(
-                        "py-2 px-1 border-b-2 font-medium text-sm",
-                        analyticsSubTab === "conversations"
-                          ? "border-blue-500 text-blue-600"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                      )}
-                    >
-                      Conversation Analytics
-                    </button>
+                {/* Analytics Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h1 className="text-lg font-bold text-gray-900">
+                      {isAdmin()
+                        ? "Analytics Dashboard"
+                        : `${user?.branch_city || "Branch"} Analytics`}
+                    </h1>
+                    <p className="text-sm text-gray-600">
+                      {isAdmin()
+                        ? "Comprehensive insights and metrics"
+                        : "Analytics and insights for your branch"}
+                    </p>
                   </div>
+                  <button
+                    onClick={() => {
+                      // Force re-render by updating key
+                      setLastUpdate(new Date());
+                    }}
+                    className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    <span>Refresh Data</span>
+                  </button>
                 </div>
 
-                {/* Development Tools */}
-                {analyticsSubTab === "recordings" && (
-                  <div className="mb-4 space-y-3">
-                    {/* Fix Audio Button */}
-                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-sm font-medium text-blue-800">
-                            Audio Files Not Playing?
-                          </h3>
-                          <p className="text-sm text-blue-600 mt-1">
-                            Fix recordings by mapping them to real audio files
-                            that exist on the server.
-                          </p>
-                        </div>
-                        <button
-                          onClick={fixAudioMappings}
-                          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
-                        >
-                          <CheckCircle className="w-4 h-4" />
-                          <span>Fix Audio Files</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Analytics Content */}
-                <WarningSuppressionWrapper>
-                  {analyticsSubTab === "recordings" && (
-                    <GoogleRecordingsAnalytics />
-                  )}
-                  {analyticsSubTab === "conversations" && (
-                    <GoogleConversationAnalytics />
-                  )}
-                </WarningSuppressionWrapper>
+                {/* Analytics Content - Exact same as Complaints analytics */}
+                <ComplaintsStyleAnalytics />
               </>
             )}
           </div>
