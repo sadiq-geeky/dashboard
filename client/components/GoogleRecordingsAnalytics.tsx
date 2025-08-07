@@ -42,6 +42,9 @@ export function GoogleRecordingsAnalytics() {
 
       const data = await response.json();
       console.log("Received recordings analytics data:", data);
+      console.log("Total recordings:", data.totalRecordings);
+      console.log("Daily recordings length:", data.dailyRecordings?.length);
+      console.log("Branch stats length:", data.branchStats?.length);
       setAnalytics(data);
     } catch (error) {
       console.error("Error fetching recordings analytics:", error);
