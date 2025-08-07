@@ -6,6 +6,10 @@ import {
   Building2,
   TrendingUp,
   RefreshCw,
+  Target,
+  Percent,
+  Clock,
+  CheckCircle,
 } from "lucide-react";
 import { authFetch } from "@/lib/api";
 
