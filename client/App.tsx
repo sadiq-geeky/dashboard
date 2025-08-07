@@ -1,6 +1,6 @@
 import "./global.css";
 
-// Simple Recharts warning suppression
+// Enhanced Recharts warning suppression
 if (
   typeof window !== "undefined" &&
   !(window as any).__WARNING_SUPPRESSION_SETUP__
@@ -9,12 +9,13 @@ if (
 
   const originalWarn = console.warn;
   console.warn = (...args) => {
-    const message = String(args[0] || "");
+    const message = String(args.join(" "));
     if (
-      message.includes("defaultProps will be removed") &&
-      (message.includes("XAxis") || message.includes("YAxis"))
+      (message.includes("Support for defaultProps will be removed") ||
+       message.includes("defaultProps will be removed")) &&
+      (message.includes("XAxis") || message.includes("YAxis") || message.includes("recharts"))
     ) {
-      return; // Suppress specific Recharts warnings
+      return; // Suppress Recharts defaultProps warnings
     }
     originalWarn.apply(console, args);
   };
