@@ -423,3 +423,138 @@ export const getComplaintsStats: RequestHandler = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch complaints statistics" });
   }
 };
+
+// Get detailed analytics for complaints (charts, trends, etc.)
+export const getComplaintsAnalytics: RequestHandler = async (req, res) => {
+  try {
+    const { branch_id } = req.query;
+
+    // Build WHERE clause for branch filtering
+    let whereClause = "WHERE 1=1";
+    let queryParams: any[] = [];
+
+    if (branch_id) {
+      whereClause += " AND branch_id = ?";
+      queryParams.push(branch_id);
+    }
+
+    // Get monthly trends for the last 6 months
+    const monthlyTrendsQuery = `
+      SELECT
+        DATE_FORMAT(created_on, '%Y-%m') as month,
+        COUNT(*) as total_complaints,
+        SUM(CASE WHEN status = 'resolved' OR status = 'closed' THEN 1 ELSE 0 END) as resolved_complaints
+      FROM complaints
+      ${whereClause}
+      AND created_on >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+      GROUP BY DATE_FORMAT(created_on, '%Y-%m')
+      ORDER BY month ASC
+    `;
+
+    const monthlyTrends = await executeQuery<{
+      month: string;
+      total_complaints: number;
+      resolved_complaints: number;
+    }>(monthlyTrendsQuery, queryParams);
+
+    // Get priority distribution
+    const priorityQuery = `
+      SELECT
+        priority,
+        COUNT(*) as count,
+        ROUND((COUNT(*) * 100.0 / (SELECT COUNT(*) FROM complaints ${whereClause})), 1) as percentage
+      FROM complaints
+      ${whereClause}
+      GROUP BY priority
+    `;
+
+    const priorityDistribution = await executeQuery<{
+      priority: string;
+      count: number;
+      percentage: number;
+    }>(priorityQuery, queryParams);
+
+    // Get status distribution
+    const statusQuery = `
+      SELECT
+        status,
+        COUNT(*) as count,
+        ROUND((COUNT(*) * 100.0 / (SELECT COUNT(*) FROM complaints ${whereClause})), 1) as percentage
+      FROM complaints
+      ${whereClause}
+      GROUP BY status
+    `;
+
+    const statusDistribution = await executeQuery<{
+      status: string;
+      count: number;
+      percentage: number;
+    }>(statusQuery, queryParams);
+
+    // Calculate average resolution time (in days)
+    const resolutionTimeQuery = `
+      SELECT
+        AVG(DATEDIFF(updated_on, created_on)) as avg_resolution_days
+      FROM complaints
+      ${whereClause}
+      AND (status = 'resolved' OR status = 'closed')
+    `;
+
+    const [resolutionTimeResult] = await executeQuery<{
+      avg_resolution_days: number;
+    }>(resolutionTimeQuery, queryParams);
+
+    // Get recent activity (last 10 activities)
+    const recentActivityQuery = `
+      SELECT
+        complaint_id,
+        complaint_text,
+        status,
+        priority,
+        updated_on,
+        branch_name
+      FROM complaints
+      ${whereClause}
+      ORDER BY updated_on DESC
+      LIMIT 10
+    `;
+
+    const recentActivity = await executeQuery<{
+      complaint_id: string;
+      complaint_text: string;
+      status: string;
+      priority: string;
+      updated_on: string;
+      branch_name: string;
+    }>(recentActivityQuery, queryParams);
+
+    // Calculate satisfaction rate (placeholder - in real app this would come from feedback)
+    const satisfactionRate = 85; // Mock data
+
+    res.json({
+      monthlyTrends: monthlyTrends.map(trend => ({
+        month: trend.month,
+        totalComplaints: trend.total_complaints,
+        resolvedComplaints: trend.resolved_complaints,
+        resolutionRate: trend.total_complaints > 0
+          ? Math.round((trend.resolved_complaints / trend.total_complaints) * 100)
+          : 0
+      })),
+      priorityDistribution,
+      statusDistribution,
+      avgResolutionTime: resolutionTimeResult?.avg_resolution_days || 0,
+      satisfactionRate,
+      recentActivity: recentActivity.map(activity => ({
+        id: activity.complaint_id,
+        text: activity.complaint_text.substring(0, 50) + '...',
+        status: activity.status,
+        priority: activity.priority,
+        updatedOn: activity.updated_on,
+        branchName: activity.branch_name
+      }))
+    });
+  } catch (error) {
+    console.error("Error fetching complaints analytics:", error);
+    res.status(500).json({ error: "Failed to fetch complaints analytics" });
+  }
+};
