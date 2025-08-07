@@ -48,7 +48,14 @@ export function BranchVoiceStreamsAnalytics() {
 
       const response = await authFetch("/api/analytics/voice-streams");
       if (!response.ok) {
-        throw new Error("Failed to fetch voice stream data");
+        let errorMessage = "Failed to fetch voice stream data";
+        try {
+          const errorResponse = await response.json();
+          errorMessage = errorResponse.error || errorMessage;
+        } catch (e) {
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();
@@ -140,7 +147,7 @@ export function BranchVoiceStreamsAnalytics() {
   }
 
   // Calculate growth percentage
-  const growthPercentage = data.previous_month_streams > 0 
+  const growthPercentage = data.previous_month_streams > 0
     ? ((data.current_month_streams - data.previous_month_streams) / data.previous_month_streams) * 100
     : data.current_month_streams > 0 ? 100 : 0;
 
@@ -247,21 +254,21 @@ export function BranchVoiceStreamsAnalytics() {
                   <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
-              <CartesianGrid 
-                strokeDasharray="2 4" 
-                stroke="#e5e7eb" 
+              <CartesianGrid
+                strokeDasharray="2 4"
+                stroke="#e5e7eb"
                 strokeOpacity={0.5}
                 vertical={false}
               />
-              <XAxis 
-                dataKey="formatted_month" 
+              <XAxis
+                dataKey="formatted_month"
                 fontSize={11}
                 fontWeight={500}
                 tick={{ fill: '#6b7280' }}
                 axisLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
                 tickLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
               />
-              <YAxis 
+              <YAxis
                 fontSize={11}
                 fontWeight={500}
                 tick={{ fill: '#6b7280' }}
@@ -270,9 +277,9 @@ export function BranchVoiceStreamsAnalytics() {
                 tickFormatter={(value) => value.toLocaleString()}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Area 
-                type="monotone" 
-                dataKey="voice_streams" 
+              <Area
+                type="monotone"
+                dataKey="voice_streams"
                 stroke="#3b82f6"
                 strokeWidth={3}
                 fill="url(#voiceStreamGradient)"
@@ -286,8 +293,8 @@ export function BranchVoiceStreamsAnalytics() {
           <div className="bg-gray-50/70 rounded-lg p-3 text-center">
             <p className="text-xs text-gray-500 mb-1">Peak Month</p>
             <p className="font-semibold text-gray-900">
-              {data.monthly_data.reduce((max, curr) => 
-                curr.voice_streams > max.voice_streams ? curr : max, 
+              {data.monthly_data.reduce((max, curr) =>
+                curr.voice_streams > max.voice_streams ? curr : max,
                 data.monthly_data[0]
               )?.formatted_month || '—'}
             </p>
