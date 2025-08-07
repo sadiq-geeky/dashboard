@@ -55,7 +55,8 @@ const fetchRecordings = async (
 ): Promise<RecordingHistory[]> => {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    // Increase timeout to 20 seconds for recordings
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
 
     // Build query parameters with branch filtering for non-admin users
     const params = new URLSearchParams({
@@ -84,25 +85,28 @@ const fetchRecordings = async (
     }
 
     const result: PaginatedResponse<RecordingHistory> = await response.json();
-    return result.data;
+    return Array.isArray(result.data) ? result.data : [];
   } catch (error) {
     console.error("Error fetching recordings:", error);
     if (error.name === "AbortError") {
-      console.error("Request timed out after 10 seconds");
+      console.error("Recordings request timed out after 20 seconds");
     }
 
-    // Retry logic for development
+    // Only retry on network errors, not on timeouts
     if (
       retries > 0 &&
+      error.name !== "AbortError" &&
       (error.name === "TypeError" || error.message?.includes("Failed to fetch"))
     ) {
       console.log(
         `Retrying recordings fetch, ${retries} attempts remaining...`,
       );
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       return fetchRecordings(user, retries - 1);
     }
 
+    // Return empty array instead of throwing on timeout/error
+    console.warn("Recordings fetch failed, returning empty array");
     return [];
   }
 };
