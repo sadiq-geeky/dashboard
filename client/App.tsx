@@ -100,6 +100,19 @@ if (typeof window !== "undefined") {
 
   // Try to suppress React development warnings specifically for defaultProps
   try {
+    // Override React's internal warning methods
+    if ((window as any).React && (window as any).React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED) {
+      const internals = (window as any).React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+
+      // Try to override the warning function
+      if (internals.ReactDebugCurrentFrame) {
+        const originalWarn = internals.ReactDebugCurrentFrame.getCurrentStack;
+        if (originalWarn) {
+          internals.ReactDebugCurrentFrame.getCurrentStack = () => "";
+        }
+      }
+    }
+
     // Override React's warning function if available
     if ((window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
       const hook = (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__;
@@ -115,8 +128,23 @@ if (typeof window !== "undefined") {
         };
       }
     }
+
+    // Try to intercept console.warn at the React level
+    const originalConsoleWarn = console.warn;
+    console.warn = (...args) => {
+      const message = args.join(' ');
+      if (
+        message.includes('defaultProps') ||
+        message.includes('XAxis') ||
+        message.includes('YAxis') ||
+        message.includes('recharts')
+      ) {
+        return;
+      }
+      originalConsoleWarn.apply(console, args);
+    };
   } catch (e) {
-    // Ignore any errors in DevTools override
+    // Ignore any errors in React internals override
   }
 }
 
