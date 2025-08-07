@@ -666,8 +666,9 @@ export function Complaints() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      <AdminNavigation />
 
-      {/* Navigation Tabs */}
+      {/* Internal Navigation Tabs */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="flex items-center justify-start py-4 px-4">
           <div className="flex items-center space-x-3">
