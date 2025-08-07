@@ -25,6 +25,8 @@ import {
   Plus,
   BarChart3,
   Activity,
+  Grid3X3,
+  Users,
 } from "lucide-react";
 import { authFetch } from "@/lib/api";
 import { cn } from "@/lib/utils";
