@@ -9,8 +9,8 @@ export interface Complaint {
   timestamp: string;
   customer_data: string; // JSON string containing customer information
   complaint_text: string;
-  status: 'pending' | 'in_progress' | 'resolved' | 'closed';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: "pending" | "in_progress" | "resolved" | "closed";
+  priority: "low" | "medium" | "high" | "urgent";
   created_on: string;
   updated_on: string;
 }
@@ -35,15 +35,15 @@ export interface PaginatedComplaints {
 // Get all complaints with pagination, search, and filtering
 export const getComplaints: RequestHandler = async (req, res) => {
   try {
-    const { 
-      page = "1", 
-      limit = "10", 
-      search, 
+    const {
+      page = "1",
+      limit = "10",
+      search,
       branch_id,
       status,
       priority,
       sort_by = "timestamp",
-      sort_order = "desc"
+      sort_order = "desc",
     } = req.query;
 
     const pageNum = parseInt(page as string);
@@ -53,9 +53,10 @@ export const getComplaints: RequestHandler = async (req, res) => {
     // Build WHERE clause for filtering and search
     let whereClause = "WHERE 1=1";
     let queryParams: any[] = [];
-    
+
     if (search) {
-      whereClause += " AND (c.branch_name LIKE ? OR c.complaint_text LIKE ? OR c.customer_data LIKE ?)";
+      whereClause +=
+        " AND (c.branch_name LIKE ? OR c.complaint_text LIKE ? OR c.customer_data LIKE ?)";
       queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
 
@@ -75,9 +76,17 @@ export const getComplaints: RequestHandler = async (req, res) => {
     }
 
     // Validate sort parameters
-    const validSortColumns = ['timestamp', 'branch_name', 'status', 'priority', 'created_on'];
-    const sortColumn = validSortColumns.includes(sort_by as string) ? sort_by : 'timestamp';
-    const sortDirection = sort_order === 'asc' ? 'ASC' : 'DESC';
+    const validSortColumns = [
+      "timestamp",
+      "branch_name",
+      "status",
+      "priority",
+      "created_on",
+    ];
+    const sortColumn = validSortColumns.includes(sort_by as string)
+      ? sort_by
+      : "timestamp";
+    const sortDirection = sort_order === "asc" ? "ASC" : "DESC";
 
     // Get total count
     const countQuery = `
@@ -85,7 +94,10 @@ export const getComplaints: RequestHandler = async (req, res) => {
       FROM complaints c
       ${whereClause}
     `;
-    const [countResult] = await executeQuery<{ total: number }>(countQuery, queryParams);
+    const [countResult] = await executeQuery<{ total: number }>(
+      countQuery,
+      queryParams,
+    );
     const total = countResult.total;
 
     // Get paginated results
@@ -152,33 +164,36 @@ export const getComplaint: RequestHandler = async (req, res) => {
       WHERE c.complaint_id = ?
     `;
 
-    const complaints = await executeQuery<Complaint & {
-      branch_address?: string;
-      branch_city?: string;
-      branch_code?: string;
-      branch_phone?: string;
-      branch_email?: string;
-    }>(query, [complaint_id]);
+    const complaints = await executeQuery<
+      Complaint & {
+        branch_address?: string;
+        branch_city?: string;
+        branch_code?: string;
+        branch_phone?: string;
+        branch_email?: string;
+      }
+    >(query, [complaint_id]);
 
     if (complaints.length === 0) {
       return res.status(404).json({ error: "Complaint not found" });
     }
 
     const complaint = complaints[0];
-    
+
     // Parse customer data if it's a JSON string
     let customerData = {};
     try {
-      customerData = typeof complaint.customer_data === 'string' 
-        ? JSON.parse(complaint.customer_data) 
-        : complaint.customer_data;
+      customerData =
+        typeof complaint.customer_data === "string"
+          ? JSON.parse(complaint.customer_data)
+          : complaint.customer_data;
     } catch (e) {
       customerData = { raw_data: complaint.customer_data };
     }
 
     res.json({
       ...complaint,
-      customer_data: customerData
+      customer_data: customerData,
     });
   } catch (error) {
     console.error("Error fetching complaint:", error);
@@ -194,13 +209,13 @@ export const createComplaint: RequestHandler = async (req, res) => {
       branch_name,
       customer_data,
       complaint_text,
-      status = 'pending',
-      priority = 'medium'
+      status = "pending",
+      priority = "medium",
     } = req.body;
 
     if (!branch_id || !branch_name || !complaint_text) {
-      return res.status(400).json({ 
-        error: "Branch ID, branch name, and complaint text are required" 
+      return res.status(400).json({
+        error: "Branch ID, branch name, and complaint text are required",
       });
     }
 
@@ -208,9 +223,10 @@ export const createComplaint: RequestHandler = async (req, res) => {
     const timestamp = new Date().toISOString();
 
     // Ensure customer_data is stored as JSON string
-    const customerDataString = typeof customer_data === 'object' 
-      ? JSON.stringify(customer_data) 
-      : customer_data || '{}';
+    const customerDataString =
+      typeof customer_data === "object"
+        ? JSON.stringify(customer_data)
+        : customer_data || "{}";
 
     const query = `
       INSERT INTO complaints 
@@ -226,7 +242,7 @@ export const createComplaint: RequestHandler = async (req, res) => {
       customerDataString,
       complaint_text,
       status,
-      priority
+      priority,
     ]);
 
     res.status(201).json({
@@ -267,7 +283,11 @@ export const updateComplaint: RequestHandler = async (req, res) => {
 
     if (customer_data) {
       updateFields.push("customer_data = ?");
-      updateValues.push(typeof customer_data === 'object' ? JSON.stringify(customer_data) : customer_data);
+      updateValues.push(
+        typeof customer_data === "object"
+          ? JSON.stringify(customer_data)
+          : customer_data,
+      );
     }
 
     if (updateFields.length === 0) {
@@ -346,15 +366,17 @@ export const getComplaintsStats: RequestHandler = async (req, res) => {
       today_complaints: number;
     }>(statsQuery);
 
-    res.json(stats || {
-      total_complaints: 0,
-      pending_complaints: 0,
-      in_progress_complaints: 0,
-      resolved_complaints: 0,
-      closed_complaints: 0,
-      urgent_complaints: 0,
-      today_complaints: 0
-    });
+    res.json(
+      stats || {
+        total_complaints: 0,
+        pending_complaints: 0,
+        in_progress_complaints: 0,
+        resolved_complaints: 0,
+        closed_complaints: 0,
+        urgent_complaints: 0,
+        today_complaints: 0,
+      },
+    );
   } catch (error) {
     console.error("Error fetching complaints stats:", error);
     res.status(500).json({ error: "Failed to fetch complaints statistics" });

@@ -8,7 +8,7 @@ export async function createManagerUser() {
 
     // Get a branch to assign to the manager
     const branches = await executeQuery<{ id: string; branch_name: string }>(
-      "SELECT id, branch_name FROM branches LIMIT 1"
+      "SELECT id, branch_name FROM branches LIMIT 1",
     );
 
     if (branches.length === 0) {
@@ -21,25 +21,25 @@ export async function createManagerUser() {
 
     // Update an existing regular user to manager role
     const regularUsers = await executeQuery<{ uuid: string; username: string }>(
-      "SELECT uuid, username FROM users WHERE role = 'user' LIMIT 1"
+      "SELECT uuid, username FROM users WHERE role = 'user' LIMIT 1",
     );
 
     if (regularUsers.length > 0) {
       const user = regularUsers[0];
-      await executeQuery(
-        "UPDATE users SET role = 'manager' WHERE uuid = ?",
-        [user.uuid]
-      );
+      await executeQuery("UPDATE users SET role = 'manager' WHERE uuid = ?", [
+        user.uuid,
+      ]);
       console.log(`✅ Updated user '${user.username}' to manager role`);
       console.log(`📋 Manager login credentials:`);
       console.log(`   Username: ${user.username}`);
-      console.log(`   Password: user123 (if default) or check existing password`);
+      console.log(
+        `   Password: user123 (if default) or check existing password`,
+      );
     } else {
       console.log("⚠️ No regular users found to convert to manager");
     }
 
     console.log("🎉 Manager user setup completed!");
-
   } catch (error) {
     console.error("❌ Error creating manager user:", error);
     throw error;

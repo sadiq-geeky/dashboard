@@ -30,7 +30,7 @@ export async function initializeComplaintsTable() {
 
     // Check if we need sample data
     const [countResult] = await executeQuery<{ count: number }>(
-      "SELECT COUNT(*) as count FROM complaints"
+      "SELECT COUNT(*) as count FROM complaints",
     );
 
     if (countResult.count === 0) {
@@ -39,7 +39,6 @@ export async function initializeComplaintsTable() {
     } else {
       console.log(`✅ Found ${countResult.count} existing complaints`);
     }
-
   } catch (error) {
     console.error("❌ Error initializing complaints table:", error);
     throw error;
@@ -49,9 +48,11 @@ export async function initializeComplaintsTable() {
 async function createSampleComplaints() {
   try {
     // Get existing branches for realistic sample data
-    const branches = await executeQuery<{ id: string; branch_name: string; branch_address: string }>(
-      "SELECT id, branch_name, branch_address FROM branches LIMIT 5"
-    );
+    const branches = await executeQuery<{
+      id: string;
+      branch_name: string;
+      branch_address: string;
+    }>("SELECT id, branch_name, branch_address FROM branches LIMIT 5");
 
     if (branches.length === 0) {
       console.log("⚠️ No branches found, skipping sample complaints creation");
@@ -68,11 +69,12 @@ async function createSampleComplaints() {
           customer_email: "ahmed.hassan@email.com",
           customer_cnic: "42101-1234567-1",
           device_used: "Recording Device #1",
-          issue_category: "Technical Issue"
+          issue_category: "Technical Issue",
         },
-        complaint_text: "The voice recording device was not working properly during my visit. The microphone seemed to have issues and my recording was very unclear. This caused delays in my application process.",
+        complaint_text:
+          "The voice recording device was not working properly during my visit. The microphone seemed to have issues and my recording was very unclear. This caused delays in my application process.",
         status: "pending",
-        priority: "high"
+        priority: "high",
       },
       {
         branch_id: branches[1]?.id || branches[0]?.id,
@@ -82,11 +84,12 @@ async function createSampleComplaints() {
           customer_phone: "+92-321-9876543",
           customer_cnic: "42201-9876543-2",
           device_used: "Recording Device #2",
-          issue_category: "Service Quality"
+          issue_category: "Service Quality",
         },
-        complaint_text: "The staff was not properly trained on how to use the recording equipment. I had to wait for 30 minutes while they figured out how to start the recording process.",
+        complaint_text:
+          "The staff was not properly trained on how to use the recording equipment. I had to wait for 30 minutes while they figured out how to start the recording process.",
         status: "in_progress",
-        priority: "medium"
+        priority: "medium",
       },
       {
         branch_id: branches[2]?.id || branches[0]?.id,
@@ -97,11 +100,12 @@ async function createSampleComplaints() {
           customer_email: "m.ali@company.com",
           customer_cnic: "42301-5555555-3",
           device_used: "Recording Device #1",
-          issue_category: "Equipment Malfunction"
+          issue_category: "Equipment Malfunction",
         },
-        complaint_text: "The recording device completely stopped working in the middle of my session. I had to reschedule my appointment and come back the next day.",
+        complaint_text:
+          "The recording device completely stopped working in the middle of my session. I had to reschedule my appointment and come back the next day.",
         status: "resolved",
-        priority: "urgent"
+        priority: "urgent",
       },
       {
         branch_id: branches[0]?.id,
@@ -111,11 +115,12 @@ async function createSampleComplaints() {
           customer_phone: "+92-345-1111111",
           customer_cnic: "42401-1111111-4",
           device_used: "Recording Device #3",
-          issue_category: "Audio Quality"
+          issue_category: "Audio Quality",
         },
-        complaint_text: "The audio quality of my recording was very poor. There was a lot of background noise and my voice was barely audible in the final recording.",
+        complaint_text:
+          "The audio quality of my recording was very poor. There was a lot of background noise and my voice was barely audible in the final recording.",
         status: "pending",
-        priority: "medium"
+        priority: "medium",
       },
       {
         branch_id: branches[1]?.id || branches[0]?.id,
@@ -126,32 +131,38 @@ async function createSampleComplaints() {
           customer_email: "usman.shah@email.com",
           customer_cnic: "42501-7777777-5",
           device_used: "Recording Device #2",
-          issue_category: "System Error"
+          issue_category: "System Error",
         },
-        complaint_text: "The system crashed during my recording session and all my data was lost. I had to provide all my information again from the beginning.",
+        complaint_text:
+          "The system crashed during my recording session and all my data was lost. I had to provide all my information again from the beginning.",
         status: "closed",
-        priority: "high"
-      }
+        priority: "high",
+      },
     ];
 
     for (const complaint of sampleComplaints) {
       const complaint_id = `complaint_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const timestamp = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000); // Random time in last 7 days
+      const timestamp = new Date(
+        Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000,
+      ); // Random time in last 7 days
 
-      await executeQuery(`
+      await executeQuery(
+        `
         INSERT INTO complaints 
         (complaint_id, branch_id, branch_name, timestamp, customer_data, complaint_text, status, priority, created_on, updated_on)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
-      `, [
-        complaint_id,
-        complaint.branch_id,
-        complaint.branch_name,
-        timestamp,
-        JSON.stringify(complaint.customer_data),
-        complaint.complaint_text,
-        complaint.status,
-        complaint.priority
-      ]);
+      `,
+        [
+          complaint_id,
+          complaint.branch_id,
+          complaint.branch_name,
+          timestamp,
+          JSON.stringify(complaint.customer_data),
+          complaint.complaint_text,
+          complaint.status,
+          complaint.priority,
+        ],
+      );
     }
 
     console.log(`✅ Created ${sampleComplaints.length} sample complaints`);

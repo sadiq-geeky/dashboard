@@ -55,7 +55,9 @@ export async function initializeTables() {
 
     // Initialize complaints table
     try {
-      const { initializeComplaintsTable } = await import("../scripts/init-complaints-table");
+      const { initializeComplaintsTable } = await import(
+        "../scripts/init-complaints-table"
+      );
       await initializeComplaintsTable();
     } catch (error) {
       console.error("⚠️  Could not initialize complaints table:", error);

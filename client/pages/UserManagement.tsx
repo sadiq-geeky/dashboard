@@ -237,19 +237,24 @@ export function UserManagement() {
             <button
               onClick={async () => {
                 try {
-                  const response = await fetch('/api/debug/promote-to-manager', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                  });
+                  const response = await fetch(
+                    "/api/debug/promote-to-manager",
+                    {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                    },
+                  );
                   const data = await response.json();
                   if (data.success) {
-                    alert(`Successfully promoted ${data.user.username} to manager!`);
+                    alert(
+                      `Successfully promoted ${data.user.username} to manager!`,
+                    );
                     fetchUsers(); // Refresh the user list
                   } else {
-                    alert(data.message || 'Failed to promote user');
+                    alert(data.message || "Failed to promote user");
                   }
                 } catch (error) {
-                  alert('Error promoting user to manager');
+                  alert("Error promoting user to manager");
                 }
               }}
               className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
@@ -319,9 +324,7 @@ export function UserManagement() {
                 <Settings className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">
-                  Managers
-                </p>
+                <p className="text-sm font-medium text-gray-500">Managers</p>
                 <p className="text-2xl font-bold text-gray-900">
                   {users.filter((u) => u.role === "manager").length}
                 </p>
@@ -437,8 +440,8 @@ export function UserManagement() {
                               : user.role === "admin"
                                 ? "bg-red-100 text-red-800"
                                 : user.role === "manager"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-blue-100 text-blue-800"
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-blue-100 text-blue-800"
                           }`}
                         >
                           {isSystemAdmin(user) ? (

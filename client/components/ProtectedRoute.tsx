@@ -13,7 +13,8 @@ export function ProtectedRoute({
   adminOnly = false,
   managerOrAdmin = false,
 }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading, user, isAdmin, isAdminOrManager } = useAuth();
+  const { isAuthenticated, isLoading, user, isAdmin, isAdminOrManager } =
+    useAuth();
 
   if (isLoading) {
     return (

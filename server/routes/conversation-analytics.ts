@@ -289,10 +289,16 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
       executeQuery<{ branch_id: string; branch_name: string; count: number }>(
         branchQuery,
       ),
-      executeQuery<{ city: string; conversion_count: number; total_conversations: number }>(
-        cityQuery,
-      ),
-      executeQuery<{ date: string; conversion_count: number; total_conversations: number }>(dailyQuery),
+      executeQuery<{
+        city: string;
+        conversion_count: number;
+        total_conversations: number;
+      }>(cityQuery),
+      executeQuery<{
+        date: string;
+        conversion_count: number;
+        total_conversations: number;
+      }>(dailyQuery),
       executeQuery<{ unique_cnic_count: number }>(cnicQuery),
       executeQuery<{
         totalConversations: number;
@@ -340,10 +346,27 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
     const totalRecordings = totalStats.totalConversations;
     const conversionFunnel = [
       { stage: "Initial Contact", count: totalRecordings, percentage: 100 },
-      { stage: "Information Gathered", count: Math.round(totalRecordings * 0.9), percentage: 90 },
-      { stage: "Needs Assessment", count: conversionMetrics.totalConversions, percentage: conversionMetrics.conversionRate },
-      { stage: "Solution Presented", count: Math.round(conversionMetrics.totalConversions * 0.85), percentage: conversionMetrics.conversionRate * 0.85 },
-      { stage: "Successful Outcome", count: conversionMetrics.successfulOutcomes, percentage: (conversionMetrics.successfulOutcomes / totalRecordings) * 100 },
+      {
+        stage: "Information Gathered",
+        count: Math.round(totalRecordings * 0.9),
+        percentage: 90,
+      },
+      {
+        stage: "Needs Assessment",
+        count: conversionMetrics.totalConversions,
+        percentage: conversionMetrics.conversionRate,
+      },
+      {
+        stage: "Solution Presented",
+        count: Math.round(conversionMetrics.totalConversions * 0.85),
+        percentage: conversionMetrics.conversionRate * 0.85,
+      },
+      {
+        stage: "Successful Outcome",
+        count: conversionMetrics.successfulOutcomes,
+        percentage:
+          (conversionMetrics.successfulOutcomes / totalRecordings) * 100,
+      },
     ];
 
     const analytics: ConversationAnalytics = {
@@ -377,8 +400,11 @@ export const getConversationAnalytics: RequestHandler = async (req, res) => {
       },
       conversionMetrics: {
         totalConversions: conversionMetrics.totalConversions,
-        conversionRate: Math.round((conversionMetrics.conversionRate || 0) * 10) / 10,
-        avgConversationDuration: Math.round(conversionMetrics.avgConversationDuration || 0),
+        conversionRate:
+          Math.round((conversionMetrics.conversionRate || 0) * 10) / 10,
+        avgConversationDuration: Math.round(
+          conversionMetrics.avgConversationDuration || 0,
+        ),
         successfulOutcomes: conversionMetrics.successfulOutcomes,
       },
       conversionsByBranch: conversionsByBranchResult.map((row) => ({

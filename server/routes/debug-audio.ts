@@ -22,7 +22,9 @@ export const debugAudioFiles: RequestHandler = async (req, res) => {
       LIMIT 20
     `);
 
-    console.log(`📊 Found ${recordings.length} recordings with file names in database`);
+    console.log(
+      `📊 Found ${recordings.length} recordings with file names in database`,
+    );
 
     // Check uploads directory
     const uploadDirExists = fs.existsSync(uploadDir);
@@ -30,9 +32,9 @@ export const debugAudioFiles: RequestHandler = async (req, res) => {
 
     if (uploadDirExists) {
       try {
-        filesOnDisk = fs.readdirSync(uploadDir).filter(file =>
-          file.endsWith('.wav') || file.endsWith('.mp3')
-        );
+        filesOnDisk = fs
+          .readdirSync(uploadDir)
+          .filter((file) => file.endsWith(".wav") || file.endsWith(".mp3"));
         console.log(`📁 Found ${filesOnDisk.length} audio files on disk`);
       } catch (err) {
         console.error("❌ Error reading uploads directory:", err);
@@ -42,7 +44,7 @@ export const debugAudioFiles: RequestHandler = async (req, res) => {
     }
 
     // Check which files exist vs missing
-    const fileStatus = recordings.map(recording => {
+    const fileStatus = recordings.map((recording) => {
       const exists = filesOnDisk.includes(recording.file_name);
       const filePath = path.join(uploadDir, recording.file_name);
 
@@ -55,8 +57,8 @@ export const debugAudioFiles: RequestHandler = async (req, res) => {
       };
     });
 
-    const existingFiles = fileStatus.filter(f => f.exists);
-    const missingFiles = fileStatus.filter(f => !f.exists);
+    const existingFiles = fileStatus.filter((f) => f.exists);
+    const missingFiles = fileStatus.filter((f) => !f.exists);
 
     console.log(`✅ ${existingFiles.length} files exist on disk`);
     console.log(`❌ ${missingFiles.length} files missing from disk`);
@@ -74,8 +76,8 @@ export const debugAudioFiles: RequestHandler = async (req, res) => {
         missing_files: missingFiles.length,
       },
       file_status: fileStatus.slice(0, 10), // First 10 for brevity
-      missing_files: missingFiles.slice(0, 5).map(f => f.file_name), // First 5 missing
-      existing_files: existingFiles.slice(0, 5).map(f => f.file_name), // First 5 existing
+      missing_files: missingFiles.slice(0, 5).map((f) => f.file_name), // First 5 missing
+      existing_files: existingFiles.slice(0, 5).map((f) => f.file_name), // First 5 existing
     };
 
     res.json({
@@ -87,15 +89,14 @@ export const debugAudioFiles: RequestHandler = async (req, res) => {
         recordings_in_db: recordings.length,
         files_exist: existingFiles.length,
         files_missing: missingFiles.length,
-      }
+      },
     });
-
   } catch (error) {
     console.error("❌ Debug audio files error:", error);
     res.status(500).json({
       success: false,
       error: "Failed to debug audio files",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 };

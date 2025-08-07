@@ -97,7 +97,9 @@ export const getRecordingsAnalytics: RequestHandler = async (req, res) => {
     ] = await Promise.all([
       executeQuery<{ date: string; count: number }>(dailyRecordingsQuery),
       executeQuery<{ status: string; count: number }>(statusQuery),
-      executeQuery<{ branch_name: string; total_recordings: number }>(branchQuery),
+      executeQuery<{ branch_name: string; total_recordings: number }>(
+        branchQuery,
+      ),
       executeQuery<{
         totalRecordings: number;
         completedRecordings: number;

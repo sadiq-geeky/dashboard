@@ -277,7 +277,7 @@ export const serveAudio: RequestHandler = (req, res) => {
       console.error(`❌ Uploads directory does not exist: ${uploadDir}`);
       return res.status(500).json({
         error: "Server configuration error: uploads directory not found",
-        debug: { uploadDir, exists: false }
+        debug: { uploadDir, exists: false },
       });
     }
 
@@ -303,8 +303,8 @@ export const serveAudio: RequestHandler = (req, res) => {
           requested_file: filename,
           full_path: filepath,
           upload_dir: uploadDir,
-          upload_dir_exists: fs.existsSync(uploadDir)
-        }
+          upload_dir_exists: fs.existsSync(uploadDir),
+        },
       });
     }
 

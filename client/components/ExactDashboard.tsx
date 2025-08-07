@@ -285,10 +285,14 @@ export function ExactDashboard() {
       await loadRecordings();
       await loadDevices();
 
-      alert("Sample data populated successfully! Analytics should now show real data.");
+      alert(
+        "Sample data populated successfully! Analytics should now show real data.",
+      );
     } catch (error) {
       console.error("Error populating sample data:", error);
-      alert("Failed to populate sample data. Please check the console for details.");
+      alert(
+        "Failed to populate sample data. Please check the console for details.",
+      );
     } finally {
       setIsPopulatingData(false);
     }
@@ -310,10 +314,14 @@ export function ExactDashboard() {
       // Reload recordings after fixing
       await loadRecordings();
 
-      alert(`Audio mappings fixed! ${result.summary?.recordings_updated || 0} recordings now have working audio files.`);
+      alert(
+        `Audio mappings fixed! ${result.summary?.recordings_updated || 0} recordings now have working audio files.`,
+      );
     } catch (error) {
       console.error("Error fixing audio mappings:", error);
-      alert("Failed to fix audio mappings. Please check the console for details.");
+      alert(
+        "Failed to fix audio mappings. Please check the console for details.",
+      );
     }
   };
 
@@ -432,7 +440,9 @@ export function ExactDashboard() {
         setIsPlaying(true);
       } catch (error) {
         console.error("Error playing audio:", error);
-        alert(`Cannot play audio: ${selectedRecording.file_name}. The audio file may not exist on the server.`);
+        alert(
+          `Cannot play audio: ${selectedRecording.file_name}. The audio file may not exist on the server.`,
+        );
         setIsPlaying(false);
       }
     } else if (!selectedRecording?.file_name) {
@@ -495,26 +505,39 @@ export function ExactDashboard() {
 
       audio.addEventListener("error", async (e) => {
         console.error("Audio error:", e);
-        console.error("Failed to load audio file:", selectedRecording.file_name);
+        console.error(
+          "Failed to load audio file:",
+          selectedRecording.file_name,
+        );
 
         // Try to get more specific error information from the server
         try {
-          const response = await fetch(`/api/audio/${selectedRecording.file_name}`);
+          const response = await fetch(
+            `/api/audio/${selectedRecording.file_name}`,
+          );
           if (!response.ok) {
             const errorData = await response.json();
             console.error("Server error:", errorData);
 
             if (response.status === 404) {
-              alert(`Audio file missing: "${selectedRecording.file_name}"\n\nThis recording exists in the database but the actual audio file is not on the server. This can happen if:\n• The file was deleted\n• The recording was created with sample data\n• There was an upload error`);
+              alert(
+                `Audio file missing: "${selectedRecording.file_name}"\n\nThis recording exists in the database but the actual audio file is not on the server. This can happen if:\n• The file was deleted\n• The recording was created with sample data\n• There was an upload error`,
+              );
             } else if (response.status === 500) {
-              alert(`Server error loading audio: "${selectedRecording.file_name}"\n\nError: ${errorData.error}\n\nPlease check the server logs.`);
+              alert(
+                `Server error loading audio: "${selectedRecording.file_name}"\n\nError: ${errorData.error}\n\nPlease check the server logs.`,
+              );
             } else {
-              alert(`Audio loading failed: "${selectedRecording.file_name}"\n\nHTTP ${response.status}: ${errorData.error || 'Unknown error'}`);
+              alert(
+                `Audio loading failed: "${selectedRecording.file_name}"\n\nHTTP ${response.status}: ${errorData.error || "Unknown error"}`,
+              );
             }
           }
         } catch (fetchError) {
           console.error("Error fetching audio file info:", fetchError);
-          alert(`Cannot load audio file: "${selectedRecording.file_name}"\n\nThe audio file is not available on the server.`);
+          alert(
+            `Cannot load audio file: "${selectedRecording.file_name}"\n\nThe audio file is not available on the server.`,
+          );
         }
 
         setIsPlaying(false);
@@ -808,12 +831,16 @@ export function ExactDashboard() {
                             {recording.file_name ? (
                               <div className="flex items-center space-x-1">
                                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                <span className="text-green-600 text-xs">Audio</span>
+                                <span className="text-green-600 text-xs">
+                                  Audio
+                                </span>
                               </div>
                             ) : (
                               <div className="flex items-center space-x-1">
                                 <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                                <span className="text-gray-500 text-xs">None</span>
+                                <span className="text-gray-500 text-xs">
+                                  None
+                                </span>
                               </div>
                             )}
                           </td>
@@ -1086,7 +1113,8 @@ export function ExactDashboard() {
                             Need Sample Data?
                           </h3>
                           <p className="text-sm text-yellow-600 mt-1">
-                            If analytics show no data, click to populate with sample recordings, branches, and devices.
+                            If analytics show no data, click to populate with
+                            sample recordings, branches, and devices.
                           </p>
                         </div>
                         <button
@@ -1117,7 +1145,8 @@ export function ExactDashboard() {
                             Audio Files Not Playing?
                           </h3>
                           <p className="text-sm text-blue-600 mt-1">
-                            Fix recordings by mapping them to real audio files that exist on the server.
+                            Fix recordings by mapping them to real audio files
+                            that exist on the server.
                           </p>
                         </div>
                         <button

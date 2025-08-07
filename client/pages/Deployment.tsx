@@ -188,9 +188,7 @@ export function Deployment() {
   const availableBranches = branches.filter(
     (b) => !getDeployedBranchIds().has(b.id),
   );
-  const availableUsers = users.filter(
-    (u) => u.role !== "admin",
-  );
+  const availableUsers = users.filter((u) => u.role !== "admin");
 
   if (!isAdmin()) {
     return (
@@ -655,7 +653,10 @@ export function Deployment() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Select Device *
                     </label>
-                    <Select value={selectedDevice} onValueChange={setSelectedDevice}>
+                    <Select
+                      value={selectedDevice}
+                      onValueChange={setSelectedDevice}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Choose a device" />
                       </SelectTrigger>
@@ -664,8 +665,12 @@ export function Deployment() {
                           <SelectItem key={device.id} value={device.id}>
                             <div className="flex items-center space-x-2">
                               <Monitor className="h-4 w-4 text-blue-500" />
-                              <span className="font-medium">{device.device_name}</span>
-                              <span className="text-gray-500">({device.device_mac || "No MAC"})</span>
+                              <span className="font-medium">
+                                {device.device_name}
+                              </span>
+                              <span className="text-gray-500">
+                                ({device.device_mac || "No MAC"})
+                              </span>
                             </div>
                           </SelectItem>
                         ))}
@@ -676,7 +681,10 @@ export function Deployment() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Select Branch *
                     </label>
-                    <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+                    <Select
+                      value={selectedBranch}
+                      onValueChange={setSelectedBranch}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Choose a branch" />
                       </SelectTrigger>
@@ -685,8 +693,12 @@ export function Deployment() {
                           <SelectItem key={branch.id} value={branch.id}>
                             <div className="flex items-center space-x-2">
                               <Building2 className="h-4 w-4 text-green-500" />
-                              <span className="font-medium">{branch.branch_name}</span>
-                              <span className="text-gray-500">({branch.branch_code})</span>
+                              <span className="font-medium">
+                                {branch.branch_name}
+                              </span>
+                              <span className="text-gray-500">
+                                ({branch.branch_code})
+                              </span>
                             </div>
                           </SelectItem>
                         ))}
@@ -697,7 +709,10 @@ export function Deployment() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Select User *
                     </label>
-                    <Select value={selectedUser} onValueChange={setSelectedUser}>
+                    <Select
+                      value={selectedUser}
+                      onValueChange={setSelectedUser}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Choose a user" />
                       </SelectTrigger>
@@ -706,8 +721,12 @@ export function Deployment() {
                           <SelectItem key={user.uuid} value={user.uuid}>
                             <div className="flex items-center space-x-2">
                               <Users className="h-4 w-4 text-purple-500" />
-                              <span className="font-medium">{user.full_name || user.username}</span>
-                              <span className="text-gray-500 capitalize">({user.role})</span>
+                              <span className="font-medium">
+                                {user.full_name || user.username}
+                              </span>
+                              <span className="text-gray-500 capitalize">
+                                ({user.role})
+                              </span>
                             </div>
                           </SelectItem>
                         ))}

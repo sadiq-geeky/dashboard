@@ -48,8 +48,8 @@ interface Complaint {
   timestamp: string;
   customer_data: CustomerData;
   complaint_text: string;
-  status: 'pending' | 'in_progress' | 'resolved' | 'closed';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: "pending" | "in_progress" | "resolved" | "closed";
+  priority: "low" | "medium" | "high" | "urgent";
   created_on: string;
   updated_on: string;
   branch_address?: string;
@@ -75,7 +75,9 @@ export function Complaints() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [stats, setStats] = useState<ComplaintsStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+  const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(
+    null,
+  );
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createComplaintData, setCreateComplaintData] = useState({
@@ -86,7 +88,7 @@ export function Complaints() {
     device_used: "",
     issue_category: "",
     complaint_text: "",
-    priority: "medium" as "low" | "medium" | "high" | "urgent"
+    priority: "medium" as "low" | "medium" | "high" | "urgent",
   });
 
   // Filter and pagination states
@@ -169,7 +171,14 @@ export function Complaints() {
       fetchComplaints();
       fetchStats();
     }
-  }, [currentPage, sortBy, sortOrder, statusFilter, priorityFilter, searchQuery]);
+  }, [
+    currentPage,
+    sortBy,
+    sortOrder,
+    statusFilter,
+    priorityFilter,
+    searchQuery,
+  ]);
 
   // Debounced search
   useEffect(() => {
@@ -195,41 +204,51 @@ export function Complaints() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pending': return <Clock className="w-4 h-4 text-yellow-500" />;
-      case 'in_progress': return <RefreshCw className="w-4 h-4 text-blue-500" />;
-      case 'resolved': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'closed': return <XCircle className="w-4 h-4 text-gray-500" />;
-      default: return <AlertTriangle className="w-4 h-4 text-red-500" />;
+      case "pending":
+        return <Clock className="w-4 h-4 text-yellow-500" />;
+      case "in_progress":
+        return <RefreshCw className="w-4 h-4 text-blue-500" />;
+      case "resolved":
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case "closed":
+        return <XCircle className="w-4 h-4 text-gray-500" />;
+      default:
+        return <AlertTriangle className="w-4 h-4 text-red-500" />;
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "urgent":
+        return "bg-red-100 text-red-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     });
   };
 
@@ -263,7 +282,7 @@ export function Complaints() {
         customer_data,
         complaint_text: createComplaintData.complaint_text,
         priority: createComplaintData.priority,
-        status: "pending"
+        status: "pending",
       };
 
       const response = await authFetch("/api/complaints", {
@@ -290,7 +309,7 @@ export function Complaints() {
         device_used: "",
         issue_category: "",
         complaint_text: "",
-        priority: "medium"
+        priority: "medium",
       });
       setShowCreateModal(false);
 
@@ -312,7 +331,9 @@ export function Complaints() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <AlertTriangle className="h-12 w-12 mx-auto mb-3 text-red-500" />
-            <p className="text-gray-600">Access denied. Manager or Administrator privileges required.</p>
+            <p className="text-gray-600">
+              Access denied. Manager or Administrator privileges required.
+            </p>
           </div>
         </div>
       </div>
@@ -338,8 +359,7 @@ export function Complaints() {
                 <p className="text-gray-600">
                   {isAdmin()
                     ? "Monitor and manage customer complaints from all branches"
-                    : "View and create complaints for your branch"
-                  }
+                    : "View and create complaints for your branch"}
                 </p>
               </div>
             </div>
@@ -364,7 +384,9 @@ export function Complaints() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.total_complaints}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.total_complaints}
+                  </p>
                 </div>
                 <Mail className="h-8 w-8 text-gray-400" />
               </div>
@@ -374,7 +396,9 @@ export function Complaints() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Pending</p>
-                  <p className="text-2xl font-bold text-yellow-600">{stats.pending_complaints}</p>
+                  <p className="text-2xl font-bold text-yellow-600">
+                    {stats.pending_complaints}
+                  </p>
                 </div>
                 <Clock className="h-8 w-8 text-yellow-500" />
               </div>
@@ -383,8 +407,12 @@ export function Complaints() {
             <div className="bg-white rounded-lg border p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">In Progress</p>
-                  <p className="text-2xl font-bold text-blue-600">{stats.in_progress_complaints}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    In Progress
+                  </p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {stats.in_progress_complaints}
+                  </p>
                 </div>
                 <RefreshCw className="h-8 w-8 text-blue-500" />
               </div>
@@ -394,7 +422,9 @@ export function Complaints() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Resolved</p>
-                  <p className="text-2xl font-bold text-green-600">{stats.resolved_complaints}</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {stats.resolved_complaints}
+                  </p>
                 </div>
                 <CheckCircle className="h-8 w-8 text-green-500" />
               </div>
@@ -404,7 +434,9 @@ export function Complaints() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Closed</p>
-                  <p className="text-2xl font-bold text-gray-600">{stats.closed_complaints}</p>
+                  <p className="text-2xl font-bold text-gray-600">
+                    {stats.closed_complaints}
+                  </p>
                 </div>
                 <XCircle className="h-8 w-8 text-gray-500" />
               </div>
@@ -414,7 +446,9 @@ export function Complaints() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Urgent</p>
-                  <p className="text-2xl font-bold text-red-600">{stats.urgent_complaints}</p>
+                  <p className="text-2xl font-bold text-red-600">
+                    {stats.urgent_complaints}
+                  </p>
                 </div>
                 <AlertTriangle className="h-8 w-8 text-red-500" />
               </div>
@@ -424,7 +458,9 @@ export function Complaints() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Today</p>
-                  <p className="text-2xl font-bold text-purple-600">{stats.today_complaints}</p>
+                  <p className="text-2xl font-bold text-purple-600">
+                    {stats.today_complaints}
+                  </p>
                 </div>
                 <Calendar className="h-8 w-8 text-purple-500" />
               </div>
@@ -501,9 +537,12 @@ export function Complaints() {
                   >
                     <div className="flex items-center space-x-1">
                       <span>Branch Name</span>
-                      {sortBy === "branch_name" && (
-                        sortOrder === "asc" ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                      )}
+                      {sortBy === "branch_name" &&
+                        (sortOrder === "asc" ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        ))}
                     </div>
                   </th>
                   <th className="text-left py-3 px-4 font-medium text-gray-900">
@@ -515,15 +554,26 @@ export function Complaints() {
                   >
                     <div className="flex items-center space-x-1">
                       <span>Timestamp</span>
-                      {sortBy === "timestamp" && (
-                        sortOrder === "asc" ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
-                      )}
+                      {sortBy === "timestamp" &&
+                        (sortOrder === "asc" ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        ))}
                     </div>
                   </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">Customer</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">Priority</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">Actions</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">
+                    Customer
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">
+                    Status
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">
+                    Priority
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -546,12 +596,16 @@ export function Complaints() {
                     <tr
                       key={complaint.complaint_id}
                       className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-                      onClick={() => fetchComplaintDetails(complaint.complaint_id)}
+                      onClick={() =>
+                        fetchComplaintDetails(complaint.complaint_id)
+                      }
                     >
                       <td className="py-3 px-4">
                         <div className="flex items-center space-x-2">
                           <Building2 className="h-4 w-4 text-gray-400" />
-                          <span className="font-medium text-gray-900">{complaint.branch_name}</span>
+                          <span className="font-medium text-gray-900">
+                            {complaint.branch_name}
+                          </span>
                         </div>
                       </td>
                       <td className="py-3 px-4">
@@ -561,29 +615,37 @@ export function Complaints() {
                       </td>
                       <td className="py-3 px-4">
                         <div>
-                          <div className="text-sm text-gray-900">{formatDate(complaint.timestamp)}</div>
-                          <div className="text-xs text-gray-500">{formatTime(complaint.timestamp)}</div>
+                          <div className="text-sm text-gray-900">
+                            {formatDate(complaint.timestamp)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {formatTime(complaint.timestamp)}
+                          </div>
                         </div>
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center space-x-2">
                           <User className="h-4 w-4 text-gray-400" />
                           <span className="text-sm text-gray-900">
-                            {typeof complaint.customer_data === 'object' && complaint.customer_data.customer_name
+                            {typeof complaint.customer_data === "object" &&
+                            complaint.customer_data.customer_name
                               ? complaint.customer_data.customer_name
-                              : 'Unknown Customer'
-                            }
+                              : "Unknown Customer"}
                           </span>
                         </div>
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center space-x-2">
                           {getStatusIcon(complaint.status)}
-                          <span className="text-sm capitalize">{complaint.status.replace('_', ' ')}</span>
+                          <span className="text-sm capitalize">
+                            {complaint.status.replace("_", " ")}
+                          </span>
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getPriorityColor(complaint.priority)}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getPriorityColor(complaint.priority)}`}
+                        >
                           {complaint.priority}
                         </span>
                       </td>
@@ -620,7 +682,9 @@ export function Complaints() {
                   Previous
                 </button>
                 <button
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  onClick={() =>
+                    setCurrentPage(Math.min(totalPages, currentPage + 1))
+                  }
                   disabled={currentPage === totalPages}
                   className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                 >
@@ -665,20 +729,30 @@ export function Complaints() {
                 {/* Basic Information */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-900">Branch Information</h3>
+                    <h3 className="text-lg font-medium text-gray-900">
+                      Branch Information
+                    </h3>
                     <div className="space-y-3">
                       <div className="flex items-center space-x-3">
                         <Building2 className="h-5 w-5 text-gray-400" />
                         <div>
-                          <p className="font-medium text-gray-900">{selectedComplaint.branch_name}</p>
-                          <p className="text-sm text-gray-500">Branch ID: {selectedComplaint.branch_id}</p>
+                          <p className="font-medium text-gray-900">
+                            {selectedComplaint.branch_name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Branch ID: {selectedComplaint.branch_id}
+                          </p>
                         </div>
                       </div>
                       {selectedComplaint.branch_address && (
                         <div className="ml-8">
-                          <p className="text-sm text-gray-600">{selectedComplaint.branch_address}</p>
+                          <p className="text-sm text-gray-600">
+                            {selectedComplaint.branch_address}
+                          </p>
                           {selectedComplaint.branch_city && (
-                            <p className="text-sm text-gray-500">{selectedComplaint.branch_city}</p>
+                            <p className="text-sm text-gray-500">
+                              {selectedComplaint.branch_city}
+                            </p>
                           )}
                         </div>
                       )}
@@ -686,22 +760,30 @@ export function Complaints() {
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-900">Complaint Status</h3>
+                    <h3 className="text-lg font-medium text-gray-900">
+                      Complaint Status
+                    </h3>
                     <div className="space-y-3">
                       <div className="flex items-center space-x-3">
                         {getStatusIcon(selectedComplaint.status)}
                         <span className="capitalize font-medium">
-                          {selectedComplaint.status.replace('_', ' ')}
+                          {selectedComplaint.status.replace("_", " ")}
                         </span>
                       </div>
                       <div>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${getPriorityColor(selectedComplaint.priority)}`}>
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${getPriorityColor(selectedComplaint.priority)}`}
+                        >
                           {selectedComplaint.priority} Priority
                         </span>
                       </div>
                       <div className="text-sm text-gray-600">
-                        <p>Created: {formatDate(selectedComplaint.created_on)}</p>
-                        <p>Updated: {formatDate(selectedComplaint.updated_on)}</p>
+                        <p>
+                          Created: {formatDate(selectedComplaint.created_on)}
+                        </p>
+                        <p>
+                          Updated: {formatDate(selectedComplaint.updated_on)}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -709,15 +791,21 @@ export function Complaints() {
 
                 {/* Customer Information */}
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Customer Information</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Customer Information
+                  </h3>
                   <div className="bg-gray-50 rounded-lg p-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {selectedComplaint.customer_data.customer_name && (
                         <div className="flex items-center space-x-3">
                           <User className="h-5 w-5 text-gray-400" />
                           <div>
-                            <p className="font-medium text-gray-900">{selectedComplaint.customer_data.customer_name}</p>
-                            <p className="text-sm text-gray-500">Customer Name</p>
+                            <p className="font-medium text-gray-900">
+                              {selectedComplaint.customer_data.customer_name}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Customer Name
+                            </p>
                           </div>
                         </div>
                       )}
@@ -726,8 +814,12 @@ export function Complaints() {
                         <div className="flex items-center space-x-3">
                           <Phone className="h-5 w-5 text-gray-400" />
                           <div>
-                            <p className="font-medium text-gray-900">{selectedComplaint.customer_data.customer_phone}</p>
-                            <p className="text-sm text-gray-500">Phone Number</p>
+                            <p className="font-medium text-gray-900">
+                              {selectedComplaint.customer_data.customer_phone}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Phone Number
+                            </p>
                           </div>
                         </div>
                       )}
@@ -736,8 +828,12 @@ export function Complaints() {
                         <div className="flex items-center space-x-3">
                           <Mail className="h-5 w-5 text-gray-400" />
                           <div>
-                            <p className="font-medium text-gray-900">{selectedComplaint.customer_data.customer_email}</p>
-                            <p className="text-sm text-gray-500">Email Address</p>
+                            <p className="font-medium text-gray-900">
+                              {selectedComplaint.customer_data.customer_email}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Email Address
+                            </p>
                           </div>
                         </div>
                       )}
@@ -746,7 +842,9 @@ export function Complaints() {
                         <div className="flex items-center space-x-3">
                           <AlertCircle className="h-5 w-5 text-gray-400" />
                           <div>
-                            <p className="font-medium text-gray-900">{selectedComplaint.customer_data.customer_cnic}</p>
+                            <p className="font-medium text-gray-900">
+                              {selectedComplaint.customer_data.customer_cnic}
+                            </p>
                             <p className="text-sm text-gray-500">CNIC</p>
                           </div>
                         </div>
@@ -756,7 +854,9 @@ export function Complaints() {
                         <div className="flex items-center space-x-3">
                           <RefreshCw className="h-5 w-5 text-gray-400" />
                           <div>
-                            <p className="font-medium text-gray-900">{selectedComplaint.customer_data.device_used}</p>
+                            <p className="font-medium text-gray-900">
+                              {selectedComplaint.customer_data.device_used}
+                            </p>
                             <p className="text-sm text-gray-500">Device Used</p>
                           </div>
                         </div>
@@ -766,8 +866,12 @@ export function Complaints() {
                         <div className="flex items-center space-x-3">
                           <AlertTriangle className="h-5 w-5 text-gray-400" />
                           <div>
-                            <p className="font-medium text-gray-900">{selectedComplaint.customer_data.issue_category}</p>
-                            <p className="text-sm text-gray-500">Issue Category</p>
+                            <p className="font-medium text-gray-900">
+                              {selectedComplaint.customer_data.issue_category}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Issue Category
+                            </p>
                           </div>
                         </div>
                       )}
@@ -777,7 +881,9 @@ export function Complaints() {
 
                 {/* Complaint Content */}
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Complaint Details</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Complaint Details
+                  </h3>
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div className="flex items-start space-x-3">
                       <MessageSquare className="h-5 w-5 text-blue-600 mt-1" />
@@ -843,7 +949,9 @@ export function Complaints() {
                 <div className="space-y-6">
                   {/* Customer Information */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Customer Information</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                      Customer Information
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -852,10 +960,12 @@ export function Complaints() {
                         <input
                           type="text"
                           value={createComplaintData.customer_name}
-                          onChange={(e) => setCreateComplaintData(prev => ({
-                            ...prev,
-                            customer_name: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setCreateComplaintData((prev) => ({
+                              ...prev,
+                              customer_name: e.target.value,
+                            }))
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                           placeholder="Enter customer name"
                           required
@@ -869,10 +979,12 @@ export function Complaints() {
                         <input
                           type="tel"
                           value={createComplaintData.customer_phone}
-                          onChange={(e) => setCreateComplaintData(prev => ({
-                            ...prev,
-                            customer_phone: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setCreateComplaintData((prev) => ({
+                              ...prev,
+                              customer_phone: e.target.value,
+                            }))
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                           placeholder="+92-300-1234567"
                         />
@@ -885,10 +997,12 @@ export function Complaints() {
                         <input
                           type="email"
                           value={createComplaintData.customer_email}
-                          onChange={(e) => setCreateComplaintData(prev => ({
-                            ...prev,
-                            customer_email: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setCreateComplaintData((prev) => ({
+                              ...prev,
+                              customer_email: e.target.value,
+                            }))
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                           placeholder="customer@email.com"
                         />
@@ -901,10 +1015,12 @@ export function Complaints() {
                         <input
                           type="text"
                           value={createComplaintData.customer_cnic}
-                          onChange={(e) => setCreateComplaintData(prev => ({
-                            ...prev,
-                            customer_cnic: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setCreateComplaintData((prev) => ({
+                              ...prev,
+                              customer_cnic: e.target.value,
+                            }))
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                           placeholder="42101-1234567-1"
                         />
@@ -917,10 +1033,12 @@ export function Complaints() {
                         <input
                           type="text"
                           value={createComplaintData.device_used}
-                          onChange={(e) => setCreateComplaintData(prev => ({
-                            ...prev,
-                            device_used: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setCreateComplaintData((prev) => ({
+                              ...prev,
+                              device_used: e.target.value,
+                            }))
+                          }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                           placeholder="Recording Device #1"
                         />
@@ -932,20 +1050,32 @@ export function Complaints() {
                         </label>
                         <Select
                           value={createComplaintData.issue_category}
-                          onValueChange={(value) => setCreateComplaintData(prev => ({
-                            ...prev,
-                            issue_category: value
-                          }))}
+                          onValueChange={(value) =>
+                            setCreateComplaintData((prev) => ({
+                              ...prev,
+                              issue_category: value,
+                            }))
+                          }
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Technical Issue">Technical Issue</SelectItem>
-                            <SelectItem value="Equipment Malfunction">Equipment Malfunction</SelectItem>
-                            <SelectItem value="Audio Quality">Audio Quality</SelectItem>
-                            <SelectItem value="Service Quality">Service Quality</SelectItem>
-                            <SelectItem value="System Error">System Error</SelectItem>
+                            <SelectItem value="Technical Issue">
+                              Technical Issue
+                            </SelectItem>
+                            <SelectItem value="Equipment Malfunction">
+                              Equipment Malfunction
+                            </SelectItem>
+                            <SelectItem value="Audio Quality">
+                              Audio Quality
+                            </SelectItem>
+                            <SelectItem value="Service Quality">
+                              Service Quality
+                            </SelectItem>
+                            <SelectItem value="System Error">
+                              System Error
+                            </SelectItem>
                             <SelectItem value="Other">Other</SelectItem>
                           </SelectContent>
                         </Select>
@@ -955,7 +1085,9 @@ export function Complaints() {
 
                   {/* Complaint Details */}
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Complaint Details</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">
+                      Complaint Details
+                    </h3>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -963,10 +1095,14 @@ export function Complaints() {
                         </label>
                         <Select
                           value={createComplaintData.priority}
-                          onValueChange={(value: "low" | "medium" | "high" | "urgent") => setCreateComplaintData(prev => ({
-                            ...prev,
-                            priority: value
-                          }))}
+                          onValueChange={(
+                            value: "low" | "medium" | "high" | "urgent",
+                          ) =>
+                            setCreateComplaintData((prev) => ({
+                              ...prev,
+                              priority: value,
+                            }))
+                          }
                         >
                           <SelectTrigger className="w-full md:w-48">
                             <SelectValue placeholder="Select priority" />
@@ -986,17 +1122,20 @@ export function Complaints() {
                         </label>
                         <textarea
                           value={createComplaintData.complaint_text}
-                          onChange={(e) => setCreateComplaintData(prev => ({
-                            ...prev,
-                            complaint_text: e.target.value
-                          }))}
+                          onChange={(e) =>
+                            setCreateComplaintData((prev) => ({
+                              ...prev,
+                              complaint_text: e.target.value,
+                            }))
+                          }
                           rows={4}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                           placeholder="Please describe the issue in detail..."
                           required
                         />
                         <p className="text-sm text-gray-500 mt-1">
-                          Provide a detailed description of the issue, including when it occurred and any relevant circumstances.
+                          Provide a detailed description of the issue, including
+                          when it occurred and any relevant circumstances.
                         </p>
                       </div>
                     </div>

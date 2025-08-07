@@ -66,8 +66,8 @@ export interface Complaint {
   timestamp: string;
   customer_data: CustomerData;
   complaint_text: string;
-  status: 'pending' | 'in_progress' | 'resolved' | 'closed';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: "pending" | "in_progress" | "resolved" | "closed";
+  priority: "low" | "medium" | "high" | "urgent";
   created_on: string;
   updated_on: string;
   branch_address?: string;

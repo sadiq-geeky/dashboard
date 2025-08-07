@@ -4,9 +4,9 @@ import { populateSampleData } from "../scripts/populate-sample-data";
 export const populateData: RequestHandler = async (req, res) => {
   try {
     console.log("🔄 Starting sample data population via API...");
-    
+
     await populateSampleData();
-    
+
     res.json({
       success: true,
       message: "Sample data populated successfully",
