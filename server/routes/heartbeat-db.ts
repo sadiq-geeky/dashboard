@@ -49,8 +49,8 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
         GROUP BY mac_address
       ) h
       LEFT JOIN devices d ON d.device_mac = h.mac_address
-      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
-      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id COLLATE utf8mb4_0900_ai_ci = d.id COLLATE utf8mb4_0900_ai_ci
+      LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
       ${whereClause}
       ORDER BY h.last_seen DESC
     `;
