@@ -368,6 +368,13 @@ export function Complaints() {
     searchQuery,
   ]);
 
+  // Fetch analytics when analytics tab is active
+  useEffect(() => {
+    if (activeTab === 'analytics') {
+      fetchAnalytics();
+    }
+  }, [activeTab, user?.branch_id]);
+
   // Debug user data on component mount
   useEffect(() => {
     console.log("Complaints component mounted, user data:", {
