@@ -11,10 +11,14 @@ export interface ConversationAnalytics {
   }>;
   conversationsByCity: Array<{
     city: string;
-    count: number;
-    branch_count: number;
+    conversion_count: number;
+    total_conversations: number;
   }>;
-  dailyConversationsLastMonth: Array<{ date: string; count: number }>;
+  dailyConversationsLastMonth: Array<{
+    date: string;
+    conversion_count: number;
+    total_conversations: number;
+  }>;
   uniqueCnicsByMonth: Array<{ month: string; unique_cnic_count: number }>;
   totalStats: {
     totalConversations: number;
