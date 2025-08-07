@@ -42,7 +42,15 @@ import {
   Edit2,
   Trash2,
   Building2,
+  X,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Fetch recordings from API with retry logic
 const fetchRecordings = async (
@@ -194,6 +202,10 @@ export function ExactDashboard() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCity, setSelectedCity] = useState<string>("all");
+  const [selectedBranchNo, setSelectedBranchNo] = useState<string>("all");
+  const [uniqueCities, setUniqueCities] = useState<string[]>([]);
+  const [uniqueBranchNos, setUniqueBranchNos] = useState<string[]>([]);
   const [selectedRecording, setSelectedRecording] =
     useState<RecordingHistory | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
