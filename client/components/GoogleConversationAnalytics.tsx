@@ -141,11 +141,16 @@ export function GoogleConversationAnalytics() {
         <div className="text-center">
           <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-2" />
           <p className="text-gray-600">No conversation analytics data available</p>
+          {error && (
+            <p className="text-red-600 text-sm mt-2 mb-2">
+              Error: {error}
+            </p>
+          )}
           <button
             onClick={fetchAnalytics}
             className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            Retry Loading Data
+            {loading ? "Loading..." : "Retry Loading Data"}
           </button>
         </div>
       </div>
