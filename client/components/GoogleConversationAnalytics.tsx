@@ -195,6 +195,9 @@ export function GoogleConversationAnalytics() {
   const conversationsByBranch = analytics.conversationsByBranch || [];
   const conversationsByCity = analytics.conversationsByCity || [];
   const monthlyTrends = analytics.monthlyTrends || [];
+  const conversionsByBranch = analytics.conversionsByBranch || [];
+  const conversionTrends = analytics.conversionTrends || [];
+  const conversionFunnel = analytics.conversionFunnel || [];
 
   const dailyChartData =
     dailyConversations.length > 0
