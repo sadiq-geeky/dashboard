@@ -231,11 +231,43 @@ export function Complaints() {
             device_id: userDeployment.device_name,
           }));
         } else {
-          setCreateComplaintData(prev => ({
-            ...prev,
-            device_id: "No device assigned",
-          }));
-          console.warn("No device deployment found for user");
+          // Try alternative lookup approaches
+          console.log("No exact user_id match found, trying alternative lookups...");
+
+          // Try matching by username
+          const userByUsername = data.data?.find((deployment: any) =>
+            deployment.username === user.username
+          );
+
+          // Try matching by emp_name
+          const userByEmpName = data.data?.find((deployment: any) =>
+            deployment.emp_name === user.emp_name
+          );
+
+          console.log("Alternative lookups:", {
+            byUsername: userByUsername,
+            byEmpName: userByEmpName
+          });
+
+          if (userByUsername && userByUsername.device_name) {
+            console.log("Found device by username match");
+            setCreateComplaintData(prev => ({
+              ...prev,
+              device_id: userByUsername.device_name,
+            }));
+          } else if (userByEmpName && userByEmpName.device_name) {
+            console.log("Found device by emp_name match");
+            setCreateComplaintData(prev => ({
+              ...prev,
+              device_id: userByEmpName.device_name,
+            }));
+          } else {
+            setCreateComplaintData(prev => ({
+              ...prev,
+              device_id: "No device assigned",
+            }));
+            console.warn("No device deployment found for user by any lookup method");
+          }
         }
       } else {
         const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
