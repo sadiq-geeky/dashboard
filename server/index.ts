@@ -205,6 +205,12 @@ export function createServer() {
     addBranchFilter(),
     getUniqueCnicsByMonth,
   );
+  app.get(
+    "/api/analytics/voice-streams",
+    authenticate,
+    addBranchFilter(),
+    getVoiceStreamsAnalytics,
+  );
 
   // User Management routes
   app.post("/api/auth/login", loginUser);
