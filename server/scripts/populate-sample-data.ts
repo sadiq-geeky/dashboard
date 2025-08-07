@@ -82,8 +82,8 @@ export async function populateSampleData() {
       try {
         await executeQuery(`
           INSERT IGNORE INTO branches
-          (id, branch_code, branch_name, branch_address, branch_city, region, is_active, created_on, updated_on)
-          VALUES (?, ?, ?, ?, ?, ?, true, NOW(), NOW())
+          (id, branch_code, branch_name, branch_address, branch_city, region)
+          VALUES (?, ?, ?, ?, ?, ?)
         `, [branch.id, branch.branch_code, branch.branch_name, branch.branch_address, branch.branch_city, branch.region]);
       } catch (error) {
         console.log(`Branch ${branch.branch_name} might already exist`);
@@ -106,9 +106,9 @@ export async function populateSampleData() {
       try {
         await executeQuery(`
           INSERT IGNORE INTO devices
-          (id, device_mac, ip_address, device_name, is_active, created_on, updated_on)
-          VALUES (?, ?, ?, ?, true, NOW(), NOW())
-        `, [device.id, device.device_mac, device.ip_address, device.device_name]);
+          (id, device_mac, ip_address, device_name, device_status, branch_id)
+          VALUES (?, ?, ?, ?, 'active', ?)
+        `, [device.id, device.device_mac, device.ip_address, device.device_name, branches[0].id]);
       } catch (error) {
         console.log(`Device ${device.device_name} might already exist`);
       }
