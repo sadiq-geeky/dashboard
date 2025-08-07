@@ -28,11 +28,18 @@ interface MonthlyVoiceStreamData {
   formatted_month: string;
 }
 
+interface DailyVoiceStreamData {
+  date: string;
+  voice_streams: number;
+  formatted_date: string;
+}
+
 interface VoiceStreamStats {
   total_streams: number;
   current_month_streams: number;
   previous_month_streams: number;
   monthly_data: MonthlyVoiceStreamData[];
+  daily_current_month: DailyVoiceStreamData[];
 }
 
 export function BranchVoiceStreamsAnalytics() {
