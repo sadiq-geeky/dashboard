@@ -74,153 +74,26 @@ export function GoogleConversationAnalytics() {
     try {
       setLoading(true);
       setError(null);
+
+      console.log("Fetching conversation analytics from /api/analytics/conversations");
       const response = await authFetch("/api/analytics/conversations");
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch analytics: ${response.status}`);
+        const errorText = await response.text();
+        console.error("API Error Response:", response.status, errorText);
+        throw new Error(`Failed to fetch analytics: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
+      console.log("Received analytics data:", data);
       setAnalytics(data);
     } catch (error) {
       console.error("Error fetching conversation analytics:", error);
       setError(
         error instanceof Error ? error.message : "Failed to fetch analytics",
       );
-      // Set mock data for demo purposes
-      setAnalytics({
-        totalConversations: 2156,
-        uniqueCustomers: 1847,
-        activeBranches: 12,
-        todayConversations: 89,
-        conversationsByBranch: [
-          { branch_name: "Downtown Branch", conversations: 456 },
-          { branch_name: "North Branch", conversations: 387 },
-          { branch_name: "South Branch", conversations: 332 },
-          { branch_name: "East Branch", conversations: 298 },
-          { branch_name: "West Branch", conversations: 401 },
-          { branch_name: "Central Branch", conversations: 282 },
-        ],
-        conversationsByCity: [
-          { city: "New York", conversations: 678 },
-          { city: "Los Angeles", conversations: 543 },
-          { city: "Chicago", conversations: 456 },
-          { city: "Houston", conversations: 324 },
-          { city: "Phoenix", conversations: 155 },
-        ],
-        dailyConversations: [
-          { date: "2024-01-15", count: 87 },
-          { date: "2024-01-16", count: 92 },
-          { date: "2024-01-17", count: 78 },
-          { date: "2024-01-18", count: 95 },
-          { date: "2024-01-19", count: 103 },
-          { date: "2024-01-20", count: 89 },
-          { date: "2024-01-21", count: 94 },
-        ],
-        monthlyTrends: [
-          { month: "Jan", conversations: 2156, customers: 1847 },
-          { month: "Dec", conversations: 1987, customers: 1654 },
-          { month: "Nov", conversations: 1823, customers: 1532 },
-          { month: "Oct", conversations: 1765, customers: 1498 },
-          { month: "Sep", conversations: 1698, customers: 1421 },
-          { month: "Aug", conversations: 1634, customers: 1387 },
-        ],
-        conversionMetrics: {
-          totalConversions: 1834,
-          conversionRate: 85.1,
-          avgConversationDuration: 245,
-          successfulOutcomes: 1634,
-        },
-        conversionsByBranch: [
-          {
-            branch_name: "Downtown Branch",
-            total_conversations: 456,
-            successful_conversions: 398,
-            conversion_rate: 87.3,
-          },
-          {
-            branch_name: "North Branch",
-            total_conversations: 387,
-            successful_conversions: 329,
-            conversion_rate: 85.0,
-          },
-          {
-            branch_name: "South Branch",
-            total_conversations: 332,
-            successful_conversions: 275,
-            conversion_rate: 82.8,
-          },
-          {
-            branch_name: "East Branch",
-            total_conversations: 298,
-            successful_conversions: 248,
-            conversion_rate: 83.2,
-          },
-          {
-            branch_name: "West Branch",
-            total_conversations: 401,
-            successful_conversions: 346,
-            conversion_rate: 86.3,
-          },
-          {
-            branch_name: "Central Branch",
-            total_conversations: 282,
-            successful_conversions: 238,
-            conversion_rate: 84.4,
-          },
-        ],
-        conversionTrends: [
-          {
-            date: "2024-01-15",
-            conversations: 87,
-            conversions: 74,
-            conversion_rate: 85.1,
-          },
-          {
-            date: "2024-01-16",
-            conversations: 92,
-            conversions: 79,
-            conversion_rate: 85.9,
-          },
-          {
-            date: "2024-01-17",
-            conversations: 78,
-            conversions: 65,
-            conversion_rate: 83.3,
-          },
-          {
-            date: "2024-01-18",
-            conversations: 95,
-            conversions: 82,
-            conversion_rate: 86.3,
-          },
-          {
-            date: "2024-01-19",
-            conversations: 103,
-            conversions: 88,
-            conversion_rate: 85.4,
-          },
-          {
-            date: "2024-01-20",
-            conversations: 89,
-            conversions: 76,
-            conversion_rate: 85.4,
-          },
-          {
-            date: "2024-01-21",
-            conversations: 94,
-            conversions: 81,
-            conversion_rate: 86.2,
-          },
-        ],
-        conversionFunnel: [
-          { stage: "Initial Contact", count: 2156, percentage: 100 },
-          { stage: "Information Gathered", count: 1947, percentage: 90.3 },
-          { stage: "Needs Assessment", count: 1834, percentage: 85.1 },
-          { stage: "Solution Presented", count: 1723, percentage: 79.9 },
-          { stage: "Successful Outcome", count: 1634, percentage: 75.8 },
-        ],
-      });
+      // Don't set mock data - leave analytics as null to show error state
+      setAnalytics(null);
     } finally {
       setLoading(false);
     }
