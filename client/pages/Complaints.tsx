@@ -474,7 +474,20 @@ export function Complaints() {
             {/* Report Device Issue Button */}
             <button
               onClick={() => {
+                // Immediately fill user data from context
+                setCreateComplaintData({
+                  customer_name: user?.emp_name || user?.username || "",
+                  customer_phone: user?.phone_no || "",
+                  customer_email: user?.email_id || "",
+                  customer_cnic: "",
+                  device_id: "",
+                  city: user?.branch_city || "",
+                  issue_category: "",
+                  complaint_text: "",
+                  priority: "medium",
+                });
                 setShowCreateModal(true);
+                // Then try to get device info
                 fetchUserDeviceInfo();
               }}
               className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
