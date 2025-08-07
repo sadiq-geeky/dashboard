@@ -200,19 +200,20 @@ export function ComplaintsStyleAnalytics() {
           </div>
         )}
 
-        {/* Error state */}
-        {dashboardData.error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
-            <p className="text-red-600">Error: {dashboardData.error}</p>
-            <button
-              onClick={fetchDashboardAnalytics}
-              className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-            >
-              Retry
-            </button>
-          </div>
-        )}
-      </div>
+          {/* Error state */}
+          {dashboardData.error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+              <p className="text-red-600">Error: {dashboardData.error}</p>
+              <button
+                onClick={fetchDashboardAnalytics}
+                className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Interactive Branch Chart - Admin Only */}
       {isAdmin() && <InteractiveBranchChart />}
