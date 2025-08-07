@@ -405,7 +405,7 @@ export function ExactDashboard() {
           className="flex items-center justify-between h-12 px-4"
           style={{ margin: "0 auto" }}
         >
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-0.5">
             <button
               onClick={() => {
                 setActiveTab("home");
