@@ -233,6 +233,7 @@ export function createServer() {
   // Complaints Management routes (admin only)
   app.get("/api/complaints", authenticate, addBranchFilter(), getComplaints);
   app.get("/api/complaints/stats", authenticate, getComplaintsStats);
+  app.get("/api/complaints/analytics", authenticate, getComplaintsAnalytics);
   app.get("/api/complaints/:complaint_id", authenticate, getComplaint);
   app.post("/api/complaints", authenticate, createComplaint);
   app.put("/api/complaints/:complaint_id", authenticate, updateComplaint);
