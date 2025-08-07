@@ -197,7 +197,7 @@ export function GoogleConversationAnalytics() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Today's Conversations</p>
-              <p className="text-2xl font-bold text-gray-900">{analytics.todayConversations}</p>
+              <p className="text-2xl font-bold text-gray-900">{analytics.todayConversations || 0}</p>
             </div>
             <TrendingUp className="h-8 w-8 text-emerald-500" />
           </div>
