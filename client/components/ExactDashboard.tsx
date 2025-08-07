@@ -348,8 +348,6 @@ export function ExactDashboard() {
     }
   }, [
     searchQuery,
-    selectedCity,
-    selectedBranchNo,
     recordings,
     currentPage,
     itemsPerPage,
