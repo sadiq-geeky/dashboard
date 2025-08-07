@@ -468,11 +468,13 @@ export const getComplaintsAnalytics: RequestHandler = async (req, res) => {
       GROUP BY priority
     `;
 
+    // We need to pass queryParams twice - once for the subquery and once for the main query
+    const priorityParams = [...queryParams, ...queryParams];
     const priorityDistribution = await executeQuery<{
       priority: string;
       count: number;
       percentage: number;
-    }>(priorityQuery, queryParams);
+    }>(priorityQuery, priorityParams);
 
     // Get status distribution
     const statusQuery = `
@@ -485,11 +487,13 @@ export const getComplaintsAnalytics: RequestHandler = async (req, res) => {
       GROUP BY status
     `;
 
+    // We need to pass queryParams twice - once for the subquery and once for the main query
+    const statusParams = [...queryParams, ...queryParams];
     const statusDistribution = await executeQuery<{
       status: string;
       count: number;
       percentage: number;
-    }>(statusQuery, queryParams);
+    }>(statusQuery, statusParams);
 
     // Calculate average resolution time (in days)
     const resolutionTimeQuery = `
