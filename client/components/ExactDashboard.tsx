@@ -393,7 +393,7 @@ export function ExactDashboard() {
   const currentRecordings = filteredRecordings.slice(startIndex, endIndex);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-screen bg-gray-50 overflow-hidden">
       <Header />
 
       {/* Navigation Tabs */}
@@ -556,7 +556,6 @@ export function ExactDashboard() {
                         <th className="text-left py-1.5 px-1.5 text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Branch Address
                         </th>
-                        <th className="w-10"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -589,11 +588,6 @@ export function ExactDashboard() {
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.branch_address || "NA"}
-                          </td>
-                          <td className="py-1 px-1.5">
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <MoreHorizontal className="w-4 h-4" />
-                            </button>
                           </td>
                         </tr>
                       ))}
