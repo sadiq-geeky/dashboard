@@ -293,11 +293,11 @@ export const loginUser: RequestHandler = async (req, res) => {
       });
     }
 
-    // Get user by username with branch info from both users table and link table
+    // Get user by username with branch info from link table
     const users = await executeQuery<User & {branch_id: string | null, branch_city: string | null}>(
       `SELECT u.*,
-              COALESCE(u.branch_id, ldbu.branch_id) as branch_id,
-              COALESCE(u.branch_city, b.branch_city) as branch_city
+              ldbu.branch_id as branch_id,
+              b.branch_city as branch_city
        FROM users u
        LEFT JOIN link_device_branch_user ldbu ON ldbu.user_id = u.uuid
        LEFT JOIN branches b ON b.id = ldbu.branch_id
