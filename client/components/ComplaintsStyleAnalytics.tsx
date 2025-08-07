@@ -84,26 +84,27 @@ export function ComplaintsStyleAnalytics() {
 
   return (
     <div className="space-y-6">
-      {/* Analytics Header */}
-      <div className="mb-6">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-purple-100 rounded-lg">
-            <BarChart3 className="h-6 w-6 text-purple-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              {isAdmin()
-                ? "Analytics Dashboard"
-                : `${user?.branch_city || "Branch"} Analytics`}
-            </h1>
-            <p className="text-gray-600">
-              {isAdmin()
-                ? "Comprehensive analytics across all branches"
-                : "Analytics and insights for your branch"}
-            </p>
+      {/* Branch Voice Streams Analytics for Non-Admin Users */}
+      {!isAdmin() && <BranchVoiceStreamsAnalytics />}
+
+      {/* General Analytics Header for Admin Users */}
+      {isAdmin() && (
+        <div className="mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <BarChart3 className="h-6 w-6 text-purple-600" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Analytics Dashboard
+              </h1>
+              <p className="text-gray-600">
+                Comprehensive analytics across all branches
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Conversation Analytics Section */}
       <div className="bg-white rounded-lg shadow p-6 mb-8">
