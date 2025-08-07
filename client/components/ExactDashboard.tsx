@@ -677,48 +677,42 @@ export function ExactDashboard() {
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Wifi className="h-8 w-8 text-green-600" />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-500">
+                  <div className="bg-white rounded-md border border-gray-200 p-3">
+                    <div className="flex items-center space-x-2">
+                      <Wifi className="h-5 w-5 text-green-600" />
+                      <div>
+                        <div className="text-xs font-medium text-gray-500">
                           Online
                         </div>
-                        <div className="text-2xl font-bold text-green-600">
+                        <div className="text-lg font-bold text-green-600">
                           {onlineCount}
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <AlertTriangle className="h-8 w-8 text-yellow-600" />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-500">
+                  <div className="bg-white rounded-md border border-gray-200 p-3">
+                    <div className="flex items-center space-x-2">
+                      <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                      <div>
+                        <div className="text-xs font-medium text-gray-500">
                           Problematic
                         </div>
-                        <div className="text-2xl font-bold text-yellow-600">
+                        <div className="text-lg font-bold text-yellow-600">
                           {problematicCount}
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg border border-gray-200 p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <WifiOff className="h-8 w-8 text-red-600" />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-500">
+                  <div className="bg-white rounded-md border border-gray-200 p-3">
+                    <div className="flex items-center space-x-2">
+                      <WifiOff className="h-5 w-5 text-red-600" />
+                      <div>
+                        <div className="text-xs font-medium text-gray-500">
                           Offline
                         </div>
-                        <div className="text-2xl font-bold text-red-600">
+                        <div className="text-lg font-bold text-red-600">
                           {offlineCount}
                         </div>
                       </div>
