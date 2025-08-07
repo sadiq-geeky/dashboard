@@ -267,6 +267,33 @@ export function ExactDashboard() {
     }
   };
 
+  const populateSampleData = async () => {
+    setIsPopulatingData(true);
+    try {
+      const response = await authFetch("/api/populate-sample-data", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to populate sample data");
+      }
+
+      const result = await response.json();
+      console.log("Sample data populated:", result);
+
+      // Reload data after population
+      await loadRecordings();
+      await loadDevices();
+
+      alert("Sample data populated successfully! Analytics should now show real data.");
+    } catch (error) {
+      console.error("Error populating sample data:", error);
+      alert("Failed to populate sample data. Please check the console for details.");
+    } finally {
+      setIsPopulatingData(false);
+    }
+  };
+
   // Handle URL parameter changes for tab switching
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
