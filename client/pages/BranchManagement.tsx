@@ -138,9 +138,7 @@ export function BranchManagement() {
     if (!confirm("Are you sure you want to deactivate this branch?")) return;
 
     try {
-      const response = await fetch(`/api/branches/${id}`, {
-        method: "DELETE",
-      });
+      const response = await authDelete(`/api/branches/${id}`);
 
       if (!response.ok) throw new Error("Failed to delete branch");
       await fetchBranches();
