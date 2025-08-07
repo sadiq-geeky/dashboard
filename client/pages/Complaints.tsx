@@ -1722,151 +1722,105 @@ export function Complaints() {
                       </div>
                     </div>
 
-                    {/* Daily Conversations - Last Month */}
+                    {/* Conversations Last Month */}
                     <div className="bg-white rounded-lg shadow p-6">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-gray-900">Daily Conversations</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Conversations Last Month</h3>
                         <div className="flex items-center space-x-2 text-sm text-gray-500">
                           <Calendar className="h-4 w-4" />
                           <span>December 2024</span>
                         </div>
                       </div>
-                      <div className="h-64 bg-gray-50 rounded-lg p-4">
-                        <div className="h-full flex items-end justify-between space-x-1">
-                          {/* Week 1 */}
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '20px' }}></div>
-                            <span className="text-xs text-gray-500">1</span>
+
+                      {/* Weekly View */}
+                      <div className="h-64 bg-gradient-to-b from-gray-50 to-gray-100 rounded-lg p-6">
+                        <div className="h-full flex items-end justify-between space-x-6">
+                          {/* Week 1 (Dec 1-7) */}
+                          <div className="flex flex-col items-center group">
+                            <div className="relative">
+                              <div className="w-16 bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
+                                   style={{ height: '80px' }}></div>
+                              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                3 conversations
+                              </div>
+                            </div>
+                            <span className="text-sm text-gray-600 mt-3 font-medium">Week 1</span>
+                            <span className="text-xs text-gray-500">Dec 1-7</span>
+                            <span className="text-sm font-bold text-emerald-600 mt-1">3</span>
                           </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">2</span>
+
+                          {/* Week 2 (Dec 8-14) */}
+                          <div className="flex flex-col items-center group">
+                            <div className="relative">
+                              <div className="w-16 bg-gradient-to-t from-gray-300 to-gray-200 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
+                                   style={{ height: '0px' }}></div>
+                              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                0 conversations
+                              </div>
+                            </div>
+                            <span className="text-sm text-gray-600 mt-3 font-medium">Week 2</span>
+                            <span className="text-xs text-gray-500">Dec 8-14</span>
+                            <span className="text-sm font-bold text-gray-400 mt-1">0</span>
                           </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '15px' }}></div>
-                            <span className="text-xs text-gray-500">3</span>
+
+                          {/* Week 3 (Dec 15-21) */}
+                          <div className="flex flex-col items-center group">
+                            <div className="relative">
+                              <div className="w-16 bg-gradient-to-t from-gray-300 to-gray-200 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
+                                   style={{ height: '0px' }}></div>
+                              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                0 conversations
+                              </div>
+                            </div>
+                            <span className="text-sm text-gray-600 mt-3 font-medium">Week 3</span>
+                            <span className="text-xs text-gray-500">Dec 15-21</span>
+                            <span className="text-sm font-bold text-gray-400 mt-1">0</span>
                           </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">4</span>
+
+                          {/* Week 4 (Dec 22-28) */}
+                          <div className="flex flex-col items-center group">
+                            <div className="relative">
+                              <div className="w-16 bg-gradient-to-t from-gray-300 to-gray-200 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
+                                   style={{ height: '0px' }}></div>
+                              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                0 conversations
+                              </div>
+                            </div>
+                            <span className="text-sm text-gray-600 mt-3 font-medium">Week 4</span>
+                            <span className="text-xs text-gray-500">Dec 22-28</span>
+                            <span className="text-sm font-bold text-gray-400 mt-1">0</span>
                           </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '25px' }}></div>
-                            <span className="text-xs text-gray-500">5</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">6</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">7</span>
-                          </div>
-                          {/* Week 2 */}
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">8</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">9</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">10</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">11</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">12</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">13</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">14</span>
-                          </div>
-                          {/* Week 3 */}
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">15</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">16</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">17</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">18</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">19</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">20</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">21</span>
-                          </div>
-                          {/* Week 4 */}
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">22</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">23</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">24</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">25</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">26</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">27</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">28</span>
-                          </div>
-                          {/* Week 5 */}
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">29</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">30</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <div className="w-6 bg-green-500 rounded-t mb-1" style={{ height: '0px' }}></div>
-                            <span className="text-xs text-gray-500">31</span>
+
+                          {/* Week 5 (Dec 29-31) */}
+                          <div className="flex flex-col items-center group">
+                            <div className="relative">
+                              <div className="w-16 bg-gradient-to-t from-gray-300 to-gray-200 rounded-t-lg shadow-sm hover:shadow-md transition-all duration-200"
+                                   style={{ height: '0px' }}></div>
+                              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                0 conversations
+                              </div>
+                            </div>
+                            <span className="text-sm text-gray-600 mt-3 font-medium">Week 5</span>
+                            <span className="text-xs text-gray-500">Dec 29-31</span>
+                            <span className="text-sm font-bold text-gray-400 mt-1">0</span>
                           </div>
                         </div>
                       </div>
-                      <div className="mt-4 flex justify-between text-sm">
-                        <div className="text-gray-500">Peak day: Dec 5 (1 conversation)</div>
-                        <div className="text-gray-500">Avg: 0.06/day</div>
+
+                      {/* Enhanced Summary */}
+                      <div className="mt-6 grid grid-cols-3 gap-4 pt-4 border-t border-gray-200">
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-emerald-600">3</div>
+                          <div className="text-xs text-gray-500">Total Conversations</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-blue-600">Week 1</div>
+                          <div className="text-xs text-gray-500">Most Active</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-orange-600">0.10</div>
+                          <div className="text-xs text-gray-500">Avg/Day</div>
+                        </div>
                       </div>
                     </div>
                   </div>
