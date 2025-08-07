@@ -88,9 +88,7 @@ export function UserManagement() {
     }
 
     try {
-      const response = await fetch(`/api/users/${uuid}`, {
-        method: "DELETE",
-      });
+      const response = await authDelete(`/api/users/${uuid}`);
 
       if (response.ok) {
         loadUsers(); // Refresh the list
