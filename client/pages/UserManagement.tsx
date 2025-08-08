@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "../components/Header";
-import { AdminNavigation } from "../components/AdminNavigation";
 import { AddUserModal } from "../components/AddUserModal";
 import { EditUserModal } from "../components/EditUserModal";
 import { cn } from "@/lib/utils";

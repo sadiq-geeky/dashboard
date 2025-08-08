@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "../components/Header";
-import { AdminNavigation } from "../components/AdminNavigation";
 import { cn } from "@/lib/utils";
 import { authDelete, authFetch } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
