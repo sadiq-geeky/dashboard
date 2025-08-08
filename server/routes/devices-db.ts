@@ -255,7 +255,7 @@ export const updateDevice: RequestHandler = async (req, res) => {
       WHERE id = ?
     `;
 
-    const result = await executeQuery(query, [
+    const result = await executeUpdate(query, [
       device_name,
       device_mac || null,
       ip_address || null,
@@ -287,7 +287,7 @@ export const deleteDevice: RequestHandler = async (req, res) => {
     const { id } = req.params;
 
     const query = `DELETE FROM devices WHERE id = ?`;
-    const result = await executeQuery(query, [id]);
+    const result = await executeUpdate(query, [id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Device not found" });
