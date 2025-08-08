@@ -79,9 +79,10 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
 
       const fallbackQuery = `
         SELECT
-          CONCAT('Device-', h.mac_address) AS branch_name,
-          h.ip_address AS branch_code,
+          'Not linked to branch' AS branch_name,
+          'Not linked to branch' AS branch_code,
           h.ip_address,
+          h.mac_address as device_id,
           MAX(h.created_on) AS last_seen,
           CASE
             WHEN TIMESTAMPDIFF(MINUTE, MAX(h.created_on), NOW()) <= 5 THEN 'online'
