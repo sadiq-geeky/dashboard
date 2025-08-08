@@ -874,10 +874,8 @@ export function ExactDashboard() {
                               </span>
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-600 font-mono">
-                              {device.status === "offline" ? (
+                              {device.ip_address || (
                                 <span className="text-gray-400">N/A</span>
-                              ) : (
-                                `192.168.1.${100 + index}`
                               )}
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-600">
