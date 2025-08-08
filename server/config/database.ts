@@ -63,6 +63,37 @@ export async function executeQuery<T = any>(
   throw new Error("All retry attempts failed");
 }
 
+// Helper function for UPDATE/DELETE operations that returns ResultSetHeader
+export async function executeUpdate(
+  query: string,
+  params: any[] = [],
+  retries: number = 3,
+): Promise<{ affectedRows: number; insertId?: number }> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const [result] = await pool.execute(query, params);
+      return result as { affectedRows: number; insertId?: number };
+    } catch (error) {
+      console.error(
+        `Database update error (attempt ${attempt}/${retries}):`,
+        error,
+      );
+
+      // If it's the last attempt or not a connection error, throw the error
+      if (attempt === retries || !isConnectionError(error)) {
+        throw error;
+      }
+
+      // Wait before retrying (exponential backoff)
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.pow(2, attempt) * 1000),
+      );
+    }
+  }
+
+  throw new Error("All retry attempts failed");
+}
+
 // Check if error is connection related
 function isConnectionError(error: any): boolean {
   const connectionErrorCodes = [
