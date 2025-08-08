@@ -91,7 +91,6 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
         FROM heartbeat h
         LEFT JOIN devices d ON d.device_mac = h.mac_address
         WHERE h.mac_address IS NOT NULL
-        AND (d.device_status = 'active' OR d.device_status IS NULL)
         GROUP BY h.mac_address, h.ip_address
         ORDER BY MAX(h.created_on) DESC
         LIMIT 50
