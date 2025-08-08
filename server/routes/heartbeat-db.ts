@@ -79,20 +79,22 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
 
       const fallbackQuery = `
         SELECT
-          CONCAT('Device-', mac_address) AS branch_name,
-          ip_address AS branch_code,
-          MAX(created_on) AS last_seen,
+          CONCAT('Device-', h.mac_address) AS branch_name,
+          h.ip_address AS branch_code,
+          h.ip_address,
+          MAX(h.created_on) AS last_seen,
           CASE
-            WHEN TIMESTAMPDIFF(MINUTE, MAX(created_on), NOW()) <= 5 THEN 'online'
-            WHEN TIMESTAMPDIFF(MINUTE, MAX(created_on), NOW()) <= 15 THEN 'problematic'
+            WHEN TIMESTAMPDIFF(MINUTE, MAX(h.created_on), NOW()) <= 5 THEN 'online'
+            WHEN TIMESTAMPDIFF(MINUTE, MAX(h.created_on), NOW()) <= 15 THEN 'problematic'
             ELSE 'offline'
           END AS status,
           '0h 0m' AS uptime_duration_24h
-        FROM heartbeat
-        WHERE mac_address IS NOT NULL
-        ${branchFilter ? "" : ""}
-        GROUP BY mac_address, ip_address
-        ORDER BY MAX(created_on) DESC
+        FROM heartbeat h
+        LEFT JOIN devices d ON d.device_mac = h.mac_address
+        WHERE h.mac_address IS NOT NULL
+        AND (d.device_status = 'active' OR d.device_status IS NULL)
+        GROUP BY h.mac_address, h.ip_address
+        ORDER BY MAX(h.created_on) DESC
         LIMIT 50
       `;
 
