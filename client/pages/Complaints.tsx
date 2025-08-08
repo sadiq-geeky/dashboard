@@ -703,70 +703,73 @@ export function Complaints() {
                   </div>
                 </div>
 
-                {/* Report Device Issue Button */}
-                <button
-                  onClick={async () => {
-                    // Debug user data
-                    console.log("User data available:", {
-                      emp_name: user?.emp_name,
-                      username: user?.username,
-                      phone_no: user?.phone_no,
-                      email_id: user?.email_id,
-                      branch_city: user?.branch_city,
-                      full_user: user,
-                    });
+                {/* Report Device Issue Button - Hidden for admins */}
+                {!isAdmin() && (
+                  <button
+                    onClick={async () => {
+                      // Debug user data
+                      console.log("User data available:", {
+                        emp_name: user?.emp_name,
+                        username: user?.username,
+                        phone_no: user?.phone_no,
+                        email_id: user?.email_id,
+                        branch_city: user?.branch_city,
+                        full_user: user,
+                      });
 
-                    let phoneNo = user?.phone_no || "";
-                    let emailId = user?.email_id || "";
+                      let phoneNo = user?.phone_no || "";
+                      let emailId = user?.email_id || "";
 
-                    // If phone or email is missing, try to fetch from user profile
-                    if (!phoneNo || !emailId) {
-                      console.log(
-                        "Phone or email missing, fetching user profile...",
-                      );
-                      try {
-                        const userProfileResponse = await authFetch(
-                          `/api/users/${user?.uuid}`,
+                      // If phone or email is missing, try to fetch from user profile
+                      if (!phoneNo || !emailId) {
+                        console.log(
+                          "Phone or email missing, fetching user profile...",
                         );
-                        if (userProfileResponse.ok) {
-                          const userProfile = await userProfileResponse.json();
-                          console.log("User profile data:", userProfile);
-                          phoneNo = userProfile.phone_no || phoneNo;
-                          emailId = userProfile.email_id || emailId;
+                        try {
+                          const userProfileResponse = await authFetch(
+                            `/api/users/${user?.uuid}`,
+                          );
+                          if (userProfileResponse.ok) {
+                            const userProfile =
+                              await userProfileResponse.json();
+                            console.log("User profile data:", userProfile);
+                            phoneNo = userProfile.phone_no || phoneNo;
+                            emailId = userProfile.email_id || emailId;
+                          }
+                        } catch (error) {
+                          console.error("Failed to fetch user profile:", error);
                         }
-                      } catch (error) {
-                        console.error("Failed to fetch user profile:", error);
                       }
-                    }
 
-                    // Immediately fill user data from context
-                    const initialData = {
-                      customer_name: user?.emp_name || user?.username || "",
-                      customer_phone: phoneNo,
-                      customer_email: emailId,
-                      customer_cnic: "",
-                      device_id: "Loading device info...",
-                      city: user?.branch_city || "",
-                      issue_category: "",
-                      complaint_text: "",
-                      priority: "medium" as
-                        | "low"
-                        | "medium"
-                        | "high"
-                        | "urgent",
-                    };
+                      // Immediately fill user data from context
+                      const initialData = {
+                        customer_name: user?.emp_name || user?.username || "",
+                        customer_phone: phoneNo,
+                        customer_email: emailId,
+                        customer_cnic: "",
+                        device_id: "Loading device info...",
+                        city: user?.branch_city || "",
+                        issue_category: "",
+                        complaint_text: "",
+                        priority: "medium" as
+                          | "low"
+                          | "medium"
+                          | "high"
+                          | "urgent",
+                      };
 
-                    console.log("Setting initial form data:", initialData);
-                    setCreateComplaintData(initialData);
-                    setShowCreateModal(true);
-                    // Then try to get device info
-                    fetchUserDeviceInfo();
-                  }}
-                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span>Report Device Issue</span>
-                </button>
+                      console.log("Setting initial form data:", initialData);
+                      setCreateComplaintData(initialData);
+                      setShowCreateModal(true);
+                      // Then try to get device info
+                      fetchUserDeviceInfo();
+                    }}
+                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>Report Device Issue</span>
+                  </button>
+                )}
               </div>
             </div>
 

@@ -214,6 +214,10 @@ export function ExactDashboard() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [previousLogs, setPreviousLogs] = useState<RecordingHistory[]>([]);
+  const [isCustomerProfileCollapsed, setIsCustomerProfileCollapsed] =
+    useState(false);
+  const [isPreviousLogsCollapsed, setIsPreviousLogsCollapsed] = useState(false);
 
   const itemsPerPage = 12;
 
@@ -267,6 +271,33 @@ export function ExactDashboard() {
       setLastUpdate(new Date());
     } finally {
       setIsRefreshing(false);
+    }
+  };
+
+  const loadPreviousLogs = async (cnic: string | undefined) => {
+    if (!cnic) {
+      setPreviousLogs([]);
+      return;
+    }
+
+    try {
+      const response = await authFetch(
+        `/api/recordings?search=${encodeURIComponent(cnic)}&limit=10`,
+      );
+      if (response.ok) {
+        const data: PaginatedResponse<RecordingHistory> = await response.json();
+        // Filter out the current recording
+        const logs = data.data.filter(
+          (log) => log.id !== selectedRecording?.id,
+        );
+        setPreviousLogs(logs);
+      } else {
+        console.error("Failed to fetch previous logs");
+        setPreviousLogs([]);
+      }
+    } catch (error) {
+      console.error("Error fetching previous logs:", error);
+      setPreviousLogs([]);
     }
   };
 
@@ -516,6 +547,15 @@ export function ExactDashboard() {
       setCurrentTime(0);
       setDuration(0);
       setIsPlaying(false);
+    }
+  }, [selectedRecording]);
+
+  // Load previous logs when recording is selected
+  useEffect(() => {
+    if (selectedRecording?.cnic) {
+      loadPreviousLogs(selectedRecording.cnic);
+    } else {
+      setPreviousLogs([]);
     }
   }, [selectedRecording]);
 
@@ -839,10 +879,8 @@ export function ExactDashboard() {
                               </span>
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-600 font-mono">
-                              {device.status === "offline" ? (
+                              {device.ip_address || (
                                 <span className="text-gray-400">N/A</span>
-                              ) : (
-                                `192.168.1.${100 + index}`
                               )}
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-600">
@@ -907,153 +945,232 @@ export function ExactDashboard() {
           </div>
         </div>
 
-        {/* Right Sidebar - Only show when a recording is selected and on home tab */}
-        {selectedRecording && activeTab === "home" && (
-          <div className="w-80 bg-white border-l border-gray-200">
-            <div className="p-6">
-              {/* Audio Player Section */}
-              {selectedRecording && (
-                <div className="mb-6 pb-6 border-b border-gray-200">
-                  <h2 className="text-sm font-medium text-gray-900 mb-3">
-                    Recording {selectedRecording.id?.slice(-5) || "43543"}
-                  </h2>
+        {/* Right Sidebar - Only show when a recording is selected and on home tab and at least one section is expanded */}
+        {selectedRecording &&
+          activeTab === "home" &&
+          (!isCustomerProfileCollapsed || !isPreviousLogsCollapsed) && (
+            <div className="w-80 bg-white border-l border-gray-200">
+              <div className="p-6">
+                {/* Audio Player Section */}
+                {selectedRecording && (
+                  <div className="mb-6 pb-6 border-b border-gray-200">
+                    <h2 className="text-sm font-medium text-gray-900 mb-3">
+                      Recording {selectedRecording.id?.slice(-5) || "43543"}
+                    </h2>
 
-                  {/* Audio Player */}
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    {/* Progress Bar */}
-                    <div className="mb-3">
-                      <div className="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>{formatTime(currentTime)}</span>
-                        <span>{formatTime(duration)}</span>
-                      </div>
-                      <div className="relative">
-                        <div className="w-full h-1.5 bg-gray-200 rounded-full">
-                          <div
-                            className="h-1.5 bg-blue-500 rounded-full"
-                            style={{
-                              width:
-                                duration > 0
-                                  ? `${(currentTime / duration) * 100}%`
-                                  : "0%",
-                            }}
-                          >
-                            <div className="absolute right-0 top-0 w-2.5 h-2.5 bg-blue-500 rounded-full -mt-0.5 -mr-1"></div>
+                    {/* Audio Player */}
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      {/* Progress Bar */}
+                      <div className="mb-3">
+                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                          <span>{formatTime(currentTime)}</span>
+                          <span>{formatTime(duration)}</span>
+                        </div>
+                        <div className="relative">
+                          <div className="w-full h-1.5 bg-gray-200 rounded-full">
+                            <div
+                              className="h-1.5 bg-blue-500 rounded-full"
+                              style={{
+                                width:
+                                  duration > 0
+                                    ? `${(currentTime / duration) * 100}%`
+                                    : "0%",
+                              }}
+                            >
+                              <div className="absolute right-0 top-0 w-2.5 h-2.5 bg-blue-500 rounded-full -mt-0.5 -mr-1"></div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Audio Controls */}
-                    <div className="flex items-center justify-center space-x-2">
-                      {!isPlaying ? (
+                      {/* Audio Controls */}
+                      <div className="flex items-center justify-center space-x-2">
+                        {!isPlaying ? (
+                          <button
+                            onClick={playAudio}
+                            className="p-1 text-gray-600 hover:text-gray-800"
+                            disabled={!selectedRecording?.file_name}
+                          >
+                            <Play className="w-4 h-4" />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={pauseAudio}
+                            className="p-1 text-gray-600 hover:text-gray-800"
+                          >
+                            <Pause className="w-4 h-4" />
+                          </button>
+                        )}
                         <button
-                          onClick={playAudio}
+                          onClick={resetAudio}
                           className="p-1 text-gray-600 hover:text-gray-800"
                           disabled={!selectedRecording?.file_name}
                         >
-                          <Play className="w-4 h-4" />
+                          <RotateCcw className="w-4 h-4" />
                         </button>
-                      ) : (
                         <button
-                          onClick={pauseAudio}
+                          onClick={skipBack}
                           className="p-1 text-gray-600 hover:text-gray-800"
+                          disabled={!selectedRecording?.file_name}
                         >
-                          <Pause className="w-4 h-4" />
+                          <SkipBack className="w-4 h-4" />
                         </button>
-                      )}
-                      <button
-                        onClick={resetAudio}
-                        className="p-1 text-gray-600 hover:text-gray-800"
-                        disabled={!selectedRecording?.file_name}
-                      >
-                        <RotateCcw className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={skipBack}
-                        className="p-1 text-gray-600 hover:text-gray-800"
-                        disabled={!selectedRecording?.file_name}
-                      >
-                        <SkipBack className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={downloadAudio}
-                        className="p-1 text-gray-600 hover:text-gray-800"
-                        disabled={!selectedRecording?.file_name}
-                      >
-                        <Download className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Customer Profile Section - Compact */}
-              <div className="mb-6 pb-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-sm font-medium text-gray-700">
-                    Customer Profile
-                  </h2>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
-                </div>
-                {selectedRecording ? (
-                  <div className="space-y-3">
-                    {/* Top section - Avatar and name */}
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-orange-400 rounded-full flex items-center justify-center text-white font-medium text-sm">
-                        {selectedRecording.cnic?.charAt(0).toUpperCase() || "A"}
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          Ahmed Shah
-                        </div>
-                        <div className="text-xs text-gray-500">ID # 239982</div>
+                        <button
+                          onClick={downloadAudio}
+                          className="p-1 text-gray-600 hover:text-gray-800"
+                          disabled={!selectedRecording?.file_name}
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
-
-                    {/* Details section - Two columns for better alignment */}
-                    <div className="grid grid-cols-1 gap-y-1.5 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">
-                          Gender:
-                        </span>
-                        <span className="text-gray-800">Male</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">DOB:</span>
-                        <span className="text-gray-800">05/09/1996</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">CNIC:</span>
-                        <span className="text-gray-800">61901-1234567-1</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">
-                          Phone:
-                        </span>
-                        <span className="text-gray-800">0321-9876543</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">
-                          Email:
-                        </span>
-                        <span className="text-gray-800 break-all">
-                          Ahmed@gmail.com
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-4">
-                    <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-2"></div>
-                    <p className="text-xs text-gray-500">
-                      Select a recording to view customer profile
-                    </p>
                   </div>
                 )}
+
+                {/* Customer Profile Section - Compact */}
+                <div className="mb-6 pb-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <div
+                    className="flex items-center justify-between mb-3 cursor-pointer"
+                    onClick={() =>
+                      setIsCustomerProfileCollapsed(!isCustomerProfileCollapsed)
+                    }
+                  >
+                    <h2 className="text-sm font-medium text-gray-700">
+                      Customer Profile
+                    </h2>
+                    <ChevronDown
+                      className={`w-4 h-4 text-gray-400 transition-transform ${isCustomerProfileCollapsed ? "rotate-180" : ""}`}
+                    />
+                  </div>
+                  {!isCustomerProfileCollapsed && selectedRecording ? (
+                    <div className="space-y-3">
+                      {/* Top section - Avatar and name */}
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-orange-400 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                          {selectedRecording.cnic?.charAt(0).toUpperCase() ||
+                            "A"}
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            Ahmed Shah
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            ID # 239982
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Details section - Two columns for better alignment */}
+                      <div className="grid grid-cols-1 gap-y-1.5 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600 font-medium">
+                            Gender:
+                          </span>
+                          <span className="text-gray-800">Male</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600 font-medium">
+                            DOB:
+                          </span>
+                          <span className="text-gray-800">05/09/1996</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600 font-medium">
+                            CNIC:
+                          </span>
+                          <span className="text-gray-800">61901-1234567-1</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600 font-medium">
+                            Phone:
+                          </span>
+                          <span className="text-gray-800">0321-9876543</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600 font-medium">
+                            Email:
+                          </span>
+                          <span className="text-gray-800 break-all">
+                            Ahmed@gmail.com
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : !isCustomerProfileCollapsed ? (
+                    <div className="text-center py-4">
+                      <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-2"></div>
+                      <p className="text-xs text-gray-500">
+                        Select a recording to view customer profile
+                      </p>
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* Previous Logs Section */}
+                <div className="mb-6 pb-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <div
+                    className="flex items-center justify-between mb-3 cursor-pointer"
+                    onClick={() =>
+                      setIsPreviousLogsCollapsed(!isPreviousLogsCollapsed)
+                    }
+                  >
+                    <h2 className="text-sm font-medium text-gray-700">
+                      Previous logs
+                    </h2>
+                    <ChevronDown
+                      className={`w-4 h-4 text-gray-400 transition-transform ${isPreviousLogsCollapsed ? "rotate-180" : ""}`}
+                    />
+                  </div>
+
+                  {!isPreviousLogsCollapsed && previousLogs.length > 0 ? (
+                    <div className="space-y-2">
+                      {/* Table Header */}
+                      <div className="grid grid-cols-12 gap-2 text-xs font-medium text-gray-500 border-b border-gray-200 pb-1">
+                        <div className="col-span-2">S.no</div>
+                        <div className="col-span-5">Branch Address</div>
+                        <div className="col-span-5">Date</div>
+                      </div>
+
+                      {/* Table Rows */}
+                      <div className="max-h-48 overflow-y-auto">
+                        {previousLogs.map((log, index) => (
+                          <div
+                            key={log.id}
+                            onClick={() => {
+                              // Navigate to the specific recording
+                              setSelectedRecording(log);
+                            }}
+                            className="grid grid-cols-12 gap-2 text-xs py-2 hover:bg-gray-100 cursor-pointer rounded border-b border-gray-100 last:border-b-0"
+                          >
+                            <div className="col-span-2 text-gray-700">
+                              {index + 1}
+                            </div>
+                            <div className="col-span-5 text-gray-600 truncate">
+                              {log.branch_address || "N/A"}
+                            </div>
+                            <div className="col-span-5 text-gray-500">
+                              {log.start_time
+                                ? new Date(log.start_time).toLocaleDateString()
+                                : "-"}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : !isPreviousLogsCollapsed ? (
+                    <div className="text-center py-4">
+                      <MessageSquare className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                      <p className="text-xs text-gray-500">
+                        {selectedRecording
+                          ? "No previous logs found"
+                          : "Select a recording to view previous logs"}
+                      </p>
+                    </div>
+                  ) : null}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </div>
   );

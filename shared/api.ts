@@ -15,6 +15,7 @@ export interface DemoResponse {
 export interface HeartbeatRecord {
   branch_name: string;
   branch_code: string;
+  ip_address: string;
   status: "online" | "problematic" | "offline";
   last_seen: string;
   uptime_duration_24h: string;

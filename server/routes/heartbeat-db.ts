@@ -31,9 +31,10 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
 
     // Simplified and optimized heartbeat query with deduplication
     const query = `
-      SELECT DISTINCT
-        COALESCE(b.branch_address, CONCAT('Device-', h.mac_address)) AS branch_name,
-        COALESCE(b.branch_code, h.ip_address) AS branch_code,
+      SELECT
+        COALESCE(ANY_VALUE(b.branch_name), CONCAT('Device-', h.mac_address)) AS branch_name,
+        COALESCE(ANY_VALUE(b.branch_code), h.mac_address) AS branch_code,
+        h.ip_address,
         h.last_seen,
         CASE
           WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 5 THEN 'online'
@@ -41,14 +42,14 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
           ELSE 'offline'
         END AS status,
         CONCAT(
-          FLOOR(IFNULL(h.uptime_count, 0) * 30 / 3600), 'h ',
-          FLOOR(MOD(IFNULL(h.uptime_count, 0) * 30, 3600) / 60), 'm'
+          FLOOR(IFNULL(ANY_VALUE(h.uptime_count), 0) * 30 / 3600), 'h ',
+          FLOOR(MOD(IFNULL(ANY_VALUE(h.uptime_count), 0) * 30, 3600) / 60), 'm'
         ) AS uptime_duration_24h
       FROM (
         SELECT
           h1.mac_address,
           h1.ip_address,
-          h1.created_on AS last_seen,
+          MAX(h1.created_on) AS last_seen,
           (
             SELECT COUNT(*)
             FROM heartbeat h2
@@ -56,18 +57,14 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
               AND h2.created_on >= DATE_SUB(NOW(), INTERVAL 1 DAY)
           ) AS uptime_count
         FROM heartbeat h1
-        WHERE h1.created_on = (
-          SELECT MAX(h3.created_on)
-          FROM heartbeat h3
-          WHERE h3.mac_address = h1.mac_address
-        )
-        AND h1.mac_address IS NOT NULL
+        WHERE h1.mac_address IS NOT NULL
         GROUP BY h1.mac_address, h1.ip_address
       ) h
       LEFT JOIN devices d ON d.device_mac = h.mac_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
-      ${whereClause}
+      WHERE (d.device_status = 'active' OR d.device_status IS NULL)
+      ${whereClause ? (whereClause.includes("WHERE") ? whereClause.replace("WHERE", "AND") : `AND ${whereClause}`) : ""}
       GROUP BY h.mac_address, h.ip_address, h.last_seen
       ORDER BY h.last_seen DESC
       LIMIT 100
@@ -82,20 +79,22 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
 
       const fallbackQuery = `
         SELECT
-          CONCAT('Device-', mac_address) AS branch_name,
-          ip_address AS branch_code,
-          MAX(created_on) AS last_seen,
+          CONCAT('Device-', h.mac_address) AS branch_name,
+          h.ip_address AS branch_code,
+          h.ip_address,
+          MAX(h.created_on) AS last_seen,
           CASE
-            WHEN TIMESTAMPDIFF(MINUTE, MAX(created_on), NOW()) <= 5 THEN 'online'
-            WHEN TIMESTAMPDIFF(MINUTE, MAX(created_on), NOW()) <= 15 THEN 'problematic'
+            WHEN TIMESTAMPDIFF(MINUTE, MAX(h.created_on), NOW()) <= 5 THEN 'online'
+            WHEN TIMESTAMPDIFF(MINUTE, MAX(h.created_on), NOW()) <= 15 THEN 'problematic'
             ELSE 'offline'
           END AS status,
           '0h 0m' AS uptime_duration_24h
-        FROM heartbeat
-        WHERE mac_address IS NOT NULL
-        ${branchFilter ? "" : ""}
-        GROUP BY mac_address, ip_address
-        ORDER BY MAX(created_on) DESC
+        FROM heartbeat h
+        LEFT JOIN devices d ON d.device_mac = h.mac_address
+        WHERE h.mac_address IS NOT NULL
+        AND (d.device_status = 'active' OR d.device_status IS NULL)
+        GROUP BY h.mac_address, h.ip_address
+        ORDER BY MAX(h.created_on) DESC
         LIMIT 50
       `;
 
@@ -175,6 +174,45 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
     }
 
     const uuid = uuidv4(); // Generate a new UUID
+
+    // Check if device exists for this MAC address, if not create one
+    if (mac_address?.trim()) {
+      const deviceCheckQuery = `
+        SELECT id FROM devices WHERE device_mac = ?
+      `;
+      const existingDevice = await executeQuery(deviceCheckQuery, [
+        mac_address.trim(),
+      ]);
+
+      if (existingDevice.length === 0) {
+        // Create new device with inactive status
+        const deviceUuid = uuidv4();
+        const createDeviceQuery = `
+          INSERT INTO devices (
+            id, device_name, device_mac, ip_address, device_type,
+            device_status, notes, created_on, updated_on
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        `;
+
+        await executeQuery(createDeviceQuery, [
+          deviceUuid,
+          `Device-${mac_address.trim().slice(-6)}`, // Use last 6 chars of MAC as name
+          mac_address.trim(),
+          ip_address,
+          "recorder",
+          "inactive",
+          "Auto-created from heartbeat",
+        ]);
+
+        heartbeatLogger.info("heartbeat-db", "auto_device_created", {
+          request_id: requestId,
+          device_id: deviceUuid,
+          mac_address: mac_address.trim(),
+          ip_address: ip_address,
+        });
+      }
+    }
+
     // Insert heartbeat into database
     const query = `
       INSERT INTO heartbeat (uuid, ip_address, mac_address, created_on)
