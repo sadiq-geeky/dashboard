@@ -57,6 +57,7 @@ export function ConversationAnalytics() {
   const [customerData, setCustomerData] = useState<UniqueCustomerAnalytics[]>(
     [],
   );
+  const [trendData, setTrendData] = useState<BranchMonthlyTrend[]>([]);
 
   // UI states
   const [activeChart, setActiveChart] = useState<
