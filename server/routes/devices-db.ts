@@ -202,7 +202,18 @@ export const createDevice: RequestHandler = async (req, res) => {
     });
   } catch (error: any) {
     console.error("Error creating device:", error);
-    res.status(500).json({ error: "Failed to create device" });
+
+    // Handle specific database timeout errors
+    if (error.code === 'ETIMEDOUT') {
+      return res.status(503).json({
+        error: "Database connection timeout. Please try again."
+      });
+    }
+
+    res.status(500).json({
+      error: "Failed to create device",
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
