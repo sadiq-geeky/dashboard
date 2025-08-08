@@ -240,14 +240,34 @@ export function Complaints() {
   // Fetch detailed complaint
   const fetchComplaintDetails = async (complaintId: string) => {
     try {
+      console.log("Fetching complaint details for ID:", complaintId);
       const response = await authFetch(`/api/complaints/${complaintId}`);
+
       if (response.ok) {
         const data = await response.json();
+        console.log("Successfully fetched complaint details:", data);
         setSelectedComplaint(data);
         setShowDetailModal(true);
+      } else {
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: "Unknown error" }));
+        console.error(
+          "Failed to fetch complaint details:",
+          response.status,
+          errorData,
+        );
+        const errorMessage =
+          typeof errorData === "object"
+            ? errorData.error || errorData.message || JSON.stringify(errorData)
+            : errorData;
+        alert(`Failed to load complaint details: ${errorMessage}`);
       }
     } catch (error) {
       console.error("Error fetching complaint details:", error);
+      alert(
+        `Error loading complaint: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   };
 
@@ -968,7 +988,7 @@ export function Complaints() {
                         </div>
                       </th>
                       <th className="text-left py-3 px-4 font-medium text-gray-900">
-                        Customer
+                        Created by
                       </th>
                       <th className="text-left py-3 px-4 font-medium text-gray-900">
                         Status
@@ -1198,10 +1218,10 @@ export function Complaints() {
                       </div>
                     </div>
 
-                    {/* Customer Information */}
+                    {/* Creator Information */}
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 mb-4">
-                        Customer Information
+                        Creator Information
                       </h3>
                       <div className="bg-gray-50 rounded-lg p-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
