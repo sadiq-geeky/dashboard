@@ -29,6 +29,100 @@ export function Header() {
   const isOnDashboard = location.pathname === "/";
   const goBackToDashboard = () => navigate("/");
 
+  // Get current active page for navigation
+  const getCurrentPage = () => {
+    const path = location.pathname;
+    const urlParams = new URLSearchParams(location.search);
+    const tab = urlParams.get("tab");
+
+    if (path === "/" && !tab) return "home";
+    if (path === "/" && tab === "analytics") return "analytics";
+    if (path === "/" && tab === "device-status") return "device-status";
+    if (path === "/complaints") return "complaints";
+    if (path === "/branch-management") return "branches";
+    if (path === "/device-management") return "devices";
+    if (path === "/user-management") return "users";
+    if (path === "/deployment") return "deployment";
+
+    return "";
+  };
+
+  const currentPage = getCurrentPage();
+
+  const navigationItems = [
+    // First group: Core functionality
+    {
+      id: "home",
+      label: "Home",
+      icon: Grid3X3,
+      onClick: () => navigate("/"),
+      group: "core",
+    },
+    {
+      id: "analytics",
+      label: "Analytics",
+      icon: BarChart3,
+      onClick: () => navigate("/?tab=analytics"),
+      group: "core",
+    },
+    {
+      id: "device-status",
+      label: "Device Status",
+      icon: Monitor,
+      onClick: () => navigate("/?tab=device-status"),
+      group: "core",
+      adminOnly: true,
+    },
+    {
+      id: "complaints",
+      label: "Complaints",
+      icon: Mail,
+      onClick: () => navigate("/complaints"),
+      group: "core",
+    },
+    // Second group: Admin management
+    {
+      id: "branches",
+      label: "Branches",
+      icon: Building2,
+      onClick: () => navigate("/branch-management"),
+      group: "admin",
+      adminOnly: true,
+    },
+    {
+      id: "devices",
+      label: "Devices",
+      icon: Monitor,
+      onClick: () => navigate("/device-management"),
+      group: "admin",
+      adminOnly: true,
+    },
+    {
+      id: "users",
+      label: "Users",
+      icon: Users,
+      onClick: () => navigate("/user-management"),
+      group: "admin",
+      adminOnly: true,
+    },
+    {
+      id: "deployment",
+      label: "Deployment",
+      icon: Settings,
+      onClick: () => navigate("/deployment"),
+      group: "admin",
+      adminOnly: true,
+    },
+  ];
+
+  // Filter items based on admin status
+  const visibleItems = navigationItems.filter(
+    (item) => !item.adminOnly || isAdmin(),
+  );
+
+  const coreItems = visibleItems.filter((item) => item.group === "core");
+  const adminItems = visibleItems.filter((item) => item.group === "admin");
+
   return (
     <div
       className="bg-white border-b border-gray-200 px-5 py-1"
