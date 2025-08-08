@@ -183,7 +183,7 @@ export function InteractiveBranchChart() {
   const getGoogleChartsData = () => {
     const data = isDrilldown ? drilldownData : chartData;
     const chartArray = [["Branch", "Conversations"]];
-    
+
     data.forEach((item) => {
       chartArray.push([item.name, item.conversations]);
     });
@@ -193,31 +193,34 @@ export function InteractiveBranchChart() {
 
   // Google Charts options
   const getChartOptions = () => ({
-    title: isDrilldown ? drilldownTitle : `Conversations by Branch - ${selectedMonth}`,
+    title: isDrilldown
+      ? drilldownTitle
+      : `Conversations by Branch - ${selectedMonth}`,
     titleTextStyle: {
       fontSize: 16,
-      fontName: 'system-ui',
+      fontName: "system-ui",
       bold: true,
-      color: '#1f2937'
+      color: "#1f2937",
     },
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     chartArea: {
       left: 80,
       top: 60,
-      width: '80%',
-      height: '75%',
+      width: "80%",
+      height: "75%",
     },
     hAxis: {
-      title: isDrilldown && drilldownTitle.includes("Monthly") ? "Month" : "Branch",
+      title:
+        isDrilldown && drilldownTitle.includes("Monthly") ? "Month" : "Branch",
       titleTextStyle: {
         fontSize: 12,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
       textStyle: {
         fontSize: 10,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
       slantedText: true,
       slantedTextAngle: 45,
@@ -227,38 +230,38 @@ export function InteractiveBranchChart() {
       title: "Conversations",
       titleTextStyle: {
         fontSize: 12,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
       textStyle: {
         fontSize: 10,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
-      format: 'short',
+      format: "short",
       gridlines: {
-        color: '#e5e7eb',
-        count: 5
+        color: "#e5e7eb",
+        count: 5,
       },
       minorGridlines: {
-        color: 'transparent'
-      }
+        color: "transparent",
+      },
     },
-    colors: isDrilldown ? ['#10b981'] : ['#3b82f6'],
-    bar: { groupWidth: '75%' },
-    legend: { position: 'none' },
+    colors: isDrilldown ? ["#10b981"] : ["#3b82f6"],
+    bar: { groupWidth: "75%" },
+    legend: { position: "none" },
     animation: {
       startup: true,
-      easing: 'inAndOut',
+      easing: "inAndOut",
       duration: 1000,
     },
     tooltip: {
       textStyle: {
         fontSize: 12,
-        fontName: 'system-ui'
+        fontName: "system-ui",
       },
       showColorCode: true,
-    }
+    },
   });
 
   // Handle chart selection (click)
@@ -404,7 +407,7 @@ export function InteractiveBranchChart() {
             options={getChartOptions()}
             chartEvents={[
               {
-                eventName: 'select',
+                eventName: "select",
                 callback: handleChartSelect,
               },
             ]}

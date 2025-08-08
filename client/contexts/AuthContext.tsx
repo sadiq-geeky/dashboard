@@ -21,7 +21,10 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (
+    username: string,
+    password: string,
+  ) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isAdmin: () => boolean;
   isManager: () => boolean;
@@ -84,7 +87,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (userData.role !== "admin" && !userData.branch_id) {
           return {
             success: false,
-            error: "No branch assigned to your account. Please contact your administrator to assign a branch before you can access the system."
+            error:
+              "No branch assigned to your account. Please contact your administrator to assign a branch before you can access the system.",
           };
         }
 
@@ -93,7 +97,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return { success: true };
       } else {
         console.error("Login failed:", data.error);
-        return { success: false, error: data.error || "Invalid username or password" };
+        return {
+          success: false,
+          error: data.error || "Invalid username or password",
+        };
       }
     } catch (error) {
       console.error("Login error:", error);

@@ -33,7 +33,9 @@ interface ConversationAnalytics {
 }
 
 export function ConversationAnalytics() {
-  const [analytics, setAnalytics] = useState<ConversationAnalytics | null>(null);
+  const [analytics, setAnalytics] = useState<ConversationAnalytics | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,8 +65,9 @@ export function ConversationAnalytics() {
 
   // Prepare Google Charts data for daily conversations
   const getDailyConversationsData = () => {
-    if (!analytics?.dailyConversationsLastMonth?.length) return [["Date", "Conversations"]];
-    
+    if (!analytics?.dailyConversationsLastMonth?.length)
+      return [["Date", "Conversations"]];
+
     const chartData = [["Date", "Conversations"]];
     analytics.dailyConversationsLastMonth.forEach((item) => {
       chartData.push([item.date, item.count]);
@@ -74,8 +77,9 @@ export function ConversationAnalytics() {
 
   // Prepare Google Charts data for city pie chart
   const getCityData = () => {
-    if (!analytics?.conversationsByCity?.length) return [["City", "Conversations"]];
-    
+    if (!analytics?.conversationsByCity?.length)
+      return [["City", "Conversations"]];
+
     const chartData = [["City", "Conversations"]];
     analytics.conversationsByCity.slice(0, 8).forEach((item) => {
       chartData.push([item.city || "Unknown", item.count]);
@@ -85,8 +89,9 @@ export function ConversationAnalytics() {
 
   // Prepare Google Charts data for branch bar chart
   const getBranchData = () => {
-    if (!analytics?.conversationsByBranch?.length) return [["Branch", "Conversations"]];
-    
+    if (!analytics?.conversationsByBranch?.length)
+      return [["Branch", "Conversations"]];
+
     const chartData = [["Branch", "Conversations"]];
     analytics.conversationsByBranch.slice(0, 10).forEach((item) => {
       chartData.push([item.branch_name, item.count]);
@@ -96,8 +101,9 @@ export function ConversationAnalytics() {
 
   // Prepare Google Charts data for unique CNICs
   const getUniqueCnicsData = () => {
-    if (!analytics?.uniqueCnicsByMonth?.length) return [["Month", "Unique Customers"]];
-    
+    if (!analytics?.uniqueCnicsByMonth?.length)
+      return [["Month", "Unique Customers"]];
+
     const chartData = [["Month", "Unique Customers"]];
     analytics.uniqueCnicsByMonth.forEach((item) => {
       chartData.push([item.month, item.unique_cnic_count]);
@@ -110,130 +116,143 @@ export function ConversationAnalytics() {
     title: "Daily Conversations (Last 30 Days)",
     titleTextStyle: {
       fontSize: 14,
-      fontName: 'system-ui',
+      fontName: "system-ui",
       bold: true,
-      color: '#1f2937'
+      color: "#1f2937",
     },
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     chartArea: {
       left: 60,
       top: 50,
-      width: '85%',
-      height: '70%',
+      width: "85%",
+      height: "70%",
     },
     hAxis: {
       title: "Date",
-      titleTextStyle: { fontSize: 11, fontName: 'system-ui', color: '#6b7280' },
-      textStyle: { fontSize: 9, fontName: 'system-ui', color: '#6b7280' },
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
     },
     vAxis: {
       title: "Conversations",
-      titleTextStyle: { fontSize: 11, fontName: 'system-ui', color: '#6b7280' },
-      textStyle: { fontSize: 9, fontName: 'system-ui', color: '#6b7280' },
-      format: 'short',
-      gridlines: { color: '#e5e7eb', count: 5 },
-      minorGridlines: { color: 'transparent' }
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+      format: "short",
+      gridlines: { color: "#e5e7eb", count: 5 },
+      minorGridlines: { color: "transparent" },
     },
-    colors: ['#3b82f6'],
-    legend: { position: 'none' },
+    colors: ["#3b82f6"],
+    legend: { position: "none" },
     lineWidth: 3,
     pointSize: 5,
     areaOpacity: 0.3,
-    animation: { startup: true, easing: 'inAndOut', duration: 1000 },
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
   };
 
   const cityChartOptions = {
     title: "Conversations by City",
     titleTextStyle: {
       fontSize: 14,
-      fontName: 'system-ui',
+      fontName: "system-ui",
       bold: true,
-      color: '#1f2937'
+      color: "#1f2937",
     },
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     chartArea: {
       left: 20,
       top: 50,
-      width: '80%',
-      height: '70%',
+      width: "80%",
+      height: "70%",
     },
-    colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'],
+    colors: [
+      "#3b82f6",
+      "#10b981",
+      "#f59e0b",
+      "#ef4444",
+      "#8b5cf6",
+      "#06b6d4",
+      "#84cc16",
+      "#f97316",
+    ],
     legend: {
-      position: 'bottom',
-      textStyle: { fontSize: 10, fontName: 'system-ui', color: '#6b7280' }
+      position: "bottom",
+      textStyle: { fontSize: 10, fontName: "system-ui", color: "#6b7280" },
     },
-    pieSliceText: 'percentage',
-    pieSliceTextStyle: { fontSize: 10, fontName: 'system-ui', color: '#ffffff' },
-    animation: { startup: true, easing: 'inAndOut', duration: 1000 },
+    pieSliceText: "percentage",
+    pieSliceTextStyle: {
+      fontSize: 10,
+      fontName: "system-ui",
+      color: "#ffffff",
+    },
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
   };
 
   const branchChartOptions = {
     title: "Top 10 Branches by Conversations",
     titleTextStyle: {
       fontSize: 14,
-      fontName: 'system-ui',
+      fontName: "system-ui",
       bold: true,
-      color: '#1f2937'
+      color: "#1f2937",
     },
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     chartArea: {
       left: 100,
       top: 50,
-      width: '75%',
-      height: '70%',
+      width: "75%",
+      height: "70%",
     },
     hAxis: {
       title: "Conversations",
-      titleTextStyle: { fontSize: 11, fontName: 'system-ui', color: '#6b7280' },
-      textStyle: { fontSize: 9, fontName: 'system-ui', color: '#6b7280' },
-      format: 'short',
-      gridlines: { color: '#e5e7eb', count: 5 },
-      minorGridlines: { color: 'transparent' }
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+      format: "short",
+      gridlines: { color: "#e5e7eb", count: 5 },
+      minorGridlines: { color: "transparent" },
     },
     vAxis: {
       title: "Branch",
-      titleTextStyle: { fontSize: 11, fontName: 'system-ui', color: '#6b7280' },
-      textStyle: { fontSize: 9, fontName: 'system-ui', color: '#6b7280' },
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
     },
-    colors: ['#10b981'],
-    legend: { position: 'none' },
-    bar: { groupWidth: '70%' },
-    animation: { startup: true, easing: 'inAndOut', duration: 1000 },
+    colors: ["#10b981"],
+    legend: { position: "none" },
+    bar: { groupWidth: "70%" },
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
   };
 
   const uniqueCnicsChartOptions = {
     title: "Unique Customers per Month",
     titleTextStyle: {
       fontSize: 14,
-      fontName: 'system-ui',
+      fontName: "system-ui",
       bold: true,
-      color: '#1f2937'
+      color: "#1f2937",
     },
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     chartArea: {
       left: 60,
       top: 50,
-      width: '85%',
-      height: '70%',
+      width: "85%",
+      height: "70%",
     },
     hAxis: {
       title: "Month",
-      titleTextStyle: { fontSize: 11, fontName: 'system-ui', color: '#6b7280' },
-      textStyle: { fontSize: 9, fontName: 'system-ui', color: '#6b7280' },
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
     },
     vAxis: {
       title: "Unique Customers",
-      titleTextStyle: { fontSize: 11, fontName: 'system-ui', color: '#6b7280' },
-      textStyle: { fontSize: 9, fontName: 'system-ui', color: '#6b7280' },
-      format: 'short',
-      gridlines: { color: '#e5e7eb', count: 5 },
-      minorGridlines: { color: 'transparent' }
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+      format: "short",
+      gridlines: { color: "#e5e7eb", count: 5 },
+      minorGridlines: { color: "transparent" },
     },
-    colors: ['#8b5cf6'],
-    legend: { position: 'none' },
+    colors: ["#8b5cf6"],
+    legend: { position: "none" },
     lineWidth: 3,
     pointSize: 5,
-    animation: { startup: true, easing: 'inAndOut', duration: 1000 },
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
   };
 
   if (loading) {
@@ -241,7 +260,9 @@ export function ConversationAnalytics() {
       <div className="space-y-6">
         <div className="flex items-center justify-center py-12">
           <RefreshCw className="h-8 w-8 animate-spin text-blue-600" />
-          <span className="ml-3 text-gray-600">Loading conversation analytics...</span>
+          <span className="ml-3 text-gray-600">
+            Loading conversation analytics...
+          </span>
         </div>
       </div>
     );
@@ -251,7 +272,9 @@ export function ConversationAnalytics() {
     return (
       <div className="space-y-6">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h3 className="text-lg font-medium text-red-800 mb-2">Error Loading Analytics</h3>
+          <h3 className="text-lg font-medium text-red-800 mb-2">
+            Error Loading Analytics
+          </h3>
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={fetchAnalytics}
@@ -278,7 +301,9 @@ export function ConversationAnalytics() {
               <MessageSquare className="h-6 w-6 text-white" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-blue-600">Total Conversations</p>
+              <p className="text-sm font-medium text-blue-600">
+                Total Conversations
+              </p>
               <p className="text-2xl font-bold text-blue-900">
                 {analytics.totalStats.totalConversations.toLocaleString()}
               </p>
@@ -292,7 +317,9 @@ export function ConversationAnalytics() {
               <Users className="h-6 w-6 text-white" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-green-600">Unique Customers</p>
+              <p className="text-sm font-medium text-green-600">
+                Unique Customers
+              </p>
               <p className="text-2xl font-bold text-green-900">
                 {analytics.totalStats.uniqueCustomers.toLocaleString()}
               </p>
@@ -306,7 +333,9 @@ export function ConversationAnalytics() {
               <Building2 className="h-6 w-6 text-white" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-purple-600">Active Branches</p>
+              <p className="text-sm font-medium text-purple-600">
+                Active Branches
+              </p>
               <p className="text-2xl font-bold text-purple-900">
                 {analytics.totalStats.activeBranches.toLocaleString()}
               </p>
@@ -333,7 +362,9 @@ export function ConversationAnalytics() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Daily Conversations Area Chart */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Conversations Trend</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Daily Conversations Trend
+          </h3>
           <div className="h-64">
             {analytics.dailyConversationsLastMonth?.length > 0 && (
               <Chart
@@ -349,7 +380,9 @@ export function ConversationAnalytics() {
 
         {/* City Pie Chart */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Conversations by City</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Conversations by City
+          </h3>
           <div className="h-64">
             {analytics.conversationsByCity?.length > 0 && (
               <Chart
@@ -365,7 +398,9 @@ export function ConversationAnalytics() {
 
         {/* Unique CNICs Line Chart */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Unique Customers per Month</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Unique Customers per Month
+          </h3>
           <div className="h-64">
             {analytics.uniqueCnicsByMonth?.length > 0 && (
               <Chart
@@ -381,7 +416,9 @@ export function ConversationAnalytics() {
 
         {/* Branches Bar Chart */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Branches by Conversations</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Top Branches by Conversations
+          </h3>
           <div className="h-64">
             {analytics.conversationsByBranch?.length > 0 && (
               <Chart

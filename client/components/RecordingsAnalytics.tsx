@@ -47,7 +47,7 @@ export function RecordingsAnalytics() {
   // Prepare Google Charts data for daily recordings
   const getDailyRecordingsData = () => {
     if (!analytics?.dailyRecordings?.length) return [["Date", "Recordings"]];
-    
+
     const chartData = [["Date", "Recordings"]];
     analytics.dailyRecordings.forEach((item) => {
       chartData.push([item.date, item.count]);
@@ -58,7 +58,7 @@ export function RecordingsAnalytics() {
   // Prepare Google Charts data for status pie chart
   const getStatusData = () => {
     if (!analytics?.recordingsByStatus?.length) return [["Status", "Count"]];
-    
+
     const chartData = [["Status", "Count"]];
     analytics.recordingsByStatus.forEach((item) => {
       chartData.push([item.status, item.count]);
@@ -68,8 +68,9 @@ export function RecordingsAnalytics() {
 
   // Prepare Google Charts data for branch bar chart
   const getBranchData = () => {
-    if (!analytics?.recordingsByBranch?.length) return [["Branch", "Recordings"]];
-    
+    if (!analytics?.recordingsByBranch?.length)
+      return [["Branch", "Recordings"]];
+
     const chartData = [["Branch", "Recordings"]];
     analytics.recordingsByBranch.slice(0, 10).forEach((item) => {
       chartData.push([item.branch_name, item.count]);
@@ -82,94 +83,98 @@ export function RecordingsAnalytics() {
     title: "Daily Recordings Trend",
     titleTextStyle: {
       fontSize: 14,
-      fontName: 'system-ui',
+      fontName: "system-ui",
       bold: true,
-      color: '#1f2937'
+      color: "#1f2937",
     },
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     chartArea: {
       left: 60,
       top: 50,
-      width: '85%',
-      height: '70%',
+      width: "85%",
+      height: "70%",
     },
     hAxis: {
       title: "Date",
-      titleTextStyle: { fontSize: 11, fontName: 'system-ui', color: '#6b7280' },
-      textStyle: { fontSize: 9, fontName: 'system-ui', color: '#6b7280' },
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
     },
     vAxis: {
       title: "Recordings",
-      titleTextStyle: { fontSize: 11, fontName: 'system-ui', color: '#6b7280' },
-      textStyle: { fontSize: 9, fontName: 'system-ui', color: '#6b7280' },
-      format: 'short',
-      gridlines: { color: '#e5e7eb', count: 5 },
-      minorGridlines: { color: 'transparent' }
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+      format: "short",
+      gridlines: { color: "#e5e7eb", count: 5 },
+      minorGridlines: { color: "transparent" },
     },
-    colors: ['#3b82f6'],
-    legend: { position: 'none' },
+    colors: ["#3b82f6"],
+    legend: { position: "none" },
     lineWidth: 3,
     pointSize: 5,
-    animation: { startup: true, easing: 'inAndOut', duration: 1000 },
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
   };
 
   const statusChartOptions = {
     title: "Recordings by Status",
     titleTextStyle: {
       fontSize: 14,
-      fontName: 'system-ui',
+      fontName: "system-ui",
       bold: true,
-      color: '#1f2937'
+      color: "#1f2937",
     },
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     chartArea: {
       left: 20,
       top: 50,
-      width: '80%',
-      height: '70%',
+      width: "80%",
+      height: "70%",
     },
-    colors: ['#10b981', '#f59e0b', '#ef4444'],
+    colors: ["#10b981", "#f59e0b", "#ef4444"],
     legend: {
-      position: 'bottom',
-      textStyle: { fontSize: 10, fontName: 'system-ui', color: '#6b7280' }
+      position: "bottom",
+      textStyle: { fontSize: 10, fontName: "system-ui", color: "#6b7280" },
     },
-    pieSliceText: 'percentage',
-    pieSliceTextStyle: { fontSize: 10, fontName: 'system-ui', color: '#ffffff' },
-    animation: { startup: true, easing: 'inAndOut', duration: 1000 },
+    pieSliceText: "percentage",
+    pieSliceTextStyle: {
+      fontSize: 10,
+      fontName: "system-ui",
+      color: "#ffffff",
+    },
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
   };
 
   const branchChartOptions = {
     title: "Top 10 Branches by Recordings",
     titleTextStyle: {
       fontSize: 14,
-      fontName: 'system-ui',
+      fontName: "system-ui",
       bold: true,
-      color: '#1f2937'
+      color: "#1f2937",
     },
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     chartArea: {
       left: 100,
       top: 50,
-      width: '75%',
-      height: '70%',
+      width: "75%",
+      height: "70%",
     },
     hAxis: {
       title: "Recordings",
-      titleTextStyle: { fontSize: 11, fontName: 'system-ui', color: '#6b7280' },
-      textStyle: { fontSize: 9, fontName: 'system-ui', color: '#6b7280' },
-      format: 'short',
-      gridlines: { color: '#e5e7eb', count: 5 },
-      minorGridlines: { color: 'transparent' }
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+      format: "short",
+      gridlines: { color: "#e5e7eb", count: 5 },
+      minorGridlines: { color: "transparent" },
     },
     vAxis: {
       title: "Branch",
-      titleTextStyle: { fontSize: 11, fontName: 'system-ui', color: '#6b7280' },
-      textStyle: { fontSize: 9, fontName: 'system-ui', color: '#6b7280' },
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
     },
-    colors: ['#8b5cf6'],
-    legend: { position: 'none' },
-    bar: { groupWidth: '70%' },
-    animation: { startup: true, easing: 'inAndOut', duration: 1000 },
+    colors: ["#8b5cf6"],
+    legend: { position: "none" },
+    bar: { groupWidth: "70%" },
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
   };
 
   if (loading) {
@@ -187,7 +192,9 @@ export function RecordingsAnalytics() {
     return (
       <div className="space-y-6">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h3 className="text-lg font-medium text-red-800 mb-2">Error Loading Analytics</h3>
+          <h3 className="text-lg font-medium text-red-800 mb-2">
+            Error Loading Analytics
+          </h3>
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={fetchAnalytics}
@@ -214,7 +221,9 @@ export function RecordingsAnalytics() {
               <CheckCircle className="h-6 w-6 text-white" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-blue-600">Total Recordings</p>
+              <p className="text-sm font-medium text-blue-600">
+                Total Recordings
+              </p>
               <p className="text-2xl font-bold text-blue-900">
                 {analytics.totalStats.totalRecordings.toLocaleString()}
               </p>
@@ -242,7 +251,9 @@ export function RecordingsAnalytics() {
               <Clock className="h-6 w-6 text-white" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-purple-600">Avg Duration</p>
+              <p className="text-sm font-medium text-purple-600">
+                Avg Duration
+              </p>
               <p className="text-2xl font-bold text-purple-900">
                 {Math.round(analytics.totalStats.avgDuration)}s
               </p>
@@ -269,7 +280,9 @@ export function RecordingsAnalytics() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Daily Recordings Line Chart */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Recordings Trend</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Daily Recordings Trend
+          </h3>
           <div className="h-64">
             {analytics.dailyRecordings?.length > 0 && (
               <Chart
@@ -285,7 +298,9 @@ export function RecordingsAnalytics() {
 
         {/* Status Pie Chart */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recordings by Status</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Recordings by Status
+          </h3>
           <div className="h-64">
             {analytics.recordingsByStatus?.length > 0 && (
               <Chart
@@ -302,7 +317,9 @@ export function RecordingsAnalytics() {
 
       {/* Branch Bar Chart - Full Width */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Branches by Recordings</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Top Branches by Recordings
+        </h3>
         <div className="h-80">
           {analytics.recordingsByBranch?.length > 0 && (
             <Chart

@@ -162,7 +162,7 @@ export const uploadVoice: RequestHandler = async (req, res) => {
     // Generate UUID and insert into database
     const id = uuidv4();
     // Remove dashes from CNIC before inserting into database
-    const cleanedCnic = cnic.replace(/-/g, '');
+    const cleanedCnic = cnic.replace(/-/g, "");
 
     const query = `
       INSERT INTO recordings

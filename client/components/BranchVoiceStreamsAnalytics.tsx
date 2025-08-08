@@ -66,7 +66,7 @@ export function BranchVoiceStreamsAnalytics() {
   // Prepare Google Charts data for monthly chart
   const getMonthlyChartData = () => {
     if (!data?.monthly_data?.length) return [["Month", "Voice Streams"]];
-    
+
     const chartData = [["Month", "Voice Streams"]];
     data.monthly_data.forEach((item) => {
       chartData.push([item.formatted_month, item.voice_streams]);
@@ -77,7 +77,7 @@ export function BranchVoiceStreamsAnalytics() {
   // Prepare Google Charts data for daily chart
   const getDailyChartData = () => {
     if (!data?.daily_current_month?.length) return [["Date", "Voice Streams"]];
-    
+
     const chartData = [["Date", "Voice Streams"]];
     data.daily_current_month.forEach((item) => {
       chartData.push([item.formatted_date, item.voice_streams]);
@@ -90,59 +90,59 @@ export function BranchVoiceStreamsAnalytics() {
     title: "Voice Streams per Month",
     titleTextStyle: {
       fontSize: 14,
-      fontName: 'system-ui',
+      fontName: "system-ui",
       bold: true,
-      color: '#1f2937'
+      color: "#1f2937",
     },
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     chartArea: {
       left: 60,
       top: 50,
-      width: '85%',
-      height: '70%',
+      width: "85%",
+      height: "70%",
     },
     hAxis: {
       title: "Month",
       titleTextStyle: {
         fontSize: 11,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
       textStyle: {
         fontSize: 9,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
     },
     vAxis: {
       title: "Voice Streams",
       titleTextStyle: {
         fontSize: 11,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
       textStyle: {
         fontSize: 9,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
-      format: 'short',
+      format: "short",
       gridlines: {
-        color: '#e5e7eb',
-        count: 5
+        color: "#e5e7eb",
+        count: 5,
       },
       minorGridlines: {
-        color: 'transparent'
-      }
+        color: "transparent",
+      },
     },
-    colors: ['#3b82f6'],
-    legend: { position: 'none' },
+    colors: ["#3b82f6"],
+    legend: { position: "none" },
     lineWidth: 3,
     pointSize: 5,
     areaOpacity: 0.3,
     animation: {
       startup: true,
-      easing: 'inAndOut',
+      easing: "inAndOut",
       duration: 1000,
     },
   };
@@ -152,57 +152,57 @@ export function BranchVoiceStreamsAnalytics() {
     title: "Voice Streams This Month",
     titleTextStyle: {
       fontSize: 14,
-      fontName: 'system-ui',
+      fontName: "system-ui",
       bold: true,
-      color: '#1f2937'
+      color: "#1f2937",
     },
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     chartArea: {
       left: 60,
       top: 50,
-      width: '85%',
-      height: '70%',
+      width: "85%",
+      height: "70%",
     },
     hAxis: {
       title: "Date",
       titleTextStyle: {
         fontSize: 11,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
       textStyle: {
         fontSize: 9,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
     },
     vAxis: {
       title: "Voice Streams",
       titleTextStyle: {
         fontSize: 11,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
       textStyle: {
         fontSize: 9,
-        fontName: 'system-ui',
-        color: '#6b7280'
+        fontName: "system-ui",
+        color: "#6b7280",
       },
-      format: 'short',
+      format: "short",
       gridlines: {
-        color: '#e5e7eb',
-        count: 5
+        color: "#e5e7eb",
+        count: 5,
       },
       minorGridlines: {
-        color: 'transparent'
-      }
+        color: "transparent",
+      },
     },
-    colors: ['#10b981'],
-    legend: { position: 'none' },
-    bar: { groupWidth: '75%' },
+    colors: ["#10b981"],
+    legend: { position: "none" },
+    bar: { groupWidth: "75%" },
     animation: {
       startup: true,
-      easing: 'inAndOut',
+      easing: "inAndOut",
       duration: 1000,
     },
   };

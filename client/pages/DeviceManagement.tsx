@@ -86,10 +86,14 @@ export function DeviceManagement() {
     }
   };
 
-  const calculateHeartbeatStatus = (lastSeen: string): "online" | "problematic" | "offline" => {
+  const calculateHeartbeatStatus = (
+    lastSeen: string,
+  ): "online" | "problematic" | "offline" => {
     const now = new Date();
     const lastSeenDate = new Date(lastSeen);
-    const minutesDiff = Math.floor((now.getTime() - lastSeenDate.getTime()) / (1000 * 60));
+    const minutesDiff = Math.floor(
+      (now.getTime() - lastSeenDate.getTime()) / (1000 * 60),
+    );
 
     if (minutesDiff <= 5) return "online";
     if (minutesDiff <= 15) return "problematic";
@@ -102,8 +106,10 @@ export function DeviceManagement() {
 
       // Fetch devices and heartbeats in parallel
       const [devicesResponse, heartbeatsData] = await Promise.all([
-        authFetch(`/api/devices?limit=50&search=${encodeURIComponent(searchQuery)}`),
-        fetchHeartbeats()
+        authFetch(
+          `/api/devices?limit=50&search=${encodeURIComponent(searchQuery)}`,
+        ),
+        fetchHeartbeats(),
       ]);
 
       if (!devicesResponse.ok) {
@@ -120,29 +126,33 @@ export function DeviceManagement() {
       // Merge heartbeat status with devices
       const devicesWithHeartbeatStatus = devicesArray.map((device: Device) => {
         // Find matching heartbeat by MAC address or IP address
-        const heartbeat = heartbeatsData.find(hb =>
-          (device.device_mac && hb.device_id === device.device_mac) ||
-          (device.ip_address && hb.ip_address === device.ip_address)
+        const heartbeat = heartbeatsData.find(
+          (hb) =>
+            (device.device_mac && hb.device_id === device.device_mac) ||
+            (device.ip_address && hb.ip_address === device.ip_address),
         );
 
         if (heartbeat) {
           return {
             ...device,
             heartbeat_status: calculateHeartbeatStatus(heartbeat.last_seen),
-            last_seen: heartbeat.last_seen
+            last_seen: heartbeat.last_seen,
           };
         }
 
         return {
           ...device,
           heartbeat_status: "offline" as const,
-          last_seen: null
+          last_seen: null,
         };
       });
 
       setHeartbeats(heartbeatsData);
       setDevices(devicesWithHeartbeatStatus);
-      console.log("✅ Devices with heartbeat status fetched successfully:", devicesWithHeartbeatStatus);
+      console.log(
+        "✅ Devices with heartbeat status fetched successfully:",
+        devicesWithHeartbeatStatus,
+      );
     } catch (error) {
       console.error("❌ Error fetching devices:", error);
       // Set empty array on error to prevent crashes
@@ -279,7 +289,9 @@ export function DeviceManagement() {
     }
   };
 
-  const getHeartbeatStatusIcon = (status: "online" | "problematic" | "offline") => {
+  const getHeartbeatStatusIcon = (
+    status: "online" | "problematic" | "offline",
+  ) => {
     switch (status) {
       case "online":
         return <Wifi className="h-4 w-4 text-green-600" />;
@@ -292,7 +304,9 @@ export function DeviceManagement() {
     }
   };
 
-  const getHeartbeatStatusColor = (status: "online" | "problematic" | "offline") => {
+  const getHeartbeatStatusColor = (
+    status: "online" | "problematic" | "offline",
+  ) => {
     switch (status) {
       case "online":
         return "bg-green-100 text-green-700";
@@ -464,11 +478,15 @@ export function DeviceManagement() {
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        {getHeartbeatStatusIcon(device.heartbeat_status || "offline")}
+                        {getHeartbeatStatusIcon(
+                          device.heartbeat_status || "offline",
+                        )}
                         <span
                           className={`px-2 py-1 rounded-full text-xs ${getHeartbeatStatusColor(device.heartbeat_status || "offline")}`}
                         >
-                          {(device.heartbeat_status || "offline").charAt(0).toUpperCase() +
+                          {(device.heartbeat_status || "offline")
+                            .charAt(0)
+                            .toUpperCase() +
                             (device.heartbeat_status || "offline").slice(1)}
                         </span>
                       </div>
@@ -477,7 +495,8 @@ export function DeviceManagement() {
                           Last seen: {formatLastSeen(device.last_seen || null)}
                         </div>
                         <div className="text-xs text-gray-400">
-                          Added: {new Date(device.created_on).toLocaleDateString()}
+                          Added:{" "}
+                          {new Date(device.created_on).toLocaleDateString()}
                         </div>
                       </div>
                     </div>

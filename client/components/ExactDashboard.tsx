@@ -652,7 +652,9 @@ export function ExactDashboard() {
                             {recording.branch_no || recording.device_name}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
-                            {recording.cnic === "UNKNOWN" ? "Walk-in Customer" : (recording.cnic || recording.file_name || "-")}
+                            {recording.cnic === "UNKNOWN"
+                              ? "Walk-in Customer"
+                              : recording.cnic || recording.file_name || "-"}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.start_time
@@ -859,7 +861,10 @@ export function ExactDashboard() {
                       <tbody className="bg-white divide-y divide-gray-100">
                         {devices.map((device, index) => (
                           <tr
-                            key={device.device_id || `${device.ip_address}-${index}`}
+                            key={
+                              device.device_id ||
+                              `${device.ip_address}-${index}`
+                            }
                             className="hover:bg-gray-50"
                           >
                             <td className="px-2 py-1.5 text-xs font-medium text-gray-900 max-w-24 truncate">
