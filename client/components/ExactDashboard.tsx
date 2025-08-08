@@ -271,6 +271,29 @@ export function ExactDashboard() {
     }
   };
 
+  const loadPreviousLogs = async (cnic: string | undefined) => {
+    if (!cnic) {
+      setPreviousLogs([]);
+      return;
+    }
+
+    try {
+      const response = await authFetch(`/api/recordings?search=${encodeURIComponent(cnic)}&limit=10`);
+      if (response.ok) {
+        const data: PaginatedResponse<RecordingHistory> = await response.json();
+        // Filter out the current recording
+        const logs = data.data.filter(log => log.id !== selectedRecording?.id);
+        setPreviousLogs(logs);
+      } else {
+        console.error("Failed to fetch previous logs");
+        setPreviousLogs([]);
+      }
+    } catch (error) {
+      console.error("Error fetching previous logs:", error);
+      setPreviousLogs([]);
+    }
+  };
+
   const fixAudioMappings = async () => {
     try {
       const response = await authFetch("/api/fix/audio-mappings", {
