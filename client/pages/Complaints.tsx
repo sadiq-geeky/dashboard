@@ -1209,10 +1209,10 @@ export function Complaints() {
                       </div>
                     </div>
 
-                    {/* Customer Information */}
+                    {/* Creator Information */}
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 mb-4">
-                        Customer Information
+                        Creator Information
                       </h3>
                       <div className="bg-gray-50 rounded-lg p-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
