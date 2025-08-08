@@ -133,6 +133,12 @@ export const getDevice: RequestHandler = async (req, res) => {
 // Create new device
 export const createDevice: RequestHandler = async (req, res) => {
   try {
+    console.log('📦 Device creation request received:', {
+      body: req.body,
+      user: (req as any).user?.uuid,
+      headers: req.headers['x-user-id']
+    });
+
     const {
       device_name,
       device_mac,
@@ -145,6 +151,7 @@ export const createDevice: RequestHandler = async (req, res) => {
     } = req.body;
 
     if (!device_name) {
+      console.log('❌ Device creation failed: missing device_name');
       return res.status(400).json({ error: "Device name is required" });
     }
 
