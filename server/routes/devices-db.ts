@@ -224,7 +224,6 @@ export const updateDevice: RequestHandler = async (req, res) => {
     const {
       device_name,
       device_mac,
-      ip_address,
       device_type,
       installation_date,
       last_maintenance,
