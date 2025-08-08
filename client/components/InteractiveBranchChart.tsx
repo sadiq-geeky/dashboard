@@ -381,6 +381,10 @@ export function InteractiveBranchChart() {
               tick={{ fill: "#6b7280" }}
               axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
               tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
+              type="category"
+              allowDataOverflow={false}
+              allowDecimals={true}
+              allowDuplicatedCategory={true}
             />
             <YAxis
               fontSize={11}
@@ -389,6 +393,10 @@ export function InteractiveBranchChart() {
               axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
               tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
               tickFormatter={(value) => value.toLocaleString()}
+              type="number"
+              allowDataOverflow={false}
+              allowDecimals={true}
+              allowDuplicatedCategory={true}
             />
             <Tooltip
               content={<CustomTooltip />}
