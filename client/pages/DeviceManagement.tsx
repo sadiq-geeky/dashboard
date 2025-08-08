@@ -5,6 +5,7 @@ import { AdminNavigation } from "../components/AdminNavigation";
 import { cn } from "@/lib/utils";
 import { authDelete, authFetch } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
+import { HeartbeatRecord } from "@shared/api";
 import {
   Search,
   Plus,
@@ -33,6 +34,9 @@ interface Device {
   notes?: string;
   created_on: string;
   updated_on: string;
+  // Heartbeat-based status
+  heartbeat_status?: "online" | "problematic" | "offline";
+  last_seen?: string;
 }
 
 interface DeviceFormData {
@@ -55,6 +59,7 @@ export function DeviceManagement() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingDevice, setEditingDevice] = useState<Device | null>(null);
+  const [heartbeats, setHeartbeats] = useState<HeartbeatRecord[]>([]);
   const [formData, setFormData] = useState<DeviceFormData>({
     device_name: "",
     device_mac: "",
