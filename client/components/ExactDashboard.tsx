@@ -415,6 +415,23 @@ export function ExactDashboard() {
       });
     }
 
+    // Apply customer type filter
+    if (customerTypeFilter !== "all") {
+      filtered = filtered.filter((recording) => {
+        const isWalkIn = recording.cnic?.toLowerCase().includes("walk") ||
+                        recording.cnic?.toLowerCase().includes("customer") ||
+                        !recording.cnic ||
+                        recording.cnic.trim() === "";
+
+        if (customerTypeFilter === "walkin") {
+          return isWalkIn;
+        } else if (customerTypeFilter === "regular") {
+          return !isWalkIn;
+        }
+        return true;
+      });
+    }
+
     setFilteredRecordings(filtered);
 
     // Reset to page 1 if current page exceeds available pages
