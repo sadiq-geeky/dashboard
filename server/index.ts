@@ -98,7 +98,18 @@ export function createServer() {
   verifyEmailConnection().catch(console.error);
 
   // Middleware
-  app.use(cors());
+  app.use(cors({
+    origin: [
+      'http://localhost:8080',
+      'http://localhost:3000',
+      /\.fly\.dev$/,
+      /\.vercel\.app$/,
+      /\.netlify\.app$/
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id']
+  }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
