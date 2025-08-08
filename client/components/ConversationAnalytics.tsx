@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { authFetch } from "@/lib/api";
 import { useAuth } from "../contexts/AuthContext";
-import { Chart } from "react-google-charts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 import {
   RefreshCw,
   BarChart3,
@@ -34,6 +47,8 @@ interface UniqueCustomerAnalytics {
   month: string;
   unique_cnic_count: number;
 }
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
 
 export function ConversationAnalytics() {
   const { isAdmin } = useAuth();
@@ -117,121 +132,82 @@ export function ConversationAnalytics() {
     }
   }, [isAdmin]);
 
-  // Safe chart data preparation functions
+  // Prepare chart data for Recharts
   const getBranchChartData = () => {
-    const chartData = [["Branch", "Conversations"]];
-
     if (!branchData || branchData.length === 0 || !selectedPeriod) {
-      chartData.push(["No Data", 0]);
-      return chartData;
+      return [{ name: "No Data", count: 0 }];
     }
 
     const filtered = branchData.filter(item => item?.month === selectedPeriod);
     if (filtered.length === 0) {
-      chartData.push(["No Data", 0]);
-      return chartData;
+      return [{ name: "No Data", count: 0 }];
     }
 
-    filtered
+    return filtered
       .sort((a, b) => (b?.count || 0) - (a?.count || 0))
       .slice(0, 10)
-      .forEach((item) => {
-        if (item?.branch_name && typeof item.count === 'number') {
-          const branchName = item.branch_name.length > 25 
-            ? item.branch_name.substring(0, 25) + "..." 
-            : item.branch_name;
-          chartData.push([branchName, item.count]);
-        }
-      });
-
-    return chartData;
+      .map((item) => ({
+        name: item.branch_name?.length > 20 
+          ? item.branch_name.substring(0, 20) + "..." 
+          : item.branch_name || "Unknown",
+        count: item.count || 0,
+      }));
   };
 
   const getCityChartData = () => {
-    const chartData = [["City", "Conversations"]];
-
     if (!cityData || cityData.length === 0) {
-      chartData.push(["No Data", 0]);
-      return chartData;
+      return [{ name: "No Data", count: 0 }];
     }
 
-    cityData
+    return cityData
       .filter(item => item?.city)
       .sort((a, b) => (b?.count || 0) - (a?.count || 0))
-      .slice(0, 10)
-      .forEach((item) => {
-        if (item?.city && typeof item.count === 'number') {
-          chartData.push([item.city, item.count]);
-        }
-      });
-
-    return chartData;
+      .slice(0, 8)
+      .map((item) => ({
+        name: item.city || "Unknown",
+        count: item.count || 0,
+      }));
   };
 
   const getDailyChartData = () => {
-    const chartData = [["Date", "Conversations"]];
-
     if (!dailyData || dailyData.length === 0) {
-      chartData.push(["No Data", 0]);
-      return chartData;
+      return [{ name: "No Data", count: 0 }];
     }
 
-    dailyData
+    return dailyData
       .filter(item => item?.date)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .forEach((item) => {
-        if (item?.date && typeof item.count === 'number') {
-          try {
-            const date = new Date(item.date);
-            if (!isNaN(date.getTime())) {
-              const dateStr = date.toLocaleDateString("en-US", {
+      .map((item) => {
+        try {
+          const date = new Date(item.date);
+          if (!isNaN(date.getTime())) {
+            return {
+              name: date.toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
-              });
-              chartData.push([dateStr, item.count]);
-            }
-          } catch (error) {
-            console.warn("Invalid date:", item.date);
+              }),
+              count: item.count || 0,
+            };
           }
+        } catch (error) {
+          console.warn("Invalid date:", item.date);
         }
-      });
-
-    return chartData;
+        return null;
+      })
+      .filter(Boolean);
   };
 
   const getCustomerChartData = () => {
-    const chartData = [["Month", "Unique Customers"]];
-
     if (!customerData || customerData.length === 0) {
-      chartData.push(["Current Month", 0]);
-      return chartData;
+      return [{ name: "Current Month", value: 0 }];
     }
 
     const item = customerData[0];
-    if (item?.unique_cnic_count != null) {
-      chartData.push(["Current Month", item.unique_cnic_count]);
-    } else {
-      chartData.push(["Current Month", 0]);
-    }
-
-    return chartData;
+    return [{ 
+      name: "Unique Customers", 
+      value: item?.unique_cnic_count || 0 
+    }];
   };
-
-  // Simple chart options
-  const getChartOptions = (title: string) => ({
-    title,
-    titleTextStyle: { fontSize: 14, bold: true },
-    backgroundColor: "transparent",
-    chartArea: { left: 100, top: 40, width: "70%", height: "70%" },
-    hAxis: {
-      textStyle: { fontSize: 10 },
-    },
-    vAxis: {
-      textStyle: { fontSize: 10 },
-    },
-    legend: { position: "none" },
-    animation: { startup: true, duration: 500 },
-  });
 
   if (!isAdmin()) return null;
 
@@ -352,45 +328,104 @@ export function ConversationAnalytics() {
         </div>
 
         {/* Chart Display */}
-        <div className="h-96 border border-gray-200 rounded-lg p-4 bg-gray-50">
+        <div className="h-96 border border-gray-200 rounded-lg p-4 bg-white">
           {activeChart === "branch" && (
-            <Chart
-              chartType="BarChart"
-              width="100%"
-              height="100%"
-              data={getBranchChartData()}
-              options={getChartOptions("Conversations by Branch")}
-            />
+            <div className="h-full w-full">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Conversations by Branch
+              </h3>
+              <ResponsiveContainer width="100%" height="90%">
+                <BarChart data={getBranchChartData()} layout="horizontal">
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" />
+                  <YAxis 
+                    type="category" 
+                    dataKey="name" 
+                    width={120}
+                    fontSize={12}
+                  />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#3B82F6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           )}
 
           {activeChart === "city" && (
-            <Chart
-              chartType="ColumnChart"
-              width="100%"
-              height="100%"
-              data={getCityChartData()}
-              options={getChartOptions("Conversations by City")}
-            />
+            <div className="h-full w-full">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Conversations by City
+              </h3>
+              <ResponsiveContainer width="100%" height="90%">
+                <PieChart>
+                  <Pie
+                    data={getCityChartData()}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({name, value}) => `${name}: ${value}`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="count"
+                  >
+                    {getCityChartData().map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           )}
 
           {activeChart === "daily" && (
-            <Chart
-              chartType="LineChart"
-              width="100%"
-              height="100%"
-              data={getDailyChartData()}
-              options={getChartOptions("Daily Conversations - Last Month")}
-            />
+            <div className="h-full w-full">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Daily Conversations - Last Month
+              </h3>
+              <ResponsiveContainer width="100%" height="90%">
+                <LineChart data={getDailyChartData()}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="name" 
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    fontSize={12}
+                  />
+                  <YAxis />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="count" 
+                    stroke="#F59E0B" 
+                    strokeWidth={2}
+                    dot={{ fill: '#F59E0B' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           )}
 
           {activeChart === "customers" && (
-            <Chart
-              chartType="ColumnChart"
-              width="100%"
-              height="100%"
-              data={getCustomerChartData()}
-              options={getChartOptions("Unique Customers This Month")}
-            />
+            <div className="h-full w-full">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Unique Customers This Month
+              </h3>
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <div className="text-6xl font-bold text-purple-600 mb-2">
+                    {getCustomerChartData()[0]?.value || 0}
+                  </div>
+                  <div className="text-lg text-gray-600">
+                    Unique Customers (CNIC)
+                  </div>
+                  <div className="text-sm text-gray-500 mt-2">
+                    Current Month
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
 
