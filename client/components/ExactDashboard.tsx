@@ -880,7 +880,7 @@ export function ExactDashboard() {
                             {recording.branch_no || recording.device_name}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
-                            {recording.cnic === "UNKNOWN"
+                            {recording.cnic === "UNKNOWN" || recording.cnic === "XXXXXXXXXXXXX"
                               ? "Walk-in Customer"
                               : recording.cnic || recording.file_name || "-"}
                           </td>
