@@ -409,10 +409,18 @@ export function ConversationAnalytics() {
               margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
+              <XAxis
+                type="number"
+                allowDataOverflow={false}
+                allowDecimals={true}
+                allowDuplicatedCategory={true}
+              />
               <YAxis
                 dataKey="month"
                 type="category"
+                allowDataOverflow={false}
+                allowDecimals={true}
+                allowDuplicatedCategory={true}
                 tickFormatter={formatMonth}
                 width={70}
                 tick={{ fontSize: 11 }}
