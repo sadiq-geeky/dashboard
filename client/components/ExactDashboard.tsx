@@ -12,7 +12,6 @@ import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
 import { ComplaintsStyleAnalytics } from "./ComplaintsStyleAnalytics";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "./Header";
-import { AdminNavigation } from "./AdminNavigation";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Search,
