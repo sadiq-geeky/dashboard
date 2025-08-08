@@ -71,28 +71,83 @@ export function DeviceManagement() {
     notes: "",
   });
 
+  const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
+    try {
+      const response = await authFetch("/api/heartbeats");
+      if (!response.ok) {
+        console.error("Failed to fetch heartbeats:", response.status);
+        return [];
+      }
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      console.error("Error fetching heartbeats:", error);
+      return [];
+    }
+  };
+
+  const calculateHeartbeatStatus = (lastSeen: string): "online" | "problematic" | "offline" => {
+    const now = new Date();
+    const lastSeenDate = new Date(lastSeen);
+    const minutesDiff = Math.floor((now.getTime() - lastSeenDate.getTime()) / (1000 * 60));
+
+    if (minutesDiff <= 5) return "online";
+    if (minutesDiff <= 15) return "problematic";
+    return "offline";
+  };
+
   const fetchDevices = async () => {
     try {
       setLoading(true);
-      const response = await authFetch(
-        `/api/devices?limit=50&search=${encodeURIComponent(searchQuery)}`,
-      );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`HTTP Error ${response.status}:`, errorText);
+      // Fetch devices and heartbeats in parallel
+      const [devicesResponse, heartbeatsData] = await Promise.all([
+        authFetch(`/api/devices?limit=50&search=${encodeURIComponent(searchQuery)}`),
+        fetchHeartbeats()
+      ]);
+
+      if (!devicesResponse.ok) {
+        const errorText = await devicesResponse.text();
+        console.error(`HTTP Error ${devicesResponse.status}:`, errorText);
         throw new Error(
-          `Failed to fetch devices: ${response.status} ${errorText}`,
+          `Failed to fetch devices: ${devicesResponse.status} ${errorText}`,
         );
       }
 
-      const data = await response.json();
-      console.log("✅ Devices fetched successfully:", data);
-      setDevices(data.data || []);
+      const devicesData = await devicesResponse.json();
+      const devicesArray = devicesData.data || [];
+
+      // Merge heartbeat status with devices
+      const devicesWithHeartbeatStatus = devicesArray.map((device: Device) => {
+        // Find matching heartbeat by MAC address or IP address
+        const heartbeat = heartbeatsData.find(hb =>
+          (device.device_mac && hb.device_id === device.device_mac) ||
+          (device.ip_address && hb.ip_address === device.ip_address)
+        );
+
+        if (heartbeat) {
+          return {
+            ...device,
+            heartbeat_status: calculateHeartbeatStatus(heartbeat.last_seen),
+            last_seen: heartbeat.last_seen
+          };
+        }
+
+        return {
+          ...device,
+          heartbeat_status: "offline" as const,
+          last_seen: null
+        };
+      });
+
+      setHeartbeats(heartbeatsData);
+      setDevices(devicesWithHeartbeatStatus);
+      console.log("✅ Devices with heartbeat status fetched successfully:", devicesWithHeartbeatStatus);
     } catch (error) {
       console.error("❌ Error fetching devices:", error);
       // Set empty array on error to prevent crashes
       setDevices([]);
+      setHeartbeats([]);
     } finally {
       setLoading(false);
     }
