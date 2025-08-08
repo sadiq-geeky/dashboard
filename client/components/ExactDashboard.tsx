@@ -418,10 +418,21 @@ export function ExactDashboard() {
     // Apply customer type filter
     if (customerTypeFilter !== "all") {
       filtered = filtered.filter((recording) => {
-        const isWalkIn = recording.cnic?.toLowerCase().includes("walk") ||
-                        recording.cnic?.toLowerCase().includes("customer") ||
-                        !recording.cnic ||
-                        recording.cnic.trim() === "";
+        const cnic = recording.cnic?.toString().toLowerCase().trim() || "";
+
+        // More comprehensive walk-in detection
+        const isWalkIn =
+          !recording.cnic ||                           // No CNIC provided
+          cnic === "" ||                               // Empty CNIC
+          cnic.includes("walk") ||                     // Contains "walk"
+          cnic.includes("customer") ||                 // Contains "customer"
+          cnic.includes("xxx") ||                      // Contains "xxx" pattern
+          cnic.length < 10 ||                          // Too short for valid CNIC
+          /^[x]{3,}/.test(cnic) ||                     // Starts with multiple X's
+          cnic === "n/a" ||                            // N/A values
+          cnic === "na" ||                             // NA values
+          cnic === "not available" ||                  // Not available
+          !/^\d+$/.test(cnic.replace(/[-\s]/g, ""));   // Not all digits (after removing dashes/spaces)
 
         if (customerTypeFilter === "walkin") {
           return isWalkIn;
