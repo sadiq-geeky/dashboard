@@ -439,7 +439,7 @@ export function ExactDashboard() {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
-  }, [searchQuery, branchFilter, dateFromFilter, dateToFilter, recordings, currentPage, itemsPerPage]);
+  }, [searchQuery, branchFilter, dateFromFilter, dateToFilter, customerTypeFilter, recordings, currentPage, itemsPerPage]);
 
   const formatLastSeen = (dateString: string) => {
     const date = new Date(dateString);
