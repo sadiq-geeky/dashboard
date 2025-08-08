@@ -437,44 +437,65 @@ export function ConversationAnalytics() {
 
         {/* Chart Display */}
         <div className="h-96 border border-gray-200 rounded-lg p-4 bg-gray-50">
-          {activeChart === 'branch' && getBranchChartData().length > 1 && (
-            <Chart
-              chartType="BarChart"
-              width="100%"
-              height="100%"
-              data={getBranchChartData()}
-              options={getBranchChartOptions()}
-            />
-          )}
+          {loading ? (
+            <div className="flex items-center justify-center h-full">
+              <RefreshCw className="h-8 w-8 animate-spin text-blue-600 mr-3" />
+              <span className="text-gray-600">Loading chart data...</span>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <p className="text-red-600 mb-2">Error loading chart</p>
+                <button
+                  onClick={fetchAnalyticsData}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              {activeChart === 'branch' && (
+                <Chart
+                  chartType="BarChart"
+                  width="100%"
+                  height="100%"
+                  data={getBranchChartData()}
+                  options={getBranchChartOptions()}
+                />
+              )}
 
-          {activeChart === 'city' && getCityChartData().length > 1 && (
-            <Chart
-              chartType="ComboChart"
-              width="100%"
-              height="100%"
-              data={getCityChartData()}
-              options={getCityChartOptions()}
-            />
-          )}
+              {activeChart === 'city' && (
+                <Chart
+                  chartType="ComboChart"
+                  width="100%"
+                  height="100%"
+                  data={getCityChartData()}
+                  options={getCityChartOptions()}
+                />
+              )}
 
-          {activeChart === 'daily' && getDailyChartData().length > 1 && (
-            <Chart
-              chartType="ColumnChart"
-              width="100%"
-              height="100%"
-              data={getDailyChartData()}
-              options={getDailyChartOptions()}
-            />
-          )}
+              {activeChart === 'daily' && (
+                <Chart
+                  chartType="ColumnChart"
+                  width="100%"
+                  height="100%"
+                  data={getDailyChartData()}
+                  options={getDailyChartOptions()}
+                />
+              )}
 
-          {activeChart === 'customers' && getCustomerChartData().length > 1 && (
-            <Chart
-              chartType="ColumnChart"
-              width="100%"
-              height="100%"
-              data={getCustomerChartData()}
-              options={getCustomerChartOptions()}
-            />
+              {activeChart === 'customers' && (
+                <Chart
+                  chartType="ColumnChart"
+                  width="100%"
+                  height="100%"
+                  data={getCustomerChartData()}
+                  options={getCustomerChartOptions()}
+                />
+              )}
+            </>
           )}
         </div>
 
