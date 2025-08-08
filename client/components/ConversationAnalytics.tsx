@@ -170,15 +170,33 @@ export function ConversationAnalytics() {
   const getDailyChartData = () => {
     const chartData = [["Date", "Conversations", { role: "style" }]];
 
-    dailyData
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .forEach((item, index) => {
-        const date = new Date(item.date);
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
-        const isWeekend = date.getDay() === 0 || date.getDay() === 6; // Sunday = 0, Saturday = 6
-        const color = isWeekend ? '#ef4444' : '#3b82f6';
+    if (!dailyData || dailyData.length === 0) {
+      chartData.push(["No Data", 0, "#cccccc"]);
+      return chartData;
+    }
 
-        chartData.push([dayName, item.count, color]);
+    dailyData
+      .filter(item => item && item.date) // Filter out invalid items
+      .sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateA.getTime() - dateB.getTime();
+      })
+      .forEach((item, index) => {
+        try {
+          const date = new Date(item.date);
+          if (isNaN(date.getTime())) {
+            return; // Skip invalid dates
+          }
+
+          const dayName = date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
+          const isWeekend = date.getDay() === 0 || date.getDay() === 6; // Sunday = 0, Saturday = 6
+          const color = isWeekend ? '#ef4444' : '#3b82f6';
+
+          chartData.push([dayName, item.count || 0, color]);
+        } catch (error) {
+          console.warn('Invalid date in daily data:', item.date);
+        }
       });
 
     return chartData;
