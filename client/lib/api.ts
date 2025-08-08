@@ -59,6 +59,15 @@ export async function authFetch(
       : {},
   );
 
+  // Debug logging for authentication
+  const currentUser = getCurrentUser();
+  console.log('🔐 Auth debug:', {
+    url: input.toString(),
+    hasUser: !!currentUser,
+    userId: currentUser?.uuid,
+    headers: authHeaders
+  });
+
   const response = await fetch(input, {
     ...restInit,
     headers: authHeaders,
