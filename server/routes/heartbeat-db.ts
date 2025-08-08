@@ -32,9 +32,10 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
     // Simplified and optimized heartbeat query with deduplication
     const query = `
       SELECT
-        COALESCE(ANY_VALUE(b.branch_name), CONCAT('Device-', h.mac_address)) AS branch_name,
-        COALESCE(ANY_VALUE(b.branch_code), h.mac_address) AS branch_code,
+        COALESCE(ANY_VALUE(b.branch_name), 'Not linked to branch') AS branch_name,
+        COALESCE(ANY_VALUE(b.branch_code), 'Not linked to branch') AS branch_code,
         h.ip_address,
+        h.mac_address as device_id,
         h.last_seen,
         CASE
           WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 5 THEN 'online'
@@ -63,7 +64,6 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
       LEFT JOIN devices d ON d.device_mac = h.mac_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
-      WHERE (d.device_status = 'active' OR d.device_status IS NULL)
       ${whereClause ? (whereClause.includes("WHERE") ? whereClause.replace("WHERE", "AND") : `AND ${whereClause}`) : ""}
       GROUP BY h.mac_address, h.ip_address, h.last_seen
       ORDER BY h.last_seen DESC
@@ -79,9 +79,10 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
 
       const fallbackQuery = `
         SELECT
-          CONCAT('Device-', h.mac_address) AS branch_name,
-          h.ip_address AS branch_code,
+          'Not linked to branch' AS branch_name,
+          'Not linked to branch' AS branch_code,
           h.ip_address,
+          h.mac_address as device_id,
           MAX(h.created_on) AS last_seen,
           CASE
             WHEN TIMESTAMPDIFF(MINUTE, MAX(h.created_on), NOW()) <= 5 THEN 'online'
@@ -92,7 +93,6 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
         FROM heartbeat h
         LEFT JOIN devices d ON d.device_mac = h.mac_address
         WHERE h.mac_address IS NOT NULL
-        AND (d.device_status = 'active' OR d.device_status IS NULL)
         GROUP BY h.mac_address, h.ip_address
         ORDER BY MAX(h.created_on) DESC
         LIMIT 50
@@ -206,7 +206,7 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
 
         heartbeatLogger.info("heartbeat-db", "auto_device_created", {
           request_id: requestId,
-          device_id: deviceUuid,
+          uuid: deviceUuid,
           mac_address: mac_address.trim(),
           ip_address: ip_address,
         });

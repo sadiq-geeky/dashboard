@@ -14,12 +14,12 @@ interface User {
   joining_date: string | null;
   email_id: string | null;
   username: string;
-  role: "admin" | "user";
+  role: "admin" | "manager" | "user";
   is_active: boolean;
   created_on: string | null;
   updated_on: string | null;
-  created_by: string | null;
-  updated_by: string | null;
+  created_by?: string | null;
+  updated_by?: string | null;
 }
 
 interface EditUserModalProps {
@@ -53,7 +53,7 @@ export function EditUserModal({
     email_id: "",
     username: "",
     password: "", // Optional for updates
-    role: "user" as "admin" | "user",
+    role: "user" as "admin" | "manager" | "user",
     is_active: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);

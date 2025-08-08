@@ -98,7 +98,20 @@ export function createServer() {
   verifyEmailConnection().catch(console.error);
 
   // Middleware
-  app.use(cors());
+  app.use(
+    cors({
+      origin: [
+        "http://localhost:8080",
+        "http://localhost:3000",
+        /\.fly\.dev$/,
+        /\.vercel\.app$/,
+        /\.netlify\.app$/,
+      ],
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization", "x-user-id"],
+    }),
+  );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
@@ -138,9 +151,9 @@ export function createServer() {
   // Device management routes (protected with branch filtering)
   app.get("/api/devices", authenticate, addBranchFilter(), getDevices);
   app.get("/api/devices/:id", authenticate, addBranchFilter(), getDevice);
-  app.post("/api/devices", createDevice);
-  app.put("/api/devices/:id", updateDevice);
-  app.delete("/api/devices/:id", deleteDevice);
+  app.post("/api/devices", authenticate, createDevice);
+  app.put("/api/devices/:id", authenticate, updateDevice);
+  app.delete("/api/devices/:id", authenticate, deleteDevice);
   app.get(
     "/api/branches/:branch_id/devices",
     authenticate,

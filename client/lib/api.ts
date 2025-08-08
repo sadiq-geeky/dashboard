@@ -1,7 +1,7 @@
 interface AuthenticatedUser {
   uuid: string;
   username: string;
-  role: "admin" | "user";
+  role: "admin" | "manager" | "user";
   branch_id: string | null;
   branch_city: string | null;
   emp_name: string | null;
@@ -58,6 +58,15 @@ export async function authFetch(
         : {}
       : {},
   );
+
+  // Debug logging for authentication
+  const currentUser = getCurrentUser();
+  console.log("🔐 Auth debug:", {
+    url: input.toString(),
+    hasUser: !!currentUser,
+    userId: currentUser?.uuid,
+    headers: authHeaders,
+  });
 
   const response = await fetch(input, {
     ...restInit,

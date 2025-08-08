@@ -321,7 +321,7 @@ export function Complaints() {
           }));
         }
       } else {
-        const errorData = await response
+        const errorData = await deploymentsResponse
           .json()
           .catch(() => ({ error: "Unknown error" }));
         console.error("Failed to fetch deployments:", errorData);

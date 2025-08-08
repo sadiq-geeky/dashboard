@@ -32,6 +32,10 @@ export function AddUserModal({
     username: "",
     password: "",
     role: "user",
+    branch_id: "",
+    branch_city: "",
+    branch_address: "",
+    device_mac: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

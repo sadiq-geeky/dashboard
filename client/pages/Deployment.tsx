@@ -396,7 +396,7 @@ export function Deployment() {
                       ))}
                       {availableDevices.length === 0 && (
                         <p className="text-gray-500 text-sm text-center py-4">
-                          All devices are deployed
+                          No devices found
                         </p>
                       )}
                     </div>
@@ -431,7 +431,7 @@ export function Deployment() {
                       ))}
                       {availableBranches.length === 0 && (
                         <p className="text-gray-500 text-sm text-center py-4">
-                          All branches have devices
+                          No branches found
                         </p>
                       )}
                     </div>

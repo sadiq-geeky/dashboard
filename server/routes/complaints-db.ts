@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { executeQuery } from "../config/database";
+import { executeQuery, executeUpdate } from "../config/database";
 import { v4 as uuidv4 } from "uuid";
 
 export interface Complaint {
@@ -345,7 +345,7 @@ export const updateComplaint: RequestHandler = async (req, res) => {
       WHERE complaint_id = ?
     `;
 
-    const result = await executeQuery(query, updateValues);
+    const result = await executeUpdate(query, updateValues);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Complaint not found" });
@@ -367,7 +367,7 @@ export const deleteComplaint: RequestHandler = async (req, res) => {
     const { complaint_id } = req.params;
 
     const query = `DELETE FROM complaints WHERE complaint_id = ?`;
-    const result = await executeQuery(query, [complaint_id]);
+    const result = await executeUpdate(query, [complaint_id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Complaint not found" });

@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { executeQuery } from "../config/database";
+import { executeQuery, executeUpdate } from "../config/database";
 import { v4 as uuidv4 } from "uuid";
 
 export interface Device {
@@ -133,6 +133,12 @@ export const getDevice: RequestHandler = async (req, res) => {
 // Create new device
 export const createDevice: RequestHandler = async (req, res) => {
   try {
+    console.log("📦 Device creation request received:", {
+      body: req.body,
+      user: (req as any).user?.uuid,
+      headers: req.headers["x-user-id"],
+    });
+
     const {
       device_name,
       device_mac,
@@ -145,6 +151,7 @@ export const createDevice: RequestHandler = async (req, res) => {
     } = req.body;
 
     if (!device_name) {
+      console.log("❌ Device creation failed: missing device_name");
       return res.status(400).json({ error: "Device name is required" });
     }
 
@@ -202,7 +209,19 @@ export const createDevice: RequestHandler = async (req, res) => {
     });
   } catch (error: any) {
     console.error("Error creating device:", error);
-    res.status(500).json({ error: "Failed to create device" });
+
+    // Handle specific database timeout errors
+    if (error.code === "ETIMEDOUT") {
+      return res.status(503).json({
+        error: "Database connection timeout. Please try again.",
+      });
+    }
+
+    res.status(500).json({
+      error: "Failed to create device",
+      details:
+        process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
 };
 
@@ -210,6 +229,13 @@ export const createDevice: RequestHandler = async (req, res) => {
 export const updateDevice: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log("🔄 Device update request received:", {
+      deviceId: id,
+      body: req.body,
+      user: (req as any).user?.uuid,
+      headers: req.headers["x-user-id"],
+    });
+
     const {
       device_name,
       device_mac,
@@ -223,27 +249,51 @@ export const updateDevice: RequestHandler = async (req, res) => {
 
     // Check for unique MAC address if provided (excluding current device)
     if (device_mac) {
+      console.log(
+        `🔍 Checking MAC uniqueness: ${device_mac} (excluding device ${id})`,
+      );
       const macCheck = await executeQuery(
         "SELECT id FROM devices WHERE device_mac = ? AND id != ?",
         [device_mac, id],
       );
+      console.log(`📋 MAC check result:`, macCheck);
       if (macCheck.length > 0) {
+        const errorMsg = `Device MAC address already exists`;
+        console.log(
+          `❌ MAC address conflict: ${device_mac} already exists on device ${macCheck[0].id}`,
+        );
         return res
           .status(400)
-          .json({ error: "Device MAC address already exists" });
+          .set("Content-Type", "application/json")
+          .json({
+            error: errorMsg,
+            details: `MAC ${device_mac} is already used by device ${macCheck[0].id}`,
+          });
       }
     }
 
     // Check for unique IP address if provided (excluding current device)
     if (ip_address) {
+      console.log(
+        `🔍 Checking IP uniqueness: ${ip_address} (excluding device ${id})`,
+      );
       const ipCheck = await executeQuery(
         "SELECT id FROM devices WHERE ip_address = ? AND id != ?",
         [ip_address, id],
       );
+      console.log(`📋 IP check result:`, ipCheck);
       if (ipCheck.length > 0) {
+        const errorMsg = `Device IP address already exists`;
+        console.log(
+          `❌ IP address conflict: ${ip_address} already exists on device ${ipCheck[0].id}`,
+        );
         return res
           .status(400)
-          .json({ error: "Device IP address already exists" });
+          .set("Content-Type", "application/json")
+          .json({
+            error: errorMsg,
+            details: `IP ${ip_address} is already used by device ${ipCheck[0].id}`,
+          });
       }
     }
 
@@ -255,7 +305,7 @@ export const updateDevice: RequestHandler = async (req, res) => {
       WHERE id = ?
     `;
 
-    const result = await executeQuery(query, [
+    const result = await executeUpdate(query, [
       device_name,
       device_mac || null,
       ip_address || null,
@@ -267,17 +317,33 @@ export const updateDevice: RequestHandler = async (req, res) => {
       id,
     ]);
 
+    console.log(`📊 Update result:`, { affectedRows: result.affectedRows });
+
     if (result.affectedRows === 0) {
+      console.log(`❌ Device not found: ${id}`);
       return res.status(404).json({ error: "Device not found" });
     }
 
+    console.log(`✅ Device updated successfully: ${id}`);
     res.json({
       success: true,
       message: "Device updated successfully",
     });
   } catch (error: any) {
     console.error("Error updating device:", error);
-    res.status(500).json({ error: "Failed to update device" });
+
+    // Handle specific database timeout errors
+    if (error.code === "ETIMEDOUT") {
+      return res.status(503).json({
+        error: "Database connection timeout. Please try again.",
+      });
+    }
+
+    res.status(500).json({
+      error: "Failed to update device",
+      details:
+        process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
 };
 
@@ -287,7 +353,7 @@ export const deleteDevice: RequestHandler = async (req, res) => {
     const { id } = req.params;
 
     const query = `DELETE FROM devices WHERE id = ?`;
-    const result = await executeQuery(query, [id]);
+    const result = await executeUpdate(query, [id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Device not found" });
