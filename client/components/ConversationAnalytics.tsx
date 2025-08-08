@@ -144,15 +144,29 @@ export function ConversationAnalytics() {
             ? customerAnalytics
             : [customerAnalytics];
           setCustomerData(
-            validCustomerData.filter(
-              (item) => item !== null && item !== undefined,
-            ),
-          );
-        }
-      } catch (err) {
-        console.warn("Error processing customer data:", err);
-        setCustomerData([]);
+          validCustomerData.filter(
+            (item) => item !== null && item !== undefined,
+          ),
+        );
       }
+    } catch (err) {
+      console.warn("Error processing customer data:", err);
+      setCustomerData([]);
+    }
+
+    // Process trend data
+    try {
+      if (trendRes.ok) {
+        const trendAnalytics = await trendRes.json();
+        const validTrendData = Array.isArray(trendAnalytics)
+          ? trendAnalytics
+          : [];
+        setTrendData(validTrendData);
+      }
+    } catch (err) {
+      console.warn("Error processing trend data:", err);
+      setTrendData([]);
+    }
     } catch (err) {
       console.error("Error fetching analytics:", err);
       setError(err instanceof Error ? err.message : "Failed to load analytics");
