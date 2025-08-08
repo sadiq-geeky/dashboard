@@ -656,13 +656,14 @@ export function ExactDashboard() {
                       </button>
 
                       {/* Clear All Filters Button */}
-                      {(searchQuery || branchFilter || dateFromFilter || dateToFilter) && (
+                      {(searchQuery || branchFilter || dateFromFilter || dateToFilter || customerTypeFilter !== "all") && (
                         <button
                           onClick={() => {
                             setSearchQuery("");
                             setBranchFilter("");
                             setDateFromFilter("");
                             setDateToFilter("");
+                            setCustomerTypeFilter("all");
                           }}
                           className="flex items-center space-x-1 px-2 py-1.5 text-sm text-red-600 hover:text-red-800 border border-red-300 rounded-md hover:bg-red-50"
                         >
