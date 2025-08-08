@@ -344,7 +344,6 @@ export function DeviceManagement() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      {/* Navigation */}
 
       <div className="px-6 py-6 pt-1" style={{ padding: "24px 24px 5px" }}>
         <div className="space-y-6">
