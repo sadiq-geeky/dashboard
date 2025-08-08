@@ -1686,6 +1686,155 @@ export function Complaints() {
                 </div>
               </div>
             )}
+
+            {/* Admin Edit Modal */}
+            {showEditModal && selectedComplaint && isAdmin() && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                  {/* Modal Header */}
+                  <div className="border-b border-gray-200 p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-green-100 rounded-lg">
+                          <Edit className="h-6 w-6 text-green-600" />
+                        </div>
+                        <div>
+                          <h2 className="text-xl font-semibold text-gray-900">
+                            Edit Complaint
+                          </h2>
+                          <p className="text-sm text-gray-500">
+                            Update status and add admin notes for complaint {selectedComplaint.complaint_id.slice(-8)}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setShowEditModal(false)}
+                        className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                      >
+                        <ArrowLeft className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Modal Content */}
+                  <form onSubmit={handleUpdateComplaint} className="p-6">
+                    <div className="space-y-6">
+                      {/* Complaint Summary */}
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <h3 className="text-sm font-medium text-gray-900 mb-2">Complaint Summary</h3>
+                        <p className="text-sm text-gray-600 mb-2">
+                          <strong>Branch:</strong> {selectedComplaint.branch_name}
+                        </p>
+                        <p className="text-sm text-gray-600 mb-2">
+                          <strong>Customer:</strong> {
+                            typeof selectedComplaint.customer_data === "object" && selectedComplaint.customer_data.customer_name
+                              ? selectedComplaint.customer_data.customer_name
+                              : "Unknown"
+                          }
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          <strong>Issue:</strong> {selectedComplaint.complaint_text.substring(0, 100)}
+                          {selectedComplaint.complaint_text.length > 100 && "..."}
+                        </p>
+                      </div>
+
+                      {/* Status and Priority */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Status *
+                          </label>
+                          <Select
+                            value={editComplaintData.status}
+                            onValueChange={(value: "pending" | "in_progress" | "resolved" | "closed") =>
+                              setEditComplaintData((prev) => ({
+                                ...prev,
+                                status: value,
+                              }))
+                            }
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="in_progress">In Progress</SelectItem>
+                              <SelectItem value="resolved">Resolved</SelectItem>
+                              <SelectItem value="closed">Closed</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Priority
+                          </label>
+                          <Select
+                            value={editComplaintData.priority}
+                            onValueChange={(value: "low" | "medium" | "high" | "urgent") =>
+                              setEditComplaintData((prev) => ({
+                                ...prev,
+                                priority: value,
+                              }))
+                            }
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select priority" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="low">Low</SelectItem>
+                              <SelectItem value="medium">Medium</SelectItem>
+                              <SelectItem value="high">High</SelectItem>
+                              <SelectItem value="urgent">Urgent</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      {/* Admin Notes */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Admin Notes
+                        </label>
+                        <textarea
+                          value={editComplaintData.notes}
+                          onChange={(e) =>
+                            setEditComplaintData((prev) => ({
+                              ...prev,
+                              notes: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500"
+                          rows={4}
+                          placeholder="Add internal notes about this complaint (visible to admins only)..."
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          These notes are for internal use and won't be visible to customers.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Modal Footer */}
+                    <div className="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
+                      <button
+                        type="button"
+                        onClick={() => setShowEditModal(false)}
+                        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                      >
+                        <Save className="h-4 w-4" />
+                        <span>Save Changes</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </>
         )}
 
