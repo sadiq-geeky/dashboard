@@ -298,16 +298,21 @@ export function Complaints() {
     if (!selectedComplaint) return;
 
     try {
-      const response = await authFetch(`/api/complaints/${selectedComplaint.complaint_id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await authFetch(
+        `/api/complaints/${selectedComplaint.complaint_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editComplaintData),
         },
-        body: JSON.stringify(editComplaintData),
-      });
+      );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: "Unknown error" }));
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
@@ -322,12 +327,12 @@ export function Complaints() {
       setSelectedComplaint(null);
       fetchComplaints();
       fetchStats();
-
     } catch (error) {
       console.error("Error updating complaint:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update complaint",
+        description:
+          error instanceof Error ? error.message : "Failed to update complaint",
         variant: "destructive",
       });
     }
@@ -1439,12 +1444,14 @@ export function Complaints() {
                                     {selectedComplaint.notes}
                                   </p>
                                   <p className="text-xs text-gray-500 mt-2">
-                                    Last updated: {formatDate(selectedComplaint.updated_on)}
+                                    Last updated:{" "}
+                                    {formatDate(selectedComplaint.updated_on)}
                                   </p>
                                 </>
                               ) : (
                                 <p className="text-gray-500 italic">
-                                  No admin notes have been added for this complaint.
+                                  No admin notes have been added for this
+                                  complaint.
                                 </p>
                               )}
                             </div>
@@ -1733,7 +1740,8 @@ export function Complaints() {
                             Edit Complaint
                           </h2>
                           <p className="text-sm text-gray-500">
-                            Update status and add admin notes for complaint {selectedComplaint.complaint_id.slice(-8)}
+                            Update status and add admin notes for complaint{" "}
+                            {selectedComplaint.complaint_id.slice(-8)}
                           </p>
                         </div>
                       </div>
@@ -1751,20 +1759,26 @@ export function Complaints() {
                     <div className="space-y-6">
                       {/* Complaint Summary */}
                       <div className="bg-gray-50 rounded-lg p-4">
-                        <h3 className="text-sm font-medium text-gray-900 mb-2">Complaint Summary</h3>
+                        <h3 className="text-sm font-medium text-gray-900 mb-2">
+                          Complaint Summary
+                        </h3>
                         <p className="text-sm text-gray-600 mb-2">
-                          <strong>Branch:</strong> {selectedComplaint.branch_name}
+                          <strong>Branch:</strong>{" "}
+                          {selectedComplaint.branch_name}
                         </p>
                         <p className="text-sm text-gray-600 mb-2">
-                          <strong>Customer:</strong> {
-                            typeof selectedComplaint.customer_data === "object" && selectedComplaint.customer_data.customer_name
-                              ? selectedComplaint.customer_data.customer_name
-                              : "Unknown"
-                          }
+                          <strong>Customer:</strong>{" "}
+                          {typeof selectedComplaint.customer_data ===
+                            "object" &&
+                          selectedComplaint.customer_data.customer_name
+                            ? selectedComplaint.customer_data.customer_name
+                            : "Unknown"}
                         </p>
                         <p className="text-sm text-gray-600">
-                          <strong>Issue:</strong> {selectedComplaint.complaint_text.substring(0, 100)}
-                          {selectedComplaint.complaint_text.length > 100 && "..."}
+                          <strong>Issue:</strong>{" "}
+                          {selectedComplaint.complaint_text.substring(0, 100)}
+                          {selectedComplaint.complaint_text.length > 100 &&
+                            "..."}
                         </p>
                       </div>
 
@@ -1776,7 +1790,13 @@ export function Complaints() {
                           </label>
                           <Select
                             value={editComplaintData.status}
-                            onValueChange={(value: "pending" | "in_progress" | "resolved" | "closed") =>
+                            onValueChange={(
+                              value:
+                                | "pending"
+                                | "in_progress"
+                                | "resolved"
+                                | "closed",
+                            ) =>
                               setEditComplaintData((prev) => ({
                                 ...prev,
                                 status: value,
@@ -1788,7 +1808,9 @@ export function Complaints() {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="pending">Pending</SelectItem>
-                              <SelectItem value="in_progress">In Progress</SelectItem>
+                              <SelectItem value="in_progress">
+                                In Progress
+                              </SelectItem>
                               <SelectItem value="resolved">Resolved</SelectItem>
                               <SelectItem value="closed">Closed</SelectItem>
                             </SelectContent>
@@ -1801,7 +1823,9 @@ export function Complaints() {
                           </label>
                           <Select
                             value={editComplaintData.priority}
-                            onValueChange={(value: "low" | "medium" | "high" | "urgent") =>
+                            onValueChange={(
+                              value: "low" | "medium" | "high" | "urgent",
+                            ) =>
                               setEditComplaintData((prev) => ({
                                 ...prev,
                                 priority: value,
@@ -1839,7 +1863,8 @@ export function Complaints() {
                           placeholder="Add internal notes about this complaint (visible to admins only)..."
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                          These notes are for internal use and won't be visible to customers.
+                          These notes are for internal use and won't be visible
+                          to customers.
                         </p>
                       </div>
                     </div>
