@@ -248,7 +248,7 @@ export function ConversationAnalytics() {
   });
 
   const getCustomerChartOptions = () => ({
-    title: 'Unique Customers vs Total Conversations by Month',
+    title: 'Unique Customers This Month',
     titleTextStyle: { fontSize: 16, fontName: 'system-ui', bold: true },
     backgroundColor: 'transparent',
     chartArea: { left: 80, top: 60, width: '80%', height: '75%' },
@@ -256,23 +256,13 @@ export function ConversationAnalytics() {
       title: 'Month',
       textStyle: { fontSize: 11 }
     },
-    vAxes: {
-      0: {
-        title: 'Unique Customers',
-        textStyle: { color: '#8b5cf6', fontSize: 11 },
-        titleTextStyle: { color: '#8b5cf6' }
-      },
-      1: {
-        title: 'Total Conversations',
-        textStyle: { color: '#06b6d4', fontSize: 11 },
-        titleTextStyle: { color: '#06b6d4' }
-      }
+    vAxis: {
+      title: 'Unique Customers',
+      textStyle: { fontSize: 11 },
+      gridlines: { color: '#e5e7eb' }
     },
-    series: {
-      0: { type: 'bars', targetAxisIndex: 0, color: '#8b5cf6' },
-      1: { type: 'line', targetAxisIndex: 1, color: '#06b6d4', lineWidth: 3, pointSize: 6 }
-    },
-    legend: { position: 'top', textStyle: { fontSize: 12 } },
+    colors: ['#8b5cf6'],
+    legend: { position: 'none' },
     animation: { startup: true, easing: 'inAndOut', duration: 1000 }
   });
 
