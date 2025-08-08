@@ -568,8 +568,6 @@ export function ExactDashboard() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      {/* Navigation */}
-      <AdminNavigation />
 
       <div className="flex min-h-0">
         {/* Main Content */}
