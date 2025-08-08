@@ -149,9 +149,9 @@ export function createServer() {
   // Device management routes (protected with branch filtering)
   app.get("/api/devices", authenticate, addBranchFilter(), getDevices);
   app.get("/api/devices/:id", authenticate, addBranchFilter(), getDevice);
-  app.post("/api/devices", createDevice);
-  app.put("/api/devices/:id", updateDevice);
-  app.delete("/api/devices/:id", deleteDevice);
+  app.post("/api/devices", authenticate, createDevice);
+  app.put("/api/devices/:id", authenticate, updateDevice);
+  app.delete("/api/devices/:id", authenticate, deleteDevice);
   app.get(
     "/api/branches/:branch_id/devices",
     authenticate,
