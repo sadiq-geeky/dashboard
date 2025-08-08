@@ -459,17 +459,22 @@ export function DeviceManagement() {
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        {getStatusIcon(device.device_status)}
+                        {getHeartbeatStatusIcon(device.heartbeat_status || "offline")}
                         <span
-                          className={`px-2 py-1 rounded-full text-xs ${getStatusColor(device.device_status)}`}
+                          className={`px-2 py-1 rounded-full text-xs ${getHeartbeatStatusColor(device.heartbeat_status || "offline")}`}
                         >
-                          {device.device_status.charAt(0).toUpperCase() +
-                            device.device_status.slice(1)}
+                          {(device.heartbeat_status || "offline").charAt(0).toUpperCase() +
+                            (device.heartbeat_status || "offline").slice(1)}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        {new Date(device.created_on).toLocaleDateString()}
-                      </span>
+                      <div className="text-right">
+                        <div className="text-xs text-gray-500">
+                          Last seen: {formatLastSeen(device.last_seen || null)}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          Added: {new Date(device.created_on).toLocaleDateString()}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
