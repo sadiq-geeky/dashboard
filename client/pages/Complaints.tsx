@@ -120,6 +120,12 @@ export function Complaints() {
   );
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editComplaintData, setEditComplaintData] = useState({
+    status: "" as "pending" | "in_progress" | "resolved" | "closed",
+    priority: "" as "low" | "medium" | "high" | "urgent",
+    notes: "",
+  });
   const [createComplaintData, setCreateComplaintData] = useState({
     customer_name: "",
     customer_phone: "",
