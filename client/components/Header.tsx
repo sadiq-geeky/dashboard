@@ -43,14 +43,6 @@ export function Header() {
               alt="Bank Alfalah Logo"
               className="h-8 w-auto object-contain"
             />
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                Voice Recording System
-              </h1>
-              <p className="text-sm text-gray-500">
-                Powered by SE TECH (Pvt.) Ltd.
-              </p>
-            </div>
           </button>
         </div>
 
