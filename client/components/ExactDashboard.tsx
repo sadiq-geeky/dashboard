@@ -1092,14 +1092,17 @@ export function ExactDashboard() {
 
               {/* Previous Logs Section */}
               <div className="mb-6 pb-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <div className="flex items-center justify-between mb-3">
+                <div
+                  className="flex items-center justify-between mb-3 cursor-pointer"
+                  onClick={() => setIsPreviousLogsCollapsed(!isPreviousLogsCollapsed)}
+                >
                   <h2 className="text-sm font-medium text-gray-700">
                     Previous logs
                   </h2>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                  <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isPreviousLogsCollapsed ? 'rotate-180' : ''}`} />
                 </div>
 
-                {previousLogs.length > 0 ? (
+                {!isPreviousLogsCollapsed && previousLogs.length > 0 ? (
                   <div className="space-y-2">
                     {/* Table Header */}
                     <div className="grid grid-cols-12 gap-2 text-xs font-medium text-gray-500 border-b border-gray-200 pb-1">
