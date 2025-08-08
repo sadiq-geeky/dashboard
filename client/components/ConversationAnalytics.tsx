@@ -664,6 +664,16 @@ export function ConversationAnalytics() {
                   options={getCustomerChartOptions()}
                 />
               )}
+
+              {activeChart === "trend" && (
+                <Chart
+                  chartType="LineChart"
+                  width="100%"
+                  height="100%"
+                  data={getTrendChartData()}
+                  options={getTrendChartOptions()}
+                />
+              )}
             </>
           )}
         </div>
