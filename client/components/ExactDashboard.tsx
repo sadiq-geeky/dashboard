@@ -1375,7 +1375,17 @@ export function ExactDashboard() {
                             </div>
                             <div className="col-span-5 text-gray-500">
                               {log.start_time
-                                ? log.start_time.replace('T', ' ').replace('Z', '').replace('.000', '')
+                                ? (() => {
+                                    const cleanTime = log.start_time.replace('T', ' ').replace('Z', '').replace('.000', '');
+                                    const [datePart, timePart] = cleanTime.split(' ');
+                                    if (timePart) {
+                                      const [hours, minutes, seconds] = timePart.split(':');
+                                      const hour12 = parseInt(hours) % 12 || 12;
+                                      const ampm = parseInt(hours) >= 12 ? 'PM' : 'AM';
+                                      return `${datePart} ${hour12}:${minutes}:${seconds} ${ampm}`;
+                                    }
+                                    return cleanTime;
+                                  })()
                                 : "-"}
                             </div>
                           </div>
