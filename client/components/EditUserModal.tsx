@@ -53,7 +53,7 @@ export function EditUserModal({
     email_id: "",
     username: "",
     password: "", // Optional for updates
-    role: "user" as "admin" | "user",
+    role: "user" as "admin" | "manager" | "user",
     is_active: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
