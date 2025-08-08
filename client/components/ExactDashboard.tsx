@@ -233,7 +233,27 @@ export function ExactDashboard() {
       const heartbeats = await fetchHeartbeats();
       // Ensure heartbeats is an array
       const validHeartbeats = Array.isArray(heartbeats) ? heartbeats : [];
-      setDevices(validHeartbeats);
+
+      // Deduplicate devices based on branch_code (which contains IP or MAC address)
+      const uniqueDevices = validHeartbeats.reduce((acc, device) => {
+        const key = `${device.branch_code}-${device.branch_name}`;
+        // Only keep the device if we haven't seen this key before, or if this one has a more recent last_seen
+        const existing = acc.find(d => `${d.branch_code}-${d.branch_name}` === key);
+        if (!existing) {
+          acc.push(device);
+        } else {
+          // Keep the device with the more recent last_seen time
+          const existingTime = new Date(existing.last_seen).getTime();
+          const currentTime = new Date(device.last_seen).getTime();
+          if (currentTime > existingTime) {
+            const index = acc.indexOf(existing);
+            acc[index] = device;
+          }
+        }
+        return acc;
+      }, [] as typeof validHeartbeats);
+
+      setDevices(uniqueDevices);
       setLastUpdate(new Date());
     } catch (error) {
       console.error("Failed to load devices:", error);
