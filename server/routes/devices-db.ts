@@ -255,10 +255,12 @@ export const updateDevice: RequestHandler = async (req, res) => {
       );
       console.log(`📋 MAC check result:`, macCheck);
       if (macCheck.length > 0) {
+        const errorMsg = `Device MAC address already exists`;
         console.log(`❌ MAC address conflict: ${device_mac} already exists on device ${macCheck[0].id}`);
         return res
           .status(400)
-          .json({ error: "Device MAC address already exists" });
+          .set('Content-Type', 'application/json')
+          .json({ error: errorMsg, details: `MAC ${device_mac} is already used by device ${macCheck[0].id}` });
       }
     }
 
@@ -271,10 +273,12 @@ export const updateDevice: RequestHandler = async (req, res) => {
       );
       console.log(`📋 IP check result:`, ipCheck);
       if (ipCheck.length > 0) {
+        const errorMsg = `Device IP address already exists`;
         console.log(`❌ IP address conflict: ${ip_address} already exists on device ${ipCheck[0].id}`);
         return res
           .status(400)
-          .json({ error: "Device IP address already exists" });
+          .set('Content-Type', 'application/json')
+          .json({ error: errorMsg, details: `IP ${ip_address} is already used by device ${ipCheck[0].id}` });
       }
     }
 
