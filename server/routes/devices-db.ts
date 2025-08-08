@@ -288,7 +288,18 @@ export const updateDevice: RequestHandler = async (req, res) => {
     });
   } catch (error: any) {
     console.error("Error updating device:", error);
-    res.status(500).json({ error: "Failed to update device" });
+
+    // Handle specific database timeout errors
+    if (error.code === 'ETIMEDOUT') {
+      return res.status(503).json({
+        error: "Database connection timeout. Please try again."
+      });
+    }
+
+    res.status(500).json({
+      error: "Failed to update device",
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
