@@ -886,7 +886,17 @@ export function ExactDashboard() {
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.start_time
-                              ? recording.start_time.replace('T', ' ').replace('Z', '').replace('.000', '')
+                              ? (() => {
+                                  const cleanTime = recording.start_time.replace('T', ' ').replace('Z', '').replace('.000', '');
+                                  const [datePart, timePart] = cleanTime.split(' ');
+                                  if (timePart) {
+                                    const [hours, minutes, seconds] = timePart.split(':');
+                                    const hour12 = parseInt(hours) % 12 || 12;
+                                    const ampm = parseInt(hours) >= 12 ? 'PM' : 'AM';
+                                    return `${datePart} ${hour12}:${minutes}:${seconds} ${ampm}`;
+                                  }
+                                  return cleanTime;
+                                })()
                               : "-"}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
