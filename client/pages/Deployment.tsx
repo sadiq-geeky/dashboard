@@ -185,7 +185,9 @@ export function Deployment() {
   const availableBranches = branches.filter(
     (b) => !getDeployedBranchIds().has(b.id),
   );
-  const availableUsers = users.filter((u) => u.role !== "admin");
+  const availableUsers = users.filter(
+    (u) => u.role !== "admin" && !getDeployedUserIds().has(u.uuid),
+  );
 
   if (!isAdmin()) {
     return (
