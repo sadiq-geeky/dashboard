@@ -259,7 +259,7 @@ export const updateDevice: RequestHandler = async (req, res) => {
 
     const query = `
       UPDATE devices
-      SET device_name = ?, device_mac = ?, ip_address = ?, device_type = ?,
+      SET device_name = ?, device_mac = ?, device_type = ?,
           installation_date = ?, last_maintenance = ?,
           device_status = ?, notes = ?, updated_on = CURRENT_TIMESTAMP
       WHERE id = ?
