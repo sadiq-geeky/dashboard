@@ -942,8 +942,8 @@ export function ExactDashboard() {
           </div>
         </div>
 
-        {/* Right Sidebar - Only show when a recording is selected and on home tab */}
-        {selectedRecording && activeTab === "home" && (
+        {/* Right Sidebar - Only show when a recording is selected and on home tab and at least one section is expanded */}
+        {selectedRecording && activeTab === "home" && (!isCustomerProfileCollapsed || !isPreviousLogsCollapsed) && (
           <div className="w-80 bg-white border-l border-gray-200">
             <div className="p-6">
               {/* Audio Player Section */}
