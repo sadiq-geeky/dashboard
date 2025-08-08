@@ -696,6 +696,8 @@ export function ConversationAnalytics() {
               "Daily interaction analytics for the last month. Weekends are highlighted in red to show different usage patterns."}
             {activeChart === "customers" &&
               "Number of unique customers (CNIC) per month visiting the branches, compared with total conversation volume."}
+            {activeChart === "trend" &&
+              "Shows recording trends for each branch over time (year-month). Each line represents a different branch, allowing you to track growth, decline, or seasonal patterns in conversation volume."}
           </p>
         </div>
       </div>
