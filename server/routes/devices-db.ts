@@ -166,18 +166,6 @@ export const createDevice: RequestHandler = async (req, res) => {
       }
     }
 
-    // Check for unique IP address if provided
-    if (ip_address) {
-      const ipCheck = await executeQuery(
-        "SELECT id FROM devices WHERE ip_address = ?",
-        [ip_address],
-      );
-      if (ipCheck.length > 0) {
-        return res
-          .status(400)
-          .json({ error: "Device IP address already exists" });
-      }
-    }
 
     const id = uuidv4();
 
