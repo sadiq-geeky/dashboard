@@ -240,14 +240,22 @@ export function Complaints() {
   // Fetch detailed complaint
   const fetchComplaintDetails = async (complaintId: string) => {
     try {
+      console.log("Fetching complaint details for ID:", complaintId);
       const response = await authFetch(`/api/complaints/${complaintId}`);
+
       if (response.ok) {
         const data = await response.json();
+        console.log("Successfully fetched complaint details:", data);
         setSelectedComplaint(data);
         setShowDetailModal(true);
+      } else {
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        console.error("Failed to fetch complaint details:", response.status, errorData);
+        alert(`Failed to load complaint details: ${errorData.error || response.statusText}`);
       }
     } catch (error) {
       console.error("Error fetching complaint details:", error);
+      alert(`Error loading complaint: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
