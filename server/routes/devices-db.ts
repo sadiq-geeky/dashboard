@@ -256,30 +256,6 @@ export const updateDevice: RequestHandler = async (req, res) => {
       }
     }
 
-    // Check for unique IP address if provided (excluding current device)
-    if (ip_address) {
-      console.log(
-        `🔍 Checking IP uniqueness: ${ip_address} (excluding device ${id})`,
-      );
-      const ipCheck = await executeQuery(
-        "SELECT id FROM devices WHERE ip_address = ? AND id != ?",
-        [ip_address, id],
-      );
-      console.log(`📋 IP check result:`, ipCheck);
-      if (ipCheck.length > 0) {
-        const errorMsg = `Device IP address already exists`;
-        console.log(
-          `❌ IP address conflict: ${ip_address} already exists on device ${ipCheck[0].id}`,
-        );
-        return res
-          .status(400)
-          .set("Content-Type", "application/json")
-          .json({
-            error: errorMsg,
-            details: `IP ${ip_address} is already used by device ${ipCheck[0].id}`,
-          });
-      }
-    }
 
     const query = `
       UPDATE devices
