@@ -134,21 +134,19 @@ export function ConversationAnalytics() {
   };
 
   const getCityChartData = () => {
-    const chartData = [["City", "Conversations", "Branches", { role: "style" }]];
-    
+    const chartData = [["City", "Conversations", "Branches"]];
+
     cityData
-      .sort((a, b) => b.total_conversations - a.total_conversations)
+      .sort((a, b) => b.count - a.count)
       .slice(0, 12) // Top 12 cities
       .forEach((item, index) => {
-        const color = `hsl(${140 + index * 20}, 65%, ${50 + index * 3}%)`;
         chartData.push([
           item.city,
-          item.total_conversations,
-          item.branch_count,
-          color
+          item.count,
+          item.branch_count
         ]);
       });
-    
+
     return chartData;
   };
 
