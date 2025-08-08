@@ -31,9 +31,9 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
 
     // Simplified and optimized heartbeat query with deduplication
     const query = `
-      SELECT DISTINCT
-        COALESCE(b.branch_name, CONCAT('Device-', h.mac_address)) AS branch_name,
-        COALESCE(b.branch_code, h.mac_address) AS branch_code,
+      SELECT
+        COALESCE(ANY_VALUE(b.branch_name), CONCAT('Device-', h.mac_address)) AS branch_name,
+        COALESCE(ANY_VALUE(b.branch_code), h.mac_address) AS branch_code,
         h.ip_address,
         h.last_seen,
         CASE
@@ -42,14 +42,14 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
           ELSE 'offline'
         END AS status,
         CONCAT(
-          FLOOR(IFNULL(h.uptime_count, 0) * 30 / 3600), 'h ',
-          FLOOR(MOD(IFNULL(h.uptime_count, 0) * 30, 3600) / 60), 'm'
+          FLOOR(IFNULL(ANY_VALUE(h.uptime_count), 0) * 30 / 3600), 'h ',
+          FLOOR(MOD(IFNULL(ANY_VALUE(h.uptime_count), 0) * 30, 3600) / 60), 'm'
         ) AS uptime_duration_24h
       FROM (
         SELECT
           h1.mac_address,
           h1.ip_address,
-          h1.created_on AS last_seen,
+          MAX(h1.created_on) AS last_seen,
           (
             SELECT COUNT(*)
             FROM heartbeat h2
@@ -57,12 +57,7 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
               AND h2.created_on >= DATE_SUB(NOW(), INTERVAL 1 DAY)
           ) AS uptime_count
         FROM heartbeat h1
-        WHERE h1.created_on = (
-          SELECT MAX(h3.created_on)
-          FROM heartbeat h3
-          WHERE h3.mac_address = h1.mac_address
-        )
-        AND h1.mac_address IS NOT NULL
+        WHERE h1.mac_address IS NOT NULL
         GROUP BY h1.mac_address, h1.ip_address
       ) h
       LEFT JOIN devices d ON d.device_mac = h.mac_address
