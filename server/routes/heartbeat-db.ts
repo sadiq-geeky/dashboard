@@ -198,7 +198,7 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
           mac_address.trim(),
           ip_address,
           'recorder',
-          'inactive',
+          'active',
           'Auto-created from heartbeat'
         ]);
 
