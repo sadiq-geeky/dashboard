@@ -182,7 +182,7 @@ export const deleteDeployment: RequestHandler = async (req, res) => {
     const { uuid } = req.params;
 
     const query = `DELETE FROM link_device_branch_user WHERE uuid = ?`;
-    const result = await executeQuery(query, [uuid]);
+    const result = await executeUpdate(query, [uuid]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Deployment not found" });
@@ -342,7 +342,7 @@ export const updateDeployment: RequestHandler = async (req, res) => {
       WHERE uuid = ?
     `;
 
-    const result = await executeQuery(query, [
+    const result = await executeUpdate(query, [
       device_id,
       branch_id,
       user_id,
