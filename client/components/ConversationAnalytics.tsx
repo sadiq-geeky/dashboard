@@ -114,19 +114,29 @@ export function ConversationAnalytics() {
 
   // Chart data preparation functions
   const getBranchChartData = () => {
-    const filtered = branchData.filter(item => item.month === selectedPeriod);
+    if (!branchData || branchData.length === 0 || !selectedPeriod) {
+      return [["Branch", "Conversations", { role: "style" }], ["No Data", 0, "#gray"]];
+    }
+
+    const filtered = branchData.filter(item => item && item.month === selectedPeriod);
     const chartData = [["Branch", "Conversations", { role: "style" }]];
 
+    if (filtered.length === 0) {
+      chartData.push(["No Data", 0, "#cccccc"]);
+      return chartData;
+    }
+
     filtered
-      .sort((a, b) => b.count - a.count)
+      .sort((a, b) => (b.count || 0) - (a.count || 0))
       .slice(0, 15) // Top 15 branches
       .forEach((item, index) => {
         const color = `hsl(${220 + index * 15}, 70%, ${60 + index * 2}%)`;
+        const branchName = item.branch_name || `Unknown Branch ${index + 1}`;
         chartData.push([
-          item.branch_name.length > 20
-            ? item.branch_name.substring(0, 20) + "..."
-            : item.branch_name,
-          item.count,
+          branchName.length > 20
+            ? branchName.substring(0, 20) + "..."
+            : branchName,
+          item.count || 0,
           color
         ]);
       });
