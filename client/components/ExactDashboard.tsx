@@ -840,6 +840,9 @@ export function ExactDashboard() {
                             Code
                           </th>
                           <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                            Device ID
+                          </th>
+                          <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                             Status
                           </th>
                           <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
@@ -864,6 +867,11 @@ export function ExactDashboard() {
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-700 font-mono">
                               {device.branch_code}
+                            </td>
+                            <td className="px-2 py-1.5 text-xs text-gray-600 font-mono max-w-32 truncate">
+                              {device.device_id || (
+                                <span className="text-gray-400">N/A</span>
+                              )}
                             </td>
                             <td className="px-2 py-1.5">
                               <span
