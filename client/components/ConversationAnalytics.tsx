@@ -9,7 +9,6 @@ import {
   MapPin,
   Calendar,
   Users,
-  TrendingUp,
   Activity,
 } from "lucide-react";
 
@@ -67,82 +66,46 @@ export function ConversationAnalytics() {
       ]);
 
       // Process branch data
-      try {
-        if (branchRes.ok) {
-          const branchAnalytics = await branchRes.json();
-          const validBranchData = Array.isArray(branchAnalytics)
-            ? branchAnalytics
-            : [];
-          setBranchData(validBranchData);
+      if (branchRes.ok) {
+        const branchAnalytics = await branchRes.json();
+        const validBranchData = Array.isArray(branchAnalytics) ? branchAnalytics : [];
+        setBranchData(validBranchData);
 
-          // Set default period to latest month
-          const months = [
-            ...new Set(
-              validBranchData
-                .filter((item: any) => item && item.month)
-                .map((item: BranchAnalytics) => item.month),
-            ),
-          ]
-            .sort()
-            .reverse();
-          if (months.length > 0 && !selectedPeriod) {
-            setSelectedPeriod(months[0]);
-          }
+        // Set default period to latest month
+        const months = [...new Set(validBranchData.map((item: any) => item?.month).filter(Boolean))]
+          .sort()
+          .reverse();
+        if (months.length > 0 && !selectedPeriod) {
+          setSelectedPeriod(months[0]);
         }
-      } catch (err) {
-        console.warn("Error processing branch data:", err);
-        setBranchData([]);
       }
 
       // Process city data
-      try {
-        if (cityRes.ok) {
-          const cityAnalytics = await cityRes.json();
-          const validCityData = Array.isArray(cityAnalytics)
-            ? cityAnalytics
-            : [];
-          setCityData(validCityData);
-        }
-      } catch (err) {
-        console.warn("Error processing city data:", err);
-        setCityData([]);
+      if (cityRes.ok) {
+        const cityAnalytics = await cityRes.json();
+        const validCityData = Array.isArray(cityAnalytics) ? cityAnalytics : [];
+        setCityData(validCityData);
       }
 
       // Process daily data
-      try {
-        if (dailyRes.ok) {
-          const dailyAnalytics = await dailyRes.json();
-          const validDailyData = Array.isArray(dailyAnalytics)
-            ? dailyAnalytics
-            : [];
-          setDailyData(validDailyData);
-        }
-      } catch (err) {
-        console.warn("Error processing daily data:", err);
-        setDailyData([]);
+      if (dailyRes.ok) {
+        const dailyAnalytics = await dailyRes.json();
+        const validDailyData = Array.isArray(dailyAnalytics) ? dailyAnalytics : [];
+        setDailyData(validDailyData);
       }
 
       // Process customer data
-      try {
-        if (customerRes.ok) {
-          const customerAnalytics = await customerRes.json();
-          // If it's a single object, wrap it in an array
-          const validCustomerData = Array.isArray(customerAnalytics)
-            ? customerAnalytics
-            : [customerAnalytics];
-          setCustomerData(
-            validCustomerData.filter(
-              (item) => item !== null && item !== undefined,
-            ),
-          );
-        }
-      } catch (err) {
-        console.warn("Error processing customer data:", err);
-        setCustomerData([]);
+      if (customerRes.ok) {
+        const customerAnalytics = await customerRes.json();
+        const validCustomerData = Array.isArray(customerAnalytics) 
+          ? customerAnalytics 
+          : customerAnalytics ? [customerAnalytics] : [];
+        setCustomerData(validCustomerData.filter(item => item != null));
       }
+
     } catch (err) {
       console.error("Error fetching analytics:", err);
-      setError(err instanceof Error ? err.message : "Failed to load analytics");
+      setError("Failed to load analytics data");
     } finally {
       setLoading(false);
     }
@@ -154,98 +117,82 @@ export function ConversationAnalytics() {
     }
   }, [isAdmin]);
 
-  // Chart data preparation functions
+  // Safe chart data preparation functions
   const getBranchChartData = () => {
+    const chartData = [["Branch", "Conversations"]];
+
     if (!branchData || branchData.length === 0 || !selectedPeriod) {
-      return [
-        ["Branch", "Conversations", { role: "style" }],
-        ["No Data", 0, "#gray"],
-      ];
+      chartData.push(["No Data", 0]);
+      return chartData;
     }
 
-    const filtered = branchData.filter(
-      (item) => item && item.month === selectedPeriod,
-    );
-    const chartData = [["Branch", "Conversations", { role: "style" }]];
-
+    const filtered = branchData.filter(item => item?.month === selectedPeriod);
     if (filtered.length === 0) {
-      chartData.push(["No Data", 0, "#cccccc"]);
+      chartData.push(["No Data", 0]);
       return chartData;
     }
 
     filtered
-      .sort((a, b) => (b.count || 0) - (a.count || 0))
-      .slice(0, 15) // Top 15 branches
-      .forEach((item, index) => {
-        const color = `hsl(${220 + index * 15}, 70%, ${60 + index * 2}%)`;
-        const branchName = item.branch_name || `Unknown Branch ${index + 1}`;
-        chartData.push([
-          branchName.length > 20
-            ? branchName.substring(0, 20) + "..."
-            : branchName,
-          item.count || 0,
-          color,
-        ]);
+      .sort((a, b) => (b?.count || 0) - (a?.count || 0))
+      .slice(0, 10)
+      .forEach((item) => {
+        if (item?.branch_name && typeof item.count === 'number') {
+          const branchName = item.branch_name.length > 25 
+            ? item.branch_name.substring(0, 25) + "..." 
+            : item.branch_name;
+          chartData.push([branchName, item.count]);
+        }
       });
 
     return chartData;
   };
 
   const getCityChartData = () => {
-    const chartData = [["City", "Conversations", "Branches"]];
+    const chartData = [["City", "Conversations"]];
 
     if (!cityData || cityData.length === 0) {
-      chartData.push(["No Data", 0, 0]);
+      chartData.push(["No Data", 0]);
       return chartData;
     }
 
     cityData
-      .filter((item) => item && item.city) // Filter out invalid items
-      .sort((a, b) => (b.count || 0) - (a.count || 0))
-      .slice(0, 12) // Top 12 cities
-      .forEach((item, index) => {
-        chartData.push([
-          item.city || `Unknown City ${index + 1}`,
-          item.count || 0,
-          item.branch_count || 0,
-        ]);
+      .filter(item => item?.city)
+      .sort((a, b) => (b?.count || 0) - (a?.count || 0))
+      .slice(0, 10)
+      .forEach((item) => {
+        if (item?.city && typeof item.count === 'number') {
+          chartData.push([item.city, item.count]);
+        }
       });
 
     return chartData;
   };
 
   const getDailyChartData = () => {
-    const chartData = [["Date", "Conversations", { role: "style" }]];
+    const chartData = [["Date", "Conversations"]];
 
     if (!dailyData || dailyData.length === 0) {
-      chartData.push(["No Data", 0, "#cccccc"]);
+      chartData.push(["No Data", 0]);
       return chartData;
     }
 
     dailyData
-      .filter((item) => item && item.date) // Filter out invalid items
-      .sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return dateA.getTime() - dateB.getTime();
-      })
-      .forEach((item, index) => {
-        try {
-          const date = new Date(item.date);
-          if (isNaN(date.getTime())) {
-            return; // Skip invalid dates
+      .filter(item => item?.date)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .forEach((item) => {
+        if (item?.date && typeof item.count === 'number') {
+          try {
+            const date = new Date(item.date);
+            if (!isNaN(date.getTime())) {
+              const dateStr = date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              });
+              chartData.push([dateStr, item.count]);
+            }
+          } catch (error) {
+            console.warn("Invalid date:", item.date);
           }
-
-          const dayName = date.toLocaleDateString("en-US", {
-            weekday: "short",
-            day: "numeric",
-          });
-          const isWeekend = date.getDay() === 0 || date.getDay() === 6; // Sunday = 0, Saturday = 6
-          const color = isWeekend ? "#ef4444" : "#3b82f6";
-
-          chartData.push([dayName, item.count || 0, color]);
-        } catch (error) {
-          console.warn("Invalid date in daily data:", item.date);
         }
       });
 
@@ -256,114 +203,34 @@ export function ConversationAnalytics() {
     const chartData = [["Month", "Unique Customers"]];
 
     if (!customerData || customerData.length === 0) {
-      chartData.push(["No Data", 0]);
+      chartData.push(["Current Month", 0]);
       return chartData;
     }
 
-    try {
-      const item = customerData[0];
-      if (!item || !item.month) {
-        chartData.push(["No Data", 0]);
-        return chartData;
-      }
-
-      const monthName = new Date(item.month + "-01").toLocaleDateString(
-        "en-US",
-        {
-          month: "short",
-          year: "numeric",
-        },
-      );
-      chartData.push([monthName, item.unique_cnic_count || 0]);
-    } catch (error) {
-      console.warn("Error processing customer data:", error);
-      chartData.push(["No Data", 0]);
+    const item = customerData[0];
+    if (item?.unique_cnic_count != null) {
+      chartData.push(["Current Month", item.unique_cnic_count]);
+    } else {
+      chartData.push(["Current Month", 0]);
     }
 
     return chartData;
   };
 
-  // Chart options
-  const getBranchChartOptions = () => ({
-    title: `Number of Conversations by Branch - ${selectedPeriod ? new Date(selectedPeriod + "-01").toLocaleDateString("en-US", { month: "long", year: "numeric" }) : ""}`,
-    titleTextStyle: { fontSize: 16, fontName: "system-ui", bold: true },
+  // Simple chart options
+  const getChartOptions = (title: string) => ({
+    title,
+    titleTextStyle: { fontSize: 14, bold: true },
     backgroundColor: "transparent",
-    chartArea: { left: 120, top: 60, width: "75%", height: "75%" },
+    chartArea: { left: 100, top: 40, width: "70%", height: "70%" },
     hAxis: {
-      title: "Number of Conversations",
-      textStyle: { fontSize: 11 },
-      gridlines: { color: "#e5e7eb" },
-    },
-    vAxis: {
-      title: "Branch",
       textStyle: { fontSize: 10 },
-      titleTextStyle: { fontSize: 12 },
-    },
-    legend: { position: "none" },
-    animation: { startup: true, easing: "inAndOut", duration: 1000 },
-  });
-
-  const getCityChartOptions = () => ({
-    title: "Number of Conversations by City (with Branch Count)",
-    titleTextStyle: { fontSize: 16, fontName: "system-ui", bold: true },
-    backgroundColor: "transparent",
-    chartArea: { left: 80, top: 60, width: "80%", height: "75%" },
-    hAxis: {
-      title: "City",
-      textStyle: { fontSize: 11 },
-      slantedText: true,
-      slantedTextAngle: 45,
     },
     vAxis: {
-      title: "Conversations",
-      textStyle: { fontSize: 11 },
-      gridlines: { color: "#e5e7eb" },
-    },
-    series: {
-      0: { type: "columns", color: "#10b981" },
-      1: { type: "line", color: "#f59e0b", lineWidth: 3, pointSize: 6 },
-    },
-    legend: { position: "top", textStyle: { fontSize: 12 } },
-    animation: { startup: true, easing: "inAndOut", duration: 1000 },
-  });
-
-  const getDailyChartOptions = () => ({
-    title: "Number of Conversations by Date in Last Month",
-    titleTextStyle: { fontSize: 16, fontName: "system-ui", bold: true },
-    backgroundColor: "transparent",
-    chartArea: { left: 60, top: 60, width: "85%", height: "75%" },
-    hAxis: {
-      title: "Date",
       textStyle: { fontSize: 10 },
-      slantedText: true,
-      slantedTextAngle: 45,
-    },
-    vAxis: {
-      title: "Conversations",
-      textStyle: { fontSize: 11 },
-      gridlines: { color: "#e5e7eb" },
     },
     legend: { position: "none" },
-    animation: { startup: true, easing: "inAndOut", duration: 1000 },
-  });
-
-  const getCustomerChartOptions = () => ({
-    title: "Unique CNIC (Customers) in Current Month",
-    titleTextStyle: { fontSize: 16, fontName: "system-ui", bold: true },
-    backgroundColor: "transparent",
-    chartArea: { left: 80, top: 60, width: "80%", height: "75%" },
-    hAxis: {
-      title: "Month",
-      textStyle: { fontSize: 11 },
-    },
-    vAxis: {
-      title: "Unique Customers",
-      textStyle: { fontSize: 11 },
-      gridlines: { color: "#e5e7eb" },
-    },
-    colors: ["#8b5cf6"],
-    legend: { position: "none" },
-    animation: { startup: true, easing: "inAndOut", duration: 1000 },
+    animation: { startup: true, duration: 500 },
   });
 
   if (!isAdmin()) return null;
@@ -373,9 +240,7 @@ export function ConversationAnalytics() {
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-center py-12">
           <RefreshCw className="h-8 w-8 animate-spin text-blue-600 mr-3" />
-          <span className="text-lg text-gray-600">
-            Loading conversation analytics...
-          </span>
+          <span className="text-lg text-gray-600">Loading analytics...</span>
         </div>
       </div>
     );
@@ -397,13 +262,12 @@ export function ConversationAnalytics() {
     );
   }
 
-  const availableMonths = [...new Set(branchData.map((item) => item.month))]
+  const availableMonths = [...new Set(branchData.map(item => item?.month).filter(Boolean))]
     .sort()
     .reverse();
 
   return (
     <div className="space-y-6">
-      {/* Header with Chart Selection */}
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
@@ -414,26 +278,21 @@ export function ConversationAnalytics() {
               <h2 className="text-2xl font-bold text-gray-900">
                 Conversation Analytics
               </h2>
-              <p className="text-gray-600">
-                Comprehensive insights into recorded conversations
-              </p>
+              <p className="text-gray-600">Insights into recorded conversations</p>
             </div>
           </div>
 
-          {activeChart === "branch" && (
+          {activeChart === "branch" && availableMonths.length > 0 && (
             <div className="flex items-center space-x-2">
               <Calendar className="h-4 w-4 text-gray-500" />
               <select
                 value={selectedPeriod}
                 onChange={(e) => setSelectedPeriod(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 rounded-md px-3 py-1 text-sm"
               >
                 {availableMonths.map((month) => (
                   <option key={month} value={month}>
-                    {new Date(month + "-01").toLocaleDateString("en-US", {
-                      month: "long",
-                      year: "numeric",
-                    })}
+                    {month}
                   </option>
                 ))}
               </select>
@@ -453,9 +312,6 @@ export function ConversationAnalytics() {
           >
             <Building2 className="h-5 w-5 mx-auto mb-2" />
             <div className="text-sm font-medium">By Branch</div>
-            <div className="text-xs opacity-75">
-              Conversations per branch by month
-            </div>
           </button>
 
           <button
@@ -468,9 +324,6 @@ export function ConversationAnalytics() {
           >
             <MapPin className="h-5 w-5 mx-auto mb-2" />
             <div className="text-sm font-medium">By City</div>
-            <div className="text-xs opacity-75">
-              Conversations by city with branch count
-            </div>
           </button>
 
           <button
@@ -482,10 +335,7 @@ export function ConversationAnalytics() {
             }`}
           >
             <Activity className="h-5 w-5 mx-auto mb-2" />
-            <div className="text-sm font-medium">Daily Last Month</div>
-            <div className="text-xs opacity-75">
-              Daily conversations in last month
-            </div>
+            <div className="text-sm font-medium">Daily</div>
           </button>
 
           <button
@@ -497,94 +347,60 @@ export function ConversationAnalytics() {
             }`}
           >
             <Users className="h-5 w-5 mx-auto mb-2" />
-            <div className="text-sm font-medium">Unique Customers</div>
-            <div className="text-xs opacity-75">
-              Unique CNIC in current month
-            </div>
+            <div className="text-sm font-medium">Customers</div>
           </button>
         </div>
 
         {/* Chart Display */}
         <div className="h-96 border border-gray-200 rounded-lg p-4 bg-gray-50">
-          {loading ? (
-            <div className="flex items-center justify-center h-full">
-              <RefreshCw className="h-8 w-8 animate-spin text-blue-600 mr-3" />
-              <span className="text-gray-600">Loading chart data...</span>
-            </div>
-          ) : error ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <p className="text-red-600 mb-2">Error loading chart</p>
-                <button
-                  onClick={fetchAnalyticsData}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                >
-                  Retry
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              {activeChart === "branch" && (
-                <Chart
-                  chartType="BarChart"
-                  width="100%"
-                  height="100%"
-                  data={getBranchChartData()}
-                  options={getBranchChartOptions()}
-                />
-              )}
+          {activeChart === "branch" && (
+            <Chart
+              chartType="BarChart"
+              width="100%"
+              height="100%"
+              data={getBranchChartData()}
+              options={getChartOptions("Conversations by Branch")}
+            />
+          )}
 
-              {activeChart === "city" && (
-                <Chart
-                  chartType="ComboChart"
-                  width="100%"
-                  height="100%"
-                  data={getCityChartData()}
-                  options={getCityChartOptions()}
-                />
-              )}
+          {activeChart === "city" && (
+            <Chart
+              chartType="ColumnChart"
+              width="100%"
+              height="100%"
+              data={getCityChartData()}
+              options={getChartOptions("Conversations by City")}
+            />
+          )}
 
-              {activeChart === "daily" && (
-                <Chart
-                  chartType="ColumnChart"
-                  width="100%"
-                  height="100%"
-                  data={getDailyChartData()}
-                  options={getDailyChartOptions()}
-                />
-              )}
+          {activeChart === "daily" && (
+            <Chart
+              chartType="LineChart"
+              width="100%"
+              height="100%"
+              data={getDailyChartData()}
+              options={getChartOptions("Daily Conversations - Last Month")}
+            />
+          )}
 
-              {activeChart === "customers" && (
-                <Chart
-                  chartType="ColumnChart"
-                  width="100%"
-                  height="100%"
-                  data={getCustomerChartData()}
-                  options={getCustomerChartOptions()}
-                />
-              )}
-            </>
+          {activeChart === "customers" && (
+            <Chart
+              chartType="ColumnChart"
+              width="100%"
+              height="100%"
+              data={getCustomerChartData()}
+              options={getChartOptions("Unique Customers This Month")}
+            />
           )}
         </div>
 
-        {/* Chart Description */}
+        {/* Description */}
         <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-          <h4 className="font-medium text-gray-900 mb-2">
-            {activeChart === "branch" && "Number of Conversations by Branch"}
-            {activeChart === "city" && "Number of Conversations by City"}
-            {activeChart === "daily" && "Daily Conversations - Last Month"}
-            {activeChart === "customers" && "Unique Customers Analysis"}
-          </h4>
           <p className="text-sm text-gray-600">
-            {activeChart === "branch" &&
-              "Shows the number of conversations based on unique branch ID and organized by months. This helps identify the most active branches for resource allocation."}
-            {activeChart === "city" &&
-              "Displays conversations associated with each city having single or multiple branches. The line shows the number of branches per city."}
-            {activeChart === "daily" &&
-              "Daily interaction analytics for the last month. Weekends are highlighted in red to show different usage patterns. Each conversation is a record from the recordings table."}
-            {activeChart === "customers" &&
-              "Number of unique customers (CNIC) per month visiting the branches. This shows the count of unique CNICs from the recordings table for the current month."}
+            {activeChart === "branch" && "Number of conversations based on unique branch ID organized by months."}
+            {activeChart === "city" && "Number of conversations associated with each city having single or multiple branches."}
+            {activeChart === "daily" && "Daily conversation analytics for the last month from recordings table."}
+            {activeChart === "customers" && "Number of unique customers (CNIC) per month visiting the branches."}
           </p>
         </div>
       </div>
