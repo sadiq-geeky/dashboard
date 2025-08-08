@@ -13,6 +13,7 @@ export interface Complaint {
   priority: "low" | "medium" | "high" | "urgent";
   created_on: string;
   updated_on: string;
+  notes?: string;
 }
 
 export interface CustomerData {
@@ -112,7 +113,8 @@ export const getComplaints: RequestHandler = async (req, res) => {
         c.status,
         c.priority,
         c.created_on,
-        c.updated_on
+        c.updated_on,
+        c.notes
       FROM complaints c
       ${whereClause}
       ORDER BY c.${sortColumn} ${sortDirection}
@@ -174,6 +176,7 @@ export const getComplaint: RequestHandler = async (req, res) => {
         c.priority,
         c.created_on,
         c.updated_on,
+        c.notes,
         b.branch_address,
         b.branch_city,
         b.branch_code,
@@ -338,7 +341,7 @@ export const createComplaint: RequestHandler = async (req, res) => {
 export const updateComplaint: RequestHandler = async (req, res) => {
   try {
     const { complaint_id } = req.params;
-    const { status, priority, complaint_text, customer_data } = req.body;
+    const { status, priority, complaint_text, customer_data, notes } = req.body;
 
     // Build dynamic update query
     const updateFields: string[] = [];
@@ -366,6 +369,11 @@ export const updateComplaint: RequestHandler = async (req, res) => {
           ? JSON.stringify(customer_data)
           : customer_data,
       );
+    }
+
+    if (notes !== undefined) {
+      updateFields.push("notes = ?");
+      updateValues.push(notes);
     }
 
     if (updateFields.length === 0) {

@@ -74,6 +74,7 @@ export interface Complaint {
   priority: "low" | "medium" | "high" | "urgent";
   created_on: string;
   updated_on: string;
+  notes?: string;
   branch_address?: string;
   branch_city?: string;
   branch_code?: string;

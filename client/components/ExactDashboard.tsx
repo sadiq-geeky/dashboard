@@ -880,13 +880,30 @@ export function ExactDashboard() {
                             {recording.branch_no || recording.device_name}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
-                            {recording.cnic === "UNKNOWN"
+                            {recording.cnic === "UNKNOWN" ||
+                            recording.cnic === "XXXXXXXXXXXXX"
                               ? "Walk-in Customer"
                               : recording.cnic || recording.file_name || "-"}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.start_time
-                              ? new Date(recording.start_time).toLocaleString()
+                              ? (() => {
+                                  const cleanTime = recording.start_time
+                                    .replace("T", " ")
+                                    .replace("Z", "")
+                                    .replace(".000", "");
+                                  const [datePart, timePart] =
+                                    cleanTime.split(" ");
+                                  if (timePart) {
+                                    const [hours, minutes, seconds] =
+                                      timePart.split(":");
+                                    const hour12 = parseInt(hours) % 12 || 12;
+                                    const ampm =
+                                      parseInt(hours) >= 12 ? "PM" : "AM";
+                                    return `${datePart} ${hour12}:${minutes}:${seconds} ${ampm}`;
+                                  }
+                                  return cleanTime;
+                                })()
                               : "-"}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
@@ -1365,7 +1382,23 @@ export function ExactDashboard() {
                             </div>
                             <div className="col-span-5 text-gray-500">
                               {log.start_time
-                                ? new Date(log.start_time).toLocaleDateString()
+                                ? (() => {
+                                    const cleanTime = log.start_time
+                                      .replace("T", " ")
+                                      .replace("Z", "")
+                                      .replace(".000", "");
+                                    const [datePart, timePart] =
+                                      cleanTime.split(" ");
+                                    if (timePart) {
+                                      const [hours, minutes, seconds] =
+                                        timePart.split(":");
+                                      const hour12 = parseInt(hours) % 12 || 12;
+                                      const ampm =
+                                        parseInt(hours) >= 12 ? "PM" : "AM";
+                                      return `${datePart} ${hour12}:${minutes}:${seconds} ${ampm}`;
+                                    }
+                                    return cleanTime;
+                                  })()
                                 : "-"}
                             </div>
                           </div>
