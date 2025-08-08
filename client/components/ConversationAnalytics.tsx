@@ -429,6 +429,28 @@ export function ConversationAnalytics() {
     animation: { startup: true, easing: "inAndOut", duration: 1000 },
   });
 
+  const getTrendChartOptions = () => ({
+    title: "Branch Monthly Trends - Recordings Over Time",
+    titleTextStyle: { fontSize: 16, fontName: "system-ui", bold: true },
+    backgroundColor: "transparent",
+    chartArea: { left: 80, top: 60, width: "85%", height: "75%" },
+    hAxis: {
+      title: "Time (Year-Month)",
+      textStyle: { fontSize: 10 },
+      slantedText: true,
+      slantedTextAngle: 45,
+    },
+    vAxis: {
+      title: "Total Records",
+      textStyle: { fontSize: 11 },
+      gridlines: { color: "#e5e7eb" },
+    },
+    curveType: "function",
+    legend: { position: "top", alignment: "center", textStyle: { fontSize: 11 } },
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
+    series: {},
+  });
+
   if (!isAdmin()) return null;
 
   if (loading) {
