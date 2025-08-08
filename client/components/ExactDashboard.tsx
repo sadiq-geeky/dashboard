@@ -1135,14 +1135,14 @@ export function ExactDashboard() {
                       ))}
                     </div>
                   </div>
-                ) : (
+                ) : !isPreviousLogsCollapsed ? (
                   <div className="text-center py-4">
                     <MessageSquare className="mx-auto h-8 w-8 text-gray-400 mb-2" />
                     <p className="text-xs text-gray-500">
                       {selectedRecording ? "No previous logs found" : "Select a recording to view previous logs"}
                     </p>
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
           </div>
