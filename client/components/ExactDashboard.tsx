@@ -885,9 +885,7 @@ export function ExactDashboard() {
                               : recording.cnic || recording.file_name || "-"}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
-                            {recording.start_time
-                              ? new Date(recording.start_time).toLocaleString()
-                              : "-"}
+                            {recording.start_time || "-"}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.duration
