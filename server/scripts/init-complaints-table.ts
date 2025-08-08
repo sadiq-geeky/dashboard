@@ -17,6 +17,7 @@ export async function initializeComplaintsTable() {
         priority ENUM('low', 'medium', 'high', 'urgent') DEFAULT 'medium',
         created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        notes TEXT,
         INDEX idx_branch_id (branch_id),
         INDEX idx_status (status),
         INDEX idx_priority (priority),
