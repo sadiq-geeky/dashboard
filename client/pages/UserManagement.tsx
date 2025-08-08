@@ -154,43 +154,13 @@ export function UserManagement() {
               Manage system users and their permissions
             </p>
           </div>
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={async () => {
-                try {
-                  const response = await fetch(
-                    "/api/debug/promote-to-manager",
-                    {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                    },
-                  );
-                  const data = await response.json();
-                  if (data.success) {
-                    alert(
-                      `Successfully promoted ${data.user.username} to manager!`,
-                    );
-                    fetchUsers(); // Refresh the user list
-                  } else {
-                    alert(data.message || "Failed to promote user");
-                  }
-                } catch (error) {
-                  alert("Error promoting user to manager");
-                }
-              }}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
-              <Shield className="h-4 w-4" />
-              <span>Create Manager</span>
-            </button>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add User</span>
-            </button>
-          </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add User</span>
+          </button>
         </div>
 
         {/* Search */}
@@ -234,20 +204,6 @@ export function UserManagement() {
                 </p>
                 <p className="text-2xl font-bold text-gray-900">
                   {users.filter((u) => u.role === "admin").length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Settings className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Managers</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {users.filter((u) => u.role === "manager").length}
                 </p>
               </div>
             </div>

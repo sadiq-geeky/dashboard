@@ -564,8 +564,8 @@ export const getComplaintsAnalytics: RequestHandler = async (req, res) => {
       branch_name: string;
     }>(recentActivityQuery, queryParams);
 
-    // Calculate satisfaction rate (placeholder - in real app this would come from feedback)
-    const satisfactionRate = 85; // Mock data
+    // Note: Satisfaction rate would come from actual customer feedback data
+    const satisfactionRate = 0; // No mock data - requires real feedback implementation
 
     res.json({
       monthlyTrends: monthlyTrends.map((trend) => ({

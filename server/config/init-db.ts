@@ -63,9 +63,6 @@ export async function initializeTables() {
       console.error("⚠️  Could not initialize complaints table:", error);
     }
 
-    // Note: Manager user creation disabled due to schema constraints
-    // To test manager functionality, manually update a user's role in the database
-
     console.log("🚀 Database initialization completed - using existing schema");
   } catch (error) {
     console.error("❌ Database initialization failed:", error);

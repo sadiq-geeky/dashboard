@@ -778,7 +778,7 @@ export function Complaints() {
                     <div>
                       <p className="text-sm font-medium text-gray-600">Total</p>
                       <p className="text-2xl font-bold text-gray-900">
-                        {stats.total_complaints}
+                        {stats.total_complaints || 0}
                       </p>
                     </div>
                     <Mail className="h-8 w-8 text-gray-400" />
@@ -792,7 +792,7 @@ export function Complaints() {
                         Pending
                       </p>
                       <p className="text-2xl font-bold text-yellow-600">
-                        {stats.pending_complaints}
+                        {stats.pending_complaints || 0}
                       </p>
                     </div>
                     <Clock className="h-8 w-8 text-yellow-500" />
@@ -806,7 +806,7 @@ export function Complaints() {
                         In Progress
                       </p>
                       <p className="text-2xl font-bold text-blue-600">
-                        {stats.in_progress_complaints}
+                        {stats.in_progress_complaints || 0}
                       </p>
                     </div>
                     <RefreshCw className="h-8 w-8 text-blue-500" />
@@ -820,7 +820,7 @@ export function Complaints() {
                         Resolved
                       </p>
                       <p className="text-2xl font-bold text-green-600">
-                        {stats.resolved_complaints}
+                        {stats.resolved_complaints || 0}
                       </p>
                     </div>
                     <CheckCircle className="h-8 w-8 text-green-500" />
@@ -834,7 +834,7 @@ export function Complaints() {
                         Closed
                       </p>
                       <p className="text-2xl font-bold text-gray-600">
-                        {stats.closed_complaints}
+                        {stats.closed_complaints || 0}
                       </p>
                     </div>
                     <XCircle className="h-8 w-8 text-gray-500" />
@@ -848,7 +848,7 @@ export function Complaints() {
                         Urgent
                       </p>
                       <p className="text-2xl font-bold text-red-600">
-                        {stats.urgent_complaints}
+                        {stats.urgent_complaints || 0}
                       </p>
                     </div>
                     <AlertTriangle className="h-8 w-8 text-red-500" />
@@ -860,7 +860,7 @@ export function Complaints() {
                     <div>
                       <p className="text-sm font-medium text-gray-600">Today</p>
                       <p className="text-2xl font-bold text-purple-600">
-                        {stats.today_complaints}
+                        {stats.today_complaints || 0}
                       </p>
                     </div>
                     <Calendar className="h-8 w-8 text-purple-500" />
