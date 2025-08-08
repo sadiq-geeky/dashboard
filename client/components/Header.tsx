@@ -172,7 +172,7 @@ export function Header() {
 
             {/* Admin group separator */}
             {isAdmin() && adminItems.length > 0 && (
-              <div className="w-px h-8 bg-gray-300 mx-2"></div>
+              <div className="w-px h-6 bg-gray-300 mx-1.5"></div>
             )}
 
             {/* Admin management group */}
