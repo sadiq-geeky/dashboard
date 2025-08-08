@@ -42,7 +42,6 @@ interface Device {
 interface DeviceFormData {
   device_name: string;
   device_mac: string;
-  ip_address: string;
   device_type: "recorder" | "monitor" | "other";
   installation_date: string;
   last_maintenance: string;
@@ -63,7 +62,6 @@ export function DeviceManagement() {
   const [formData, setFormData] = useState<DeviceFormData>({
     device_name: "",
     device_mac: "",
-    ip_address: "",
     device_type: "recorder",
     installation_date: "",
     last_maintenance: "",
@@ -125,11 +123,9 @@ export function DeviceManagement() {
 
       // Merge heartbeat status with devices
       const devicesWithHeartbeatStatus = devicesArray.map((device: Device) => {
-        // Find matching heartbeat by MAC address or IP address
+        // Find matching heartbeat by MAC address
         const heartbeat = heartbeatsData.find(
-          (hb) =>
-            (device.device_mac && hb.device_id === device.device_mac) ||
-            (device.ip_address && hb.ip_address === device.ip_address),
+          (hb) => device.device_mac && hb.device_id === device.device_mac,
         );
 
         if (heartbeat) {
@@ -137,6 +133,7 @@ export function DeviceManagement() {
             ...device,
             heartbeat_status: calculateHeartbeatStatus(heartbeat.last_seen),
             last_seen: heartbeat.last_seen,
+            current_ip: heartbeat.ip_address, // Add current IP from heartbeat
           };
         }
 
@@ -144,6 +141,7 @@ export function DeviceManagement() {
           ...device,
           heartbeat_status: "offline" as const,
           last_seen: null,
+          current_ip: null, // No current IP if no heartbeat
         };
       });
 
@@ -233,7 +231,6 @@ export function DeviceManagement() {
       setFormData({
         device_name: "",
         device_mac: "",
-        ip_address: "",
         device_type: "recorder",
         installation_date: "",
         last_maintenance: "",
@@ -266,7 +263,6 @@ export function DeviceManagement() {
     setFormData({
       device_name: device.device_name,
       device_mac: device.device_mac || "",
-      ip_address: device.ip_address || "",
       device_type: device.device_type,
       installation_date: device.installation_date || "",
       last_maintenance: device.last_maintenance || "",
@@ -452,9 +448,9 @@ export function DeviceManagement() {
                         <strong>MAC:</strong> {device.device_mac}
                       </div>
                     )}
-                    {device.ip_address && (
+                    {(device as any).current_ip && (
                       <div className="text-gray-600">
-                        <strong>IP:</strong> {device.ip_address}
+                        <strong>Current IP:</strong> {(device as any).current_ip}
                       </div>
                     )}
                     {device.branch_name && (
