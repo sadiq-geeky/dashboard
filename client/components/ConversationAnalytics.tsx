@@ -115,21 +115,21 @@ export function ConversationAnalytics() {
   const getBranchChartData = () => {
     const filtered = branchData.filter(item => item.month === selectedPeriod);
     const chartData = [["Branch", "Conversations", { role: "style" }]];
-    
+
     filtered
-      .sort((a, b) => b.conversations - a.conversations)
+      .sort((a, b) => b.count - a.count)
       .slice(0, 15) // Top 15 branches
       .forEach((item, index) => {
         const color = `hsl(${220 + index * 15}, 70%, ${60 + index * 2}%)`;
         chartData.push([
-          item.branch_name.length > 20 
-            ? item.branch_name.substring(0, 20) + "..." 
+          item.branch_name.length > 20
+            ? item.branch_name.substring(0, 20) + "..."
             : item.branch_name,
-          item.conversations,
+          item.count,
           color
         ]);
       });
-    
+
     return chartData;
   };
 
