@@ -154,43 +154,13 @@ export function UserManagement() {
               Manage system users and their permissions
             </p>
           </div>
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={async () => {
-                try {
-                  const response = await fetch(
-                    "/api/debug/promote-to-manager",
-                    {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                    },
-                  );
-                  const data = await response.json();
-                  if (data.success) {
-                    alert(
-                      `Successfully promoted ${data.user.username} to manager!`,
-                    );
-                    fetchUsers(); // Refresh the user list
-                  } else {
-                    alert(data.message || "Failed to promote user");
-                  }
-                } catch (error) {
-                  alert("Error promoting user to manager");
-                }
-              }}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
-              <Shield className="h-4 w-4" />
-              <span>Create Manager</span>
-            </button>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add User</span>
-            </button>
-          </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add User</span>
+          </button>
         </div>
 
         {/* Search */}
