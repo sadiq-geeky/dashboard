@@ -1,58 +1,107 @@
 import React, { useState, useEffect } from "react";
-import {
-  MessageSquare,
-  Users,
-  Building2,
-  Calendar,
-  RefreshCw,
-  TrendingUp,
-} from "lucide-react";
 import { authFetch } from "@/lib/api";
+import { useAuth } from "../contexts/AuthContext";
 import { Chart } from "react-google-charts";
+import {
+  RefreshCw,
+  BarChart3,
+  Building2,
+  MapPin,
+  Calendar,
+  Users,
+  ChevronDown,
+  TrendingUp,
+  Activity,
+} from "lucide-react";
 
-interface ConversationAnalytics {
-  conversationsByBranch: Array<{
-    branch_id: string;
-    branch_name: string;
-    count: number;
-    month: string;
-  }>;
-  conversationsByCity: Array<{
-    city: string;
-    count: number;
-    branch_count: number;
-  }>;
-  dailyConversationsLastMonth: Array<{ date: string; count: number }>;
-  uniqueCnicsByMonth: Array<{ month: string; unique_cnic_count: number }>;
-  totalStats: {
-    totalConversations: number;
-    uniqueCustomers: number;
-    activeBranches: number;
-    todayConversations: number;
-  };
+interface BranchAnalytics {
+  branch_id: string;
+  branch_name: string;
+  branch_city: string;
+  month: string;
+  conversations: number;
+}
+
+interface CityAnalytics {
+  city: string;
+  total_conversations: number;
+  branch_count: number;
+  branches: string[];
+}
+
+interface DailyAnalytics {
+  date: string;
+  conversations: number;
+  day_name: string;
+}
+
+interface UniqueCustomerAnalytics {
+  month: string;
+  unique_customers: number;
+  total_conversations: number;
 }
 
 export function ConversationAnalytics() {
-  const [analytics, setAnalytics] = useState<ConversationAnalytics | null>(
-    null,
-  );
+  const { isAdmin } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Data states
+  const [branchData, setBranchData] = useState<BranchAnalytics[]>([]);
+  const [cityData, setCityData] = useState<CityAnalytics[]>([]);
+  const [dailyData, setDailyData] = useState<DailyAnalytics[]>([]);
+  const [customerData, setCustomerData] = useState<UniqueCustomerAnalytics[]>([]);
+  
+  // UI states
+  const [activeChart, setActiveChart] = useState<'branch' | 'city' | 'daily' | 'customers'>('branch');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('');
 
-  const fetchAnalytics = async () => {
+  const fetchAnalyticsData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await authFetch("/api/analytics/conversations");
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch conversation analytics");
+      // Fetch all analytics data in parallel
+      const [branchRes, cityRes, dailyRes, customerRes] = await Promise.all([
+        authFetch("/api/analytics/conversations/by-branch"),
+        authFetch("/api/analytics/conversations/by-city"), 
+        authFetch("/api/analytics/conversations/daily-last-month"),
+        authFetch("/api/analytics/conversations/unique-customers")
+      ]);
+
+      // Process branch data
+      if (branchRes.ok) {
+        const branchAnalytics = await branchRes.json();
+        setBranchData(branchAnalytics);
+        
+        // Set default period to latest month
+        const months = [...new Set(branchAnalytics.map((item: BranchAnalytics) => item.month))]
+          .sort().reverse();
+        if (months.length > 0 && !selectedPeriod) {
+          setSelectedPeriod(months[0]);
+        }
       }
 
-      const data = await response.json();
-      setAnalytics(data);
+      // Process city data
+      if (cityRes.ok) {
+        const cityAnalytics = await cityRes.json();
+        setCityData(cityAnalytics);
+      }
+
+      // Process daily data
+      if (dailyRes.ok) {
+        const dailyAnalytics = await dailyRes.json();
+        setDailyData(dailyAnalytics);
+      }
+
+      // Process customer data
+      if (customerRes.ok) {
+        const customerAnalytics = await customerRes.json();
+        setCustomerData(customerAnalytics);
+      }
+
     } catch (err) {
-      console.error("Error fetching conversation analytics:", err);
+      console.error("Error fetching analytics:", err);
       setError(err instanceof Error ? err.message : "Failed to load analytics");
     } finally {
       setLoading(false);
@@ -60,209 +109,186 @@ export function ConversationAnalytics() {
   };
 
   useEffect(() => {
-    fetchAnalytics();
-  }, []);
+    if (isAdmin()) {
+      fetchAnalyticsData();
+    }
+  }, [isAdmin]);
 
-  // Prepare Google Charts data for daily conversations
-  const getDailyConversationsData = () => {
-    if (!analytics?.dailyConversationsLastMonth?.length)
-      return [["Date", "Conversations"]];
-
-    const chartData = [["Date", "Conversations"]];
-    analytics.dailyConversationsLastMonth.forEach((item) => {
-      chartData.push([item.date, item.count]);
-    });
+  // Chart data preparation functions
+  const getBranchChartData = () => {
+    const filtered = branchData.filter(item => item.month === selectedPeriod);
+    const chartData = [["Branch", "Conversations", { role: "style" }]];
+    
+    filtered
+      .sort((a, b) => b.conversations - a.conversations)
+      .slice(0, 15) // Top 15 branches
+      .forEach((item, index) => {
+        const color = `hsl(${220 + index * 15}, 70%, ${60 + index * 2}%)`;
+        chartData.push([
+          item.branch_name.length > 20 
+            ? item.branch_name.substring(0, 20) + "..." 
+            : item.branch_name,
+          item.conversations,
+          color
+        ]);
+      });
+    
     return chartData;
   };
 
-  // Prepare Google Charts data for city pie chart
-  const getCityData = () => {
-    if (!analytics?.conversationsByCity?.length)
-      return [["City", "Conversations"]];
-
-    const chartData = [["City", "Conversations"]];
-    analytics.conversationsByCity.slice(0, 8).forEach((item) => {
-      chartData.push([item.city || "Unknown", item.count]);
-    });
+  const getCityChartData = () => {
+    const chartData = [["City", "Conversations", "Branches", { role: "style" }]];
+    
+    cityData
+      .sort((a, b) => b.total_conversations - a.total_conversations)
+      .slice(0, 12) // Top 12 cities
+      .forEach((item, index) => {
+        const color = `hsl(${140 + index * 20}, 65%, ${50 + index * 3}%)`;
+        chartData.push([
+          item.city,
+          item.total_conversations,
+          item.branch_count,
+          color
+        ]);
+      });
+    
     return chartData;
   };
 
-  // Prepare Google Charts data for branch bar chart
-  const getBranchData = () => {
-    if (!analytics?.conversationsByBranch?.length)
-      return [["Branch", "Conversations"]];
-
-    const chartData = [["Branch", "Conversations"]];
-    analytics.conversationsByBranch.slice(0, 10).forEach((item) => {
-      chartData.push([item.branch_name, item.count]);
-    });
+  const getDailyChartData = () => {
+    const chartData = [["Date", "Conversations", { role: "style" }]];
+    
+    dailyData
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .forEach((item, index) => {
+        const date = new Date(item.date);
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
+        const color = item.day_name === 'Saturday' || item.day_name === 'Sunday' 
+          ? '#ef4444' : '#3b82f6';
+        
+        chartData.push([dayName, item.conversations, color]);
+      });
+    
     return chartData;
   };
 
-  // Prepare Google Charts data for unique CNICs
-  const getUniqueCnicsData = () => {
-    if (!analytics?.uniqueCnicsByMonth?.length)
-      return [["Month", "Unique Customers"]];
-
-    const chartData = [["Month", "Unique Customers"]];
-    analytics.uniqueCnicsByMonth.forEach((item) => {
-      chartData.push([item.month, item.unique_cnic_count]);
-    });
+  const getCustomerChartData = () => {
+    const chartData = [["Month", "Unique Customers", "Total Conversations"]];
+    
+    customerData
+      .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime())
+      .forEach(item => {
+        const monthName = new Date(item.month + '-01').toLocaleDateString('en-US', {
+          month: 'short',
+          year: '2-digit'
+        });
+        chartData.push([monthName, item.unique_customers, item.total_conversations]);
+      });
+    
     return chartData;
   };
 
   // Chart options
-  const dailyChartOptions = {
-    title: "Daily Conversations (Last 30 Days)",
-    titleTextStyle: {
-      fontSize: 14,
-      fontName: "system-ui",
-      bold: true,
-      color: "#1f2937",
-    },
-    backgroundColor: "transparent",
-    chartArea: {
-      left: 60,
-      top: 50,
-      width: "85%",
-      height: "70%",
-    },
+  const getBranchChartOptions = () => ({
+    title: `Conversations by Branch - ${selectedPeriod ? new Date(selectedPeriod + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : ''}`,
+    titleTextStyle: { fontSize: 16, fontName: 'system-ui', bold: true },
+    backgroundColor: 'transparent',
+    chartArea: { left: 120, top: 60, width: '75%', height: '75%' },
     hAxis: {
-      title: "Date",
-      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
-      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+      title: 'Number of Conversations',
+      textStyle: { fontSize: 11 },
+      gridlines: { color: '#e5e7eb' }
     },
     vAxis: {
-      title: "Conversations",
-      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
-      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
-      format: "short",
-      gridlines: { color: "#e5e7eb", count: 5 },
-      minorGridlines: { color: "transparent" },
+      title: 'Branch',
+      textStyle: { fontSize: 10 },
+      titleTextStyle: { fontSize: 12 }
     },
-    colors: ["#3b82f6"],
-    legend: { position: "none" },
-    lineWidth: 3,
-    pointSize: 5,
-    areaOpacity: 0.3,
-    animation: { startup: true, easing: "inAndOut", duration: 1000 },
-  };
+    legend: { position: 'none' },
+    animation: { startup: true, easing: 'inAndOut', duration: 1000 }
+  });
 
-  const cityChartOptions = {
-    title: "Conversations by City",
-    titleTextStyle: {
-      fontSize: 14,
-      fontName: "system-ui",
-      bold: true,
-      color: "#1f2937",
-    },
-    backgroundColor: "transparent",
-    chartArea: {
-      left: 20,
-      top: 50,
-      width: "80%",
-      height: "70%",
-    },
-    colors: [
-      "#3b82f6",
-      "#10b981",
-      "#f59e0b",
-      "#ef4444",
-      "#8b5cf6",
-      "#06b6d4",
-      "#84cc16",
-      "#f97316",
-    ],
-    legend: {
-      position: "bottom",
-      textStyle: { fontSize: 10, fontName: "system-ui", color: "#6b7280" },
-    },
-    pieSliceText: "percentage",
-    pieSliceTextStyle: {
-      fontSize: 10,
-      fontName: "system-ui",
-      color: "#ffffff",
-    },
-    animation: { startup: true, easing: "inAndOut", duration: 1000 },
-  };
-
-  const branchChartOptions = {
-    title: "Top 10 Branches by Conversations",
-    titleTextStyle: {
-      fontSize: 14,
-      fontName: "system-ui",
-      bold: true,
-      color: "#1f2937",
-    },
-    backgroundColor: "transparent",
-    chartArea: {
-      left: 100,
-      top: 50,
-      width: "75%",
-      height: "70%",
-    },
+  const getCityChartOptions = () => ({
+    title: 'Conversations by City (with Branch Count)',
+    titleTextStyle: { fontSize: 16, fontName: 'system-ui', bold: true },
+    backgroundColor: 'transparent',
+    chartArea: { left: 80, top: 60, width: '80%', height: '75%' },
     hAxis: {
-      title: "Conversations",
-      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
-      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
-      format: "short",
-      gridlines: { color: "#e5e7eb", count: 5 },
-      minorGridlines: { color: "transparent" },
+      title: 'City',
+      textStyle: { fontSize: 11 },
+      slantedText: true,
+      slantedTextAngle: 45
     },
     vAxis: {
-      title: "Branch",
-      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
-      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+      title: 'Conversations',
+      textStyle: { fontSize: 11 },
+      gridlines: { color: '#e5e7eb' }
     },
-    colors: ["#10b981"],
-    legend: { position: "none" },
-    bar: { groupWidth: "70%" },
-    animation: { startup: true, easing: "inAndOut", duration: 1000 },
-  };
+    series: {
+      0: { type: 'columns', color: '#10b981' },
+      1: { type: 'line', color: '#f59e0b', lineWidth: 3, pointSize: 6 }
+    },
+    legend: { position: 'top', textStyle: { fontSize: 12 } },
+    animation: { startup: true, easing: 'inAndOut', duration: 1000 }
+  });
 
-  const uniqueCnicsChartOptions = {
-    title: "Unique Customers per Month",
-    titleTextStyle: {
-      fontSize: 14,
-      fontName: "system-ui",
-      bold: true,
-      color: "#1f2937",
-    },
-    backgroundColor: "transparent",
-    chartArea: {
-      left: 60,
-      top: 50,
-      width: "85%",
-      height: "70%",
-    },
+  const getDailyChartOptions = () => ({
+    title: 'Daily Conversations - Last Month',
+    titleTextStyle: { fontSize: 16, fontName: 'system-ui', bold: true },
+    backgroundColor: 'transparent',
+    chartArea: { left: 60, top: 60, width: '85%', height: '75%' },
     hAxis: {
-      title: "Month",
-      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
-      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+      title: 'Date',
+      textStyle: { fontSize: 10 },
+      slantedText: true,
+      slantedTextAngle: 45
     },
     vAxis: {
-      title: "Unique Customers",
-      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
-      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
-      format: "short",
-      gridlines: { color: "#e5e7eb", count: 5 },
-      minorGridlines: { color: "transparent" },
+      title: 'Conversations',
+      textStyle: { fontSize: 11 },
+      gridlines: { color: '#e5e7eb' }
     },
-    colors: ["#8b5cf6"],
-    legend: { position: "none" },
-    lineWidth: 3,
-    pointSize: 5,
-    animation: { startup: true, easing: "inAndOut", duration: 1000 },
-  };
+    legend: { position: 'none' },
+    animation: { startup: true, easing: 'inAndOut', duration: 1000 }
+  });
+
+  const getCustomerChartOptions = () => ({
+    title: 'Unique Customers vs Total Conversations by Month',
+    titleTextStyle: { fontSize: 16, fontName: 'system-ui', bold: true },
+    backgroundColor: 'transparent',
+    chartArea: { left: 80, top: 60, width: '80%', height: '75%' },
+    hAxis: {
+      title: 'Month',
+      textStyle: { fontSize: 11 }
+    },
+    vAxes: {
+      0: {
+        title: 'Unique Customers',
+        textStyle: { color: '#8b5cf6', fontSize: 11 },
+        titleTextStyle: { color: '#8b5cf6' }
+      },
+      1: {
+        title: 'Total Conversations',
+        textStyle: { color: '#06b6d4', fontSize: 11 },
+        titleTextStyle: { color: '#06b6d4' }
+      }
+    },
+    series: {
+      0: { type: 'bars', targetAxisIndex: 0, color: '#8b5cf6' },
+      1: { type: 'line', targetAxisIndex: 1, color: '#06b6d4', lineWidth: 3, pointSize: 6 }
+    },
+    legend: { position: 'top', textStyle: { fontSize: 12 } },
+    animation: { startup: true, easing: 'inAndOut', duration: 1000 }
+  });
+
+  if (!isAdmin()) return null;
 
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-center py-12">
-          <RefreshCw className="h-8 w-8 animate-spin text-blue-600" />
-          <span className="ml-3 text-gray-600">
-            Loading conversation analytics...
-          </span>
+          <RefreshCw className="h-8 w-8 animate-spin text-blue-600 mr-3" />
+          <span className="text-lg text-gray-600">Loading comprehensive analytics...</span>
         </div>
       </div>
     );
@@ -270,15 +296,12 @@ export function ConversationAnalytics() {
 
   if (error) {
     return (
-      <div className="space-y-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h3 className="text-lg font-medium text-red-800 mb-2">
-            Error Loading Analytics
-          </h3>
-          <p className="text-red-600 mb-4">{error}</p>
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-600">Error: {error}</p>
           <button
-            onClick={fetchAnalytics}
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+            onClick={fetchAnalyticsData}
+            className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
           >
             Retry
           </button>
@@ -287,149 +310,156 @@ export function ConversationAnalytics() {
     );
   }
 
-  if (!analytics) {
-    return null;
-  }
+  const availableMonths = [...new Set(branchData.map(item => item.month))].sort().reverse();
 
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-600 rounded-lg">
-              <MessageSquare className="h-6 w-6 text-white" />
+      {/* Header with Chart Selection */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <BarChart3 className="h-6 w-6 text-blue-600" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-blue-600">
-                Total Conversations
-              </p>
-              <p className="text-2xl font-bold text-blue-900">
-                {analytics.totalStats.totalConversations.toLocaleString()}
-              </p>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Conversation Analytics</h2>
+              <p className="text-gray-600">Comprehensive insights into recorded conversations</p>
             </div>
           </div>
+          
+          {activeChart === 'branch' && (
+            <div className="flex items-center space-x-2">
+              <Calendar className="h-4 w-4 text-gray-500" />
+              <select
+                value={selectedPeriod}
+                onChange={(e) => setSelectedPeriod(e.target.value)}
+                className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {availableMonths.map(month => (
+                  <option key={month} value={month}>
+                    {new Date(month + '-01').toLocaleDateString('en-US', {
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
-        <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-600 rounded-lg">
-              <Users className="h-6 w-6 text-white" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-green-600">
-                Unique Customers
-              </p>
-              <p className="text-2xl font-bold text-green-900">
-                {analytics.totalStats.uniqueCustomers.toLocaleString()}
-              </p>
-            </div>
-          </div>
+        {/* Chart Type Selection */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <button
+            onClick={() => setActiveChart('branch')}
+            className={`p-4 rounded-lg border-2 transition-all ${
+              activeChart === 'branch'
+                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                : 'border-gray-200 hover:border-gray-300 text-gray-600'
+            }`}
+          >
+            <Building2 className="h-5 w-5 mx-auto mb-2" />
+            <div className="text-sm font-medium">By Branch</div>
+            <div className="text-xs opacity-75">Monthly conversations per branch</div>
+          </button>
+
+          <button
+            onClick={() => setActiveChart('city')}
+            className={`p-4 rounded-lg border-2 transition-all ${
+              activeChart === 'city'
+                ? 'border-green-500 bg-green-50 text-green-700'
+                : 'border-gray-200 hover:border-gray-300 text-gray-600'
+            }`}
+          >
+            <MapPin className="h-5 w-5 mx-auto mb-2" />
+            <div className="text-sm font-medium">By City</div>
+            <div className="text-xs opacity-75">Conversations by city with branch count</div>
+          </button>
+
+          <button
+            onClick={() => setActiveChart('daily')}
+            className={`p-4 rounded-lg border-2 transition-all ${
+              activeChart === 'daily'
+                ? 'border-orange-500 bg-orange-50 text-orange-700'
+                : 'border-gray-200 hover:border-gray-300 text-gray-600'
+            }`}
+          >
+            <Activity className="h-5 w-5 mx-auto mb-2" />
+            <div className="text-sm font-medium">Daily Trends</div>
+            <div className="text-xs opacity-75">Daily interactions last month</div>
+          </button>
+
+          <button
+            onClick={() => setActiveChart('customers')}
+            className={`p-4 rounded-lg border-2 transition-all ${
+              activeChart === 'customers'
+                ? 'border-purple-500 bg-purple-50 text-purple-700'
+                : 'border-gray-200 hover:border-gray-300 text-gray-600'
+            }`}
+          >
+            <Users className="h-5 w-5 mx-auto mb-2" />
+            <div className="text-sm font-medium">Unique Customers</div>
+            <div className="text-xs opacity-75">Monthly unique customer visits</div>
+          </button>
         </div>
 
-        <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-purple-600 rounded-lg">
-              <Building2 className="h-6 w-6 text-white" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-purple-600">
-                Active Branches
-              </p>
-              <p className="text-2xl font-bold text-purple-900">
-                {analytics.totalStats.activeBranches.toLocaleString()}
-              </p>
-            </div>
-          </div>
+        {/* Chart Display */}
+        <div className="h-96 border border-gray-200 rounded-lg p-4 bg-gray-50">
+          {activeChart === 'branch' && getBranchChartData().length > 1 && (
+            <Chart
+              chartType="BarChart"
+              width="100%"
+              height="100%"
+              data={getBranchChartData()}
+              options={getBranchChartOptions()}
+            />
+          )}
+
+          {activeChart === 'city' && getCityChartData().length > 1 && (
+            <Chart
+              chartType="ComboChart"
+              width="100%"
+              height="100%"
+              data={getCityChartData()}
+              options={getCityChartOptions()}
+            />
+          )}
+
+          {activeChart === 'daily' && getDailyChartData().length > 1 && (
+            <Chart
+              chartType="ColumnChart"
+              width="100%"
+              height="100%"
+              data={getDailyChartData()}
+              options={getDailyChartOptions()}
+            />
+          )}
+
+          {activeChart === 'customers' && getCustomerChartData().length > 1 && (
+            <Chart
+              chartType="ComboChart"
+              width="100%"
+              height="100%"
+              data={getCustomerChartData()}
+              options={getCustomerChartOptions()}
+            />
+          )}
         </div>
 
-        <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-orange-600 rounded-lg">
-              <Calendar className="h-6 w-6 text-white" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-orange-600">Today</p>
-              <p className="text-2xl font-bold text-orange-900">
-                {analytics.totalStats.todayConversations.toLocaleString()}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Daily Conversations Area Chart */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Daily Conversations Trend
-          </h3>
-          <div className="h-64">
-            {analytics.dailyConversationsLastMonth?.length > 0 && (
-              <Chart
-                chartType="AreaChart"
-                width="100%"
-                height="100%"
-                data={getDailyConversationsData()}
-                options={dailyChartOptions}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* City Pie Chart */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Conversations by City
-          </h3>
-          <div className="h-64">
-            {analytics.conversationsByCity?.length > 0 && (
-              <Chart
-                chartType="PieChart"
-                width="100%"
-                height="100%"
-                data={getCityData()}
-                options={cityChartOptions}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Unique CNICs Line Chart */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Unique Customers per Month
-          </h3>
-          <div className="h-64">
-            {analytics.uniqueCnicsByMonth?.length > 0 && (
-              <Chart
-                chartType="LineChart"
-                width="100%"
-                height="100%"
-                data={getUniqueCnicsData()}
-                options={uniqueCnicsChartOptions}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Branches Bar Chart */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Top Branches by Conversations
-          </h3>
-          <div className="h-64">
-            {analytics.conversationsByBranch?.length > 0 && (
-              <Chart
-                chartType="BarChart"
-                width="100%"
-                height="100%"
-                data={getBranchData()}
-                options={branchChartOptions}
-              />
-            )}
-          </div>
+        {/* Chart Description */}
+        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+          <h4 className="font-medium text-gray-900 mb-2">
+            {activeChart === 'branch' && "Number of Conversations by Branch"}
+            {activeChart === 'city' && "Number of Conversations by City"}
+            {activeChart === 'daily' && "Daily Conversation Trends"}
+            {activeChart === 'customers' && "Unique Customer Analysis"}
+          </h4>
+          <p className="text-sm text-gray-600">
+            {activeChart === 'branch' && "Shows the number of conversations based on unique branch ID and organized by months. This helps identify the most active branches for resource allocation."}
+            {activeChart === 'city' && "Displays conversations associated with each city having single or multiple branches. The line shows the number of branches per city."}
+            {activeChart === 'daily' && "Daily interaction analytics for the last month. Weekends are highlighted in red to show different usage patterns."}
+            {activeChart === 'customers' && "Number of unique customers (CNIC) per month visiting the branches, compared with total conversation volume."}
+          </p>
         </div>
       </div>
     </div>
