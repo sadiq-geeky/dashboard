@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import {
   LogOut,
   User,
@@ -9,6 +10,12 @@ import {
   Building2,
   ArrowLeft,
   Home,
+  Grid3X3,
+  BarChart3,
+  Monitor,
+  Mail,
+  Users,
+  Settings,
 } from "lucide-react";
 
 export function Header() {
@@ -22,6 +29,100 @@ export function Header() {
   const isOnDashboard = location.pathname === "/";
   const goBackToDashboard = () => navigate("/");
 
+  // Get current active page for navigation
+  const getCurrentPage = () => {
+    const path = location.pathname;
+    const urlParams = new URLSearchParams(location.search);
+    const tab = urlParams.get("tab");
+
+    if (path === "/" && !tab) return "home";
+    if (path === "/" && tab === "analytics") return "analytics";
+    if (path === "/" && tab === "device-status") return "device-status";
+    if (path === "/complaints") return "complaints";
+    if (path === "/branch-management") return "branches";
+    if (path === "/device-management") return "devices";
+    if (path === "/user-management") return "users";
+    if (path === "/deployment") return "deployment";
+
+    return "";
+  };
+
+  const currentPage = getCurrentPage();
+
+  const navigationItems = [
+    // First group: Core functionality
+    {
+      id: "home",
+      label: "Home",
+      icon: Grid3X3,
+      onClick: () => navigate("/"),
+      group: "core",
+    },
+    {
+      id: "analytics",
+      label: "Analytics",
+      icon: BarChart3,
+      onClick: () => navigate("/?tab=analytics"),
+      group: "core",
+    },
+    {
+      id: "device-status",
+      label: "Device Status",
+      icon: Monitor,
+      onClick: () => navigate("/?tab=device-status"),
+      group: "core",
+      adminOnly: true,
+    },
+    {
+      id: "complaints",
+      label: "Complaints",
+      icon: Mail,
+      onClick: () => navigate("/complaints"),
+      group: "core",
+    },
+    // Second group: Admin management
+    {
+      id: "branches",
+      label: "Branches",
+      icon: Building2,
+      onClick: () => navigate("/branch-management"),
+      group: "admin",
+      adminOnly: true,
+    },
+    {
+      id: "devices",
+      label: "Devices",
+      icon: Monitor,
+      onClick: () => navigate("/device-management"),
+      group: "admin",
+      adminOnly: true,
+    },
+    {
+      id: "users",
+      label: "Users",
+      icon: Users,
+      onClick: () => navigate("/user-management"),
+      group: "admin",
+      adminOnly: true,
+    },
+    {
+      id: "deployment",
+      label: "Deployment",
+      icon: Settings,
+      onClick: () => navigate("/deployment"),
+      group: "admin",
+      adminOnly: true,
+    },
+  ];
+
+  // Filter items based on admin status
+  const visibleItems = navigationItems.filter(
+    (item) => !item.adminOnly || isAdmin(),
+  );
+
+  const coreItems = visibleItems.filter((item) => item.group === "core");
+  const adminItems = visibleItems.filter((item) => item.group === "admin");
+
   return (
     <div
       className="bg-white border-b border-gray-200 px-5 py-1"
@@ -31,11 +132,11 @@ export function Header() {
         className="flex items-center justify-between"
         style={{ fontWeight: "300" }}
       >
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-6">
           {/* Clickable logo */}
           <button
             onClick={goBackToDashboard}
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+            className="flex items-center hover:opacity-80 transition-opacity"
             title="Go to Dashboard"
           >
             <img
@@ -43,15 +144,63 @@ export function Header() {
               alt="Bank Alfalah Logo"
               className="h-8 w-auto object-contain"
             />
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                Voice Recording System
-              </h1>
-              <p className="text-sm text-gray-500">
-                Powered by SE TECH (Pvt.) Ltd.
-              </p>
-            </div>
           </button>
+
+          {/* Navigation tabs */}
+          <div className="flex items-center space-x-1.5">
+            {/* Core functionality group */}
+            {coreItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = currentPage === item.id;
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={item.onClick}
+                  className={cn(
+                    "flex flex-col items-center justify-center px-2 py-1.5 rounded-md transition-all duration-200 min-w-[55px]",
+                    isActive
+                      ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
+                  )}
+                >
+                  <Icon className="w-4 h-4 mb-0.5" />
+                  <span className="text-[10px] font-medium leading-tight text-center">
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
+
+            {/* Admin group separator */}
+            {isAdmin() && adminItems.length > 0 && (
+              <div className="w-px h-6 bg-gray-300 mx-1.5"></div>
+            )}
+
+            {/* Admin management group */}
+            {adminItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = currentPage === item.id;
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={item.onClick}
+                  className={cn(
+                    "flex flex-col items-center justify-center px-2 py-1.5 rounded-md transition-all duration-200 min-w-[55px]",
+                    isActive
+                      ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
+                  )}
+                >
+                  <Icon className="w-4 h-4 mb-0.5" />
+                  <span className="text-[10px] font-medium leading-tight text-center">
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="flex items-center space-x-4">

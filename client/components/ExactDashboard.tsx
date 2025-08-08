@@ -10,9 +10,9 @@ import { GoogleRecordingsAnalytics } from "./GoogleRecordingsAnalytics";
 import { GoogleConversationAnalytics } from "./GoogleConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
 import { ComplaintsStyleAnalytics } from "./ComplaintsStyleAnalytics";
+import { ConversationAnalytics } from "./ConversationAnalytics";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "./Header";
-import { AdminNavigation } from "./AdminNavigation";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Search,
@@ -207,6 +207,11 @@ export function ExactDashboard() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [branchFilter, setBranchFilter] = useState("");
+  const [dateFromFilter, setDateFromFilter] = useState("");
+  const [dateToFilter, setDateToFilter] = useState("");
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [customerTypeFilter, setCustomerTypeFilter] = useState("all"); // "all", "walkin", "regular"
   const [selectedRecording, setSelectedRecording] =
     useState<RecordingHistory | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -370,15 +375,95 @@ export function ExactDashboard() {
   useEffect(() => {
     let filtered = recordings;
 
-    // Apply search filter
+    // Apply search filters
     if (searchQuery) {
       filtered = filtered.filter(
         (recording) =>
           recording.cnic?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           recording.device_name
             ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          recording.branch_address
+            ?.toLowerCase()
             .includes(searchQuery.toLowerCase()),
       );
+    }
+
+    // Apply branch filter
+    if (branchFilter) {
+      filtered = filtered.filter(
+        (recording) =>
+          recording.branch_no
+            ?.toLowerCase()
+            .includes(branchFilter.toLowerCase()) ||
+          recording.branch_address
+            ?.toLowerCase()
+            .includes(branchFilter.toLowerCase()),
+      );
+    }
+
+    // Apply date range filter
+    if (dateFromFilter || dateToFilter) {
+      filtered = filtered.filter((recording) => {
+        const recordingDate = recording.start_time || recording.created_on;
+        if (!recordingDate) return false;
+
+        const recordDate = new Date(recordingDate);
+        const fromDate = dateFromFilter ? new Date(dateFromFilter) : null;
+        const toDate = dateToFilter
+          ? new Date(dateToFilter + "T23:59:59")
+          : null;
+
+        if (fromDate && recordDate < fromDate) return false;
+        if (toDate && recordDate > toDate) return false;
+        return true;
+      });
+    }
+
+    // Apply customer type filter
+    if (customerTypeFilter !== "all") {
+      console.log("🔍 Customer Type Filter:", customerTypeFilter);
+      console.log("📊 Total records before filter:", filtered.length);
+
+      filtered = filtered.filter((recording) => {
+        const cnic = recording.cnic?.toString().toLowerCase().trim() || "";
+
+        // More comprehensive walk-in detection
+        const isWalkIn =
+          !recording.cnic || // No CNIC provided
+          cnic === "" || // Empty CNIC
+          cnic.includes("walk") || // Contains "walk"
+          cnic.includes("customer") || // Contains "customer"
+          cnic.includes("xxx") || // Contains "xxx" pattern
+          /^x+$/i.test(cnic) || // Only X characters
+          cnic.includes("this is walk") || // Specific pattern from user message
+          cnic.includes("walkin") || // Walk-in without space
+          cnic.includes("walk-in") || // Walk-in with hyphen
+          cnic.length < 10 || // Too short for valid CNIC
+          /^[x]{3,}/.test(cnic) || // Starts with multiple X's
+          cnic === "n/a" || // N/A values
+          cnic === "na" || // NA values
+          cnic === "not available" || // Not available
+          cnic === "0" || // Zero value
+          cnic === "00000000000" || // All zeros
+          !/^\d+$/.test(cnic.replace(/[-\s]/g, "")); // Not all digits (after removing dashes/spaces)
+
+        // Debug logging for first few records
+        if (filtered.length <= 5) {
+          console.log(
+            `📝 Record ${recording.id}: CNIC="${recording.cnic}" -> isWalkIn=${isWalkIn}`,
+          );
+        }
+
+        if (customerTypeFilter === "walkin") {
+          return isWalkIn;
+        } else if (customerTypeFilter === "regular") {
+          return !isWalkIn;
+        }
+        return true;
+      });
+
+      console.log("📊 Records after customer type filter:", filtered.length);
     }
 
     setFilteredRecordings(filtered);
@@ -388,7 +473,16 @@ export function ExactDashboard() {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
-  }, [searchQuery, recordings, currentPage, itemsPerPage]);
+  }, [
+    searchQuery,
+    branchFilter,
+    dateFromFilter,
+    dateToFilter,
+    customerTypeFilter,
+    recordings,
+    currentPage,
+    itemsPerPage,
+  ]);
 
   const formatLastSeen = (dateString: string) => {
     const date = new Date(dateString);
@@ -569,9 +663,6 @@ export function ExactDashboard() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      {/* Navigation */}
-      <AdminNavigation />
-
       <div className="flex min-h-0">
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-h-0">
@@ -582,32 +673,169 @@ export function ExactDashboard() {
             {activeTab === "home" && (
               <>
                 {/* Search and Filter Bar */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center space-x-4">
-                    <div className="relative">
-                      <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <input
-                        type="text"
-                        placeholder="Search by CNIC or Device"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-8 pr-3 py-1.5 w-64 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
+                <div className="mb-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="relative">
+                        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Search by CNIC, Device, or Branch"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-8 pr-3 py-1.5 w-72 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
 
-                    {/* Clear Filters Button */}
-                    {searchQuery && (
+                      {/* Advanced Filters Toggle */}
                       <button
-                        onClick={() => {
-                          setSearchQuery("");
-                        }}
-                        className="flex items-center space-x-1 px-2 py-1.5 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50"
+                        onClick={() =>
+                          setShowAdvancedFilters(!showAdvancedFilters)
+                        }
+                        className="flex items-center space-x-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50"
                       >
-                        <X className="w-3 h-3" />
-                        <span>Clear</span>
+                        <Filter className="w-4 h-4" />
+                        <span>Filters</span>
+                        <ChevronDown
+                          className={`w-3 h-3 transition-transform ${showAdvancedFilters ? "rotate-180" : ""}`}
+                        />
                       </button>
-                    )}
+
+                      {/* Clear All Filters Button */}
+                      {(searchQuery ||
+                        branchFilter ||
+                        dateFromFilter ||
+                        dateToFilter ||
+                        customerTypeFilter !== "all") && (
+                        <button
+                          onClick={() => {
+                            setSearchQuery("");
+                            setBranchFilter("");
+                            setDateFromFilter("");
+                            setDateToFilter("");
+                            setCustomerTypeFilter("all");
+                          }}
+                          className="flex items-center space-x-1 px-2 py-1.5 text-sm text-red-600 hover:text-red-800 border border-red-300 rounded-md hover:bg-red-50"
+                        >
+                          <X className="w-3 h-3" />
+                          <span>Clear All</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
+
+                  {/* Advanced Filters */}
+                  {showAdvancedFilters && (
+                    <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {/* Branch Filter */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Branch Code/Name
+                          </label>
+                          <div className="relative">
+                            <Building2 className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <input
+                              type="text"
+                              placeholder="Filter by branch"
+                              value={branchFilter}
+                              onChange={(e) => setBranchFilter(e.target.value)}
+                              className="pl-8 pr-3 py-1.5 w-full border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Date From Filter */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            From Date
+                          </label>
+                          <div className="relative">
+                            <Calendar className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <input
+                              type="date"
+                              value={dateFromFilter}
+                              onChange={(e) =>
+                                setDateFromFilter(e.target.value)
+                              }
+                              className="pl-8 pr-3 py-1.5 w-full border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Date To Filter */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            To Date
+                          </label>
+                          <div className="relative">
+                            <Calendar className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <input
+                              type="date"
+                              value={dateToFilter}
+                              onChange={(e) => setDateToFilter(e.target.value)}
+                              className="pl-8 pr-3 py-1.5 w-full border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Customer Type Filter */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Customer Type
+                          </label>
+                          <div className="relative">
+                            <User className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <select
+                              value={customerTypeFilter}
+                              onChange={(e) =>
+                                setCustomerTypeFilter(e.target.value)
+                              }
+                              className="pl-8 pr-3 py-1.5 w-full border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                            >
+                              <option value="all">All Customers</option>
+                              <option value="walkin">Walk-in Customers</option>
+                              <option value="regular">Regular Customers</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Active Filters Summary */}
+                      {(branchFilter ||
+                        dateFromFilter ||
+                        dateToFilter ||
+                        customerTypeFilter !== "all") && (
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <div className="flex items-center space-x-2 text-sm text-gray-600">
+                            <span className="font-medium">Active filters:</span>
+                            {branchFilter && (
+                              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                                Branch: {branchFilter}
+                              </span>
+                            )}
+                            {dateFromFilter && (
+                              <span className="bg-green-100 text-green-800 px-2 py-1 rounded-md">
+                                From: {dateFromFilter}
+                              </span>
+                            )}
+                            {dateToFilter && (
+                              <span className="bg-green-100 text-green-800 px-2 py-1 rounded-md">
+                                To: {dateToFilter}
+                              </span>
+                            )}
+                            {customerTypeFilter !== "all" && (
+                              <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-md">
+                                {customerTypeFilter === "walkin"
+                                  ? "Walk-in Customers"
+                                  : "Regular Customers"}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Table */}
@@ -925,34 +1153,8 @@ export function ExactDashboard() {
 
             {activeTab === "analytics" && (
               <>
-                {/* Analytics Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h1 className="text-lg font-bold text-gray-900">
-                      {isAdmin()
-                        ? "Analytics Dashboard"
-                        : `${user?.branch_city || "Branch"} Analytics`}
-                    </h1>
-                    <p className="text-sm text-gray-600">
-                      {isAdmin()
-                        ? "Comprehensive insights and metrics"
-                        : "Analytics and insights for your branch"}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      // Force re-render by updating key
-                      setLastUpdate(new Date());
-                    }}
-                    className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    <span>Refresh Data</span>
-                  </button>
-                </div>
-
-                {/* Analytics Content - Exact same as Complaints analytics */}
-                <ComplaintsStyleAnalytics />
+                {/* Comprehensive Analytics Dashboard */}
+                <ConversationAnalytics />
               </>
             )}
           </div>

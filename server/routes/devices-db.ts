@@ -6,7 +6,6 @@ export interface Device {
   id: string;
   device_name: string;
   device_mac?: string;
-  ip_address?: string;
   device_type: "recorder" | "monitor" | "other";
   branch_id?: string;
   branch_name?: string;
@@ -39,10 +38,8 @@ export const getDevices: RequestHandler = async (req, res) => {
     const conditions: string[] = [];
 
     if (search) {
-      conditions.push(
-        "(device_name LIKE ? OR device_mac LIKE ? OR ip_address LIKE ?)",
-      );
-      queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
+      conditions.push("(device_name LIKE ? OR device_mac LIKE ?)");
+      queryParams.push(`%${search}%`, `%${search}%`);
     }
 
     // Skip branch_id filter for now until table is fixed
@@ -142,7 +139,6 @@ export const createDevice: RequestHandler = async (req, res) => {
     const {
       device_name,
       device_mac,
-      ip_address,
       device_type,
       installation_date,
       last_maintenance,
@@ -168,33 +164,19 @@ export const createDevice: RequestHandler = async (req, res) => {
       }
     }
 
-    // Check for unique IP address if provided
-    if (ip_address) {
-      const ipCheck = await executeQuery(
-        "SELECT id FROM devices WHERE ip_address = ?",
-        [ip_address],
-      );
-      if (ipCheck.length > 0) {
-        return res
-          .status(400)
-          .json({ error: "Device IP address already exists" });
-      }
-    }
-
     const id = uuidv4();
 
     const query = `
       INSERT INTO devices
-      (id, device_name, device_mac, ip_address, device_type,
+      (id, device_name, device_mac, device_type,
        installation_date, last_maintenance, device_status, notes)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     await executeQuery(query, [
       id,
       device_name,
       device_mac || null,
-      ip_address || null,
       device_type || "recorder",
       installation_date || null,
       last_maintenance || null,
@@ -239,7 +221,6 @@ export const updateDevice: RequestHandler = async (req, res) => {
     const {
       device_name,
       device_mac,
-      ip_address,
       device_type,
       installation_date,
       last_maintenance,
@@ -272,34 +253,9 @@ export const updateDevice: RequestHandler = async (req, res) => {
       }
     }
 
-    // Check for unique IP address if provided (excluding current device)
-    if (ip_address) {
-      console.log(
-        `🔍 Checking IP uniqueness: ${ip_address} (excluding device ${id})`,
-      );
-      const ipCheck = await executeQuery(
-        "SELECT id FROM devices WHERE ip_address = ? AND id != ?",
-        [ip_address, id],
-      );
-      console.log(`📋 IP check result:`, ipCheck);
-      if (ipCheck.length > 0) {
-        const errorMsg = `Device IP address already exists`;
-        console.log(
-          `❌ IP address conflict: ${ip_address} already exists on device ${ipCheck[0].id}`,
-        );
-        return res
-          .status(400)
-          .set("Content-Type", "application/json")
-          .json({
-            error: errorMsg,
-            details: `IP ${ip_address} is already used by device ${ipCheck[0].id}`,
-          });
-      }
-    }
-
     const query = `
       UPDATE devices
-      SET device_name = ?, device_mac = ?, ip_address = ?, device_type = ?,
+      SET device_name = ?, device_mac = ?, device_type = ?,
           installation_date = ?, last_maintenance = ?,
           device_status = ?, notes = ?, updated_on = CURRENT_TIMESTAMP
       WHERE id = ?
@@ -308,7 +264,6 @@ export const updateDevice: RequestHandler = async (req, res) => {
     const result = await executeUpdate(query, [
       device_name,
       device_mac || null,
-      ip_address || null,
       device_type || "recorder",
       installation_date || null,
       last_maintenance || null,

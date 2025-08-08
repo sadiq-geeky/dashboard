@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "../components/Header";
-import { AdminNavigation } from "../components/AdminNavigation";
 import { AddUserModal } from "../components/AddUserModal";
 import { EditUserModal } from "../components/EditUserModal";
 import { cn } from "@/lib/utils";
@@ -139,8 +138,6 @@ export function UserManagement() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      {/* Navigation */}
-      <AdminNavigation />
 
       <div
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"

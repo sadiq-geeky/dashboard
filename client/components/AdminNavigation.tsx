@@ -131,14 +131,14 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
                 key={item.id}
                 onClick={item.onClick}
                 className={cn(
-                  "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
+                  "flex flex-col items-center px-3 py-2 rounded-lg transition-all duration-200 min-w-[70px]",
                   isActive
                     ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
                     : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
                 )}
               >
-                <Icon className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">{item.label}</span>
+                <Icon className="w-5 h-5 mb-1" />
+                <span className="text-xs font-medium">{item.label}</span>
               </button>
             );
           })}
@@ -158,14 +158,14 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
                 key={item.id}
                 onClick={item.onClick}
                 className={cn(
-                  "flex flex-col items-center px-6 py-4 rounded-lg transition-all duration-200 min-w-[90px]",
+                  "flex flex-col items-center px-3 py-2 rounded-lg transition-all duration-200 min-w-[70px]",
                   isActive
                     ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
                     : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
                 )}
               >
-                <Icon className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">{item.label}</span>
+                <Icon className="w-5 h-5 mb-1" />
+                <span className="text-xs font-medium">{item.label}</span>
               </button>
             );
           })}

@@ -189,16 +189,15 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
         const deviceUuid = uuidv4();
         const createDeviceQuery = `
           INSERT INTO devices (
-            id, device_name, device_mac, ip_address, device_type,
+            id, device_name, device_mac, device_type,
             device_status, notes, created_on, updated_on
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+          ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
         `;
 
         await executeQuery(createDeviceQuery, [
           deviceUuid,
           `Device-${mac_address.trim().slice(-6)}`, // Use last 6 chars of MAC as name
           mac_address.trim(),
-          ip_address,
           "recorder",
           "inactive",
           "Auto-created from heartbeat",
