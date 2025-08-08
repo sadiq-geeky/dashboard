@@ -748,7 +748,7 @@ export function ExactDashboard() {
                       </div>
 
                       {/* Active Filters Summary */}
-                      {(branchFilter || dateFromFilter || dateToFilter) && (
+                      {(branchFilter || dateFromFilter || dateToFilter || customerTypeFilter !== "all") && (
                         <div className="mt-3 pt-3 border-t border-gray-200">
                           <div className="flex items-center space-x-2 text-sm text-gray-600">
                             <span className="font-medium">Active filters:</span>
@@ -765,6 +765,11 @@ export function ExactDashboard() {
                             {dateToFilter && (
                               <span className="bg-green-100 text-green-800 px-2 py-1 rounded-md">
                                 To: {dateToFilter}
+                              </span>
+                            )}
+                            {customerTypeFilter !== "all" && (
+                              <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-md">
+                                {customerTypeFilter === "walkin" ? "Walk-in Customers" : "Regular Customers"}
                               </span>
                             )}
                           </div>
