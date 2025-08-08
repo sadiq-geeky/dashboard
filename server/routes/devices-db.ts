@@ -248,11 +248,14 @@ export const updateDevice: RequestHandler = async (req, res) => {
 
     // Check for unique MAC address if provided (excluding current device)
     if (device_mac) {
+      console.log(`🔍 Checking MAC uniqueness: ${device_mac} (excluding device ${id})`);
       const macCheck = await executeQuery(
         "SELECT id FROM devices WHERE device_mac = ? AND id != ?",
         [device_mac, id],
       );
+      console.log(`📋 MAC check result:`, macCheck);
       if (macCheck.length > 0) {
+        console.log(`❌ MAC address conflict: ${device_mac} already exists on device ${macCheck[0].id}`);
         return res
           .status(400)
           .json({ error: "Device MAC address already exists" });
@@ -261,11 +264,14 @@ export const updateDevice: RequestHandler = async (req, res) => {
 
     // Check for unique IP address if provided (excluding current device)
     if (ip_address) {
+      console.log(`🔍 Checking IP uniqueness: ${ip_address} (excluding device ${id})`);
       const ipCheck = await executeQuery(
         "SELECT id FROM devices WHERE ip_address = ? AND id != ?",
         [ip_address, id],
       );
+      console.log(`📋 IP check result:`, ipCheck);
       if (ipCheck.length > 0) {
+        console.log(`❌ IP address conflict: ${ip_address} already exists on device ${ipCheck[0].id}`);
         return res
           .status(400)
           .json({ error: "Device IP address already exists" });
