@@ -131,14 +131,23 @@ export function DeviceManagement() {
             }
           }
         } catch (readError) {
-          console.warn('Could not read response body:', readError);
+          console.warn("Could not read response body:", readError);
         }
         console.error(`Device save failed: ${response.status} - ${errorText}`);
-        console.error('Request data:', JSON.stringify({
-          url: editingDevice ? `/api/devices/${editingDevice.id}` : "/api/devices",
-          method: editingDevice ? "PUT" : "POST",
-          formData
-        }, null, 2));
+        console.error(
+          "Request data:",
+          JSON.stringify(
+            {
+              url: editingDevice
+                ? `/api/devices/${editingDevice.id}`
+                : "/api/devices",
+              method: editingDevice ? "PUT" : "POST",
+              formData,
+            },
+            null,
+            2,
+          ),
+        );
         throw new Error(`Failed to save device: ${errorText}`);
       }
 
@@ -162,10 +171,14 @@ export function DeviceManagement() {
       // Show user-friendly error message
       if (error instanceof Error) {
         const errorMessage = error.message;
-        if (errorMessage.includes('IP address already exists')) {
-          alert('Error: The IP address you entered is already being used by another device. Please choose a different IP address.');
-        } else if (errorMessage.includes('MAC address already exists')) {
-          alert('Error: The MAC address you entered is already being used by another device. Please choose a different MAC address.');
+        if (errorMessage.includes("IP address already exists")) {
+          alert(
+            "Error: The IP address you entered is already being used by another device. Please choose a different IP address.",
+          );
+        } else if (errorMessage.includes("MAC address already exists")) {
+          alert(
+            "Error: The MAC address you entered is already being used by another device. Please choose a different MAC address.",
+          );
         } else {
           alert(`Error saving device: ${errorMessage}`);
         }
@@ -297,8 +310,12 @@ export function DeviceManagement() {
           ) : devices.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 bg-white rounded-lg border border-gray-200">
               <Monitor className="h-16 w-16 text-gray-300 mb-4" />
-              <p className="text-gray-500 text-lg font-medium">No devices found</p>
-              <p className="text-gray-400 text-sm mt-2">Click "Add Device" to create your first device</p>
+              <p className="text-gray-500 text-lg font-medium">
+                No devices found
+              </p>
+              <p className="text-gray-400 text-sm mt-2">
+                Click "Add Device" to create your first device
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
