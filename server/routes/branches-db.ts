@@ -172,7 +172,7 @@ export const updateBranch: RequestHandler = async (req, res) => {
       WHERE id = ?
     `;
 
-    const result = await executeQuery(query, [
+    const result = await executeUpdate(query, [
       branch_code,
       branch_name,
       branch_city || null,
@@ -208,7 +208,7 @@ export const deleteBranch: RequestHandler = async (req, res) => {
     const { id } = req.params;
 
     const query = `UPDATE branches SET is_active = false WHERE id = ?`;
-    const result = await executeQuery(query, [id]);
+    const result = await executeUpdate(query, [id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Branch not found" });
