@@ -13,6 +13,7 @@ export interface Complaint {
   priority: "low" | "medium" | "high" | "urgent";
   created_on: string;
   updated_on: string;
+  notes?: string;
 }
 
 export interface CustomerData {
