@@ -1,7 +1,7 @@
 interface AuthenticatedUser {
   uuid: string;
   username: string;
-  role: "admin" | "user";
+  role: "admin" | "manager" | "user";
   branch_id: string | null;
   branch_city: string | null;
   emp_name: string | null;
