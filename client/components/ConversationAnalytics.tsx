@@ -168,18 +168,18 @@ export function ConversationAnalytics() {
   };
 
   const getCustomerChartData = () => {
-    const chartData = [["Month", "Unique Customers", "Total Conversations"]];
-    
-    customerData
-      .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime())
-      .forEach(item => {
-        const monthName = new Date(item.month + '-01').toLocaleDateString('en-US', {
-          month: 'short',
-          year: '2-digit'
-        });
-        chartData.push([monthName, item.unique_customers, item.total_conversations]);
+    const chartData = [["Month", "Unique Customers"]];
+
+    // The API returns a single object, not an array
+    if (customerData.length > 0) {
+      const item = customerData[0];
+      const monthName = new Date(item.month + '-01').toLocaleDateString('en-US', {
+        month: 'short',
+        year: 'numeric'
       });
-    
+      chartData.push([monthName, item.unique_cnic_count]);
+    }
+
     return chartData;
   };
 
