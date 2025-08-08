@@ -46,10 +46,12 @@ import { getRecordingsAnalytics } from "./routes/analytics-db";
 import {
   getConversationAnalytics,
   getConversationsByBranch,
+  getConversationsByBranchPerMonth,
   getConversationsByCity,
   getDailyConversationsLastMonth,
   getUniqueCnicsByMonth,
 } from "./routes/conversation-analytics";
+import { getVoiceStreamsAnalytics } from "./routes/voice-streams-analytics";
 import {
   getUsers,
   createUser,
@@ -180,6 +182,12 @@ export function createServer() {
     getConversationsByBranch,
   );
   app.get(
+    "/api/analytics/conversations/branch-monthly",
+    authenticate,
+    addBranchFilter(),
+    getConversationsByBranchPerMonth,
+  );
+  app.get(
     "/api/analytics/conversations/city",
     authenticate,
     addBranchFilter(),
@@ -196,6 +204,12 @@ export function createServer() {
     authenticate,
     addBranchFilter(),
     getUniqueCnicsByMonth,
+  );
+  app.get(
+    "/api/analytics/voice-streams",
+    authenticate,
+    addBranchFilter(),
+    getVoiceStreamsAnalytics,
   );
 
   // User Management routes

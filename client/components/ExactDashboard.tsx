@@ -55,7 +55,8 @@ const fetchRecordings = async (
 ): Promise<RecordingHistory[]> => {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    // Increase timeout to 20 seconds for recordings
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
 
     // Build query parameters with branch filtering for non-admin users
     const params = new URLSearchParams({
@@ -84,25 +85,28 @@ const fetchRecordings = async (
     }
 
     const result: PaginatedResponse<RecordingHistory> = await response.json();
-    return result.data;
+    return Array.isArray(result.data) ? result.data : [];
   } catch (error) {
     console.error("Error fetching recordings:", error);
     if (error.name === "AbortError") {
-      console.error("Request timed out after 10 seconds");
+      console.error("Recordings request timed out after 20 seconds");
     }
 
-    // Retry logic for development
+    // Only retry on network errors, not on timeouts
     if (
       retries > 0 &&
+      error.name !== "AbortError" &&
       (error.name === "TypeError" || error.message?.includes("Failed to fetch"))
     ) {
       console.log(
         `Retrying recordings fetch, ${retries} attempts remaining...`,
       );
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       return fetchRecordings(user, retries - 1);
     }
 
+    // Return empty array instead of throwing on timeout/error
+    console.warn("Recordings fetch failed, returning empty array");
     return [];
   }
 };
@@ -111,7 +115,8 @@ const fetchRecordings = async (
 const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    // Increase timeout to 30 seconds for heartbeats
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
     const response = await authFetch("/api/heartbeats", {
       signal: controller.signal,
@@ -120,7 +125,8 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
     clearTimeout(timeoutId);
 
     if (response.ok) {
-      return await response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     } else {
       let errorText = "";
       try {
@@ -135,21 +141,24 @@ const fetchHeartbeats = async (retries = 2): Promise<HeartbeatRecord[]> => {
   } catch (error) {
     console.error("Error fetching heartbeats:", error);
     if (error.name === "AbortError") {
-      console.error("Request timed out after 10 seconds");
+      console.error("Heartbeat request timed out after 30 seconds");
     }
 
-    // Retry logic for development
+    // Only retry on network errors, not on timeouts
     if (
       retries > 0 &&
+      error.name !== "AbortError" &&
       (error.name === "TypeError" || error.message?.includes("Failed to fetch"))
     ) {
       console.log(
         `Retrying heartbeats fetch, ${retries} attempts remaining...`,
       );
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       return fetchHeartbeats(retries - 1);
     }
 
+    // Return empty array instead of throwing on timeout/error
+    console.warn("Heartbeats fetch failed, returning empty array");
     return [];
   }
 };
@@ -222,10 +231,15 @@ export function ExactDashboard() {
     setIsRefreshing(true);
     try {
       const heartbeats = await fetchHeartbeats();
-      setDevices(heartbeats);
+      // Ensure heartbeats is an array
+      const validHeartbeats = Array.isArray(heartbeats) ? heartbeats : [];
+      setDevices(validHeartbeats);
       setLastUpdate(new Date());
     } catch (error) {
       console.error("Failed to load devices:", error);
+      // Set empty array on error to prevent crashes
+      setDevices([]);
+      setLastUpdate(new Date());
     } finally {
       setIsRefreshing(false);
     }
@@ -287,12 +301,13 @@ export function ExactDashboard() {
     }
   }, [activeTab]);
 
-  // Device status counts
-  const onlineCount = devices.filter((d) => d.status === "online").length;
-  const problematicCount = devices.filter(
+  // Device status counts with safety checks
+  const safeDevices = Array.isArray(devices) ? devices : [];
+  const onlineCount = safeDevices.filter((d) => d.status === "online").length;
+  const problematicCount = safeDevices.filter(
     (d) => d.status === "problematic",
   ).length;
-  const offlineCount = devices.filter((d) => d.status === "offline").length;
+  const offlineCount = safeDevices.filter((d) => d.status === "offline").length;
 
   useEffect(() => {
     let filtered = recordings;
@@ -484,15 +499,15 @@ export function ExactDashboard() {
   const currentRecordings = filteredRecordings.slice(startIndex, endIndex);
 
   return (
-    <div className="h-screen bg-gray-50 overflow-hidden">
+    <div className="min-h-screen bg-gray-50">
       <Header />
 
       {/* Navigation */}
       <AdminNavigation />
 
-      <div className="flex h-full">
+      <div className="flex min-h-0">
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-h-0">
           <div
             className="flex-1 px-4 py-3 overflow-y-auto"
             style={{ padding: "12px 16px 3px" }}
