@@ -2,19 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { authFetch } from "@/lib/api";
 import { RefreshCw, Mic, Calendar, TrendingUp, BarChart3 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  Area,
-  AreaChart,
-} from "recharts";
+import { Chart } from "react-google-charts";
 
 interface MonthlyVoiceStreamData {
   month: string;
@@ -75,24 +63,148 @@ export function BranchVoiceStreamsAnalytics() {
     }
   }, [isAdmin]);
 
-  // Custom tooltip for charts
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl p-4 min-w-[200px]">
-          <div className="flex items-center space-x-2 mb-2">
-            <div className="w-3 h-3 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600" />
-            <p className="font-semibold text-gray-900 text-sm">{label}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              {payload[0].value} voice streams
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return null;
+  // Prepare Google Charts data for monthly chart
+  const getMonthlyChartData = () => {
+    if (!data?.monthly_data?.length) return [["Month", "Voice Streams"]];
+
+    const chartData = [["Month", "Voice Streams"]];
+    data.monthly_data.forEach((item) => {
+      chartData.push([item.formatted_month, item.voice_streams]);
+    });
+    return chartData;
+  };
+
+  // Prepare Google Charts data for daily chart
+  const getDailyChartData = () => {
+    if (!data?.daily_current_month?.length) return [["Date", "Voice Streams"]];
+
+    const chartData = [["Date", "Voice Streams"]];
+    data.daily_current_month.forEach((item) => {
+      chartData.push([item.formatted_date, item.voice_streams]);
+    });
+    return chartData;
+  };
+
+  // Chart options for monthly area chart
+  const monthlyChartOptions = {
+    title: "Voice Streams per Month",
+    titleTextStyle: {
+      fontSize: 14,
+      fontName: "system-ui",
+      bold: true,
+      color: "#1f2937",
+    },
+    backgroundColor: "transparent",
+    chartArea: {
+      left: 60,
+      top: 50,
+      width: "85%",
+      height: "70%",
+    },
+    hAxis: {
+      title: "Month",
+      titleTextStyle: {
+        fontSize: 11,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+      textStyle: {
+        fontSize: 9,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+    },
+    vAxis: {
+      title: "Voice Streams",
+      titleTextStyle: {
+        fontSize: 11,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+      textStyle: {
+        fontSize: 9,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+      format: "short",
+      gridlines: {
+        color: "#e5e7eb",
+        count: 5,
+      },
+      minorGridlines: {
+        color: "transparent",
+      },
+    },
+    colors: ["#3b82f6"],
+    legend: { position: "none" },
+    lineWidth: 3,
+    pointSize: 5,
+    areaOpacity: 0.3,
+    animation: {
+      startup: true,
+      easing: "inAndOut",
+      duration: 1000,
+    },
+  };
+
+  // Chart options for daily bar chart
+  const dailyChartOptions = {
+    title: "Voice Streams This Month",
+    titleTextStyle: {
+      fontSize: 14,
+      fontName: "system-ui",
+      bold: true,
+      color: "#1f2937",
+    },
+    backgroundColor: "transparent",
+    chartArea: {
+      left: 60,
+      top: 50,
+      width: "85%",
+      height: "70%",
+    },
+    hAxis: {
+      title: "Date",
+      titleTextStyle: {
+        fontSize: 11,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+      textStyle: {
+        fontSize: 9,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+    },
+    vAxis: {
+      title: "Voice Streams",
+      titleTextStyle: {
+        fontSize: 11,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+      textStyle: {
+        fontSize: 9,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+      format: "short",
+      gridlines: {
+        color: "#e5e7eb",
+        count: 5,
+      },
+      minorGridlines: {
+        color: "transparent",
+      },
+    },
+    colors: ["#10b981"],
+    legend: { position: "none" },
+    bar: { groupWidth: "75%" },
+    animation: {
+      startup: true,
+      easing: "inAndOut",
+      duration: 1000,
+    },
   };
 
   if (isAdmin()) {
@@ -266,68 +378,15 @@ export function BranchVoiceStreamsAnalytics() {
 
           {/* Chart */}
           <div className="h-64 bg-gradient-to-b from-gray-50/30 to-white/30 rounded-lg p-3 border border-gray-100/50">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={data.monthly_data}
-                margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
-              >
-                <defs>
-                  <linearGradient
-                    id="voiceStreamGradient"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.3} />
-                    <stop
-                      offset="100%"
-                      stopColor="#3b82f6"
-                      stopOpacity={0.05}
-                    />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  strokeDasharray="2 4"
-                  stroke="#e5e7eb"
-                  strokeOpacity={0.5}
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="formatted_month"
-                  fontSize={9}
-                  fontWeight={500}
-                  tick={{ fill: "#6b7280" }}
-                  axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-                  tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-                  interval="preserveStartEnd"
-                  type="category"
-                  allowDataOverflow={false}
-                  allowDecimals={true}
-                  allowDuplicatedCategory={true}
-                />
-                <YAxis
-                  fontSize={9}
-                  fontWeight={500}
-                  tick={{ fill: "#6b7280" }}
-                  axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-                  tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-                  tickFormatter={(value) => value.toLocaleString()}
-                  type="number"
-                  allowDataOverflow={false}
-                  allowDecimals={true}
-                  allowDuplicatedCategory={true}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Area
-                  type="monotone"
-                  dataKey="voice_streams"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  fill="url(#voiceStreamGradient)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            {data.monthly_data?.length > 0 && (
+              <Chart
+                chartType="AreaChart"
+                width="100%"
+                height="100%"
+                data={getMonthlyChartData()}
+                options={monthlyChartOptions}
+              />
+            )}
           </div>
 
           {/* Chart Footer */}
@@ -378,62 +437,15 @@ export function BranchVoiceStreamsAnalytics() {
 
           {/* Daily Chart */}
           <div className="h-64 bg-gradient-to-b from-gray-50/30 to-white/30 rounded-lg p-3 border border-gray-100/50">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={data.daily_current_month}
-                margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
-              >
-                <defs>
-                  <linearGradient
-                    id="dailyVoiceStreamGradient"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
-                    <stop offset="100%" stopColor="#059669" stopOpacity={0.8} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  strokeDasharray="2 4"
-                  stroke="#e5e7eb"
-                  strokeOpacity={0.5}
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="formatted_date"
-                  fontSize={9}
-                  fontWeight={500}
-                  tick={{ fill: "#6b7280" }}
-                  axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-                  tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-                  interval="preserveStartEnd"
-                  type="category"
-                  allowDataOverflow={false}
-                  allowDecimals={true}
-                  allowDuplicatedCategory={true}
-                />
-                <YAxis
-                  fontSize={9}
-                  fontWeight={500}
-                  tick={{ fill: "#6b7280" }}
-                  axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-                  tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-                  tickFormatter={(value) => value.toLocaleString()}
-                  type="number"
-                  allowDataOverflow={false}
-                  allowDecimals={true}
-                  allowDuplicatedCategory={true}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar
-                  dataKey="voice_streams"
-                  fill="url(#dailyVoiceStreamGradient)"
-                  radius={[2, 2, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            {data.daily_current_month?.length > 0 && (
+              <Chart
+                chartType="ColumnChart"
+                width="100%"
+                height="100%"
+                data={getDailyChartData()}
+                options={dailyChartOptions}
+              />
+            )}
           </div>
 
           {/* Daily Chart Footer */}

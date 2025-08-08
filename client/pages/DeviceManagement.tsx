@@ -5,6 +5,7 @@ import { AdminNavigation } from "../components/AdminNavigation";
 import { cn } from "@/lib/utils";
 import { authDelete, authFetch } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
+import { HeartbeatRecord } from "@shared/api";
 import {
   Search,
   Plus,
@@ -33,6 +34,9 @@ interface Device {
   notes?: string;
   created_on: string;
   updated_on: string;
+  // Heartbeat-based status
+  heartbeat_status?: "online" | "problematic" | "offline";
+  last_seen?: string;
 }
 
 interface DeviceFormData {
@@ -55,6 +59,7 @@ export function DeviceManagement() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingDevice, setEditingDevice] = useState<Device | null>(null);
+  const [heartbeats, setHeartbeats] = useState<HeartbeatRecord[]>([]);
   const [formData, setFormData] = useState<DeviceFormData>({
     device_name: "",
     device_mac: "",
@@ -66,28 +71,93 @@ export function DeviceManagement() {
     notes: "",
   });
 
+  const fetchHeartbeats = async (): Promise<HeartbeatRecord[]> => {
+    try {
+      const response = await authFetch("/api/heartbeats");
+      if (!response.ok) {
+        console.error("Failed to fetch heartbeats:", response.status);
+        return [];
+      }
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      console.error("Error fetching heartbeats:", error);
+      return [];
+    }
+  };
+
+  const calculateHeartbeatStatus = (
+    lastSeen: string,
+  ): "online" | "problematic" | "offline" => {
+    const now = new Date();
+    const lastSeenDate = new Date(lastSeen);
+    const minutesDiff = Math.floor(
+      (now.getTime() - lastSeenDate.getTime()) / (1000 * 60),
+    );
+
+    if (minutesDiff <= 5) return "online";
+    if (minutesDiff <= 15) return "problematic";
+    return "offline";
+  };
+
   const fetchDevices = async () => {
     try {
       setLoading(true);
-      const response = await authFetch(
-        `/api/devices?limit=50&search=${encodeURIComponent(searchQuery)}`,
-      );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`HTTP Error ${response.status}:`, errorText);
+      // Fetch devices and heartbeats in parallel
+      const [devicesResponse, heartbeatsData] = await Promise.all([
+        authFetch(
+          `/api/devices?limit=50&search=${encodeURIComponent(searchQuery)}`,
+        ),
+        fetchHeartbeats(),
+      ]);
+
+      if (!devicesResponse.ok) {
+        const errorText = await devicesResponse.text();
+        console.error(`HTTP Error ${devicesResponse.status}:`, errorText);
         throw new Error(
-          `Failed to fetch devices: ${response.status} ${errorText}`,
+          `Failed to fetch devices: ${devicesResponse.status} ${errorText}`,
         );
       }
 
-      const data = await response.json();
-      console.log("✅ Devices fetched successfully:", data);
-      setDevices(data.data || []);
+      const devicesData = await devicesResponse.json();
+      const devicesArray = devicesData.data || [];
+
+      // Merge heartbeat status with devices
+      const devicesWithHeartbeatStatus = devicesArray.map((device: Device) => {
+        // Find matching heartbeat by MAC address or IP address
+        const heartbeat = heartbeatsData.find(
+          (hb) =>
+            (device.device_mac && hb.device_id === device.device_mac) ||
+            (device.ip_address && hb.ip_address === device.ip_address),
+        );
+
+        if (heartbeat) {
+          return {
+            ...device,
+            heartbeat_status: calculateHeartbeatStatus(heartbeat.last_seen),
+            last_seen: heartbeat.last_seen,
+          };
+        }
+
+        return {
+          ...device,
+          heartbeat_status: "offline" as const,
+          last_seen: null,
+        };
+      });
+
+      setHeartbeats(heartbeatsData);
+      setDevices(devicesWithHeartbeatStatus);
+      console.log(
+        "✅ Devices with heartbeat status fetched successfully:",
+        devicesWithHeartbeatStatus,
+      );
     } catch (error) {
       console.error("❌ Error fetching devices:", error);
       // Set empty array on error to prevent crashes
       setDevices([]);
+      setHeartbeats([]);
     } finally {
       setLoading(false);
     }
@@ -95,6 +165,11 @@ export function DeviceManagement() {
 
   useEffect(() => {
     fetchDevices();
+
+    // Auto-refresh every 30 seconds to keep heartbeat status current
+    const interval = setInterval(fetchDevices, 30000);
+
+    return () => clearInterval(interval);
   }, [searchQuery]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -214,30 +289,47 @@ export function DeviceManagement() {
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getHeartbeatStatusIcon = (
+    status: "online" | "problematic" | "offline",
+  ) => {
     switch (status) {
-      case "active":
+      case "online":
         return <Wifi className="h-4 w-4 text-green-600" />;
-      case "maintenance":
+      case "problematic":
         return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
-      case "inactive":
+      case "offline":
         return <WifiOff className="h-4 w-4 text-red-600" />;
       default:
         return <Monitor className="h-4 w-4 text-gray-600" />;
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getHeartbeatStatusColor = (
+    status: "online" | "problematic" | "offline",
+  ) => {
     switch (status) {
-      case "active":
+      case "online":
         return "bg-green-100 text-green-700";
-      case "maintenance":
+      case "problematic":
         return "bg-yellow-100 text-yellow-700";
-      case "inactive":
+      case "offline":
         return "bg-red-100 text-red-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
+  };
+
+  const formatLastSeen = (lastSeen: string | null) => {
+    if (!lastSeen) return "Never";
+    const date = new Date(lastSeen);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+    if (diffMinutes < 1) return "Just now";
+    if (diffMinutes < 60) return `${diffMinutes}m ago`;
+    if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h ago`;
+    return date.toLocaleDateString();
   };
 
   if (!isAdmin()) {
@@ -386,17 +478,27 @@ export function DeviceManagement() {
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        {getStatusIcon(device.device_status)}
+                        {getHeartbeatStatusIcon(
+                          device.heartbeat_status || "offline",
+                        )}
                         <span
-                          className={`px-2 py-1 rounded-full text-xs ${getStatusColor(device.device_status)}`}
+                          className={`px-2 py-1 rounded-full text-xs ${getHeartbeatStatusColor(device.heartbeat_status || "offline")}`}
                         >
-                          {device.device_status.charAt(0).toUpperCase() +
-                            device.device_status.slice(1)}
+                          {(device.heartbeat_status || "offline")
+                            .charAt(0)
+                            .toUpperCase() +
+                            (device.heartbeat_status || "offline").slice(1)}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        {new Date(device.created_on).toLocaleDateString()}
-                      </span>
+                      <div className="text-right">
+                        <div className="text-xs text-gray-500">
+                          Last seen: {formatLastSeen(device.last_seen || null)}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          Added:{" "}
+                          {new Date(device.created_on).toLocaleDateString()}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -431,25 +533,6 @@ export function DeviceManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-0.5">
-                      Device Type
-                    </label>
-                    <select
-                      value={formData.device_type}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          device_type: e.target.value as any,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    >
-                      <option value="recorder">Recorder</option>
-                      <option value="monitor">Monitor</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-0.5">
                       MAC Address
                     </label>
                     <input
@@ -457,19 +540,6 @@ export function DeviceManagement() {
                       value={formData.device_mac}
                       onChange={(e) =>
                         setFormData({ ...formData, device_mac: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-0.5">
-                      IP Address
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.ip_address}
-                      onChange={(e) =>
-                        setFormData({ ...formData, ip_address: e.target.value })
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
                     />
@@ -489,25 +559,6 @@ export function DeviceManagement() {
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-0.5">
-                      Status
-                    </label>
-                    <select
-                      value={formData.device_status}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          device_status: e.target.value as any,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="maintenance">Maintenance</option>
-                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-0.5">

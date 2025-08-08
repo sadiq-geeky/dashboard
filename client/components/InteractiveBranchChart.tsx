@@ -8,16 +8,7 @@ import {
   Building2,
   Calendar,
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
+import { Chart } from "react-google-charts";
 
 interface BranchMonthlyData {
   branch_id: string;
@@ -188,33 +179,101 @@ export function InteractiveBranchChart() {
     }
   };
 
-  // Custom tooltip with enhanced design
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const value = payload[0].value;
-      const isOthers = payload[0].payload?.isOthers;
+  // Prepare Google Charts data
+  const getGoogleChartsData = () => {
+    const data = isDrilldown ? drilldownData : chartData;
+    const chartArray = [["Branch", "Conversations"]];
 
-      return (
-        <div className="bg-white/95 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-xl p-4 min-w-[200px]">
-          <div className="flex items-center space-x-2 mb-2">
-            <div
-              className={`w-3 h-3 rounded-full ${isOthers ? "bg-gradient-to-r from-amber-400 to-orange-500" : "bg-gradient-to-r from-blue-500 to-indigo-600"}`}
-            />
-            <p className="font-semibold text-gray-900 text-sm">{label}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              {value.toLocaleString()} conversations
-            </p>
-            <p className="text-xs text-gray-500 flex items-center space-x-1">
-              <span>🔍</span>
-              <span>Click to explore details</span>
-            </p>
-          </div>
-        </div>
-      );
+    data.forEach((item) => {
+      chartArray.push([item.name, item.conversations]);
+    });
+
+    return chartArray;
+  };
+
+  // Google Charts options
+  const getChartOptions = () => ({
+    title: isDrilldown
+      ? drilldownTitle
+      : `Conversations by Branch - ${selectedMonth}`,
+    titleTextStyle: {
+      fontSize: 16,
+      fontName: "system-ui",
+      bold: true,
+      color: "#1f2937",
+    },
+    backgroundColor: "transparent",
+    chartArea: {
+      left: 80,
+      top: 60,
+      width: "80%",
+      height: "75%",
+    },
+    hAxis: {
+      title:
+        isDrilldown && drilldownTitle.includes("Monthly") ? "Month" : "Branch",
+      titleTextStyle: {
+        fontSize: 12,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+      textStyle: {
+        fontSize: 10,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+      slantedText: true,
+      slantedTextAngle: 45,
+      maxAlternation: 1,
+    },
+    vAxis: {
+      title: "Conversations",
+      titleTextStyle: {
+        fontSize: 12,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+      textStyle: {
+        fontSize: 10,
+        fontName: "system-ui",
+        color: "#6b7280",
+      },
+      format: "short",
+      gridlines: {
+        color: "#e5e7eb",
+        count: 5,
+      },
+      minorGridlines: {
+        color: "transparent",
+      },
+    },
+    colors: isDrilldown ? ["#10b981"] : ["#3b82f6"],
+    bar: { groupWidth: "75%" },
+    legend: { position: "none" },
+    animation: {
+      startup: true,
+      easing: "inAndOut",
+      duration: 1000,
+    },
+    tooltip: {
+      textStyle: {
+        fontSize: 12,
+        fontName: "system-ui",
+      },
+      showColorCode: true,
+    },
+  });
+
+  // Handle chart selection (click)
+  const handleChartSelect = (chart: any) => {
+    const selection = chart.getChart().getSelection();
+    if (selection.length > 0) {
+      const selectedIndex = selection[0].row;
+      const data = isDrilldown ? drilldownData : chartData;
+      if (selectedIndex < data.length && !isDrilldown) {
+        handleBarClick(data[selectedIndex]);
+      }
     }
-    return null;
   };
 
   useEffect(() => {
@@ -339,88 +398,21 @@ export function InteractiveBranchChart() {
 
       {/* Chart */}
       <div className="h-96 bg-gradient-to-b from-gray-50/30 to-white/30 rounded-xl p-4 border border-gray-100/50">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={isDrilldown ? drilldownData : chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
-          >
-            <defs>
-              <linearGradient id="primaryGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.9} />
-                <stop offset="100%" stopColor="#1d4ed8" stopOpacity={0.8} />
-              </linearGradient>
-              <linearGradient id="othersGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.9} />
-                <stop offset="100%" stopColor="#d97706" stopOpacity={0.8} />
-              </linearGradient>
-              <linearGradient
-                id="drilldownGradient"
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
-                <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
-                <stop offset="100%" stopColor="#059669" stopOpacity={0.8} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid
-              strokeDasharray="2 4"
-              stroke="#e5e7eb"
-              strokeOpacity={0.5}
-              vertical={false}
-            />
-            <XAxis
-              dataKey="name"
-              angle={-45}
-              textAnchor="end"
-              height={80}
-              fontSize={11}
-              fontWeight={500}
-              interval={0}
-              tick={{ fill: "#6b7280" }}
-              axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-              tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-              type="category"
-              allowDataOverflow={false}
-              allowDecimals={true}
-              allowDuplicatedCategory={true}
-            />
-            <YAxis
-              fontSize={11}
-              fontWeight={500}
-              tick={{ fill: "#6b7280" }}
-              axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-              tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
-              tickFormatter={(value) => value.toLocaleString()}
-              type="number"
-              allowDataOverflow={false}
-              allowDecimals={true}
-              allowDuplicatedCategory={true}
-            />
-            <Tooltip
-              content={<CustomTooltip />}
-              cursor={{ fill: "rgba(59, 130, 246, 0.05)" }}
-            />
-            <Bar
-              dataKey="conversations"
-              cursor="pointer"
-              onClick={isDrilldown ? undefined : handleBarClick}
-              radius={[4, 4, 0, 0]}
-            >
-              {(isDrilldown ? drilldownData : chartData).map((entry, index) => {
-                let fillColor = "url(#primaryGradient)";
-                if (isDrilldown) {
-                  fillColor = "url(#drilldownGradient)";
-                } else if (entry.isOthers) {
-                  fillColor = "url(#othersGradient)";
-                }
-
-                return <Cell key={`cell-${index}`} fill={fillColor} />;
-              })}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        {chartData.length > 0 && (
+          <Chart
+            chartType="ColumnChart"
+            width="100%"
+            height="100%"
+            data={getGoogleChartsData()}
+            options={getChartOptions()}
+            chartEvents={[
+              {
+                eventName: "select",
+                callback: handleChartSelect,
+              },
+            ]}
+          />
+        )}
       </div>
 
       {/* Stats */}

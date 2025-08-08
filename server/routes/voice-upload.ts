@@ -161,6 +161,9 @@ export const uploadVoice: RequestHandler = async (req, res) => {
 
     // Generate UUID and insert into database
     const id = uuidv4();
+    // Remove dashes from CNIC before inserting into database
+    const cleanedCnic = cnic.replace(/-/g, "");
+
     const query = `
       INSERT INTO recordings
       (id, cnic, start_time, end_time, file_name, ip_address, mac_address, CREATED_ON,
@@ -170,7 +173,7 @@ export const uploadVoice: RequestHandler = async (req, res) => {
 
     await executeQuery(query, [
       id,
-      cnic,
+      cleanedCnic,
       start_time,
       end_time,
       file.filename,

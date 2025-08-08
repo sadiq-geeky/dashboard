@@ -1,24 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-  ComposedChart,
-  Area,
-  AreaChart,
-  ScatterChart,
-  Scatter,
-} from "recharts";
-import {
   MessageSquare,
   Users,
   Building2,
@@ -27,6 +8,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { authFetch } from "@/lib/api";
+import { Chart } from "react-google-charts";
 
 interface ConversationAnalytics {
   conversationsByBranch: Array<{
@@ -50,30 +32,6 @@ interface ConversationAnalytics {
   };
 }
 
-const COLORS = {
-  primary: "#3b82f6",
-  secondary: "#8b5cf6",
-  success: "#10b981",
-  warning: "#f59e0b",
-  danger: "#ef4444",
-  info: "#06b6d4",
-};
-
-const CHART_COLORS = [
-  COLORS.primary,
-  COLORS.secondary,
-  COLORS.success,
-  COLORS.warning,
-  COLORS.danger,
-  COLORS.info,
-  "#f97316",
-  "#84cc16",
-  "#06b6d4",
-  "#8b5cf6",
-  "#f59e0b",
-  "#ef4444",
-];
-
 export function ConversationAnalytics() {
   const [analytics, setAnalytics] = useState<ConversationAnalytics | null>(
     null,
@@ -93,9 +51,9 @@ export function ConversationAnalytics() {
 
       const data = await response.json();
       setAnalytics(data);
-    } catch (error) {
-      console.error("Error fetching conversation analytics:", error);
-      setError("Failed to load conversation analytics data");
+    } catch (err) {
+      console.error("Error fetching conversation analytics:", err);
+      setError(err instanceof Error ? err.message : "Failed to load analytics");
     } finally {
       setLoading(false);
     }
@@ -105,49 +63,204 @@ export function ConversationAnalytics() {
     fetchAnalytics();
   }, []);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  };
+  // Prepare Google Charts data for daily conversations
+  const getDailyConversationsData = () => {
+    if (!analytics?.dailyConversationsLastMonth?.length)
+      return [["Date", "Conversations"]];
 
-  const formatMonth = (monthString: string) => {
-    const [year, month] = monthString.split("-");
-    const date = new Date(parseInt(year), parseInt(month) - 1);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
+    const chartData = [["Date", "Conversations"]];
+    analytics.dailyConversationsLastMonth.forEach((item) => {
+      chartData.push([item.date, item.count]);
     });
+    return chartData;
   };
 
-  // Process branch data for visualization - group by current month
-  const processedBranchData =
-    analytics?.conversationsByBranch
-      .reduce(
-        (acc, item) => {
-          const existing = acc.find((b) => b.branch_id === item.branch_id);
-          if (existing) {
-            existing.count += item.count;
-          } else {
-            acc.push({ ...item });
-          }
-          return acc;
-        },
-        [] as Array<{
-          branch_id: string;
-          branch_name: string;
-          count: number;
-          month: string;
-        }>,
-      )
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 10) || [];
+  // Prepare Google Charts data for city pie chart
+  const getCityData = () => {
+    if (!analytics?.conversationsByCity?.length)
+      return [["City", "Conversations"]];
+
+    const chartData = [["City", "Conversations"]];
+    analytics.conversationsByCity.slice(0, 8).forEach((item) => {
+      chartData.push([item.city || "Unknown", item.count]);
+    });
+    return chartData;
+  };
+
+  // Prepare Google Charts data for branch bar chart
+  const getBranchData = () => {
+    if (!analytics?.conversationsByBranch?.length)
+      return [["Branch", "Conversations"]];
+
+    const chartData = [["Branch", "Conversations"]];
+    analytics.conversationsByBranch.slice(0, 10).forEach((item) => {
+      chartData.push([item.branch_name, item.count]);
+    });
+    return chartData;
+  };
+
+  // Prepare Google Charts data for unique CNICs
+  const getUniqueCnicsData = () => {
+    if (!analytics?.uniqueCnicsByMonth?.length)
+      return [["Month", "Unique Customers"]];
+
+    const chartData = [["Month", "Unique Customers"]];
+    analytics.uniqueCnicsByMonth.forEach((item) => {
+      chartData.push([item.month, item.unique_cnic_count]);
+    });
+    return chartData;
+  };
+
+  // Chart options
+  const dailyChartOptions = {
+    title: "Daily Conversations (Last 30 Days)",
+    titleTextStyle: {
+      fontSize: 14,
+      fontName: "system-ui",
+      bold: true,
+      color: "#1f2937",
+    },
+    backgroundColor: "transparent",
+    chartArea: {
+      left: 60,
+      top: 50,
+      width: "85%",
+      height: "70%",
+    },
+    hAxis: {
+      title: "Date",
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+    },
+    vAxis: {
+      title: "Conversations",
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+      format: "short",
+      gridlines: { color: "#e5e7eb", count: 5 },
+      minorGridlines: { color: "transparent" },
+    },
+    colors: ["#3b82f6"],
+    legend: { position: "none" },
+    lineWidth: 3,
+    pointSize: 5,
+    areaOpacity: 0.3,
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
+  };
+
+  const cityChartOptions = {
+    title: "Conversations by City",
+    titleTextStyle: {
+      fontSize: 14,
+      fontName: "system-ui",
+      bold: true,
+      color: "#1f2937",
+    },
+    backgroundColor: "transparent",
+    chartArea: {
+      left: 20,
+      top: 50,
+      width: "80%",
+      height: "70%",
+    },
+    colors: [
+      "#3b82f6",
+      "#10b981",
+      "#f59e0b",
+      "#ef4444",
+      "#8b5cf6",
+      "#06b6d4",
+      "#84cc16",
+      "#f97316",
+    ],
+    legend: {
+      position: "bottom",
+      textStyle: { fontSize: 10, fontName: "system-ui", color: "#6b7280" },
+    },
+    pieSliceText: "percentage",
+    pieSliceTextStyle: {
+      fontSize: 10,
+      fontName: "system-ui",
+      color: "#ffffff",
+    },
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
+  };
+
+  const branchChartOptions = {
+    title: "Top 10 Branches by Conversations",
+    titleTextStyle: {
+      fontSize: 14,
+      fontName: "system-ui",
+      bold: true,
+      color: "#1f2937",
+    },
+    backgroundColor: "transparent",
+    chartArea: {
+      left: 100,
+      top: 50,
+      width: "75%",
+      height: "70%",
+    },
+    hAxis: {
+      title: "Conversations",
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+      format: "short",
+      gridlines: { color: "#e5e7eb", count: 5 },
+      minorGridlines: { color: "transparent" },
+    },
+    vAxis: {
+      title: "Branch",
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+    },
+    colors: ["#10b981"],
+    legend: { position: "none" },
+    bar: { groupWidth: "70%" },
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
+  };
+
+  const uniqueCnicsChartOptions = {
+    title: "Unique Customers per Month",
+    titleTextStyle: {
+      fontSize: 14,
+      fontName: "system-ui",
+      bold: true,
+      color: "#1f2937",
+    },
+    backgroundColor: "transparent",
+    chartArea: {
+      left: 60,
+      top: 50,
+      width: "85%",
+      height: "70%",
+    },
+    hAxis: {
+      title: "Month",
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+    },
+    vAxis: {
+      title: "Unique Customers",
+      titleTextStyle: { fontSize: 11, fontName: "system-ui", color: "#6b7280" },
+      textStyle: { fontSize: 9, fontName: "system-ui", color: "#6b7280" },
+      format: "short",
+      gridlines: { color: "#e5e7eb", count: 5 },
+      minorGridlines: { color: "transparent" },
+    },
+    colors: ["#8b5cf6"],
+    legend: { position: "none" },
+    lineWidth: 3,
+    pointSize: 5,
+    animation: { startup: true, easing: "inAndOut", duration: 1000 },
+  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="flex items-center space-x-2">
-          <RefreshCw className="h-5 w-5 animate-spin text-blue-500" />
-          <span className="text-gray-600">
+      <div className="space-y-6">
+        <div className="flex items-center justify-center py-12">
+          <RefreshCw className="h-8 w-8 animate-spin text-blue-600" />
+          <span className="ml-3 text-gray-600">
             Loading conversation analytics...
           </span>
         </div>
@@ -157,12 +270,15 @@ export function ConversationAnalytics() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <p className="text-red-600 mb-2">{error}</p>
+      <div className="space-y-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <h3 className="text-lg font-medium text-red-800 mb-2">
+            Error Loading Analytics
+          </h3>
+          <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={fetchAnalytics}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
           >
             Retry
           </button>
@@ -172,353 +288,147 @@ export function ConversationAnalytics() {
   }
 
   if (!analytics) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-gray-600">
-          No conversation analytics data available
-        </p>
-      </div>
-    );
+    return null;
   }
-
-  const {
-    totalStats,
-    conversationsByCity,
-    dailyConversationsLastMonth,
-    uniqueCnicsByMonth,
-  } = analytics;
-
-  // Safe defaults to prevent undefined errors
-  const safeStats = {
-    totalConversations: totalStats?.totalConversations || 0,
-    uniqueCustomers: totalStats?.uniqueCustomers || 0,
-    activeBranches: totalStats?.activeBranches || 0,
-    todayConversations: totalStats?.todayConversations || 0,
-  };
-
-  // Safe arrays with defaults
-  const safeCityData = (conversationsByCity || []).map((city) => ({
-    city: city?.city || "Unknown",
-    count: city?.count || 0,
-    branch_count: city?.branch_count || 0,
-  }));
-
-  const safeDailyData = dailyConversationsLastMonth || [];
-  const safeMonthlyData = uniqueCnicsByMonth || [];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Conversation Analytics
-          </h1>
-          <p className="text-gray-600">
-            Customer interaction insights and metrics
-          </p>
-        </div>
-        <button
-          onClick={fetchAnalytics}
-          className="flex items-center space-x-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-        >
-          <RefreshCw className="h-4 w-4" />
-          <span>Refresh</span>
-        </button>
-      </div>
-
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <MessageSquare className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-blue-600 rounded-lg">
+              <MessageSquare className="h-6 w-6 text-white" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">
+              <p className="text-sm font-medium text-blue-600">
                 Total Conversations
               </p>
-              <p className="text-2xl font-bold text-gray-900">
-                {safeStats.totalConversations.toLocaleString()}
+              <p className="text-2xl font-bold text-blue-900">
+                {analytics.totalStats.totalConversations.toLocaleString()}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Users className="h-6 w-6 text-green-600" />
+            <div className="p-2 bg-green-600 rounded-lg">
+              <Users className="h-6 w-6 text-white" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">
+              <p className="text-sm font-medium text-green-600">
                 Unique Customers
               </p>
-              <p className="text-2xl font-bold text-gray-900">
-                {safeStats.uniqueCustomers.toLocaleString()}
+              <p className="text-2xl font-bold text-green-900">
+                {analytics.totalStats.uniqueCustomers.toLocaleString()}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Building2 className="h-6 w-6 text-purple-600" />
+            <div className="p-2 bg-purple-600 rounded-lg">
+              <Building2 className="h-6 w-6 text-white" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">
+              <p className="text-sm font-medium text-purple-600">
                 Active Branches
               </p>
-              <p className="text-2xl font-bold text-gray-900">
-                {safeStats.activeBranches.toLocaleString()}
+              <p className="text-2xl font-bold text-purple-900">
+                {analytics.totalStats.activeBranches.toLocaleString()}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg p-6">
           <div className="flex items-center">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Calendar className="h-6 w-6 text-orange-600" />
+            <div className="p-2 bg-orange-600 rounded-lg">
+              <Calendar className="h-6 w-6 text-white" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Today</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {safeStats.todayConversations.toLocaleString()}
+              <p className="text-sm font-medium text-orange-600">Today</p>
+              <p className="text-2xl font-bold text-orange-900">
+                {analytics.totalStats.todayConversations.toLocaleString()}
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Charts Grid - First Row */}
+      {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Conversations by Branch */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        {/* Daily Conversations Area Chart */}
+        <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Conversations by Branch (Top 10)
+            Daily Conversations Trend
           </h3>
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart
-              data={processedBranchData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 50 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="branch_name"
-                angle={-45}
-                textAnchor="end"
-                height={80}
-                tick={{ fontSize: 10 }}
+          <div className="h-64">
+            {analytics.dailyConversationsLastMonth?.length > 0 && (
+              <Chart
+                chartType="AreaChart"
+                width="100%"
+                height="100%"
+                data={getDailyConversationsData()}
+                options={dailyChartOptions}
               />
-              <YAxis />
-              <Tooltip
-                formatter={(value: number) => [value, "Conversations"]}
-                labelFormatter={(label) => `Branch: ${label}`}
-              />
-              <Bar dataKey="count" fill={COLORS.primary} />
-            </BarChart>
-          </ResponsiveContainer>
+            )}
+          </div>
         </div>
 
-        {/* Conversations by City */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        {/* City Pie Chart */}
+        <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Conversations by City
           </h3>
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart
-              data={safeCityData.slice(0, 10)}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="city"
-                angle={-45}
-                textAnchor="end"
-                height={80}
-                tick={{ fontSize: 10 }}
+          <div className="h-64">
+            {analytics.conversationsByCity?.length > 0 && (
+              <Chart
+                chartType="PieChart"
+                width="100%"
+                height="100%"
+                data={getCityData()}
+                options={cityChartOptions}
               />
-              <YAxis />
-              <Tooltip
-                formatter={(value: number, name, props) => [
-                  `${value} conversations`,
-                  `${props.payload.branch_count} branches`,
-                ]}
-                labelFormatter={(label) => `City: ${label}`}
-              />
-              <Line
-                type="monotone"
-                dataKey="count"
-                stroke={COLORS.secondary}
-                strokeWidth={3}
-                dot={{ fill: COLORS.secondary, strokeWidth: 2, r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Charts Grid - Second Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Daily Conversations Last Month */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Daily Conversations (Last 30 Days)
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <ScatterChart
-              data={safeDailyData.slice().reverse()}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="date"
-                tickFormatter={formatDate}
-                type="category"
-                allowDataOverflow={false}
-                allowDecimals={true}
-                allowDuplicatedCategory={true}
-              />
-              <YAxis
-                dataKey="count"
-                type="number"
-                allowDataOverflow={false}
-                allowDecimals={true}
-                allowDuplicatedCategory={true}
-              />
-              <Tooltip
-                labelFormatter={(label) => formatDate(label)}
-                formatter={(value: number) => [value, "Conversations"]}
-              />
-              <Scatter dataKey="count" fill={COLORS.success} />
-            </ScatterChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Unique CNICs by Month */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Unique Customers Per Month
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={safeMonthlyData.slice().reverse()}
-              layout="horizontal"
-              margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                type="number"
-                allowDataOverflow={false}
-                allowDecimals={true}
-                allowDuplicatedCategory={true}
-              />
-              <YAxis
-                dataKey="month"
-                type="category"
-                allowDataOverflow={false}
-                allowDecimals={true}
-                allowDuplicatedCategory={true}
-                tickFormatter={formatMonth}
-                width={70}
-                tick={{ fontSize: 11 }}
-              />
-              <Tooltip
-                labelFormatter={(label) => formatMonth(label)}
-                formatter={(value: number) => [value, "Unique Customers"]}
-              />
-              <Bar dataKey="unique_cnic_count" fill={COLORS.info} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* City Details Table */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          City Details
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  City
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Conversations
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Branches
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Avg per Branch
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {safeCityData.map((city, index) => (
-                <tr
-                  key={index}
-                  className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {city.city}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {city.count.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {city.branch_count}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {(city.count / city.branch_count).toFixed(1)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Key Insights */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Key Insights
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600">Avg Conversations/Day</p>
-            <p className="text-xl font-bold text-blue-600">
-              {safeDailyData.length > 0
-                ? (
-                    safeDailyData.reduce(
-                      (sum, day) => sum + (day?.count || 0),
-                      0,
-                    ) / safeDailyData.length
-                  ).toFixed(1)
-                : "0"}
-            </p>
+            )}
           </div>
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600">Peak Day</p>
-            <p className="text-xl font-bold text-green-600">
-              {safeDailyData.length > 0
-                ? formatDate(
-                    safeDailyData.reduce((max, current) =>
-                      (current?.count || 0) > (max?.count || 0) ? current : max,
-                    )?.date || "",
-                  )
-                : "N/A"}
-            </p>
+        </div>
+
+        {/* Unique CNICs Line Chart */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Unique Customers per Month
+          </h3>
+          <div className="h-64">
+            {analytics.uniqueCnicsByMonth?.length > 0 && (
+              <Chart
+                chartType="LineChart"
+                width="100%"
+                height="100%"
+                data={getUniqueCnicsData()}
+                options={uniqueCnicsChartOptions}
+              />
+            )}
           </div>
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600">Top City</p>
-            <p className="text-xl font-bold text-purple-600">
-              {safeCityData.length > 0 ? safeCityData[0].city : "N/A"}
-            </p>
+        </div>
+
+        {/* Branches Bar Chart */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Top Branches by Conversations
+          </h3>
+          <div className="h-64">
+            {analytics.conversationsByBranch?.length > 0 && (
+              <Chart
+                chartType="BarChart"
+                width="100%"
+                height="100%"
+                data={getBranchData()}
+                options={branchChartOptions}
+              />
+            )}
           </div>
         </div>
       </div>
