@@ -1084,6 +1084,58 @@ export function ExactDashboard() {
                   </div>
                 )}
               </div>
+
+              {/* Previous Logs Section */}
+              <div className="mb-6 pb-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-medium text-gray-700">
+                    Previous logs
+                  </h2>
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                </div>
+
+                {previousLogs.length > 0 ? (
+                  <div className="space-y-2">
+                    {/* Table Header */}
+                    <div className="grid grid-cols-12 gap-2 text-xs font-medium text-gray-500 border-b border-gray-200 pb-1">
+                      <div className="col-span-2">S.no</div>
+                      <div className="col-span-5">Branch Address</div>
+                      <div className="col-span-5">Date</div>
+                    </div>
+
+                    {/* Table Rows */}
+                    <div className="max-h-48 overflow-y-auto">
+                      {previousLogs.map((log, index) => (
+                        <div
+                          key={log.id}
+                          onClick={() => {
+                            // Navigate to the specific recording
+                            setSelectedRecording(log);
+                          }}
+                          className="grid grid-cols-12 gap-2 text-xs py-2 hover:bg-gray-100 cursor-pointer rounded border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="col-span-2 text-gray-700">
+                            {index + 1}
+                          </div>
+                          <div className="col-span-5 text-gray-600 truncate">
+                            {log.branch_address || "N/A"}
+                          </div>
+                          <div className="col-span-5 text-gray-500">
+                            {log.start_time ? new Date(log.start_time).toLocaleDateString() : "-"}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <MessageSquare className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                    <p className="text-xs text-gray-500">
+                      {selectedRecording ? "No previous logs found" : "Select a recording to view previous logs"}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
