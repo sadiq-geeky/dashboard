@@ -228,6 +228,13 @@ export const createDevice: RequestHandler = async (req, res) => {
 export const updateDevice: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('🔄 Device update request received:', {
+      deviceId: id,
+      body: req.body,
+      user: (req as any).user?.uuid,
+      headers: req.headers['x-user-id']
+    });
+
     const {
       device_name,
       device_mac,
