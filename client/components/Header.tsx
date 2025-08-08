@@ -147,7 +147,7 @@ export function Header() {
           </button>
 
           {/* Navigation tabs */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-1.5">
             {/* Core functionality group */}
             {coreItems.map((item) => {
               const Icon = item.icon;
