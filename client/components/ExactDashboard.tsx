@@ -1364,7 +1364,9 @@ export function ExactDashboard() {
                               {log.branch_address || "N/A"}
                             </div>
                             <div className="col-span-5 text-gray-500">
-                              {log.start_time || "-"}
+                              {log.start_time
+                                ? log.start_time.replace('T', ' ').replace('Z', '').replace('.000', '')
+                                : "-"}
                             </div>
                           </div>
                         ))}
