@@ -19,26 +19,23 @@ interface BranchAnalytics {
   branch_name: string;
   branch_city: string;
   month: string;
-  conversations: number;
+  count: number;
 }
 
 interface CityAnalytics {
   city: string;
-  total_conversations: number;
+  count: number;
   branch_count: number;
-  branches: string[];
 }
 
 interface DailyAnalytics {
   date: string;
-  conversations: number;
-  day_name: string;
+  count: number;
 }
 
 interface UniqueCustomerAnalytics {
   month: string;
-  unique_customers: number;
-  total_conversations: number;
+  unique_cnic_count: number;
 }
 
 export function ConversationAnalytics() {
