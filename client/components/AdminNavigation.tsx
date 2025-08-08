@@ -137,8 +137,8 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
                     : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
                 )}
               >
-                <Icon className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">{item.label}</span>
+                <Icon className="w-5 h-5 mb-1" />
+                <span className="text-xs font-medium">{item.label}</span>
               </button>
             );
           })}
@@ -164,8 +164,8 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
                     : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
                 )}
               >
-                <Icon className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium">{item.label}</span>
+                <Icon className="w-5 h-5 mb-1" />
+                <span className="text-xs font-medium">{item.label}</span>
               </button>
             );
           })}
