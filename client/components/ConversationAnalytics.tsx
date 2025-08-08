@@ -48,7 +48,16 @@ interface UniqueCustomerAnalytics {
   unique_cnic_count: number;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
+const COLORS = [
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042",
+  "#8884D8",
+  "#82CA9D",
+  "#FFC658",
+  "#FF7C7C",
+];
 
 export function ConversationAnalytics() {
   const { isAdmin } = useAuth();
@@ -59,7 +68,9 @@ export function ConversationAnalytics() {
   const [branchData, setBranchData] = useState<BranchAnalytics[]>([]);
   const [cityData, setCityData] = useState<CityAnalytics[]>([]);
   const [dailyData, setDailyData] = useState<DailyAnalytics[]>([]);
-  const [customerData, setCustomerData] = useState<UniqueCustomerAnalytics[]>([]);
+  const [customerData, setCustomerData] = useState<UniqueCustomerAnalytics[]>(
+    [],
+  );
 
   // UI states
   const [activeChart, setActiveChart] = useState<
@@ -83,11 +94,17 @@ export function ConversationAnalytics() {
       // Process branch data
       if (branchRes.ok) {
         const branchAnalytics = await branchRes.json();
-        const validBranchData = Array.isArray(branchAnalytics) ? branchAnalytics : [];
+        const validBranchData = Array.isArray(branchAnalytics)
+          ? branchAnalytics
+          : [];
         setBranchData(validBranchData);
 
         // Set default period to latest month
-        const months = [...new Set(validBranchData.map((item: any) => item?.month).filter(Boolean))]
+        const months = [
+          ...new Set(
+            validBranchData.map((item: any) => item?.month).filter(Boolean),
+          ),
+        ]
           .sort()
           .reverse();
         if (months.length > 0 && !selectedPeriod) {
@@ -105,19 +122,22 @@ export function ConversationAnalytics() {
       // Process daily data
       if (dailyRes.ok) {
         const dailyAnalytics = await dailyRes.json();
-        const validDailyData = Array.isArray(dailyAnalytics) ? dailyAnalytics : [];
+        const validDailyData = Array.isArray(dailyAnalytics)
+          ? dailyAnalytics
+          : [];
         setDailyData(validDailyData);
       }
 
       // Process customer data
       if (customerRes.ok) {
         const customerAnalytics = await customerRes.json();
-        const validCustomerData = Array.isArray(customerAnalytics) 
-          ? customerAnalytics 
-          : customerAnalytics ? [customerAnalytics] : [];
-        setCustomerData(validCustomerData.filter(item => item != null));
+        const validCustomerData = Array.isArray(customerAnalytics)
+          ? customerAnalytics
+          : customerAnalytics
+            ? [customerAnalytics]
+            : [];
+        setCustomerData(validCustomerData.filter((item) => item != null));
       }
-
     } catch (err) {
       console.error("Error fetching analytics:", err);
       setError("Failed to load analytics data");
@@ -138,7 +158,9 @@ export function ConversationAnalytics() {
       return [{ name: "No Data", count: 0 }];
     }
 
-    const filtered = branchData.filter(item => item?.month === selectedPeriod);
+    const filtered = branchData.filter(
+      (item) => item?.month === selectedPeriod,
+    );
     if (filtered.length === 0) {
       return [{ name: "No Data", count: 0 }];
     }
@@ -147,9 +169,10 @@ export function ConversationAnalytics() {
       .sort((a, b) => (b?.count || 0) - (a?.count || 0))
       .slice(0, 10)
       .map((item) => ({
-        name: item.branch_name?.length > 20 
-          ? item.branch_name.substring(0, 20) + "..." 
-          : item.branch_name || "Unknown",
+        name:
+          item.branch_name?.length > 20
+            ? item.branch_name.substring(0, 20) + "..."
+            : item.branch_name || "Unknown",
         count: item.count || 0,
       }));
   };
@@ -160,7 +183,7 @@ export function ConversationAnalytics() {
     }
 
     return cityData
-      .filter(item => item?.city)
+      .filter((item) => item?.city)
       .sort((a, b) => (b?.count || 0) - (a?.count || 0))
       .slice(0, 8)
       .map((item) => ({
@@ -175,7 +198,7 @@ export function ConversationAnalytics() {
     }
 
     return dailyData
-      .filter(item => item?.date)
+      .filter((item) => item?.date)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .map((item) => {
         try {
@@ -203,10 +226,12 @@ export function ConversationAnalytics() {
     }
 
     const item = customerData[0];
-    return [{ 
-      name: "Unique Customers", 
-      value: item?.unique_cnic_count || 0 
-    }];
+    return [
+      {
+        name: "Unique Customers",
+        value: item?.unique_cnic_count || 0,
+      },
+    ];
   };
 
   if (!isAdmin()) return null;
@@ -238,7 +263,9 @@ export function ConversationAnalytics() {
     );
   }
 
-  const availableMonths = [...new Set(branchData.map(item => item?.month).filter(Boolean))]
+  const availableMonths = [
+    ...new Set(branchData.map((item) => item?.month).filter(Boolean)),
+  ]
     .sort()
     .reverse();
 
@@ -254,7 +281,9 @@ export function ConversationAnalytics() {
               <h2 className="text-2xl font-bold text-gray-900">
                 Conversation Analytics
               </h2>
-              <p className="text-gray-600">Insights into recorded conversations</p>
+              <p className="text-gray-600">
+                Insights into recorded conversations
+              </p>
             </div>
           </div>
 
@@ -338,9 +367,9 @@ export function ConversationAnalytics() {
                 <BarChart data={getBranchChartData()} layout="horizontal">
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" />
-                  <YAxis 
-                    type="category" 
-                    dataKey="name" 
+                  <YAxis
+                    type="category"
+                    dataKey="name"
                     width={120}
                     fontSize={12}
                   />
@@ -363,13 +392,16 @@ export function ConversationAnalytics() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({name, value}) => `${name}: ${value}`}
+                    label={({ name, value }) => `${name}: ${value}`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="count"
                   >
                     {getCityChartData().map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -386,8 +418,8 @@ export function ConversationAnalytics() {
               <ResponsiveContainer width="100%" height="90%">
                 <LineChart data={getDailyChartData()}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="name" 
+                  <XAxis
+                    dataKey="name"
                     angle={-45}
                     textAnchor="end"
                     height={80}
@@ -395,12 +427,12 @@ export function ConversationAnalytics() {
                   />
                   <YAxis />
                   <Tooltip />
-                  <Line 
-                    type="monotone" 
-                    dataKey="count" 
-                    stroke="#F59E0B" 
+                  <Line
+                    type="monotone"
+                    dataKey="count"
+                    stroke="#F59E0B"
                     strokeWidth={2}
-                    dot={{ fill: '#F59E0B' }}
+                    dot={{ fill: "#F59E0B" }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -432,10 +464,14 @@ export function ConversationAnalytics() {
         {/* Description */}
         <div className="mt-4 p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">
-            {activeChart === "branch" && "Number of conversations based on unique branch ID organized by months."}
-            {activeChart === "city" && "Number of conversations associated with each city having single or multiple branches."}
-            {activeChart === "daily" && "Daily conversation analytics for the last month from recordings table."}
-            {activeChart === "customers" && "Number of unique customers (CNIC) per month visiting the branches."}
+            {activeChart === "branch" &&
+              "Number of conversations based on unique branch ID organized by months."}
+            {activeChart === "city" &&
+              "Number of conversations associated with each city having single or multiple branches."}
+            {activeChart === "daily" &&
+              "Daily conversation analytics for the last month from recordings table."}
+            {activeChart === "customers" &&
+              "Number of unique customers (CNIC) per month visiting the branches."}
           </p>
         </div>
       </div>

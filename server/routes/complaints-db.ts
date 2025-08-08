@@ -151,7 +151,10 @@ export const getComplaint: RequestHandler = async (req, res) => {
       WHERE complaint_id = ?
     `;
 
-    const existsResult = await executeQuery<{ complaint_id: string }>(checkQuery, [complaint_id]);
+    const existsResult = await executeQuery<{ complaint_id: string }>(
+      checkQuery,
+      [complaint_id],
+    );
 
     if (existsResult.length === 0) {
       console.log("Complaint not found:", complaint_id);
@@ -192,7 +195,10 @@ export const getComplaint: RequestHandler = async (req, res) => {
     >(query, [complaint_id]);
 
     if (complaints.length === 0) {
-      console.log("Complaint found in check but not in main query:", complaint_id);
+      console.log(
+        "Complaint found in check but not in main query:",
+        complaint_id,
+      );
       return res.status(404).json({ error: "Complaint not found" });
     }
 
@@ -222,11 +228,11 @@ export const getComplaint: RequestHandler = async (req, res) => {
     console.error("Error details:", {
       message: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : "No stack trace",
-      complaint_id: req.params.complaint_id
+      complaint_id: req.params.complaint_id,
     });
     res.status(500).json({
       error: "Failed to fetch complaint",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 };

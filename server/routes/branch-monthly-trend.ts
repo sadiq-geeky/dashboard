@@ -26,10 +26,12 @@ export const getBranchMonthlyTrend: RequestHandler = async (req, res) => {
     `;
 
     const results = await executeQuery<BranchMonthlyTrend>(query);
-    
+
     res.json(results);
   } catch (error) {
     console.error("Error fetching branch monthly trend:", error);
-    res.status(500).json({ error: "Failed to fetch branch monthly trend data" });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch branch monthly trend data" });
   }
 };

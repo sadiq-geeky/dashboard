@@ -249,16 +249,25 @@ export function Complaints() {
         setSelectedComplaint(data);
         setShowDetailModal(true);
       } else {
-        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
-        console.error("Failed to fetch complaint details:", response.status, errorData);
-        const errorMessage = typeof errorData === 'object'
-          ? (errorData.error || errorData.message || JSON.stringify(errorData))
-          : errorData;
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: "Unknown error" }));
+        console.error(
+          "Failed to fetch complaint details:",
+          response.status,
+          errorData,
+        );
+        const errorMessage =
+          typeof errorData === "object"
+            ? errorData.error || errorData.message || JSON.stringify(errorData)
+            : errorData;
         alert(`Failed to load complaint details: ${errorMessage}`);
       }
     } catch (error) {
       console.error("Error fetching complaint details:", error);
-      alert(`Error loading complaint: ${error instanceof Error ? error.message : "Unknown error"}`);
+      alert(
+        `Error loading complaint: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   };
 
