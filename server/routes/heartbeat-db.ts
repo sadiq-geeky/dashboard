@@ -32,8 +32,9 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
     // Simplified and optimized heartbeat query with deduplication
     const query = `
       SELECT DISTINCT
-        COALESCE(b.branch_address, CONCAT('Device-', h.mac_address)) AS branch_name,
-        COALESCE(b.branch_code, h.ip_address) AS branch_code,
+        COALESCE(b.branch_name, CONCAT('Device-', h.mac_address)) AS branch_name,
+        COALESCE(b.branch_code, h.mac_address) AS branch_code,
+        h.ip_address,
         h.last_seen,
         CASE
           WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 5 THEN 'online'
