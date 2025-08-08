@@ -587,6 +587,21 @@ export function ConversationAnalytics() {
               Monthly unique customer visits
             </div>
           </button>
+
+          <button
+            onClick={() => setActiveChart("trend")}
+            className={`p-4 rounded-lg border-2 transition-all ${
+              activeChart === "trend"
+                ? "border-teal-500 bg-teal-50 text-teal-700"
+                : "border-gray-200 hover:border-gray-300 text-gray-600"
+            }`}
+          >
+            <TrendingUp className="h-5 w-5 mx-auto mb-2" />
+            <div className="text-sm font-medium">Monthly Trends</div>
+            <div className="text-xs opacity-75">
+              Branch recordings over time
+            </div>
+          </button>
         </div>
 
         {/* Chart Display */}
