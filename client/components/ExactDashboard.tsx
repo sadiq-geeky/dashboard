@@ -10,6 +10,7 @@ import { GoogleRecordingsAnalytics } from "./GoogleRecordingsAnalytics";
 import { GoogleConversationAnalytics } from "./GoogleConversationAnalytics";
 import { WarningSuppressionWrapper } from "./WarningSuppressionWrapper";
 import { ComplaintsStyleAnalytics } from "./ComplaintsStyleAnalytics";
+import { ConversationAnalytics } from "./ConversationAnalytics";
 import { useAuth } from "../contexts/AuthContext";
 import { Header } from "./Header";
 import { useNavigate, useLocation } from "react-router-dom";
