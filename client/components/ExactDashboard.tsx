@@ -543,6 +543,15 @@ export function ExactDashboard() {
     }
   }, [selectedRecording]);
 
+  // Load previous logs when recording is selected
+  useEffect(() => {
+    if (selectedRecording?.cnic) {
+      loadPreviousLogs(selectedRecording.cnic);
+    } else {
+      setPreviousLogs([]);
+    }
+  }, [selectedRecording]);
+
   // Calculate pagination
   const totalPages = Math.ceil(filteredRecordings.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
