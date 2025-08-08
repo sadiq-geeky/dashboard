@@ -118,14 +118,28 @@ export function DeviceManagement() {
       });
 
       if (!response.ok) {
-        let errorText = '';
+        let errorText = `HTTP ${response.status} ${response.statusText}`;
         try {
-          errorText = await response.text();
+          const text = await response.text();
+          if (text) {
+            // Try to parse as JSON first, then fallback to text
+            try {
+              const errorData = JSON.parse(text);
+              errorText = errorData.error || errorData.message || text;
+            } catch {
+              errorText = text;
+            }
+          }
         } catch (readError) {
-          errorText = 'Unable to read error details';
+          console.warn('Could not read response body:', readError);
         }
         console.error(`Device save failed: ${response.status} - ${errorText}`);
-        throw new Error(`Failed to save device: ${response.status} ${errorText}`);
+        console.error('Request data:', {
+          url: editingDevice ? `/api/devices/${editingDevice.id}` : "/api/devices",
+          method: editingDevice ? "PUT" : "POST",
+          formData
+        });
+        throw new Error(`Failed to save device: ${errorText}`);
       }
 
       await fetchDevices();
