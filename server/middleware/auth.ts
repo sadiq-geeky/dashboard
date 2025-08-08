@@ -28,7 +28,7 @@ export const authenticate: RequestHandler = async (req: any, res, next) => {
     const users = await executeQuery<{
       uuid: string;
       username: string;
-      role: "admin" | "user";
+      role: "admin" | "manager" | "user";
       branch_id: string | null;
       branch_city: string | null;
       emp_name: string | null;
