@@ -171,9 +171,9 @@ export const createDevice: RequestHandler = async (req, res) => {
 
     const query = `
       INSERT INTO devices
-      (id, device_name, device_mac, ip_address, device_type,
+      (id, device_name, device_mac, device_type,
        installation_date, last_maintenance, device_status, notes)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     await executeQuery(query, [
