@@ -134,11 +134,11 @@ export function DeviceManagement() {
           console.warn('Could not read response body:', readError);
         }
         console.error(`Device save failed: ${response.status} - ${errorText}`);
-        console.error('Request data:', {
+        console.error('Request data:', JSON.stringify({
           url: editingDevice ? `/api/devices/${editingDevice.id}` : "/api/devices",
           method: editingDevice ? "PUT" : "POST",
           formData
-        });
+        }, null, 2));
         throw new Error(`Failed to save device: ${errorText}`);
       }
 
