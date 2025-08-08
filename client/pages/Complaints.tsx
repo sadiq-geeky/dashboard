@@ -251,7 +251,10 @@ export function Complaints() {
       } else {
         const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
         console.error("Failed to fetch complaint details:", response.status, errorData);
-        alert(`Failed to load complaint details: ${errorData.error || response.statusText}`);
+        const errorMessage = typeof errorData === 'object'
+          ? (errorData.error || errorData.message || JSON.stringify(errorData))
+          : errorData;
+        alert(`Failed to load complaint details: ${errorMessage}`);
       }
     } catch (error) {
       console.error("Error fetching complaint details:", error);
