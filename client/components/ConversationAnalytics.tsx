@@ -527,7 +527,7 @@ export function ConversationAnalytics() {
         </div>
 
         {/* Chart Type Selection */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-6">
           <button
             onClick={() => setActiveChart("branch")}
             className={`p-4 rounded-lg border-2 transition-all ${
