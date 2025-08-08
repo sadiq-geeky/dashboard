@@ -22,6 +22,7 @@ export interface LogEntry {
   cnic?: string;
   error?: string;
   details?: any;
+  uuid?: string;
 }
 
 export class Logger {

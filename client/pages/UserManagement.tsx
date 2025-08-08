@@ -35,6 +35,8 @@ interface User {
   is_active: boolean;
   created_on: string | null;
   updated_on: string | null;
+  created_by?: string | null;
+  updated_by?: string | null;
 }
 
 export function UserManagement() {
