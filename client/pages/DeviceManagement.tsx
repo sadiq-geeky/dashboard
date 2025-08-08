@@ -274,30 +274,43 @@ export function DeviceManagement() {
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getHeartbeatStatusIcon = (status: "online" | "problematic" | "offline") => {
     switch (status) {
-      case "active":
+      case "online":
         return <Wifi className="h-4 w-4 text-green-600" />;
-      case "maintenance":
+      case "problematic":
         return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
-      case "inactive":
+      case "offline":
         return <WifiOff className="h-4 w-4 text-red-600" />;
       default:
         return <Monitor className="h-4 w-4 text-gray-600" />;
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getHeartbeatStatusColor = (status: "online" | "problematic" | "offline") => {
     switch (status) {
-      case "active":
+      case "online":
         return "bg-green-100 text-green-700";
-      case "maintenance":
+      case "problematic":
         return "bg-yellow-100 text-yellow-700";
-      case "inactive":
+      case "offline":
         return "bg-red-100 text-red-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
+  };
+
+  const formatLastSeen = (lastSeen: string | null) => {
+    if (!lastSeen) return "Never";
+    const date = new Date(lastSeen);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+    if (diffMinutes < 1) return "Just now";
+    if (diffMinutes < 60) return `${diffMinutes}m ago`;
+    if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h ago`;
+    return date.toLocaleDateString();
   };
 
   if (!isAdmin()) {
