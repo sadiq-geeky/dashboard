@@ -885,7 +885,9 @@ export function ExactDashboard() {
                               : recording.cnic || recording.file_name || "-"}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
-                            {recording.start_time || "-"}
+                            {recording.start_time
+                              ? recording.start_time.replace('T', ' ').replace('Z', '').replace('.000', '')
+                              : "-"}
                           </td>
                           <td className="py-1 px-1.5 text-xs text-gray-500">
                             {recording.duration
