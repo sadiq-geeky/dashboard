@@ -298,10 +298,14 @@ export const updateDevice: RequestHandler = async (req, res) => {
       id,
     ]);
 
+    console.log(`📊 Update result:`, { affectedRows: result.affectedRows });
+
     if (result.affectedRows === 0) {
+      console.log(`❌ Device not found: ${id}`);
       return res.status(404).json({ error: "Device not found" });
     }
 
+    console.log(`✅ Device updated successfully: ${id}`);
     res.json({
       success: true,
       message: "Device updated successfully",
