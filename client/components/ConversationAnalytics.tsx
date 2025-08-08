@@ -310,6 +310,42 @@ export function ConversationAnalytics() {
     return chartData;
   };
 
+  const getTrendChartData = () => {
+    if (!trendData || trendData.length === 0) {
+      return [["Month", "No Data"], ["No Data", 0]];
+    }
+
+    // Group data by time period (yr-mth) and branch
+    const groupedData: { [key: string]: { [branch: string]: number } } = {};
+    const branches = new Set<string>();
+
+    trendData.forEach((item) => {
+      const timeKey = `${item.yr}-${String(item.mth).padStart(2, '0')}`;
+      if (!groupedData[timeKey]) {
+        groupedData[timeKey] = {};
+      }
+      groupedData[timeKey][item.branch_code] = item.total_records;
+      branches.add(item.branch_code);
+    });
+
+    // Sort time periods
+    const sortedTimes = Object.keys(groupedData).sort();
+    const branchArray = Array.from(branches).sort();
+
+    // Create chart data structure
+    const chartData = [["Month", ...branchArray]];
+
+    sortedTimes.forEach((timeKey) => {
+      const row: any[] = [timeKey];
+      branchArray.forEach((branch) => {
+        row.push(groupedData[timeKey][branch] || 0);
+      });
+      chartData.push(row);
+    });
+
+    return chartData;
+  };
+
   // Chart options
   const getBranchChartOptions = () => ({
     title: `Conversations by Branch - ${selectedPeriod ? new Date(selectedPeriod + "-01").toLocaleDateString("en-US", { month: "long", year: "numeric" }) : ""}`,
