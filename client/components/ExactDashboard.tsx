@@ -1024,13 +1024,16 @@ export function ExactDashboard() {
 
               {/* Customer Profile Section - Compact */}
               <div className="mb-6 pb-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <div className="flex items-center justify-between mb-3">
+                <div
+                  className="flex items-center justify-between mb-3 cursor-pointer"
+                  onClick={() => setIsCustomerProfileCollapsed(!isCustomerProfileCollapsed)}
+                >
                   <h2 className="text-sm font-medium text-gray-700">
                     Customer Profile
                   </h2>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                  <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isCustomerProfileCollapsed ? 'rotate-180' : ''}`} />
                 </div>
-                {selectedRecording ? (
+                {!isCustomerProfileCollapsed && selectedRecording ? (
                   <div className="space-y-3">
                     {/* Top section - Avatar and name */}
                     <div className="flex items-center space-x-3">
