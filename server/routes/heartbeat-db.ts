@@ -206,7 +206,7 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
 
         heartbeatLogger.info("heartbeat-db", "auto_device_created", {
           request_id: requestId,
-          device_id: deviceUuid,
+          uuid: deviceUuid,
           mac_address: mac_address.trim(),
           ip_address: ip_address,
         });
