@@ -294,6 +294,12 @@ export function DeviceManagement() {
             <div className="flex items-center justify-center h-64">
               <RefreshCw className="h-8 w-8 animate-spin text-red-500" />
             </div>
+          ) : devices.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-64 bg-white rounded-lg border border-gray-200">
+              <Monitor className="h-16 w-16 text-gray-300 mb-4" />
+              <p className="text-gray-500 text-lg font-medium">No devices found</p>
+              <p className="text-gray-400 text-sm mt-2">Click "Add Device" to create your first device</p>
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {devices.map((device) => (
