@@ -29,12 +29,12 @@ export function Login() {
       return;
     }
 
-    const success = await login(username, password);
+    const result = await login(username, password);
 
-    if (success) {
+    if (result.success) {
       window.location.href = "/";
     } else {
-      setError("Invalid username or password");
+      setError(result.error || "Invalid username or password");
     }
 
     setIsLoading(false);
