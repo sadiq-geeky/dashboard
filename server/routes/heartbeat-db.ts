@@ -64,7 +64,7 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
       WHERE (d.device_status = 'active' OR d.device_status IS NULL)
-      ${whereClause ? (whereClause.includes('WHERE') ? whereClause.replace('WHERE', 'AND') : `AND ${whereClause}`) : ''}
+      ${whereClause ? (whereClause.includes("WHERE") ? whereClause.replace("WHERE", "AND") : `AND ${whereClause}`) : ""}
       GROUP BY h.mac_address, h.ip_address, h.last_seen
       ORDER BY h.last_seen DESC
       LIMIT 100
@@ -180,7 +180,9 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
       const deviceCheckQuery = `
         SELECT id FROM devices WHERE device_mac = ?
       `;
-      const existingDevice = await executeQuery(deviceCheckQuery, [mac_address.trim()]);
+      const existingDevice = await executeQuery(deviceCheckQuery, [
+        mac_address.trim(),
+      ]);
 
       if (existingDevice.length === 0) {
         // Create new device with inactive status
@@ -197,9 +199,9 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
           `Device-${mac_address.trim().slice(-6)}`, // Use last 6 chars of MAC as name
           mac_address.trim(),
           ip_address,
-          'recorder',
-          'inactive',
-          'Auto-created from heartbeat'
+          "recorder",
+          "inactive",
+          "Auto-created from heartbeat",
         ]);
 
         heartbeatLogger.info("heartbeat-db", "auto_device_created", {

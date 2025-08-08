@@ -730,7 +730,8 @@ export function Complaints() {
                             `/api/users/${user?.uuid}`,
                           );
                           if (userProfileResponse.ok) {
-                            const userProfile = await userProfileResponse.json();
+                            const userProfile =
+                              await userProfileResponse.json();
                             console.log("User profile data:", userProfile);
                             phoneNo = userProfile.phone_no || phoneNo;
                             emailId = userProfile.email_id || emailId;
