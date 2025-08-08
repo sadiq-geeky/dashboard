@@ -393,7 +393,9 @@ export function ExactDashboard() {
     if (branchFilter) {
       filtered = filtered.filter(
         (recording) =>
-          recording.branch_no?.toLowerCase().includes(branchFilter.toLowerCase()) ||
+          recording.branch_no
+            ?.toLowerCase()
+            .includes(branchFilter.toLowerCase()) ||
           recording.branch_address
             ?.toLowerCase()
             .includes(branchFilter.toLowerCase()),
@@ -408,7 +410,9 @@ export function ExactDashboard() {
 
         const recordDate = new Date(recordingDate);
         const fromDate = dateFromFilter ? new Date(dateFromFilter) : null;
-        const toDate = dateToFilter ? new Date(dateToFilter + 'T23:59:59') : null;
+        const toDate = dateToFilter
+          ? new Date(dateToFilter + "T23:59:59")
+          : null;
 
         if (fromDate && recordDate < fromDate) return false;
         if (toDate && recordDate > toDate) return false;
@@ -426,27 +430,29 @@ export function ExactDashboard() {
 
         // More comprehensive walk-in detection
         const isWalkIn =
-          !recording.cnic ||                           // No CNIC provided
-          cnic === "" ||                               // Empty CNIC
-          cnic.includes("walk") ||                     // Contains "walk"
-          cnic.includes("customer") ||                 // Contains "customer"
-          cnic.includes("xxx") ||                      // Contains "xxx" pattern
-          /^x+$/i.test(cnic) ||                        // Only X characters
-          cnic.includes("this is walk") ||             // Specific pattern from user message
-          cnic.includes("walkin") ||                   // Walk-in without space
-          cnic.includes("walk-in") ||                  // Walk-in with hyphen
-          cnic.length < 10 ||                          // Too short for valid CNIC
-          /^[x]{3,}/.test(cnic) ||                     // Starts with multiple X's
-          cnic === "n/a" ||                            // N/A values
-          cnic === "na" ||                             // NA values
-          cnic === "not available" ||                  // Not available
-          cnic === "0" ||                              // Zero value
-          cnic === "00000000000" ||                    // All zeros
-          !/^\d+$/.test(cnic.replace(/[-\s]/g, ""));   // Not all digits (after removing dashes/spaces)
+          !recording.cnic || // No CNIC provided
+          cnic === "" || // Empty CNIC
+          cnic.includes("walk") || // Contains "walk"
+          cnic.includes("customer") || // Contains "customer"
+          cnic.includes("xxx") || // Contains "xxx" pattern
+          /^x+$/i.test(cnic) || // Only X characters
+          cnic.includes("this is walk") || // Specific pattern from user message
+          cnic.includes("walkin") || // Walk-in without space
+          cnic.includes("walk-in") || // Walk-in with hyphen
+          cnic.length < 10 || // Too short for valid CNIC
+          /^[x]{3,}/.test(cnic) || // Starts with multiple X's
+          cnic === "n/a" || // N/A values
+          cnic === "na" || // NA values
+          cnic === "not available" || // Not available
+          cnic === "0" || // Zero value
+          cnic === "00000000000" || // All zeros
+          !/^\d+$/.test(cnic.replace(/[-\s]/g, "")); // Not all digits (after removing dashes/spaces)
 
         // Debug logging for first few records
         if (filtered.length <= 5) {
-          console.log(`📝 Record ${recording.id}: CNIC="${recording.cnic}" -> isWalkIn=${isWalkIn}`);
+          console.log(
+            `📝 Record ${recording.id}: CNIC="${recording.cnic}" -> isWalkIn=${isWalkIn}`,
+          );
         }
 
         if (customerTypeFilter === "walkin") {
@@ -467,7 +473,16 @@ export function ExactDashboard() {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(1);
     }
-  }, [searchQuery, branchFilter, dateFromFilter, dateToFilter, customerTypeFilter, recordings, currentPage, itemsPerPage]);
+  }, [
+    searchQuery,
+    branchFilter,
+    dateFromFilter,
+    dateToFilter,
+    customerTypeFilter,
+    recordings,
+    currentPage,
+    itemsPerPage,
+  ]);
 
   const formatLastSeen = (dateString: string) => {
     const date = new Date(dateString);
@@ -648,7 +663,6 @@ export function ExactDashboard() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-
       <div className="flex min-h-0">
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-h-0">
@@ -675,16 +689,24 @@ export function ExactDashboard() {
 
                       {/* Advanced Filters Toggle */}
                       <button
-                        onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                        onClick={() =>
+                          setShowAdvancedFilters(!showAdvancedFilters)
+                        }
                         className="flex items-center space-x-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50"
                       >
                         <Filter className="w-4 h-4" />
                         <span>Filters</span>
-                        <ChevronDown className={`w-3 h-3 transition-transform ${showAdvancedFilters ? 'rotate-180' : ''}`} />
+                        <ChevronDown
+                          className={`w-3 h-3 transition-transform ${showAdvancedFilters ? "rotate-180" : ""}`}
+                        />
                       </button>
 
                       {/* Clear All Filters Button */}
-                      {(searchQuery || branchFilter || dateFromFilter || dateToFilter || customerTypeFilter !== "all") && (
+                      {(searchQuery ||
+                        branchFilter ||
+                        dateFromFilter ||
+                        dateToFilter ||
+                        customerTypeFilter !== "all") && (
                         <button
                           onClick={() => {
                             setSearchQuery("");
@@ -733,7 +755,9 @@ export function ExactDashboard() {
                             <input
                               type="date"
                               value={dateFromFilter}
-                              onChange={(e) => setDateFromFilter(e.target.value)}
+                              onChange={(e) =>
+                                setDateFromFilter(e.target.value)
+                              }
                               className="pl-8 pr-3 py-1.5 w-full border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                             />
                           </div>
@@ -764,7 +788,9 @@ export function ExactDashboard() {
                             <User className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <select
                               value={customerTypeFilter}
-                              onChange={(e) => setCustomerTypeFilter(e.target.value)}
+                              onChange={(e) =>
+                                setCustomerTypeFilter(e.target.value)
+                              }
                               className="pl-8 pr-3 py-1.5 w-full border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
                             >
                               <option value="all">All Customers</option>
@@ -776,7 +802,10 @@ export function ExactDashboard() {
                       </div>
 
                       {/* Active Filters Summary */}
-                      {(branchFilter || dateFromFilter || dateToFilter || customerTypeFilter !== "all") && (
+                      {(branchFilter ||
+                        dateFromFilter ||
+                        dateToFilter ||
+                        customerTypeFilter !== "all") && (
                         <div className="mt-3 pt-3 border-t border-gray-200">
                           <div className="flex items-center space-x-2 text-sm text-gray-600">
                             <span className="font-medium">Active filters:</span>
@@ -797,7 +826,9 @@ export function ExactDashboard() {
                             )}
                             {customerTypeFilter !== "all" && (
                               <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-md">
-                                {customerTypeFilter === "walkin" ? "Walk-in Customers" : "Regular Customers"}
+                                {customerTypeFilter === "walkin"
+                                  ? "Walk-in Customers"
+                                  : "Regular Customers"}
                               </span>
                             )}
                           </div>

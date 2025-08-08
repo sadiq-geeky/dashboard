@@ -38,9 +38,7 @@ export const getDevices: RequestHandler = async (req, res) => {
     const conditions: string[] = [];
 
     if (search) {
-      conditions.push(
-        "(device_name LIKE ? OR device_mac LIKE ?)",
-      );
+      conditions.push("(device_name LIKE ? OR device_mac LIKE ?)");
       queryParams.push(`%${search}%`, `%${search}%`);
     }
 
@@ -166,7 +164,6 @@ export const createDevice: RequestHandler = async (req, res) => {
       }
     }
 
-
     const id = uuidv4();
 
     const query = `
@@ -255,7 +252,6 @@ export const updateDevice: RequestHandler = async (req, res) => {
           });
       }
     }
-
 
     const query = `
       UPDATE devices

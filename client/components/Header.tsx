@@ -165,7 +165,9 @@ export function Header() {
                   )}
                 >
                   <Icon className="w-4 h-4 mb-0.5" />
-                  <span className="text-[10px] font-medium leading-tight text-center">{item.label}</span>
+                  <span className="text-[10px] font-medium leading-tight text-center">
+                    {item.label}
+                  </span>
                 </button>
               );
             })}
@@ -192,7 +194,9 @@ export function Header() {
                   )}
                 >
                   <Icon className="w-4 h-4 mb-0.5" />
-                  <span className="text-[10px] font-medium leading-tight text-center">{item.label}</span>
+                  <span className="text-[10px] font-medium leading-tight text-center">
+                    {item.label}
+                  </span>
                 </button>
               );
             })}
