@@ -23,7 +23,6 @@ interface Device {
   id: string;
   device_name: string;
   device_mac?: string;
-  ip_address?: string;
   device_type: "recorder" | "monitor" | "other";
   branch_id?: string;
   branch_name?: string;
@@ -37,6 +36,7 @@ interface Device {
   // Heartbeat-based status
   heartbeat_status?: "online" | "problematic" | "offline";
   last_seen?: string;
+  current_ip?: string; // IP address from heartbeat data
 }
 
 interface DeviceFormData {
