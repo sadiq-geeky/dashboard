@@ -20,8 +20,6 @@ interface User {
   updated_on: string | null;
   created_by?: string | null;
   updated_by?: string | null;
-  created_by: string | null;
-  updated_by: string | null;
 }
 
 interface EditUserModalProps {
