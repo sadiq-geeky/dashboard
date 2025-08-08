@@ -32,42 +32,42 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
     // Simplified and optimized heartbeat query with deduplication
     const query = `
       SELECT
-        COALESCE(ANY_VALUE(b.branch_name), 'Not linked to branch') AS branch_name,
-        COALESCE(ANY_VALUE(b.branch_code), 'Not linked to branch') AS branch_code,
-        h.ip_address,
-        h.mac_address as device_id,
-        h.last_seen,
-        CASE
-          WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 5 THEN 'online'
-          WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 15 THEN 'problematic'
-          ELSE 'offline'
-        END AS status,
-        CONCAT(
-          FLOOR(IFNULL(ANY_VALUE(h.uptime_count), 0) * 30 / 3600), 'h ',
-          FLOOR(MOD(IFNULL(ANY_VALUE(h.uptime_count), 0) * 30, 3600) / 60), 'm'
-        ) AS uptime_duration_24h
-      FROM (
-        SELECT
-          h1.mac_address,
-          h1.ip_address,
-          MAX(h1.created_on) AS last_seen,
-          (
-            SELECT COUNT(*)
-            FROM heartbeat h2
-            WHERE h2.mac_address = h1.mac_address
-              AND h2.created_on >= DATE_SUB(NOW(), INTERVAL 1 DAY)
-          ) AS uptime_count
-        FROM heartbeat h1
-        WHERE h1.mac_address IS NOT NULL
-        GROUP BY h1.mac_address, h1.ip_address
-      ) h
-      LEFT JOIN devices d ON d.device_mac = h.mac_address
-      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
-      LEFT JOIN branches b ON b.id = ldbu.branch_id
-      ${whereClause ? (whereClause.includes("WHERE") ? whereClause.replace("WHERE", "AND") : `AND ${whereClause}`) : ""}
-      GROUP BY h.mac_address, h.ip_address, h.last_seen
-      ORDER BY h.last_seen DESC
-      LIMIT 100
+  COALESCE(ANY_VALUE(b.branch_name), 'Not linked to branch') AS branch_name,
+  COALESCE(ANY_VALUE(b.branch_code), 'Not linked to branch') AS branch_code,
+  h.ip_address,
+  h.mac_address as device_id,
+  h.last_seen,
+
+  CASE
+    WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 5 THEN 'online'
+    WHEN TIMESTAMPDIFF(MINUTE, h.last_seen, NOW()) <= 15 THEN 'problematic'
+    ELSE 'offline'
+  END AS status,
+  CONCAT(
+    FLOOR(IFNULL(ANY_VALUE(h.uptime_count), 0) * 30 / 3600), 'h ',
+    FLOOR(MOD(IFNULL(ANY_VALUE(h.uptime_count), 0) * 30, 3600) / 60), 'm'
+  ) AS uptime_duration_24h
+FROM (
+  SELECT
+    h1.mac_address,
+    h1.ip_address,
+    MAX(h1.created_on) AS last_seen,
+    (
+      SELECT COUNT(*)
+      FROM heartbeat h2
+      WHERE h2.mac_address = h1.mac_address
+        AND h2.created_on >= DATE_SUB(NOW(), INTERVAL 1 DAY)
+    ) AS uptime_count
+  FROM heartbeat h1
+  WHERE h1.mac_address IS NOT NULL
+  GROUP BY h1.mac_address, h1.ip_address
+) h
+LEFT JOIN devices d ON d.device_mac = h.mac_address
+LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+LEFT JOIN branches b ON b.id = ldbu.branch_id
+GROUP BY h.mac_address, h.ip_address, h.last_seen
+ORDER BY h.last_seen DESC
+LIMIT 100
     `;
 
     let heartbeats;
