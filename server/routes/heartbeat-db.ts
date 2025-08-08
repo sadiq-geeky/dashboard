@@ -29,9 +29,9 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
       queryParams.push(branchFilter.value);
     }
 
-    // Simplified and optimized heartbeat query
+    // Simplified and optimized heartbeat query with deduplication
     const query = `
-      SELECT
+      SELECT DISTINCT
         COALESCE(b.branch_address, CONCAT('Device-', h.mac_address)) AS branch_name,
         COALESCE(b.branch_code, h.ip_address) AS branch_code,
         h.last_seen,
@@ -62,11 +62,13 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
           WHERE h3.mac_address = h1.mac_address
         )
         AND h1.mac_address IS NOT NULL
+        GROUP BY h1.mac_address, h1.ip_address
       ) h
       LEFT JOIN devices d ON d.device_mac = h.mac_address
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
       ${whereClause}
+      GROUP BY h.mac_address, h.ip_address, h.last_seen
       ORDER BY h.last_seen DESC
       LIMIT 100
     `;
