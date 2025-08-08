@@ -725,6 +725,25 @@ export function ExactDashboard() {
                             />
                           </div>
                         </div>
+
+                        {/* Customer Type Filter */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Customer Type
+                          </label>
+                          <div className="relative">
+                            <User className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <select
+                              value={customerTypeFilter}
+                              onChange={(e) => setCustomerTypeFilter(e.target.value)}
+                              className="pl-8 pr-3 py-1.5 w-full border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                            >
+                              <option value="all">All Customers</option>
+                              <option value="walkin">Walk-in Customers</option>
+                              <option value="regular">Regular Customers</option>
+                            </select>
+                          </div>
+                        </div>
                       </div>
 
                       {/* Active Filters Summary */}
