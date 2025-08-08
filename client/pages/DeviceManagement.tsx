@@ -570,25 +570,6 @@ export function DeviceManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-0.5">
-                      Status
-                    </label>
-                    <select
-                      value={formData.device_status}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          device_status: e.target.value as any,
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="maintenance">Maintenance</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-0.5">
                       Notes
                     </label>
                     <textarea
