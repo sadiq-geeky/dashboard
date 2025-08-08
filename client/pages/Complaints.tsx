@@ -979,7 +979,7 @@ export function Complaints() {
                         </div>
                       </th>
                       <th className="text-left py-3 px-4 font-medium text-gray-900">
-                        Customer
+                        Created by
                       </th>
                       <th className="text-left py-3 px-4 font-medium text-gray-900">
                         Status
