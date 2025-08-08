@@ -117,7 +117,11 @@ export function DeviceManagement() {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to save device");
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Device save failed: ${response.status} - ${errorText}`);
+        throw new Error(`Failed to save device: ${response.status} ${errorText}`);
+      }
 
       await fetchDevices();
       setShowAddModal(false);
