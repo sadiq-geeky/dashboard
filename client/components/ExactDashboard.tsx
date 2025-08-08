@@ -843,10 +843,10 @@ export function ExactDashboard() {
                             Device ID
                           </th>
                           <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                            Status
+                            IP Address
                           </th>
                           <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                            IP Address
+                            Status
                           </th>
                           <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                             Uptime
@@ -873,6 +873,11 @@ export function ExactDashboard() {
                                 <span className="text-gray-400">N/A</span>
                               )}
                             </td>
+                            <td className="px-2 py-1.5 text-xs text-gray-600 font-mono">
+                              {device.ip_address || (
+                                <span className="text-gray-400">N/A</span>
+                              )}
+                            </td>
                             <td className="px-2 py-1.5">
                               <span
                                 className={cn(
@@ -885,11 +890,6 @@ export function ExactDashboard() {
                                   {device.status}
                                 </span>
                               </span>
-                            </td>
-                            <td className="px-2 py-1.5 text-xs text-gray-600 font-mono">
-                              {device.ip_address || (
-                                <span className="text-gray-400">N/A</span>
-                              )}
                             </td>
                             <td className="px-2 py-1.5 text-xs text-gray-600">
                               {device.uptime_duration_24h || "0h 0m"}
