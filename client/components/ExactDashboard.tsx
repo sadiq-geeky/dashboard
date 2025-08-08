@@ -210,6 +210,7 @@ export function ExactDashboard() {
   const [dateFromFilter, setDateFromFilter] = useState("");
   const [dateToFilter, setDateToFilter] = useState("");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [customerTypeFilter, setCustomerTypeFilter] = useState("all"); // "all", "walkin", "regular"
   const [selectedRecording, setSelectedRecording] =
     useState<RecordingHistory | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
