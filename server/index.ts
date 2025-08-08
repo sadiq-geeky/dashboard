@@ -220,6 +220,12 @@ export function createServer() {
     getUniqueCnicsByMonth,
   );
   app.get(
+    "/api/analytics/branch-monthly-trend",
+    authenticate,
+    addBranchFilter(),
+    getBranchMonthlyTrend,
+  );
+  app.get(
     "/api/analytics/voice-streams",
     authenticate,
     addBranchFilter(),
