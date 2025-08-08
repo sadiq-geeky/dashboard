@@ -86,6 +86,7 @@ import {
   getComplaintsAnalytics,
 } from "./routes/complaints-db";
 import { promoteToManager } from "./routes/debug-manager";
+import { getBranchMonthlyTrend } from "./routes/branch-monthly-trend";
 
 export function createServer() {
   const app = express();
