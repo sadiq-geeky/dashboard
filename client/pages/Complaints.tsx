@@ -675,7 +675,6 @@ export function Complaints() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <AdminNavigation />
 
       <div className="px-6 py-6">
         {/* Complaints Tab Content */}

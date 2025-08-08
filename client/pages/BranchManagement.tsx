@@ -160,7 +160,6 @@ export function BranchManagement() {
       <Header />
 
       {/* Navigation */}
-      <AdminNavigation />
 
       <div className="px-6 py-6 pt-1" style={{ padding: "24px 24px 5px" }}>
         <div className="space-y-6">
