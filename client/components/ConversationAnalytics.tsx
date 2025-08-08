@@ -685,6 +685,7 @@ export function ConversationAnalytics() {
             {activeChart === "city" && "Number of Conversations by City"}
             {activeChart === "daily" && "Daily Conversation Trends"}
             {activeChart === "customers" && "Unique Customer Analysis"}
+            {activeChart === "trend" && "Branch Monthly Trends Over Time"}
           </h4>
           <p className="text-sm text-gray-600">
             {activeChart === "branch" &&
