@@ -448,9 +448,9 @@ export function DeviceManagement() {
                         <strong>MAC:</strong> {device.device_mac}
                       </div>
                     )}
-                    {(device as any).current_ip && (
+                    {device.current_ip && (
                       <div className="text-gray-600">
-                        <strong>Current IP:</strong> {(device as any).current_ip}
+                        <strong>Current IP:</strong> {device.current_ip}
                       </div>
                     )}
                     {device.branch_name && (
