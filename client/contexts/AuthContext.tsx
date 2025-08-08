@@ -65,7 +65,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (
     username: string,
     password: string,
-  ): Promise<boolean> => {
+  ): Promise<{ success: boolean; error?: string }> => {
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
@@ -79,16 +79,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (response.ok && data.success) {
         const userData = data.user;
+
+        // Check if user has branch assigned (except for admin users)
+        if (userData.role !== "admin" && !userData.branch_id) {
+          return {
+            success: false,
+            error: "No branch assigned to your account. Please contact your administrator to assign a branch before you can access the system."
+          };
+        }
+
         setUser(userData);
         localStorage.setItem("auth_user", JSON.stringify(userData));
-        return true;
+        return { success: true };
       } else {
         console.error("Login failed:", data.error);
-        return false;
+        return { success: false, error: data.error || "Invalid username or password" };
       }
     } catch (error) {
       console.error("Login error:", error);
-      return false;
+      return { success: false, error: "Login failed. Please try again." };
     }
   };
 
