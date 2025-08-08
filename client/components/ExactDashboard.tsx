@@ -276,8 +276,10 @@ export function ExactDashboard() {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tab = urlParams.get("tab");
-    if (tab && tab !== activeTab) {
-      setActiveTab(tab);
+    // If no tab parameter exists, default to "home"
+    const targetTab = tab || "home";
+    if (targetTab !== activeTab) {
+      setActiveTab(targetTab);
     }
   }, [location.search, activeTab]);
 
