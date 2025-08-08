@@ -377,8 +377,17 @@ export function ConversationAnalytics() {
                 dataKey="date"
                 tickFormatter={formatDate}
                 type="category"
+                allowDataOverflow={false}
+                allowDecimals={true}
+                allowDuplicatedCategory={true}
               />
-              <YAxis dataKey="count" type="number" />
+              <YAxis
+                dataKey="count"
+                type="number"
+                allowDataOverflow={false}
+                allowDecimals={true}
+                allowDuplicatedCategory={true}
+              />
               <Tooltip
                 labelFormatter={(label) => formatDate(label)}
                 formatter={(value: number) => [value, "Conversations"]}
