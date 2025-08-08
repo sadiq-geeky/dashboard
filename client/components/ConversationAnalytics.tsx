@@ -63,10 +63,10 @@ export function ConversationAnalytics() {
 
       // Fetch all analytics data in parallel
       const [branchRes, cityRes, dailyRes, customerRes] = await Promise.all([
-        authFetch("/api/analytics/conversations/by-branch"),
-        authFetch("/api/analytics/conversations/by-city"), 
-        authFetch("/api/analytics/conversations/daily-last-month"),
-        authFetch("/api/analytics/conversations/unique-customers")
+        authFetch("/api/analytics/conversations/branch-monthly"),
+        authFetch("/api/analytics/conversations/city"),
+        authFetch("/api/analytics/conversations/daily"),
+        authFetch("/api/analytics/conversations/cnic")
       ]);
 
       // Process branch data
