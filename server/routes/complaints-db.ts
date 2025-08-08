@@ -142,6 +142,23 @@ export const getComplaint: RequestHandler = async (req, res) => {
   try {
     const { complaint_id } = req.params;
 
+    console.log("Fetching complaint with ID:", complaint_id);
+
+    // First check if complaint exists
+    const checkQuery = `
+      SELECT complaint_id
+      FROM complaints
+      WHERE complaint_id = ?
+    `;
+
+    const existsResult = await executeQuery<{ complaint_id: string }>(checkQuery, [complaint_id]);
+
+    if (existsResult.length === 0) {
+      console.log("Complaint not found:", complaint_id);
+      return res.status(404).json({ error: "Complaint not found" });
+    }
+
+    // Get complaint with branch details
     const query = `
       SELECT
         c.complaint_id,
@@ -175,19 +192,24 @@ export const getComplaint: RequestHandler = async (req, res) => {
     >(query, [complaint_id]);
 
     if (complaints.length === 0) {
+      console.log("Complaint found in check but not in main query:", complaint_id);
       return res.status(404).json({ error: "Complaint not found" });
     }
 
     const complaint = complaints[0];
+    console.log("Successfully retrieved complaint:", complaint.complaint_id);
 
     // Parse customer data if it's a JSON string
     let customerData = {};
     try {
-      customerData =
-        typeof complaint.customer_data === "string"
-          ? JSON.parse(complaint.customer_data)
-          : complaint.customer_data;
+      if (complaint.customer_data) {
+        customerData =
+          typeof complaint.customer_data === "string"
+            ? JSON.parse(complaint.customer_data)
+            : complaint.customer_data;
+      }
     } catch (e) {
+      console.warn("Failed to parse customer_data as JSON:", e);
       customerData = { raw_data: complaint.customer_data };
     }
 
@@ -197,7 +219,15 @@ export const getComplaint: RequestHandler = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching complaint:", error);
-    res.status(500).json({ error: "Failed to fetch complaint" });
+    console.error("Error details:", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : "No stack trace",
+      complaint_id: req.params.complaint_id
+    });
+    res.status(500).json({
+      error: "Failed to fetch complaint",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
   }
 };
 
