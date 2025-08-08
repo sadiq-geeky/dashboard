@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { executeQuery } from "../config/database";
+import { executeQuery, executeUpdate } from "../config/database";
 import { v4 as uuidv4 } from "uuid";
 
 export interface Complaint {
