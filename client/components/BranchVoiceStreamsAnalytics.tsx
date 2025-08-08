@@ -301,6 +301,10 @@ export function BranchVoiceStreamsAnalytics() {
                   axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   interval="preserveStartEnd"
+                  type="category"
+                  allowDataOverflow={false}
+                  allowDecimals={true}
+                  allowDuplicatedCategory={true}
                 />
                 <YAxis
                   fontSize={9}
@@ -309,6 +313,10 @@ export function BranchVoiceStreamsAnalytics() {
                   axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   tickFormatter={(value) => value.toLocaleString()}
+                  type="number"
+                  allowDataOverflow={false}
+                  allowDecimals={true}
+                  allowDuplicatedCategory={true}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Area
@@ -401,6 +409,10 @@ export function BranchVoiceStreamsAnalytics() {
                   axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   interval="preserveStartEnd"
+                  type="category"
+                  allowDataOverflow={false}
+                  allowDecimals={true}
+                  allowDuplicatedCategory={true}
                 />
                 <YAxis
                   fontSize={9}
@@ -409,6 +421,10 @@ export function BranchVoiceStreamsAnalytics() {
                   axisLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   tickLine={{ stroke: "#d1d5db", strokeWidth: 1 }}
                   tickFormatter={(value) => value.toLocaleString()}
+                  type="number"
+                  allowDataOverflow={false}
+                  allowDecimals={true}
+                  allowDuplicatedCategory={true}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar
