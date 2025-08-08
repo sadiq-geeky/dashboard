@@ -82,7 +82,10 @@ if (typeof window !== "undefined") {
         event.message.includes("Support for defaultProps") ||
         event.message.includes("XAxis") ||
         event.message.includes("YAxis") ||
-        event.message.includes("recharts"))
+        event.message.includes("recharts") ||
+        event.message.includes("CategoricalChartWrapper") ||
+        event.message.includes("ChartLayoutContextProvider") ||
+        event.message.includes("Surface"))
     ) {
       event.preventDefault();
       event.stopPropagation();
