@@ -35,7 +35,6 @@ export async function initializeComplaintsTable() {
   }
 }
 
-
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   initializeComplaintsTable()

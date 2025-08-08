@@ -63,7 +63,6 @@ export async function initializeTables() {
       console.error("⚠️  Could not initialize complaints table:", error);
     }
 
-
     console.log("🚀 Database initialization completed - using existing schema");
   } catch (error) {
     console.error("❌ Database initialization failed:", error);

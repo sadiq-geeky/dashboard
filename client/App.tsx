@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
     console.log =
       (...args) => {
         const message = String(args.join(" "));
-        const messageStr = args.map(arg => String(arg)).join(" ");
+        const messageStr = args.map((arg) => String(arg)).join(" ");
 
         // Suppress any defaultProps warnings related to charts
         if (
@@ -31,7 +31,9 @@ if (typeof window !== "undefined") {
           (args[0] && args[0].toString().includes("XAxis")) ||
           (args[0] && args[0].toString().includes("YAxis")) ||
           (args[0] && args[0].toString().includes("defaultProps")) ||
-          (args.length > 1 && args[1] && args[1].toString().includes("XAxis")) ||
+          (args.length > 1 &&
+            args[1] &&
+            args[1].toString().includes("XAxis")) ||
           (args.length > 1 && args[1] && args[1].toString().includes("YAxis"))
         ) {
           return; // Completely suppress these warnings

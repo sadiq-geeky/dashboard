@@ -213,9 +213,12 @@ export function BranchManagement() {
           ) : branches.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 bg-white rounded-lg border border-gray-200">
               <Building2 className="h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No branches found</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No branches found
+              </h3>
               <p className="text-gray-500 text-center max-w-sm">
-                There are no branches configured yet. Click "Add Branch" to create your first branch.
+                There are no branches configured yet. Click "Add Branch" to
+                create your first branch.
               </p>
             </div>
           ) : (

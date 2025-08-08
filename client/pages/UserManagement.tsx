@@ -209,7 +209,6 @@ export function UserManagement() {
             </div>
           </div>
 
-
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
