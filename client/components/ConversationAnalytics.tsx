@@ -61,7 +61,7 @@ export function ConversationAnalytics() {
 
   // UI states
   const [activeChart, setActiveChart] = useState<
-    "branch" | "city" | "daily" | "customers"
+    "branch" | "city" | "daily" | "customers" | "trend"
   >("branch");
   const [selectedPeriod, setSelectedPeriod] = useState<string>("");
 
