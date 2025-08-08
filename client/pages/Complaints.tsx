@@ -1422,6 +1422,34 @@ export function Complaints() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Admin Notes Section - Only show for admins or if notes exist */}
+                    {(isAdmin() || selectedComplaint.notes) && (
+                      <div>
+                        <h3 className="text-lg font-medium text-gray-900 mb-4">
+                          Admin Notes
+                        </h3>
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                          <div className="flex items-start space-x-3">
+                            <AlertCircle className="h-5 w-5 text-yellow-600 mt-1" />
+                            <div className="flex-1">
+                              {selectedComplaint.notes ? (
+                                <p className="text-gray-900 leading-relaxed whitespace-pre-wrap">
+                                  {selectedComplaint.notes}
+                                </p>
+                              ) : (
+                                <p className="text-gray-500 italic">
+                                  No admin notes have been added for this complaint.
+                                </p>
+                              )}
+                              <p className="text-xs text-gray-500 mt-2">
+                                Internal notes visible to administrators only
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Modal Footer */}
