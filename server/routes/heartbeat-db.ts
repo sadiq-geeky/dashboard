@@ -64,7 +64,7 @@ export const getHeartbeats: RequestHandler = async (req: any, res) => {
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
       WHERE (d.device_status = 'active' OR d.device_status IS NULL)
-      ${whereClause ? `AND ${whereClause.replace('WHERE ', '')}` : ''}
+      ${whereClause ? (whereClause.includes('WHERE') ? whereClause.replace('WHERE', 'AND') : `AND ${whereClause}`) : ''}
       GROUP BY h.mac_address, h.ip_address, h.last_seen
       ORDER BY h.last_seen DESC
       LIMIT 100
