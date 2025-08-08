@@ -430,11 +430,17 @@ export function ExactDashboard() {
           cnic.includes("walk") ||                     // Contains "walk"
           cnic.includes("customer") ||                 // Contains "customer"
           cnic.includes("xxx") ||                      // Contains "xxx" pattern
+          /^x+$/i.test(cnic) ||                        // Only X characters
+          cnic.includes("this is walk") ||             // Specific pattern from user message
+          cnic.includes("walkin") ||                   // Walk-in without space
+          cnic.includes("walk-in") ||                  // Walk-in with hyphen
           cnic.length < 10 ||                          // Too short for valid CNIC
           /^[x]{3,}/.test(cnic) ||                     // Starts with multiple X's
           cnic === "n/a" ||                            // N/A values
           cnic === "na" ||                             // NA values
           cnic === "not available" ||                  // Not available
+          cnic === "0" ||                              // Zero value
+          cnic === "00000000000" ||                    // All zeros
           !/^\d+$/.test(cnic.replace(/[-\s]/g, ""));   // Not all digits (after removing dashes/spaces)
 
         // Debug logging for first few records
