@@ -158,14 +158,14 @@ export function Header() {
                   key={item.id}
                   onClick={item.onClick}
                   className={cn(
-                    "flex flex-col items-center px-3 py-2 rounded-lg transition-all duration-200 min-w-[70px]",
+                    "flex flex-col items-center justify-center px-2 py-1.5 rounded-md transition-all duration-200 min-w-[55px]",
                     isActive
                       ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
                       : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
                   )}
                 >
-                  <Icon className="w-5 h-5 mb-1" />
-                  <span className="text-xs font-medium">{item.label}</span>
+                  <Icon className="w-4 h-4 mb-0.5" />
+                  <span className="text-[10px] font-medium leading-tight text-center">{item.label}</span>
                 </button>
               );
             })}
@@ -185,14 +185,14 @@ export function Header() {
                   key={item.id}
                   onClick={item.onClick}
                   className={cn(
-                    "flex flex-col items-center px-3 py-2 rounded-lg transition-all duration-200 min-w-[70px]",
+                    "flex flex-col items-center justify-center px-2 py-1.5 rounded-md transition-all duration-200 min-w-[55px]",
                     isActive
                       ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
                       : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
                   )}
                 >
-                  <Icon className="w-5 h-5 mb-1" />
-                  <span className="text-xs font-medium">{item.label}</span>
+                  <Icon className="w-4 h-4 mb-0.5" />
+                  <span className="text-[10px] font-medium leading-tight text-center">{item.label}</span>
                 </button>
               );
             })}
