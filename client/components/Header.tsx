@@ -132,11 +132,11 @@ export function Header() {
         className="flex items-center justify-between"
         style={{ fontWeight: "300" }}
       >
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-6">
           {/* Clickable logo */}
           <button
             onClick={goBackToDashboard}
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+            className="flex items-center hover:opacity-80 transition-opacity"
             title="Go to Dashboard"
           >
             <img
@@ -145,6 +145,58 @@ export function Header() {
               className="h-8 w-auto object-contain"
             />
           </button>
+
+          {/* Navigation tabs */}
+          <div className="flex items-center space-x-3">
+            {/* Core functionality group */}
+            {coreItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = currentPage === item.id;
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={item.onClick}
+                  className={cn(
+                    "flex flex-col items-center px-3 py-2 rounded-lg transition-all duration-200 min-w-[70px]",
+                    isActive
+                      ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
+                  )}
+                >
+                  <Icon className="w-5 h-5 mb-1" />
+                  <span className="text-xs font-medium">{item.label}</span>
+                </button>
+              );
+            })}
+
+            {/* Admin group separator */}
+            {isAdmin() && adminItems.length > 0 && (
+              <div className="w-px h-8 bg-gray-300 mx-2"></div>
+            )}
+
+            {/* Admin management group */}
+            {adminItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = currentPage === item.id;
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={item.onClick}
+                  className={cn(
+                    "flex flex-col items-center px-3 py-2 rounded-lg transition-all duration-200 min-w-[70px]",
+                    isActive
+                      ? "text-primary bg-primary/5 border-2 border-primary/20 shadow-sm"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-50",
+                  )}
+                >
+                  <Icon className="w-5 h-5 mb-1" />
+                  <span className="text-xs font-medium">{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="flex items-center space-x-4">
