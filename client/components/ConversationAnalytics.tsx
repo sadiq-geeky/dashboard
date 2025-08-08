@@ -152,18 +152,18 @@ export function ConversationAnalytics() {
 
   const getDailyChartData = () => {
     const chartData = [["Date", "Conversations", { role: "style" }]];
-    
+
     dailyData
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .forEach((item, index) => {
         const date = new Date(item.date);
         const dayName = date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
-        const color = item.day_name === 'Saturday' || item.day_name === 'Sunday' 
-          ? '#ef4444' : '#3b82f6';
-        
-        chartData.push([dayName, item.conversations, color]);
+        const isWeekend = date.getDay() === 0 || date.getDay() === 6; // Sunday = 0, Saturday = 6
+        const color = isWeekend ? '#ef4444' : '#3b82f6';
+
+        chartData.push([dayName, item.count, color]);
       });
-    
+
     return chartData;
   };
 
