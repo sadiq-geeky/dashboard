@@ -268,7 +268,6 @@ export const updateDevice: RequestHandler = async (req, res) => {
     const result = await executeUpdate(query, [
       device_name,
       device_mac || null,
-      ip_address || null,
       device_type || "recorder",
       installation_date || null,
       last_maintenance || null,
