@@ -147,14 +147,20 @@ export function ConversationAnalytics() {
   const getCityChartData = () => {
     const chartData = [["City", "Conversations", "Branches"]];
 
+    if (!cityData || cityData.length === 0) {
+      chartData.push(["No Data", 0, 0]);
+      return chartData;
+    }
+
     cityData
-      .sort((a, b) => b.count - a.count)
+      .filter(item => item && item.city) // Filter out invalid items
+      .sort((a, b) => (b.count || 0) - (a.count || 0))
       .slice(0, 12) // Top 12 cities
       .forEach((item, index) => {
         chartData.push([
-          item.city,
-          item.count,
-          item.branch_count
+          item.city || `Unknown City ${index + 1}`,
+          item.count || 0,
+          item.branch_count || 0
         ]);
       });
 
