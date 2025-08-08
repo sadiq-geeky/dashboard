@@ -171,6 +171,43 @@ export const postHeartbeat: RequestHandler = async (req, res) => {
     }
 
     const uuid = uuidv4(); // Generate a new UUID
+
+    // Check if device exists for this MAC address, if not create one
+    if (mac_address?.trim()) {
+      const deviceCheckQuery = `
+        SELECT id FROM devices WHERE device_mac = ?
+      `;
+      const existingDevice = await executeQuery(deviceCheckQuery, [mac_address.trim()]);
+
+      if (existingDevice.length === 0) {
+        // Create new device with inactive status
+        const deviceUuid = uuidv4();
+        const createDeviceQuery = `
+          INSERT INTO devices (
+            id, device_name, device_mac, ip_address, device_type,
+            device_status, notes, created_on, updated_on
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        `;
+
+        await executeQuery(createDeviceQuery, [
+          deviceUuid,
+          `Device-${mac_address.trim().slice(-6)}`, // Use last 6 chars of MAC as name
+          mac_address.trim(),
+          ip_address,
+          'recorder',
+          'inactive',
+          'Auto-created from heartbeat'
+        ]);
+
+        heartbeatLogger.info("heartbeat-db", "auto_device_created", {
+          request_id: requestId,
+          device_id: deviceUuid,
+          mac_address: mac_address.trim(),
+          ip_address: ip_address,
+        });
+      }
+    }
+
     // Insert heartbeat into database
     const query = `
       INSERT INTO heartbeat (uuid, ip_address, mac_address, created_on)
