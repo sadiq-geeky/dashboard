@@ -1362,9 +1362,7 @@ export function ExactDashboard() {
                               {log.branch_address || "N/A"}
                             </div>
                             <div className="col-span-5 text-gray-500">
-                              {log.start_time
-                                ? new Date(log.start_time).toLocaleDateString()
-                                : "-"}
+                              {log.start_time || "-"}
                             </div>
                           </div>
                         ))}
