@@ -94,7 +94,8 @@ export function ConversationAnalytics() {
       // Process customer data
       if (customerRes.ok) {
         const customerAnalytics = await customerRes.json();
-        setCustomerData(customerAnalytics);
+        // If it's a single object, wrap it in an array
+        setCustomerData(Array.isArray(customerAnalytics) ? customerAnalytics : [customerAnalytics]);
       }
 
     } catch (err) {
