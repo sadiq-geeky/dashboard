@@ -422,7 +422,7 @@ export function ConversationAnalytics() {
 
           {activeChart === 'customers' && getCustomerChartData().length > 1 && (
             <Chart
-              chartType="ComboChart"
+              chartType="ColumnChart"
               width="100%"
               height="100%"
               data={getCustomerChartData()}
