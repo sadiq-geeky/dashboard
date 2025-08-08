@@ -417,6 +417,9 @@ export function ExactDashboard() {
 
     // Apply customer type filter
     if (customerTypeFilter !== "all") {
+      console.log("🔍 Customer Type Filter:", customerTypeFilter);
+      console.log("📊 Total records before filter:", filtered.length);
+
       filtered = filtered.filter((recording) => {
         const cnic = recording.cnic?.toString().toLowerCase().trim() || "";
 
@@ -434,6 +437,11 @@ export function ExactDashboard() {
           cnic === "not available" ||                  // Not available
           !/^\d+$/.test(cnic.replace(/[-\s]/g, ""));   // Not all digits (after removing dashes/spaces)
 
+        // Debug logging for first few records
+        if (filtered.length <= 5) {
+          console.log(`📝 Record ${recording.id}: CNIC="${recording.cnic}" -> isWalkIn=${isWalkIn}`);
+        }
+
         if (customerTypeFilter === "walkin") {
           return isWalkIn;
         } else if (customerTypeFilter === "regular") {
@@ -441,6 +449,8 @@ export function ExactDashboard() {
         }
         return true;
       });
+
+      console.log("📊 Records after customer type filter:", filtered.length);
     }
 
     setFilteredRecordings(filtered);
