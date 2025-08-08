@@ -180,7 +180,6 @@ export const createDevice: RequestHandler = async (req, res) => {
       id,
       device_name,
       device_mac || null,
-      ip_address || null,
       device_type || "recorder",
       installation_date || null,
       last_maintenance || null,
