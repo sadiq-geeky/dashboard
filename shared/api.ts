@@ -13,6 +13,8 @@ export interface DemoResponse {
 
 // Device Heartbeat Types
 export interface HeartbeatRecord {
+  id: string;
+  device_name: string;
   branch_name: string;
   branch_code: string;
   ip_address: string;
