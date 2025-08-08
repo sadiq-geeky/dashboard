@@ -215,6 +215,8 @@ export function ExactDashboard() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [previousLogs, setPreviousLogs] = useState<RecordingHistory[]>([]);
+  const [isCustomerProfileCollapsed, setIsCustomerProfileCollapsed] = useState(false);
+  const [isPreviousLogsCollapsed, setIsPreviousLogsCollapsed] = useState(false);
 
   const itemsPerPage = 12;
 
