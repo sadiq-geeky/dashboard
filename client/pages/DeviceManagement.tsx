@@ -118,7 +118,12 @@ export function DeviceManagement() {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
+        let errorText = '';
+        try {
+          errorText = await response.text();
+        } catch (readError) {
+          errorText = 'Unable to read error details';
+        }
         console.error(`Device save failed: ${response.status} - ${errorText}`);
         throw new Error(`Failed to save device: ${response.status} ${errorText}`);
       }
