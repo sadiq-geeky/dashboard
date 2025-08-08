@@ -238,13 +238,13 @@ export function ExactDashboard() {
       // Ensure heartbeats is an array
       const validHeartbeats = Array.isArray(heartbeats) ? heartbeats : [];
 
-      // Deduplicate devices based on branch_code (which contains IP or MAC address)
+      // Deduplicate devices based on device_id (MAC address)
       const uniqueDevices = validHeartbeats.reduce(
         (acc, device) => {
-          const key = `${device.branch_code}-${device.branch_name}`;
+          const key = device.device_id || device.ip_address; // Use device_id (MAC) or IP as unique identifier
           // Only keep the device if we haven't seen this key before, or if this one has a more recent last_seen
           const existing = acc.find(
-            (d) => `${d.branch_code}-${d.branch_name}` === key,
+            (d) => (d.device_id || d.ip_address) === key,
           );
           if (!existing) {
             acc.push(device);
