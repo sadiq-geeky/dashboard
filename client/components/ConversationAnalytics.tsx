@@ -205,14 +205,26 @@ export function ConversationAnalytics() {
   const getCustomerChartData = () => {
     const chartData = [["Month", "Unique Customers"]];
 
-    // The API returns a single object, not an array
-    if (customerData.length > 0) {
+    if (!customerData || customerData.length === 0) {
+      chartData.push(["No Data", 0]);
+      return chartData;
+    }
+
+    try {
       const item = customerData[0];
+      if (!item || !item.month) {
+        chartData.push(["No Data", 0]);
+        return chartData;
+      }
+
       const monthName = new Date(item.month + '-01').toLocaleDateString('en-US', {
         month: 'short',
         year: 'numeric'
       });
-      chartData.push([monthName, item.unique_cnic_count]);
+      chartData.push([monthName, item.unique_cnic_count || 0]);
+    } catch (error) {
+      console.warn('Error processing customer data:', error);
+      chartData.push(["No Data", 0]);
     }
 
     return chartData;
