@@ -67,35 +67,61 @@ export function ConversationAnalytics() {
       ]);
 
       // Process branch data
-      if (branchRes.ok) {
-        const branchAnalytics = await branchRes.json();
-        setBranchData(branchAnalytics);
-        
-        // Set default period to latest month
-        const months = [...new Set(branchAnalytics.map((item: BranchAnalytics) => item.month))]
-          .sort().reverse();
-        if (months.length > 0 && !selectedPeriod) {
-          setSelectedPeriod(months[0]);
+      try {
+        if (branchRes.ok) {
+          const branchAnalytics = await branchRes.json();
+          const validBranchData = Array.isArray(branchAnalytics) ? branchAnalytics : [];
+          setBranchData(validBranchData);
+
+          // Set default period to latest month
+          const months = [...new Set(validBranchData
+            .filter((item: any) => item && item.month)
+            .map((item: BranchAnalytics) => item.month))]
+            .sort().reverse();
+          if (months.length > 0 && !selectedPeriod) {
+            setSelectedPeriod(months[0]);
+          }
         }
+      } catch (err) {
+        console.warn("Error processing branch data:", err);
+        setBranchData([]);
       }
 
       // Process city data
-      if (cityRes.ok) {
-        const cityAnalytics = await cityRes.json();
-        setCityData(cityAnalytics);
+      try {
+        if (cityRes.ok) {
+          const cityAnalytics = await cityRes.json();
+          const validCityData = Array.isArray(cityAnalytics) ? cityAnalytics : [];
+          setCityData(validCityData);
+        }
+      } catch (err) {
+        console.warn("Error processing city data:", err);
+        setCityData([]);
       }
 
       // Process daily data
-      if (dailyRes.ok) {
-        const dailyAnalytics = await dailyRes.json();
-        setDailyData(dailyAnalytics);
+      try {
+        if (dailyRes.ok) {
+          const dailyAnalytics = await dailyRes.json();
+          const validDailyData = Array.isArray(dailyAnalytics) ? dailyAnalytics : [];
+          setDailyData(validDailyData);
+        }
+      } catch (err) {
+        console.warn("Error processing daily data:", err);
+        setDailyData([]);
       }
 
       // Process customer data
-      if (customerRes.ok) {
-        const customerAnalytics = await customerRes.json();
-        // If it's a single object, wrap it in an array
-        setCustomerData(Array.isArray(customerAnalytics) ? customerAnalytics : [customerAnalytics]);
+      try {
+        if (customerRes.ok) {
+          const customerAnalytics = await customerRes.json();
+          // If it's a single object, wrap it in an array
+          const validCustomerData = Array.isArray(customerAnalytics) ? customerAnalytics : [customerAnalytics];
+          setCustomerData(validCustomerData.filter(item => item !== null && item !== undefined));
+        }
+      } catch (err) {
+        console.warn("Error processing customer data:", err);
+        setCustomerData([]);
       }
 
     } catch (err) {
