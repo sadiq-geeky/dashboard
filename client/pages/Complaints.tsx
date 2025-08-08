@@ -280,6 +280,59 @@ export function Complaints() {
     }
   };
 
+  // Open edit modal for admin
+  const openEditModal = (complaint: Complaint) => {
+    setSelectedComplaint(complaint);
+    setEditComplaintData({
+      status: complaint.status,
+      priority: complaint.priority,
+      notes: complaint.notes || "",
+    });
+    setShowEditModal(true);
+  };
+
+  // Handle complaint update
+  const handleUpdateComplaint = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedComplaint) return;
+
+    try {
+      const response = await authFetch(`/api/complaints/${selectedComplaint.complaint_id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editComplaintData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error(errorData.error || `Server error: ${response.status}`);
+      }
+
+      toast({
+        title: "Success",
+        description: "Complaint updated successfully!",
+        variant: "default",
+      });
+
+      // Close modal and refresh data
+      setShowEditModal(false);
+      setSelectedComplaint(null);
+      fetchComplaints();
+      fetchStats();
+
+    } catch (error) {
+      console.error("Error updating complaint:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update complaint",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Fetch user's device information
   const fetchUserDeviceInfo = async () => {
     try {
