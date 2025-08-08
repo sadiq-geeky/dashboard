@@ -158,6 +158,18 @@ export function DeviceManagement() {
       });
     } catch (error) {
       console.error("Error saving device:", error);
+
+      // Show user-friendly error message
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        if (errorMessage.includes('IP address already exists')) {
+          alert('Error: The IP address you entered is already being used by another device. Please choose a different IP address.');
+        } else if (errorMessage.includes('MAC address already exists')) {
+          alert('Error: The MAC address you entered is already being used by another device. Please choose a different MAC address.');
+        } else {
+          alert(`Error saving device: ${errorMessage}`);
+        }
+      }
     }
   };
 
