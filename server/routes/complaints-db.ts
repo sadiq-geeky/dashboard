@@ -158,7 +158,7 @@ export const getComplaint: RequestHandler = async (req, res) => {
       return res.status(404).json({ error: "Complaint not found" });
     }
 
-    // Get complaint with branch details
+    // Get complaint with branch details (fix collation conflict)
     const query = `
       SELECT
         c.complaint_id,
@@ -177,7 +177,7 @@ export const getComplaint: RequestHandler = async (req, res) => {
         b.contact_phone as branch_phone,
         b.contact_email as branch_email
       FROM complaints c
-      LEFT JOIN branches b ON c.branch_id = b.id
+      LEFT JOIN branches b ON c.branch_id COLLATE utf8mb4_0900_ai_ci = b.id COLLATE utf8mb4_0900_ai_ci
       WHERE c.complaint_id = ?
     `;
 
