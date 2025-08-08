@@ -155,6 +155,11 @@ export function DeviceManagement() {
 
   useEffect(() => {
     fetchDevices();
+
+    // Auto-refresh every 30 seconds to keep heartbeat status current
+    const interval = setInterval(fetchDevices, 30000);
+
+    return () => clearInterval(interval);
   }, [searchQuery]);
 
   const handleSubmit = async (e: React.FormEvent) => {
