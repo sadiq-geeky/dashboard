@@ -1434,17 +1434,19 @@ export function Complaints() {
                             <AlertCircle className="h-5 w-5 text-yellow-600 mt-1" />
                             <div className="flex-1">
                               {selectedComplaint.notes ? (
-                                <p className="text-gray-900 leading-relaxed whitespace-pre-wrap">
-                                  {selectedComplaint.notes}
-                                </p>
+                                <>
+                                  <p className="text-gray-900 leading-relaxed whitespace-pre-wrap">
+                                    {selectedComplaint.notes}
+                                  </p>
+                                  <p className="text-xs text-gray-500 mt-2">
+                                    Last updated: {formatDate(selectedComplaint.updated_on)}
+                                  </p>
+                                </>
                               ) : (
                                 <p className="text-gray-500 italic">
                                   No admin notes have been added for this complaint.
                                 </p>
                               )}
-                              <p className="text-xs text-gray-500 mt-2">
-                                Internal notes visible to administrators only
-                              </p>
                             </div>
                           </div>
                         </div>
