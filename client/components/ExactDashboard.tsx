@@ -1080,14 +1080,14 @@ export function ExactDashboard() {
                       </div>
                     </div>
                   </div>
-                ) : (
+                ) : !isCustomerProfileCollapsed ? (
                   <div className="text-center py-4">
                     <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-2"></div>
                     <p className="text-xs text-gray-500">
                       Select a recording to view customer profile
                     </p>
                   </div>
-                )}
+                ) : null}
               </div>
 
               {/* Previous Logs Section */}
