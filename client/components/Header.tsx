@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import {
   LogOut,
   User,
@@ -9,6 +10,12 @@ import {
   Building2,
   ArrowLeft,
   Home,
+  Grid3X3,
+  BarChart3,
+  Monitor,
+  Mail,
+  Users,
+  Settings,
 } from "lucide-react";
 
 export function Header() {
