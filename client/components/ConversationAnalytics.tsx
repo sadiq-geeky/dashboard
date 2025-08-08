@@ -38,6 +38,13 @@ interface UniqueCustomerAnalytics {
   unique_cnic_count: number;
 }
 
+interface BranchMonthlyTrend {
+  branch_code: string;
+  yr: number;
+  mth: number;
+  total_records: number;
+}
+
 export function ConversationAnalytics() {
   const { isAdmin } = useAuth();
   const [loading, setLoading] = useState(true);
