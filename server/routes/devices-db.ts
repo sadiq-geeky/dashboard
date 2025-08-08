@@ -39,9 +39,9 @@ export const getDevices: RequestHandler = async (req, res) => {
 
     if (search) {
       conditions.push(
-        "(device_name LIKE ? OR device_mac LIKE ? OR ip_address LIKE ?)",
+        "(device_name LIKE ? OR device_mac LIKE ?)",
       );
-      queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
+      queryParams.push(`%${search}%`, `%${search}%`);
     }
 
     // Skip branch_id filter for now until table is fixed
