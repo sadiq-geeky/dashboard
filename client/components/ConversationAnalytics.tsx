@@ -214,6 +214,32 @@ export function ConversationAnalytics() {
     }
   };
 
+  const fetchCityMonthlyData = async (cityName: string) => {
+    if (!cityName) {
+      setCityMonthlyData([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await authFetch(`/api/analytics/conversations/city/${encodeURIComponent(cityName)}/monthly`);
+
+      if (response.ok) {
+        const data = await response.json();
+        const validData = Array.isArray(data) ? data.filter(item => item && typeof item === 'object') : [];
+        setCityMonthlyData(validData);
+      } else {
+        console.error("Failed to fetch city monthly data:", response.status, response.statusText);
+        setCityMonthlyData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching city monthly data:", error);
+      setCityMonthlyData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isAdmin()) {
       fetchAnalyticsData();
