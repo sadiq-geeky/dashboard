@@ -187,29 +187,17 @@ export function ConversationAnalytics() {
     }
   }, [selectedBranch, activeChart]);
 
-  // Prepare chart data for Google Charts
+  // Prepare chart data for Google Charts - Monthly recordings for selected branch
   const getBranchChartData = () => {
-    if (!branchData || branchData.length === 0 || !selectedPeriod) {
-      return [["Branch", "Conversations"], ["No Data", 0]];
+    if (!branchMonthlyData || branchMonthlyData.length === 0) {
+      return [["Month", "Recordings"], ["No Data", 0]];
     }
 
-    const filtered = branchData.filter(
-      (item) => item?.month === selectedPeriod,
-    );
-    if (filtered.length === 0) {
-      return [["Branch", "Conversations"], ["No Data", 0]];
-    }
-
-    const chartData = [["Branch", "Conversations"]];
-    filtered
-      .sort((a, b) => (b?.count || 0) - (a?.count || 0))
-      .slice(0, 10)
+    const chartData = [["Month", "Recordings"]];
+    branchMonthlyData
+      .sort((a, b) => a.month.localeCompare(b.month))
       .forEach((item) => {
-        const branchName =
-          item.branch_name?.length > 20
-            ? item.branch_name.substring(0, 20) + "..."
-            : item.branch_name || "Unknown";
-        chartData.push([branchName, item.count || 0]);
+        chartData.push([item.formatted_month || item.month, item.count || 0]);
       });
 
     return chartData;
