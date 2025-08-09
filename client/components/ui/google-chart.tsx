@@ -3,9 +3,9 @@ import { Chart } from "react-google-charts";
 import { cn } from "@/lib/utils";
 
 export interface GoogleChartProps {
-  chartType: 
+  chartType:
     | "AreaChart"
-    | "BarChart" 
+    | "BarChart"
     | "ColumnChart"
     | "LineChart"
     | "PieChart"
@@ -119,12 +119,42 @@ export function GoogleChart({
     );
   }
 
-  if (!data || data.length <= 1) {
+  // Validate data format
+  if (!data || !Array.isArray(data) || data.length <= 1) {
     return (
       <div className={cn("flex items-center justify-center", className)}>
         <div className="text-center text-gray-500">
           <div className="text-sm font-medium">No data available</div>
           <div className="text-xs mt-1">Check back later for updates</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Validate data structure - ensure all rows have the same number of columns
+  try {
+    const columnCount = data[0]?.length || 0;
+    const validData = data.filter(row =>
+      Array.isArray(row) && row.length === columnCount && row.every(cell => cell !== undefined && cell !== null)
+    );
+
+    if (validData.length <= 1) {
+      return (
+        <div className={cn("flex items-center justify-center", className)}>
+          <div className="text-center text-gray-500">
+            <div className="text-sm font-medium">Invalid data format</div>
+            <div className="text-xs mt-1">Please check the data structure</div>
+          </div>
+        </div>
+      );
+    }
+  } catch (validationError) {
+    console.error("Chart data validation error:", validationError);
+    return (
+      <div className={cn("flex items-center justify-center", className)}>
+        <div className="text-center text-red-500">
+          <div className="text-sm font-medium">Data validation failed</div>
+          <div className="text-xs mt-1">Please check console for details</div>
         </div>
       </div>
     );
@@ -153,7 +183,7 @@ export const ChartPresets = {
     danger: ["#EF4444", "#DC2626", "#B91C1C"],
     purple: ["#8B5CF6", "#7C3AED", "#6D28D9"],
     multi: [
-      "#0088FE", "#00C49F", "#FFBB28", "#FF8042", 
+      "#0088FE", "#00C49F", "#FFBB28", "#FF8042",
       "#8884D8", "#82CA9D", "#FFC658", "#FF7C7C"
     ],
   },
