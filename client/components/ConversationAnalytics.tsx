@@ -266,6 +266,35 @@ export function ConversationAnalytics() {
     }
   };
 
+  const fetchAllBranchesLastMonthData = async () => {
+    try {
+      setLoading(true);
+      const response = await authFetch(
+        "/api/analytics/conversations/all-branches-last-month",
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const validData = Array.isArray(data)
+          ? data.filter((item) => item && typeof item === "object")
+          : [];
+        setAllBranchesLastMonthData(validData);
+      } else {
+        console.error(
+          "Failed to fetch all branches last month data:",
+          response.status,
+          response.statusText,
+        );
+        setAllBranchesLastMonthData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching all branches last month data:", error);
+      setAllBranchesLastMonthData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isAdmin()) {
       fetchAnalyticsData();
