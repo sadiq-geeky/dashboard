@@ -200,18 +200,12 @@ export function ConversationAnalytics() {
     return chartData;
   };
 
-  const getCustomerChartData = () => {
+  const getCustomerValue = () => {
     if (!customerData || customerData.length === 0) {
-      return [{ name: "Current Month", value: 0 }];
+      return 0;
     }
-
     const item = customerData[0];
-    return [
-      {
-        name: "Unique Customers",
-        value: item?.unique_cnic_count || 0,
-      },
-    ];
+    return item?.unique_cnic_count || 0;
   };
 
   if (!isAdmin()) return null;
