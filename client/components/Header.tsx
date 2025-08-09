@@ -207,10 +207,19 @@ export function Header() {
           {/* User Info */}
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2 text-sm text-gray-600">
-              {user.branch_city && (
+              {(user.branch_address ||
+                user.branch_name ||
+                user.branch_city) && (
                 <div className="flex items-center space-x-1">
                   <Building2 className="h-4 w-4" />
-                  <span>Branch: {user.branch_city}</span>
+                  <span>
+                    Branch:{" "}
+                    {isAdmin()
+                      ? user.branch_city
+                      : user.branch_address ||
+                        user.branch_name ||
+                        user.branch_city}
+                  </span>
                 </div>
               )}
             </div>

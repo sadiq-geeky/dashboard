@@ -28,6 +28,8 @@ export interface UserSession {
   role: "admin" | "manager" | "user";
   branch_id: string | null;
   branch_city: string | null;
+  branch_name: string | null;
+  branch_address: string | null;
   emp_name: string | null;
   phone_no: string | null;
   email_id: string | null;
@@ -299,11 +301,18 @@ export const loginUser: RequestHandler = async (req, res) => {
 
     // Get user by username with branch info from link table
     const users = await executeQuery<
-      User & { branch_id: string | null; branch_city: string | null }
+      User & {
+        branch_id: string | null;
+        branch_city: string | null;
+        branch_name: string | null;
+        branch_address: string | null;
+      }
     >(
       `SELECT u.*,
               ldbu.branch_id as branch_id,
-              b.branch_city as branch_city
+              b.branch_city as branch_city,
+              b.branch_name as branch_name,
+              b.branch_address as branch_address
        FROM users u
        LEFT JOIN link_device_branch_user ldbu ON ldbu.user_id COLLATE utf8mb4_0900_ai_ci = u.uuid COLLATE utf8mb4_0900_ai_ci
        LEFT JOIN branches b ON b.id COLLATE utf8mb4_0900_ai_ci = ldbu.branch_id COLLATE utf8mb4_0900_ai_ci
@@ -336,6 +345,8 @@ export const loginUser: RequestHandler = async (req, res) => {
       role: user.role,
       branch_id: user.branch_id,
       branch_city: user.branch_city,
+      branch_name: user.branch_name,
+      branch_address: user.branch_address,
       emp_name: user.emp_name,
       phone_no: user.phone_no,
       email_id: user.email_id,

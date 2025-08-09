@@ -340,10 +340,8 @@ export function ConversationAnalytics() {
   };
 
   useEffect(() => {
-    if (isAdmin()) {
-      fetchAnalyticsData();
-    }
-  }, [isAdmin]);
+    fetchAnalyticsData();
+  }, []);
 
   useEffect(() => {
     if (selectedBranch && activeChart === "branch") {
@@ -471,8 +469,6 @@ export function ConversationAnalytics() {
     return item?.unique_cnic_count || 0;
   };
 
-  if (!isAdmin()) return null;
-
   if (loading) {
     return (
       <div className="bg-white rounded-lg shadow p-6">
@@ -533,17 +529,19 @@ export function ConversationAnalytics() {
             <div className="text-sm font-medium">By Branch</div>
           </button>
 
-          <button
-            onClick={() => setActiveChart("city")}
-            className={`p-4 rounded-lg border-2 transition-all ${
-              activeChart === "city"
-                ? "border-green-500 bg-green-50 text-green-700"
-                : "border-gray-200 hover:border-gray-300 text-gray-600"
-            }`}
-          >
-            <MapPin className="h-5 w-5 mx-auto mb-2" />
-            <div className="text-sm font-medium">By City</div>
-          </button>
+          {isAdmin() && (
+            <button
+              onClick={() => setActiveChart("city")}
+              className={`p-4 rounded-lg border-2 transition-all ${
+                activeChart === "city"
+                  ? "border-green-500 bg-green-50 text-green-700"
+                  : "border-gray-200 hover:border-gray-300 text-gray-600"
+              }`}
+            >
+              <MapPin className="h-5 w-5 mx-auto mb-2" />
+              <div className="text-sm font-medium">By City</div>
+            </button>
+          )}
 
           <button
             onClick={() => setActiveChart("daily")}
@@ -583,17 +581,28 @@ export function ConversationAnalytics() {
                 {availableBranches.length > 0 && (
                   <div className="flex items-center space-x-2">
                     <Building2 className="h-4 w-4 text-gray-500" />
-                    <select
-                      value={selectedBranch}
-                      onChange={(e) => setSelectedBranch(e.target.value)}
-                      className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    >
-                      {availableBranches.map((branch) => (
-                        <option key={branch.branch_id} value={branch.branch_id}>
-                          {branch.branch_name}
-                        </option>
-                      ))}
-                    </select>
+                    {isAdmin() ? (
+                      <select
+                        value={selectedBranch}
+                        onChange={(e) => setSelectedBranch(e.target.value)}
+                        className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        {availableBranches.map((branch) => (
+                          <option
+                            key={branch.branch_id}
+                            value={branch.branch_id}
+                          >
+                            {branch.branch_name}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span className="text-sm font-medium text-gray-700">
+                        {availableBranches.find(
+                          (b) => b.branch_id === selectedBranch,
+                        )?.branch_name || "Your Branch"}
+                      </span>
+                    )}
                   </div>
                 )}
               </div>
@@ -684,17 +693,24 @@ export function ConversationAnalytics() {
                 {availableCities.length > 0 && (
                   <div className="flex items-center space-x-2">
                     <MapPin className="h-4 w-4 text-gray-500" />
-                    <select
-                      value={selectedCity}
-                      onChange={(e) => setSelectedCity(e.target.value)}
-                      className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    >
-                      {availableCities.map((city) => (
-                        <option key={city.city} value={city.city}>
-                          {city.city}
-                        </option>
-                      ))}
-                    </select>
+                    {isAdmin() ? (
+                      <select
+                        value={selectedCity}
+                        onChange={(e) => setSelectedCity(e.target.value)}
+                        className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                      >
+                        {availableCities.map((city) => (
+                          <option key={city.city} value={city.city}>
+                            {city.city}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span className="text-sm font-medium text-gray-700">
+                        {availableCities.find((c) => c.city === selectedCity)
+                          ?.city || "Your City"}
+                      </span>
+                    )}
                   </div>
                 )}
               </div>
@@ -786,19 +802,30 @@ export function ConversationAnalytics() {
                 {availableBranches.length > 0 && (
                   <div className="flex items-center space-x-2">
                     <Building2 className="h-4 w-4 text-gray-500" />
-                    <select
-                      value={selectedBranchForDaily}
-                      onChange={(e) =>
-                        setSelectedBranchForDaily(e.target.value)
-                      }
-                      className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    >
-                      {availableBranches.map((branch) => (
-                        <option key={branch.branch_id} value={branch.branch_id}>
-                          {branch.branch_name}
-                        </option>
-                      ))}
-                    </select>
+                    {isAdmin() ? (
+                      <select
+                        value={selectedBranchForDaily}
+                        onChange={(e) =>
+                          setSelectedBranchForDaily(e.target.value)
+                        }
+                        className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      >
+                        {availableBranches.map((branch) => (
+                          <option
+                            key={branch.branch_id}
+                            value={branch.branch_id}
+                          >
+                            {branch.branch_name}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span className="text-sm font-medium text-gray-700">
+                        {availableBranches.find(
+                          (b) => b.branch_id === selectedBranchForDaily,
+                        )?.branch_name || "Your Branch"}
+                      </span>
+                    )}
                   </div>
                 )}
               </div>
