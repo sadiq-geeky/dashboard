@@ -904,7 +904,7 @@ export function ConversationAnalytics() {
             {activeChart === "city" &&
               "Monthly conversations for the selected city showing conversation trends over the last 12 months."}
             {activeChart === "daily" &&
-              "Conversations by branch for the last month showing activity across all branches."}
+              "Daily conversation analytics for the selected branch showing trends over the last month."}
             {activeChart === "customers" &&
               "Number of unique customers (CNIC) per month visiting the branches."}
           </p>
