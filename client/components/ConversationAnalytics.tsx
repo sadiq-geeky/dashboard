@@ -1,20 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { authFetch } from "@/lib/api";
 import { useAuth } from "../contexts/AuthContext";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+import { GoogleChart, ChartPresets } from "./ui/google-chart";
 import {
   RefreshCw,
   BarChart3,
@@ -48,16 +35,26 @@ interface UniqueCustomerAnalytics {
   unique_cnic_count: number;
 }
 
-const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884D8",
-  "#82CA9D",
-  "#FFC658",
-  "#FF7C7C",
-];
+interface Branch {
+  branch_id: string;
+  branch_name: string;
+}
+
+interface BranchMonthlyRecordings {
+  month: string;
+  formatted_month: string;
+  count: number;
+}
+
+interface City {
+  city: string;
+}
+
+interface CityMonthlyConversations {
+  month: string;
+  formatted_month: string;
+  count: number;
+}
 
 export function ConversationAnalytics() {
   const { isAdmin } = useAuth();
@@ -71,12 +68,22 @@ export function ConversationAnalytics() {
   const [customerData, setCustomerData] = useState<UniqueCustomerAnalytics[]>(
     [],
   );
+  const [availableBranches, setAvailableBranches] = useState<Branch[]>([]);
+  const [branchMonthlyData, setBranchMonthlyData] = useState<
+    BranchMonthlyRecordings[]
+  >([]);
+  const [availableCities, setAvailableCities] = useState<City[]>([]);
+  const [cityMonthlyData, setCityMonthlyData] = useState<
+    CityMonthlyConversations[]
+  >([]);
 
   // UI states
   const [activeChart, setActiveChart] = useState<
     "branch" | "city" | "daily" | "customers"
   >("branch");
   const [selectedPeriod, setSelectedPeriod] = useState<string>("");
+  const [selectedBranch, setSelectedBranch] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
 
   const fetchAnalyticsData = async () => {
     try {
@@ -99,6 +106,30 @@ export function ConversationAnalytics() {
           : [];
         setBranchData(validBranchData);
 
+        // Extract unique branches for dropdown
+        const uniqueBranches = validBranchData.reduce(
+          (acc: Branch[], item: any) => {
+            if (item?.branch_id && item?.branch_name) {
+              const exists = acc.find((b) => b.branch_id === item.branch_id);
+              if (!exists) {
+                acc.push({
+                  branch_id: item.branch_id,
+                  branch_name: item.branch_name,
+                });
+              }
+            }
+            return acc;
+          },
+          [],
+        );
+
+        setAvailableBranches(uniqueBranches);
+
+        // Set default branch to first available branch
+        if (uniqueBranches.length > 0 && !selectedBranch) {
+          setSelectedBranch(uniqueBranches[0].branch_id);
+        }
+
         // Set default period to latest month
         const months = [
           ...new Set(
@@ -117,6 +148,24 @@ export function ConversationAnalytics() {
         const cityAnalytics = await cityRes.json();
         const validCityData = Array.isArray(cityAnalytics) ? cityAnalytics : [];
         setCityData(validCityData);
+
+        // Extract unique cities for dropdown
+        const uniqueCities = validCityData.reduce((acc: City[], item: any) => {
+          if (item?.city) {
+            const exists = acc.find((c) => c.city === item.city);
+            if (!exists) {
+              acc.push({ city: item.city });
+            }
+          }
+          return acc;
+        }, []);
+
+        setAvailableCities(uniqueCities);
+
+        // Set default city to first available city
+        if (uniqueCities.length > 0 && !selectedCity) {
+          setSelectedCity(uniqueCities[0].city);
+        }
       }
 
       // Process daily data
@@ -146,92 +195,198 @@ export function ConversationAnalytics() {
     }
   };
 
+  const fetchBranchMonthlyData = async (branchId: string) => {
+    if (!branchId) {
+      setBranchMonthlyData([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await authFetch(
+        `/api/analytics/conversations/branch/${branchId}/monthly`,
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const validData = Array.isArray(data)
+          ? data.filter((item) => item && typeof item === "object")
+          : [];
+        setBranchMonthlyData(validData);
+      } else {
+        console.error(
+          "Failed to fetch branch monthly data:",
+          response.status,
+          response.statusText,
+        );
+        setBranchMonthlyData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching branch monthly data:", error);
+      setBranchMonthlyData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCityMonthlyData = async (cityName: string) => {
+    if (!cityName) {
+      setCityMonthlyData([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await authFetch(
+        `/api/analytics/conversations/city/${encodeURIComponent(cityName)}/monthly`,
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const validData = Array.isArray(data)
+          ? data.filter((item) => item && typeof item === "object")
+          : [];
+        setCityMonthlyData(validData);
+      } else {
+        console.error(
+          "Failed to fetch city monthly data:",
+          response.status,
+          response.statusText,
+        );
+        setCityMonthlyData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching city monthly data:", error);
+      setCityMonthlyData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isAdmin()) {
       fetchAnalyticsData();
     }
   }, [isAdmin]);
 
-  // Prepare chart data for Recharts
+  useEffect(() => {
+    if (selectedBranch && activeChart === "branch") {
+      fetchBranchMonthlyData(selectedBranch);
+    }
+  }, [selectedBranch, activeChart]);
+
+  useEffect(() => {
+    if (selectedCity && activeChart === "city") {
+      fetchCityMonthlyData(selectedCity);
+    }
+  }, [selectedCity, activeChart]);
+
+  // Prepare chart data for Google Charts - Monthly recordings for selected branch
   const getBranchChartData = () => {
-    if (!branchData || branchData.length === 0 || !selectedPeriod) {
-      return [{ name: "No Data", count: 0 }];
-    }
+    try {
+      if (
+        !branchMonthlyData ||
+        !Array.isArray(branchMonthlyData) ||
+        branchMonthlyData.length === 0
+      ) {
+        return [
+          ["Month", "Recordings"],
+          ["No Data", 0],
+        ];
+      }
 
-    const filtered = branchData.filter(
-      (item) => item?.month === selectedPeriod,
-    );
-    if (filtered.length === 0) {
-      return [{ name: "No Data", count: 0 }];
-    }
+      const chartData: (string | number)[][] = [["Month", "Recordings"]];
 
-    return filtered
-      .sort((a, b) => (b?.count || 0) - (a?.count || 0))
-      .slice(0, 10)
-      .map((item) => ({
-        name:
-          item.branch_name?.length > 20
-            ? item.branch_name.substring(0, 20) + "..."
-            : item.branch_name || "Unknown",
-        count: item.count || 0,
-      }));
+      branchMonthlyData
+        .filter((item) => item && item.month) // Filter out any null/undefined items
+        .sort((a, b) => (a.month || "").localeCompare(b.month || ""))
+        .forEach((item) => {
+          const monthLabel = item.formatted_month || item.month || "Unknown";
+          const count = typeof item.count === "number" ? item.count : 0;
+          chartData.push([monthLabel, count]);
+        });
+
+      return chartData;
+    } catch (error) {
+      console.error("Error preparing branch chart data:", error);
+      return [
+        ["Month", "Recordings"],
+        ["Error", 0],
+      ];
+    }
   };
 
+  // Prepare chart data for Google Charts - Monthly conversations for selected city
   const getCityChartData = () => {
-    if (!cityData || cityData.length === 0) {
-      return [{ name: "No Data", count: 0 }];
-    }
+    try {
+      if (
+        !cityMonthlyData ||
+        !Array.isArray(cityMonthlyData) ||
+        cityMonthlyData.length === 0
+      ) {
+        return [
+          ["Month", "Conversations"],
+          ["No Data", 0],
+        ];
+      }
 
-    return cityData
-      .filter((item) => item?.city)
-      .sort((a, b) => (b?.count || 0) - (a?.count || 0))
-      .slice(0, 8)
-      .map((item) => ({
-        name: item.city || "Unknown",
-        count: item.count || 0,
-      }));
+      const chartData: (string | number)[][] = [["Month", "Conversations"]];
+
+      cityMonthlyData
+        .filter((item) => item && item.month) // Filter out any null/undefined items
+        .sort((a, b) => (a.month || "").localeCompare(b.month || ""))
+        .forEach((item) => {
+          const monthLabel = item.formatted_month || item.month || "Unknown";
+          const count = typeof item.count === "number" ? item.count : 0;
+          chartData.push([monthLabel, count]);
+        });
+
+      return chartData;
+    } catch (error) {
+      console.error("Error preparing city chart data:", error);
+      return [
+        ["Month", "Conversations"],
+        ["Error", 0],
+      ];
+    }
   };
 
   const getDailyChartData = () => {
     if (!dailyData || dailyData.length === 0) {
-      return [{ name: "No Data", count: 0 }];
+      return [
+        ["Date", "Conversations"],
+        ["No Data", 0],
+      ];
     }
 
-    return dailyData
+    const chartData = [["Date", "Conversations"]];
+    dailyData
       .filter((item) => item?.date)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .map((item) => {
+      .forEach((item) => {
         try {
           const date = new Date(item.date);
           if (!isNaN(date.getTime())) {
-            return {
-              name: date.toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              }),
-              count: item.count || 0,
-            };
+            const formattedDate = date.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
+            chartData.push([formattedDate, item.count || 0]);
           }
         } catch (error) {
           console.warn("Invalid date:", item.date);
         }
-        return null;
-      })
-      .filter(Boolean);
+      });
+
+    return chartData;
   };
 
-  const getCustomerChartData = () => {
+  const getCustomerValue = () => {
     if (!customerData || customerData.length === 0) {
-      return [{ name: "Current Month", value: 0 }];
+      return 0;
     }
-
     const item = customerData[0];
-    return [
-      {
-        name: "Unique Customers",
-        value: item?.unique_cnic_count || 0,
-      },
-    ];
+    return item?.unique_cnic_count || 0;
   };
 
   if (!isAdmin()) return null;
@@ -263,12 +418,6 @@ export function ConversationAnalytics() {
     );
   }
 
-  const availableMonths = [
-    ...new Set(branchData.map((item) => item?.month).filter(Boolean)),
-  ]
-    .sort()
-    .reverse();
-
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow p-6">
@@ -286,23 +435,6 @@ export function ConversationAnalytics() {
               </p>
             </div>
           </div>
-
-          {activeChart === "branch" && availableMonths.length > 0 && (
-            <div className="flex items-center space-x-2">
-              <Calendar className="h-4 w-4 text-gray-500" />
-              <select
-                value={selectedPeriod}
-                onChange={(e) => setSelectedPeriod(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-1 text-sm"
-              >
-                {availableMonths.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
         </div>
 
         {/* Chart Type Selection */}
@@ -360,23 +492,102 @@ export function ConversationAnalytics() {
         <div className="h-96 border border-gray-200 rounded-lg p-4 bg-white">
           {activeChart === "branch" && (
             <div className="h-full w-full">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Conversations by Branch
-              </h3>
-              <ResponsiveContainer width="100%" height="90%">
-                <BarChart data={getBranchChartData()} layout="horizontal">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    width={120}
-                    fontSize={12}
-                  />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#3B82F6" />
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Monthly Recordings -{" "}
+                  {availableBranches.find((b) => b.branch_id === selectedBranch)
+                    ?.branch_name || "Selected Branch"}
+                </h3>
+                {availableBranches.length > 0 && (
+                  <div className="flex items-center space-x-2">
+                    <Building2 className="h-4 w-4 text-gray-500" />
+                    <select
+                      value={selectedBranch}
+                      onChange={(e) => setSelectedBranch(e.target.value)}
+                      className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      {availableBranches.map((branch) => (
+                        <option key={branch.branch_id} value={branch.branch_id}>
+                          {branch.branch_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+              <div className="h-80">
+                {selectedBranch ? (
+                  <div className="w-full h-full p-4">
+                    {loading ? (
+                      <div className="flex items-center justify-center h-full">
+                        <RefreshCw className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+                        <span className="text-gray-600">Loading chart...</span>
+                      </div>
+                    ) : branchMonthlyData.length > 0 ? (
+                      <div className="w-full h-full">
+                        <div className="flex items-end justify-center h-64 space-x-4 mb-4">
+                          {branchMonthlyData.map((item, index) => {
+                            const maxCount = Math.max(
+                              ...branchMonthlyData.map((d) => d.count),
+                            );
+                            const height = (item.count / maxCount) * 200; // Max height 200px
+                            return (
+                              <div
+                                key={index}
+                                className="flex flex-col items-center space-y-2"
+                              >
+                                <div
+                                  className="bg-blue-500 hover:bg-blue-600 transition-colors duration-200 rounded-t-sm min-w-[60px] flex items-end justify-center relative group"
+                                  style={{ height: `${height}px` }}
+                                >
+                                  <span className="text-white text-xs font-medium mb-1">
+                                    {item.count}
+                                  </span>
+                                  {/* Tooltip */}
+                                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                                    {item.formatted_month}: {item.count}{" "}
+                                    recordings
+                                  </div>
+                                </div>
+                                <div className="text-xs text-gray-600 text-center max-w-[60px] break-words">
+                                  {item.formatted_month?.split(" ")[0] ||
+                                    item.month}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm font-medium text-gray-700 mb-1">
+                            Number of Recordings
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Monthly data for the last 12 months
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center text-gray-500">
+                          <Activity className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                          <p className="text-sm">
+                            No recordings found for this branch
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center text-gray-500">
+                      <Building2 className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                      <p className="text-sm">
+                        Select a branch to view recordings
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -385,28 +596,14 @@ export function ConversationAnalytics() {
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Conversations by City
               </h3>
-              <ResponsiveContainer width="100%" height="90%">
-                <PieChart>
-                  <Pie
-                    data={getCityChartData()}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="count"
-                  >
-                    {getCityChartData().map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              <div className="h-80">
+                <GoogleChart
+                  chartType="PieChart"
+                  data={getCityChartData()}
+                  loading={loading}
+                  options={ChartPresets.pieChart("")}
+                />
+              </div>
             </div>
           )}
 
@@ -415,27 +612,25 @@ export function ConversationAnalytics() {
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Daily Conversations - Last Month
               </h3>
-              <ResponsiveContainer width="100%" height="90%">
-                <LineChart data={getDailyChartData()}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="name"
-                    angle={-45}
-                    textAnchor="end"
-                    height={80}
-                    fontSize={12}
-                  />
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#F59E0B"
-                    strokeWidth={2}
-                    dot={{ fill: "#F59E0B" }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <div className="h-80">
+                <GoogleChart
+                  chartType="LineChart"
+                  data={getDailyChartData()}
+                  loading={loading}
+                  options={{
+                    ...ChartPresets.lineChart("", ChartPresets.colors.warning),
+                    hAxis: {
+                      title: "Date",
+                      slantedText: true,
+                      slantedTextAngle: 45,
+                    },
+                    vAxis: {
+                      title: "Conversations",
+                    },
+                    legend: { position: "none" },
+                  }}
+                />
+              </div>
             </div>
           )}
 
@@ -447,7 +642,7 @@ export function ConversationAnalytics() {
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <div className="text-6xl font-bold text-purple-600 mb-2">
-                    {getCustomerChartData()[0]?.value || 0}
+                    {getCustomerValue()}
                   </div>
                   <div className="text-lg text-gray-600">
                     Unique Customers (CNIC)
@@ -465,7 +660,7 @@ export function ConversationAnalytics() {
         <div className="mt-4 p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">
             {activeChart === "branch" &&
-              "Number of conversations based on unique branch ID organized by months."}
+              "Monthly recordings for the selected branch showing recording trends over the last 12 months."}
             {activeChart === "city" &&
               "Number of conversations associated with each city having single or multiple branches."}
             {activeChart === "daily" &&

@@ -50,6 +50,8 @@ import {
   getConversationsByCity,
   getDailyConversationsLastMonth,
   getUniqueCnicsByMonth,
+  getBranchRecordingsByMonth,
+  getCityConversationsByMonth,
 } from "./routes/conversation-analytics";
 import { getVoiceStreamsAnalytics } from "./routes/voice-streams-analytics";
 import {
@@ -218,6 +220,16 @@ export function createServer() {
     authenticate,
     addBranchFilter(),
     getUniqueCnicsByMonth,
+  );
+  app.get(
+    "/api/analytics/conversations/branch/:branchId/monthly",
+    authenticate,
+    getBranchRecordingsByMonth,
+  );
+  app.get(
+    "/api/analytics/conversations/city/:cityName/monthly",
+    authenticate,
+    getCityConversationsByMonth,
   );
   app.get(
     "/api/analytics/branch-monthly-trend",

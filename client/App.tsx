@@ -182,6 +182,7 @@ import { Complaints } from "./pages/Complaints";
 import { Login } from "./pages/Login";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
+import { GoogleChartsDemo } from "./components/GoogleChartsDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -266,6 +267,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Complaints />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/analytics-demo"
+              element={
+                <ProtectedRoute>
+                  <GoogleChartsDemo />
                 </ProtectedRoute>
               }
             />

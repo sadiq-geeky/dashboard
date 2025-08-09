@@ -10,6 +10,7 @@ import {
   Building2,
   Users,
   Settings,
+  Presentation,
 } from "lucide-react";
 
 interface AdminNavigationProps {
@@ -35,6 +36,7 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
     if (path === "/device-management") return "devices";
     if (path === "/user-management") return "users";
     if (path === "/deployment") return "deployment";
+    if (path === "/analytics-demo") return "analytics-demo";
 
     return "";
   };
@@ -70,6 +72,13 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
       label: "Complaints",
       icon: Mail,
       onClick: () => navigate("/complaints"),
+      group: "core",
+    },
+    {
+      id: "analytics-demo",
+      label: "Charts Demo",
+      icon: Presentation,
+      onClick: () => navigate("/analytics-demo"),
       group: "core",
     },
     // Second group: Admin management
