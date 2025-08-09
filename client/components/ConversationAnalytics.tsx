@@ -747,7 +747,7 @@ export function ConversationAnalytics() {
             {activeChart === "branch" &&
               "Monthly recordings for the selected branch showing recording trends over the last 12 months."}
             {activeChart === "city" &&
-              "Number of conversations associated with each city having single or multiple branches."}
+              "Monthly conversations for the selected city showing conversation trends over the last 12 months."}
             {activeChart === "daily" &&
               "Daily conversation analytics for the last month from recordings table."}
             {activeChart === "customers" &&
