@@ -79,7 +79,8 @@ export function ConversationAnalytics() {
   const [allBranchesLastMonthData, setAllBranchesLastMonthData] = useState<
     Array<{ branch_id: string; branch_name: string; count: number }>
   >([]);
-  const [selectedBranchForDaily, setSelectedBranchForDaily] = useState<string>("");
+  const [selectedBranchForDaily, setSelectedBranchForDaily] =
+    useState<string>("");
   const [branchDailyData, setBranchDailyData] = useState<
     Array<{ date: string; count: number; formatted_date: string }>
   >([]);
@@ -677,8 +678,8 @@ export function ConversationAnalytics() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-medium text-gray-900">
                   Monthly Conversations -{" "}
-                  {availableCities.find((c) => c.city === selectedCity)
-                    ?.city || "Selected City"}
+                  {availableCities.find((c) => c.city === selectedCity)?.city ||
+                    "Selected City"}
                 </h3>
                 {availableCities.length > 0 && (
                   <div className="flex items-center space-x-2">
@@ -778,15 +779,18 @@ export function ConversationAnalytics() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-medium text-gray-900">
                   Daily Conversations -{" "}
-                  {availableBranches.find((b) => b.branch_id === selectedBranchForDaily)
-                    ?.branch_name || "Selected Branch"}
+                  {availableBranches.find(
+                    (b) => b.branch_id === selectedBranchForDaily,
+                  )?.branch_name || "Selected Branch"}
                 </h3>
                 {availableBranches.length > 0 && (
                   <div className="flex items-center space-x-2">
                     <Building2 className="h-4 w-4 text-gray-500" />
                     <select
                       value={selectedBranchForDaily}
-                      onChange={(e) => setSelectedBranchForDaily(e.target.value)}
+                      onChange={(e) =>
+                        setSelectedBranchForDaily(e.target.value)
+                      }
                       className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                     >
                       {availableBranches.map((branch) => (
@@ -809,13 +813,21 @@ export function ConversationAnalytics() {
                     ) : branchDailyData.length > 0 ? (
                       <div className="w-full h-full">
                         <div className="overflow-x-auto pb-4">
-                          <div className="flex items-end justify-start h-64 space-x-1 mb-4" style={{ minWidth: `${branchDailyData.length * 32}px` }}>
+                          <div
+                            className="flex items-end justify-start h-64 space-x-1 mb-4"
+                            style={{
+                              minWidth: `${branchDailyData.length * 32}px`,
+                            }}
+                          >
                             {branchDailyData.map((item, index) => {
                               const maxCount = Math.max(
                                 ...branchDailyData.map((d) => d.count),
-                                1 // Ensure we have at least 1 for scaling
+                                1, // Ensure we have at least 1 for scaling
                               );
-                              const height = item.count > 0 ? (item.count / maxCount) * 200 : 2; // Min height 2px for zero values
+                              const height =
+                                item.count > 0
+                                  ? (item.count / maxCount) * 200
+                                  : 2; // Min height 2px for zero values
                               return (
                                 <div
                                   key={index}
@@ -824,8 +836,8 @@ export function ConversationAnalytics() {
                                   <div
                                     className={`transition-colors duration-200 rounded-t-sm w-7 flex items-end justify-center relative group ${
                                       item.count > 0
-                                        ? 'bg-orange-500 hover:bg-orange-600'
-                                        : 'bg-gray-200 hover:bg-gray-300'
+                                        ? "bg-orange-500 hover:bg-orange-600"
+                                        : "bg-gray-200 hover:bg-gray-300"
                                     }`}
                                     style={{ height: `${height}px` }}
                                   >
@@ -836,7 +848,8 @@ export function ConversationAnalytics() {
                                     )}
                                     {/* Tooltip */}
                                     <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
-                                      {item.formatted_date}: {item.count} conversations
+                                      {item.formatted_date}: {item.count}{" "}
+                                      conversations
                                     </div>
                                   </div>
                                   <div className="text-xs text-gray-600 text-center w-7">
@@ -853,12 +866,20 @@ export function ConversationAnalytics() {
                           </div>
                           <div className="text-lg font-semibold text-gray-800 mb-1">
                             {branchDailyData.length > 0
-                              ? new Date(branchDailyData[0].date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-                              : new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-                            }
+                              ? new Date(
+                                  branchDailyData[0].date,
+                                ).toLocaleDateString("en-US", {
+                                  month: "long",
+                                  year: "numeric",
+                                })
+                              : new Date().toLocaleDateString("en-US", {
+                                  month: "long",
+                                  year: "numeric",
+                                })}
                           </div>
                           <div className="text-xs text-gray-500">
-                            Daily data for the current month ({branchDailyData.length} days)
+                            Daily data for the current month (
+                            {branchDailyData.length} days)
                           </div>
                         </div>
                       </div>
@@ -867,7 +888,8 @@ export function ConversationAnalytics() {
                         <div className="text-center text-gray-500">
                           <Activity className="h-12 w-12 mx-auto mb-2 text-gray-300" />
                           <p className="text-sm">
-                            No conversations found for this branch in the last month
+                            No conversations found for this branch in the last
+                            month
                           </p>
                         </div>
                       </div>

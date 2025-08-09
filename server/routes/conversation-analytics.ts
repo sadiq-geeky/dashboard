@@ -280,7 +280,7 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
 
     // Create a map for quick lookup
     const conversationMap = new Map();
-    conversationData.forEach(row => {
+    conversationData.forEach((row) => {
       conversationMap.set(row.date, row.count);
     });
 
@@ -304,16 +304,16 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
     const currentDate = new Date(firstDay);
 
     while (currentDate <= lastDay) {
-      const dateString = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD format
-      const formattedDate = currentDate.toLocaleDateString('en-US', {
-        month: 'long',
-        day: '2-digit'
+      const dateString = currentDate.toISOString().split("T")[0]; // YYYY-MM-DD format
+      const formattedDate = currentDate.toLocaleDateString("en-US", {
+        month: "long",
+        day: "2-digit",
       });
 
       result.push({
         date: dateString,
         formatted_date: formattedDate,
-        count: conversationMap.get(dateString) || 0
+        count: conversationMap.get(dateString) || 0,
       });
 
       currentDate.setDate(currentDate.getDate() + 1);
@@ -369,7 +369,10 @@ export const getBranchRecordingsByMonth: RequestHandler = async (req, res) => {
 };
 
 // Get conversations for all branches in the last month
-export const getAllBranchesLastMonthConversations: RequestHandler = async (req, res) => {
+export const getAllBranchesLastMonthConversations: RequestHandler = async (
+  req,
+  res,
+) => {
   try {
     const query = `
       SELECT
@@ -394,8 +397,13 @@ export const getAllBranchesLastMonthConversations: RequestHandler = async (req, 
 
     res.json(result);
   } catch (error) {
-    console.error("Error fetching all branches last month conversations:", error);
-    res.status(500).json({ error: "Failed to fetch all branches last month conversations" });
+    console.error(
+      "Error fetching all branches last month conversations:",
+      error,
+    );
+    res
+      .status(500)
+      .json({ error: "Failed to fetch all branches last month conversations" });
   }
 };
 
