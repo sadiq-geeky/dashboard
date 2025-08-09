@@ -36,6 +36,7 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
     if (path === "/device-management") return "devices";
     if (path === "/user-management") return "users";
     if (path === "/deployment") return "deployment";
+    if (path === "/analytics-demo") return "analytics-demo";
 
     return "";
   };
