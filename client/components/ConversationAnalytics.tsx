@@ -391,50 +391,11 @@ export function ConversationAnalytics() {
                 Conversations by City
               </h3>
               <div className="h-80">
-                <Chart
+                <GoogleChart
                   chartType="PieChart"
-                  width="100%"
-                  height="100%"
                   data={getCityChartData()}
-                  options={{
-                    title: "",
-                    backgroundColor: "transparent",
-                    chartArea: {
-                      left: 20,
-                      top: 20,
-                      width: "90%",
-                      height: "85%",
-                    },
-                    colors: [
-                      "#0088FE",
-                      "#00C49F",
-                      "#FFBB28",
-                      "#FF8042",
-                      "#8884D8",
-                      "#82CA9D",
-                      "#FFC658",
-                      "#FF7C7C",
-                    ],
-                    pieSliceText: "label",
-                    pieSliceTextStyle: {
-                      fontSize: 11,
-                      fontName: "system-ui",
-                      color: "#000",
-                    },
-                    legend: {
-                      position: "right",
-                      textStyle: {
-                        fontSize: 11,
-                        fontName: "system-ui",
-                        color: "#6b7280",
-                      },
-                    },
-                    animation: {
-                      startup: true,
-                      easing: "inAndOut",
-                      duration: 800,
-                    },
-                  }}
+                  loading={loading}
+                  options={ChartPresets.pieChart("")}
                 />
               </div>
             </div>
