@@ -357,10 +357,10 @@ export function ConversationAnalytics() {
   }, [selectedCity, activeChart]);
 
   useEffect(() => {
-    if (activeChart === "daily") {
-      fetchAllBranchesLastMonthData();
+    if (selectedBranchForDaily && activeChart === "daily") {
+      fetchBranchDailyData(selectedBranchForDaily);
     }
-  }, [activeChart]);
+  }, [selectedBranchForDaily, activeChart]);
 
   // Prepare chart data for Google Charts - Monthly recordings for selected branch
   const getBranchChartData = () => {
