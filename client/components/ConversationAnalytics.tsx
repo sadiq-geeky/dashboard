@@ -313,6 +313,12 @@ export function ConversationAnalytics() {
     }
   }, [selectedCity, activeChart]);
 
+  useEffect(() => {
+    if (activeChart === "daily") {
+      fetchAllBranchesLastMonthData();
+    }
+  }, [activeChart]);
+
   // Prepare chart data for Google Charts - Monthly recordings for selected branch
   const getBranchChartData = () => {
     try {
