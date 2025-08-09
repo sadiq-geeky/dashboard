@@ -158,17 +158,29 @@ export function ConversationAnalytics() {
   };
 
   const fetchBranchMonthlyData = async (branchId: string) => {
+    console.log("fetchBranchMonthlyData called with branchId:", branchId);
+
     if (!branchId) {
+      console.log("No branchId provided, setting empty data");
       setBranchMonthlyData([]);
       return;
     }
 
     try {
       setLoading(true);
-      const response = await authFetch(`/api/analytics/conversations/branch/${branchId}/monthly`);
+      const url = `/api/analytics/conversations/branch/${branchId}/monthly`;
+      console.log("Fetching from URL:", url);
+
+      const response = await authFetch(url);
+      console.log("Response status:", response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log("Raw API response:", data);
+
         const validData = Array.isArray(data) ? data.filter(item => item && typeof item === 'object') : [];
+        console.log("Filtered valid data:", validData);
+
         setBranchMonthlyData(validData);
       } else {
         console.error("Failed to fetch branch monthly data:", response.status, response.statusText);
