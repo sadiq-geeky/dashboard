@@ -79,6 +79,10 @@ export function ConversationAnalytics() {
   const [allBranchesLastMonthData, setAllBranchesLastMonthData] = useState<
     Array<{ branch_id: string; branch_name: string; count: number }>
   >([]);
+  const [selectedBranchForDaily, setSelectedBranchForDaily] = useState<string>("");
+  const [branchDailyData, setBranchDailyData] = useState<
+    Array<{ date: string; count: number; formatted_date: string }>
+  >([]);
 
   // UI states
   const [activeChart, setActiveChart] = useState<
