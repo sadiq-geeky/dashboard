@@ -209,6 +209,44 @@ export const getDailyConversationsLastMonth: RequestHandler = async (
   }
 };
 
+// Get conversations per month for a specific city
+export const getCityConversationsByMonth: RequestHandler = async (req, res) => {
+  try {
+    const { cityName } = req.params;
+
+    if (!cityName) {
+      return res.status(400).json({ error: "City name is required" });
+    }
+
+    const query = `
+      SELECT
+        DATE_FORMAT(r.start_time, '%Y-%m') as month,
+        DATE_FORMAT(r.start_time, '%M %Y') as formatted_month,
+        COUNT(r.id) AS count
+      FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE b.branch_city = ?
+        AND r.start_time >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+      GROUP BY DATE_FORMAT(r.start_time, '%Y-%m'), DATE_FORMAT(r.start_time, '%M %Y')
+      ORDER BY month DESC
+      LIMIT 12
+    `;
+
+    const result = await executeQuery<{
+      month: string;
+      formatted_month: string;
+      count: number;
+    }>(query, [cityName]);
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching city conversations by month:", error);
+    res.status(500).json({ error: "Failed to fetch city conversations by month" });
+  }
+};
+
 // Get recordings per month for a specific branch
 export const getBranchRecordingsByMonth: RequestHandler = async (req, res) => {
   try {
