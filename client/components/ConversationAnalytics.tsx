@@ -808,31 +808,38 @@ export function ConversationAnalytics() {
                       </div>
                     ) : branchDailyData.length > 0 ? (
                       <div className="w-full h-full">
-                        <div className="overflow-x-auto">
-                          <div className="flex items-end justify-start h-64 space-x-2 mb-4 min-w-max">
+                        <div className="overflow-x-auto pb-4">
+                          <div className="flex items-end justify-start h-64 space-x-1 mb-4" style={{ minWidth: `${branchDailyData.length * 32}px` }}>
                             {branchDailyData.map((item, index) => {
                               const maxCount = Math.max(
                                 ...branchDailyData.map((d) => d.count),
+                                1 // Ensure we have at least 1 for scaling
                               );
-                              const height = maxCount > 0 ? (item.count / maxCount) * 200 : 0; // Max height 200px
+                              const height = item.count > 0 ? (item.count / maxCount) * 200 : 2; // Min height 2px for zero values
                               return (
                                 <div
                                   key={index}
-                                  className="flex flex-col items-center space-y-2"
+                                  className="flex flex-col items-center space-y-1"
                                 >
                                   <div
-                                    className="bg-orange-500 hover:bg-orange-600 transition-colors duration-200 rounded-t-sm min-w-[40px] flex items-end justify-center relative group"
-                                    style={{ height: `${Math.max(height, 4)}px` }}
+                                    className={`transition-colors duration-200 rounded-t-sm w-7 flex items-end justify-center relative group ${
+                                      item.count > 0
+                                        ? 'bg-orange-500 hover:bg-orange-600'
+                                        : 'bg-gray-200 hover:bg-gray-300'
+                                    }`}
+                                    style={{ height: `${height}px` }}
                                   >
-                                    <span className="text-white text-xs font-medium mb-1">
-                                      {item.count}
-                                    </span>
+                                    {item.count > 0 && (
+                                      <span className="text-white text-xs font-medium mb-1">
+                                        {item.count}
+                                      </span>
+                                    )}
                                     {/* Tooltip */}
                                     <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
                                       {item.formatted_date}: {item.count} conversations
                                     </div>
                                   </div>
-                                  <div className="text-xs text-gray-600 text-center max-w-[40px] break-words">
+                                  <div className="text-xs text-gray-600 text-center w-7">
                                     {item.formatted_date?.split(" ")[1] || new Date(item.date).getDate()}
                                   </div>
                                 </div>
