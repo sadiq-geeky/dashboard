@@ -141,6 +141,24 @@ export function ConversationAnalytics() {
         const cityAnalytics = await cityRes.json();
         const validCityData = Array.isArray(cityAnalytics) ? cityAnalytics : [];
         setCityData(validCityData);
+
+        // Extract unique cities for dropdown
+        const uniqueCities = validCityData.reduce((acc: City[], item: any) => {
+          if (item?.city) {
+            const exists = acc.find(c => c.city === item.city);
+            if (!exists) {
+              acc.push({ city: item.city });
+            }
+          }
+          return acc;
+        }, []);
+
+        setAvailableCities(uniqueCities);
+
+        // Set default city to first available city
+        if (uniqueCities.length > 0 && !selectedCity) {
+          setSelectedCity(uniqueCities[0].city);
+        }
       }
 
       // Process daily data
