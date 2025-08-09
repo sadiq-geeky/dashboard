@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { authFetch } from "@/lib/api";
 import { useAuth } from "../contexts/AuthContext";
-import { Chart } from "react-google-charts";
+import { GoogleChart, ChartPresets } from "./ui/google-chart";
 import {
   RefreshCw,
   BarChart3,
