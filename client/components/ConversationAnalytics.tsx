@@ -284,11 +284,7 @@ export function ConversationAnalytics() {
     );
   }
 
-  const availableMonths = [
-    ...new Set(branchData.map((item) => item?.month).filter(Boolean)),
-  ]
-    .sort()
-    .reverse();
+
 
   return (
     <div className="space-y-6">
