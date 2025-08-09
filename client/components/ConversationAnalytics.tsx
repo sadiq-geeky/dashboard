@@ -503,7 +503,7 @@ export function ConversationAnalytics() {
         <div className="mt-4 p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">
             {activeChart === "branch" &&
-              "Number of conversations based on unique branch ID organized by months."}
+              "Monthly recordings for the selected branch showing recording trends over the last 12 months."}
             {activeChart === "city" &&
               "Number of conversations associated with each city having single or multiple branches."}
             {activeChart === "daily" &&
