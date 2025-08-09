@@ -1,20 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { authFetch } from "@/lib/api";
 import { useAuth } from "../contexts/AuthContext";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+import { Chart } from "react-google-charts";
 import {
   RefreshCw,
   BarChart3,
