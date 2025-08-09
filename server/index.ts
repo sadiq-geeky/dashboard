@@ -233,6 +233,11 @@ export function createServer() {
     getCityConversationsByMonth,
   );
   app.get(
+    "/api/analytics/conversations/all-branches-last-month",
+    authenticate,
+    getAllBranchesLastMonthConversations,
+  );
+  app.get(
     "/api/analytics/branch-monthly-trend",
     authenticate,
     addBranchFilter(),
