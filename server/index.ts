@@ -221,6 +221,11 @@ export function createServer() {
     getUniqueCnicsByMonth,
   );
   app.get(
+    "/api/analytics/conversations/branch/:branchId/monthly",
+    authenticate,
+    getBranchRecordingsByMonth,
+  );
+  app.get(
     "/api/analytics/branch-monthly-trend",
     authenticate,
     addBranchFilter(),
