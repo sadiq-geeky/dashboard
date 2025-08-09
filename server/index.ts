@@ -239,6 +239,11 @@ export function createServer() {
     getAllBranchesLastMonthConversations,
   );
   app.get(
+    "/api/analytics/conversations/branch/:branchId/daily",
+    authenticate,
+    getBranchDailyConversations,
+  );
+  app.get(
     "/api/analytics/branch-monthly-trend",
     authenticate,
     addBranchFilter(),
