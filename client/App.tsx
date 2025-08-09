@@ -182,6 +182,7 @@ import { Complaints } from "./pages/Complaints";
 import { Login } from "./pages/Login";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
+import { GoogleChartsDemo } from "./components/GoogleChartsDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
