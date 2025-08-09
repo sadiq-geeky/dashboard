@@ -390,11 +390,12 @@ export function ConversationAnalytics() {
                 Monthly Recordings - {availableBranches.find(b => b.branch_id === selectedBranch)?.branch_name || "Selected Branch"}
               </h3>
               <div className="h-80">
-                <GoogleChart
-                  chartType="ColumnChart"
-                  data={getBranchChartData()}
-                  loading={loading || !selectedBranch}
-                  options={{
+                {selectedBranch ? (
+                  <GoogleChart
+                    chartType="ColumnChart"
+                    data={getBranchChartData()}
+                    loading={loading}
+                    options={{
                     ...ChartPresets.columnChart(""),
                     chartArea: {
                       left: 60,
