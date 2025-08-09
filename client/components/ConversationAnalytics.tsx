@@ -70,6 +70,8 @@ export function ConversationAnalytics() {
   );
   const [availableBranches, setAvailableBranches] = useState<Branch[]>([]);
   const [branchMonthlyData, setBranchMonthlyData] = useState<BranchMonthlyRecordings[]>([]);
+  const [availableCities, setAvailableCities] = useState<City[]>([]);
+  const [cityMonthlyData, setCityMonthlyData] = useState<CityMonthlyConversations[]>([]);
 
   // UI states
   const [activeChart, setActiveChart] = useState<
