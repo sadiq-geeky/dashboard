@@ -337,20 +337,60 @@ export function ConversationAnalytics() {
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Conversations by Branch
               </h3>
-              <ResponsiveContainer width="100%" height="90%">
-                <BarChart data={getBranchChartData()} layout="horizontal">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    width={120}
-                    fontSize={12}
-                  />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#3B82F6" />
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="h-80">
+                <Chart
+                  chartType="BarChart"
+                  width="100%"
+                  height="100%"
+                  data={getBranchChartData()}
+                  options={{
+                    title: "",
+                    backgroundColor: "transparent",
+                    chartArea: {
+                      left: 150,
+                      top: 20,
+                      width: "70%",
+                      height: "85%",
+                    },
+                    hAxis: {
+                      title: "Number of Conversations",
+                      titleTextStyle: {
+                        fontSize: 12,
+                        fontName: "system-ui",
+                        color: "#6b7280",
+                      },
+                      textStyle: {
+                        fontSize: 11,
+                        fontName: "system-ui",
+                        color: "#6b7280",
+                      },
+                      gridlines: {
+                        color: "#e5e7eb",
+                      },
+                    },
+                    vAxis: {
+                      title: "Branch",
+                      titleTextStyle: {
+                        fontSize: 12,
+                        fontName: "system-ui",
+                        color: "#6b7280",
+                      },
+                      textStyle: {
+                        fontSize: 10,
+                        fontName: "system-ui",
+                        color: "#6b7280",
+                      },
+                    },
+                    colors: ["#3B82F6"],
+                    legend: { position: "none" },
+                    animation: {
+                      startup: true,
+                      easing: "inAndOut",
+                      duration: 800,
+                    },
+                  }}
+                />
+              </div>
             </div>
           )}
 
@@ -359,28 +399,53 @@ export function ConversationAnalytics() {
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Conversations by City
               </h3>
-              <ResponsiveContainer width="100%" height="90%">
-                <PieChart>
-                  <Pie
-                    data={getCityChartData()}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="count"
-                  >
-                    {getCityChartData().map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              <div className="h-80">
+                <Chart
+                  chartType="PieChart"
+                  width="100%"
+                  height="100%"
+                  data={getCityChartData()}
+                  options={{
+                    title: "",
+                    backgroundColor: "transparent",
+                    chartArea: {
+                      left: 20,
+                      top: 20,
+                      width: "90%",
+                      height: "85%",
+                    },
+                    colors: [
+                      "#0088FE",
+                      "#00C49F",
+                      "#FFBB28",
+                      "#FF8042",
+                      "#8884D8",
+                      "#82CA9D",
+                      "#FFC658",
+                      "#FF7C7C",
+                    ],
+                    pieSliceText: "label",
+                    pieSliceTextStyle: {
+                      fontSize: 11,
+                      fontName: "system-ui",
+                      color: "#000",
+                    },
+                    legend: {
+                      position: "right",
+                      textStyle: {
+                        fontSize: 11,
+                        fontName: "system-ui",
+                        color: "#6b7280",
+                      },
+                    },
+                    animation: {
+                      startup: true,
+                      easing: "inAndOut",
+                      duration: 800,
+                    },
+                  }}
+                />
+              </div>
             </div>
           )}
 
@@ -389,27 +454,67 @@ export function ConversationAnalytics() {
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Daily Conversations - Last Month
               </h3>
-              <ResponsiveContainer width="100%" height="90%">
-                <LineChart data={getDailyChartData()}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="name"
-                    angle={-45}
-                    textAnchor="end"
-                    height={80}
-                    fontSize={12}
-                  />
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#F59E0B"
-                    strokeWidth={2}
-                    dot={{ fill: "#F59E0B" }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <div className="h-80">
+                <Chart
+                  chartType="LineChart"
+                  width="100%"
+                  height="100%"
+                  data={getDailyChartData()}
+                  options={{
+                    title: "",
+                    backgroundColor: "transparent",
+                    chartArea: {
+                      left: 60,
+                      top: 20,
+                      width: "85%",
+                      height: "75%",
+                    },
+                    hAxis: {
+                      title: "Date",
+                      titleTextStyle: {
+                        fontSize: 12,
+                        fontName: "system-ui",
+                        color: "#6b7280",
+                      },
+                      textStyle: {
+                        fontSize: 10,
+                        fontName: "system-ui",
+                        color: "#6b7280",
+                      },
+                      slantedText: true,
+                      slantedTextAngle: 45,
+                      gridlines: {
+                        color: "#e5e7eb",
+                      },
+                    },
+                    vAxis: {
+                      title: "Conversations",
+                      titleTextStyle: {
+                        fontSize: 12,
+                        fontName: "system-ui",
+                        color: "#6b7280",
+                      },
+                      textStyle: {
+                        fontSize: 11,
+                        fontName: "system-ui",
+                        color: "#6b7280",
+                      },
+                      gridlines: {
+                        color: "#e5e7eb",
+                      },
+                    },
+                    colors: ["#F59E0B"],
+                    lineWidth: 3,
+                    pointSize: 5,
+                    legend: { position: "none" },
+                    animation: {
+                      startup: true,
+                      easing: "inAndOut",
+                      duration: 800,
+                    },
+                  }}
+                />
+              </div>
             </div>
           )}
 
@@ -421,7 +526,7 @@ export function ConversationAnalytics() {
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <div className="text-6xl font-bold text-purple-600 mb-2">
-                    {getCustomerChartData()[0]?.value || 0}
+                    {getCustomerValue()}
                   </div>
                   <div className="text-lg text-gray-600">
                     Unique Customers (CNIC)
