@@ -321,22 +321,7 @@ export function ConversationAnalytics() {
             </div>
           </div>
 
-          {activeChart === "branch" && availableBranches.length > 0 && (
-            <div className="flex items-center space-x-2">
-              <Building2 className="h-4 w-4 text-gray-500" />
-              <select
-                value={selectedBranch}
-                onChange={(e) => setSelectedBranch(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-1 text-sm"
-              >
-                {availableBranches.map((branch) => (
-                  <option key={branch.branch_id} value={branch.branch_id}>
-                    {branch.branch_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+
         </div>
 
         {/* Chart Type Selection */}
