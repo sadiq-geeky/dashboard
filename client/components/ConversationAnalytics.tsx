@@ -175,30 +175,29 @@ export function ConversationAnalytics() {
 
   const getDailyChartData = () => {
     if (!dailyData || dailyData.length === 0) {
-      return [{ name: "No Data", count: 0 }];
+      return [["Date", "Conversations"], ["No Data", 0]];
     }
 
-    return dailyData
+    const chartData = [["Date", "Conversations"]];
+    dailyData
       .filter((item) => item?.date)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .map((item) => {
+      .forEach((item) => {
         try {
           const date = new Date(item.date);
           if (!isNaN(date.getTime())) {
-            return {
-              name: date.toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              }),
-              count: item.count || 0,
-            };
+            const formattedDate = date.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
+            chartData.push([formattedDate, item.count || 0]);
           }
         } catch (error) {
           console.warn("Invalid date:", item.date);
         }
-        return null;
-      })
-      .filter(Boolean);
+      });
+
+    return chartData;
   };
 
   const getCustomerChartData = () => {
