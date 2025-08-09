@@ -531,17 +531,19 @@ export function ConversationAnalytics() {
             <div className="text-sm font-medium">By Branch</div>
           </button>
 
-          <button
-            onClick={() => setActiveChart("city")}
-            className={`p-4 rounded-lg border-2 transition-all ${
-              activeChart === "city"
-                ? "border-green-500 bg-green-50 text-green-700"
-                : "border-gray-200 hover:border-gray-300 text-gray-600"
-            }`}
-          >
-            <MapPin className="h-5 w-5 mx-auto mb-2" />
-            <div className="text-sm font-medium">By City</div>
-          </button>
+          {isAdmin() && (
+            <button
+              onClick={() => setActiveChart("city")}
+              className={`p-4 rounded-lg border-2 transition-all ${
+                activeChart === "city"
+                  ? "border-green-500 bg-green-50 text-green-700"
+                  : "border-gray-200 hover:border-gray-300 text-gray-600"
+              }`}
+            >
+              <MapPin className="h-5 w-5 mx-auto mb-2" />
+              <div className="text-sm font-medium">By City</div>
+            </button>
+          )}
 
           <button
             onClick={() => setActiveChart("daily")}
