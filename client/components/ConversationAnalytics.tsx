@@ -157,11 +157,35 @@ export function ConversationAnalytics() {
     }
   };
 
+  const fetchBranchMonthlyData = async (branchId: string) => {
+    if (!branchId) return;
+
+    try {
+      const response = await authFetch(`/api/analytics/conversations/branch/${branchId}/monthly`);
+      if (response.ok) {
+        const data = await response.json();
+        setBranchMonthlyData(Array.isArray(data) ? data : []);
+      } else {
+        console.error("Failed to fetch branch monthly data");
+        setBranchMonthlyData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching branch monthly data:", error);
+      setBranchMonthlyData([]);
+    }
+  };
+
   useEffect(() => {
     if (isAdmin()) {
       fetchAnalyticsData();
     }
   }, [isAdmin]);
+
+  useEffect(() => {
+    if (selectedBranch && activeChart === "branch") {
+      fetchBranchMonthlyData(selectedBranch);
+    }
+  }, [selectedBranch, activeChart]);
 
   // Prepare chart data for Google Charts
   const getBranchChartData = () => {
