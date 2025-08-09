@@ -79,6 +79,7 @@ export function ConversationAnalytics() {
   >("branch");
   const [selectedPeriod, setSelectedPeriod] = useState<string>("");
   const [selectedBranch, setSelectedBranch] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
 
   const fetchAnalyticsData = async () => {
     try {
