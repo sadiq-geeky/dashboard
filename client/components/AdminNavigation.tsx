@@ -10,6 +10,7 @@ import {
   Building2,
   Users,
   Settings,
+  Presentation,
 } from "lucide-react";
 
 interface AdminNavigationProps {
