@@ -270,6 +270,14 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/analytics-demo"
+              element={
+                <ProtectedRoute>
+                  <GoogleChartsDemo />
+                </ProtectedRoute>
+              }
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
