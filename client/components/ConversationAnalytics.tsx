@@ -340,10 +340,8 @@ export function ConversationAnalytics() {
   };
 
   useEffect(() => {
-    if (isAdmin()) {
-      fetchAnalyticsData();
-    }
-  }, [isAdmin]);
+    fetchAnalyticsData();
+  }, []);
 
   useEffect(() => {
     if (selectedBranch && activeChart === "branch") {
@@ -471,7 +469,7 @@ export function ConversationAnalytics() {
     return item?.unique_cnic_count || 0;
   };
 
-  if (!isAdmin()) return null;
+
 
   if (loading) {
     return (
