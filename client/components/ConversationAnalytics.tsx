@@ -69,9 +69,13 @@ export function ConversationAnalytics() {
     [],
   );
   const [availableBranches, setAvailableBranches] = useState<Branch[]>([]);
-  const [branchMonthlyData, setBranchMonthlyData] = useState<BranchMonthlyRecordings[]>([]);
+  const [branchMonthlyData, setBranchMonthlyData] = useState<
+    BranchMonthlyRecordings[]
+  >([]);
   const [availableCities, setAvailableCities] = useState<City[]>([]);
-  const [cityMonthlyData, setCityMonthlyData] = useState<CityMonthlyConversations[]>([]);
+  const [cityMonthlyData, setCityMonthlyData] = useState<
+    CityMonthlyConversations[]
+  >([]);
 
   // UI states
   const [activeChart, setActiveChart] = useState<
@@ -103,18 +107,21 @@ export function ConversationAnalytics() {
         setBranchData(validBranchData);
 
         // Extract unique branches for dropdown
-        const uniqueBranches = validBranchData.reduce((acc: Branch[], item: any) => {
-          if (item?.branch_id && item?.branch_name) {
-            const exists = acc.find(b => b.branch_id === item.branch_id);
-            if (!exists) {
-              acc.push({
-                branch_id: item.branch_id,
-                branch_name: item.branch_name
-              });
+        const uniqueBranches = validBranchData.reduce(
+          (acc: Branch[], item: any) => {
+            if (item?.branch_id && item?.branch_name) {
+              const exists = acc.find((b) => b.branch_id === item.branch_id);
+              if (!exists) {
+                acc.push({
+                  branch_id: item.branch_id,
+                  branch_name: item.branch_name,
+                });
+              }
             }
-          }
-          return acc;
-        }, []);
+            return acc;
+          },
+          [],
+        );
 
         setAvailableBranches(uniqueBranches);
 
@@ -145,7 +152,7 @@ export function ConversationAnalytics() {
         // Extract unique cities for dropdown
         const uniqueCities = validCityData.reduce((acc: City[], item: any) => {
           if (item?.city) {
-            const exists = acc.find(c => c.city === item.city);
+            const exists = acc.find((c) => c.city === item.city);
             if (!exists) {
               acc.push({ city: item.city });
             }
@@ -196,14 +203,22 @@ export function ConversationAnalytics() {
 
     try {
       setLoading(true);
-      const response = await authFetch(`/api/analytics/conversations/branch/${branchId}/monthly`);
+      const response = await authFetch(
+        `/api/analytics/conversations/branch/${branchId}/monthly`,
+      );
 
       if (response.ok) {
         const data = await response.json();
-        const validData = Array.isArray(data) ? data.filter(item => item && typeof item === 'object') : [];
+        const validData = Array.isArray(data)
+          ? data.filter((item) => item && typeof item === "object")
+          : [];
         setBranchMonthlyData(validData);
       } else {
-        console.error("Failed to fetch branch monthly data:", response.status, response.statusText);
+        console.error(
+          "Failed to fetch branch monthly data:",
+          response.status,
+          response.statusText,
+        );
         setBranchMonthlyData([]);
       }
     } catch (error) {
@@ -222,14 +237,22 @@ export function ConversationAnalytics() {
 
     try {
       setLoading(true);
-      const response = await authFetch(`/api/analytics/conversations/city/${encodeURIComponent(cityName)}/monthly`);
+      const response = await authFetch(
+        `/api/analytics/conversations/city/${encodeURIComponent(cityName)}/monthly`,
+      );
 
       if (response.ok) {
         const data = await response.json();
-        const validData = Array.isArray(data) ? data.filter(item => item && typeof item === 'object') : [];
+        const validData = Array.isArray(data)
+          ? data.filter((item) => item && typeof item === "object")
+          : [];
         setCityMonthlyData(validData);
       } else {
-        console.error("Failed to fetch city monthly data:", response.status, response.statusText);
+        console.error(
+          "Failed to fetch city monthly data:",
+          response.status,
+          response.statusText,
+        );
         setCityMonthlyData([]);
       }
     } catch (error) {
@@ -261,56 +284,79 @@ export function ConversationAnalytics() {
   // Prepare chart data for Google Charts - Monthly recordings for selected branch
   const getBranchChartData = () => {
     try {
-      if (!branchMonthlyData || !Array.isArray(branchMonthlyData) || branchMonthlyData.length === 0) {
-        return [["Month", "Recordings"], ["No Data", 0]];
+      if (
+        !branchMonthlyData ||
+        !Array.isArray(branchMonthlyData) ||
+        branchMonthlyData.length === 0
+      ) {
+        return [
+          ["Month", "Recordings"],
+          ["No Data", 0],
+        ];
       }
 
       const chartData: (string | number)[][] = [["Month", "Recordings"]];
 
       branchMonthlyData
-        .filter(item => item && item.month) // Filter out any null/undefined items
+        .filter((item) => item && item.month) // Filter out any null/undefined items
         .sort((a, b) => (a.month || "").localeCompare(b.month || ""))
         .forEach((item) => {
           const monthLabel = item.formatted_month || item.month || "Unknown";
-          const count = typeof item.count === 'number' ? item.count : 0;
+          const count = typeof item.count === "number" ? item.count : 0;
           chartData.push([monthLabel, count]);
         });
 
       return chartData;
     } catch (error) {
       console.error("Error preparing branch chart data:", error);
-      return [["Month", "Recordings"], ["Error", 0]];
+      return [
+        ["Month", "Recordings"],
+        ["Error", 0],
+      ];
     }
   };
 
   // Prepare chart data for Google Charts - Monthly conversations for selected city
   const getCityChartData = () => {
     try {
-      if (!cityMonthlyData || !Array.isArray(cityMonthlyData) || cityMonthlyData.length === 0) {
-        return [["Month", "Conversations"], ["No Data", 0]];
+      if (
+        !cityMonthlyData ||
+        !Array.isArray(cityMonthlyData) ||
+        cityMonthlyData.length === 0
+      ) {
+        return [
+          ["Month", "Conversations"],
+          ["No Data", 0],
+        ];
       }
 
       const chartData: (string | number)[][] = [["Month", "Conversations"]];
 
       cityMonthlyData
-        .filter(item => item && item.month) // Filter out any null/undefined items
+        .filter((item) => item && item.month) // Filter out any null/undefined items
         .sort((a, b) => (a.month || "").localeCompare(b.month || ""))
         .forEach((item) => {
           const monthLabel = item.formatted_month || item.month || "Unknown";
-          const count = typeof item.count === 'number' ? item.count : 0;
+          const count = typeof item.count === "number" ? item.count : 0;
           chartData.push([monthLabel, count]);
         });
 
       return chartData;
     } catch (error) {
       console.error("Error preparing city chart data:", error);
-      return [["Month", "Conversations"], ["Error", 0]];
+      return [
+        ["Month", "Conversations"],
+        ["Error", 0],
+      ];
     }
   };
 
   const getDailyChartData = () => {
     if (!dailyData || dailyData.length === 0) {
-      return [["Date", "Conversations"], ["No Data", 0]];
+      return [
+        ["Date", "Conversations"],
+        ["No Data", 0],
+      ];
     }
 
     const chartData = [["Date", "Conversations"]];
@@ -372,8 +418,6 @@ export function ConversationAnalytics() {
     );
   }
 
-
-
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow p-6">
@@ -391,8 +435,6 @@ export function ConversationAnalytics() {
               </p>
             </div>
           </div>
-
-
         </div>
 
         {/* Chart Type Selection */}
@@ -452,7 +494,9 @@ export function ConversationAnalytics() {
             <div className="h-full w-full">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-medium text-gray-900">
-                  Monthly Recordings - {availableBranches.find(b => b.branch_id === selectedBranch)?.branch_name || "Selected Branch"}
+                  Monthly Recordings -{" "}
+                  {availableBranches.find((b) => b.branch_id === selectedBranch)
+                    ?.branch_name || "Selected Branch"}
                 </h3>
                 {availableBranches.length > 0 && (
                   <div className="flex items-center space-x-2">
@@ -483,10 +527,15 @@ export function ConversationAnalytics() {
                       <div className="w-full h-full">
                         <div className="flex items-end justify-center h-64 space-x-4 mb-4">
                           {branchMonthlyData.map((item, index) => {
-                            const maxCount = Math.max(...branchMonthlyData.map(d => d.count));
+                            const maxCount = Math.max(
+                              ...branchMonthlyData.map((d) => d.count),
+                            );
                             const height = (item.count / maxCount) * 200; // Max height 200px
                             return (
-                              <div key={index} className="flex flex-col items-center space-y-2">
+                              <div
+                                key={index}
+                                className="flex flex-col items-center space-y-2"
+                              >
                                 <div
                                   className="bg-blue-500 hover:bg-blue-600 transition-colors duration-200 rounded-t-sm min-w-[60px] flex items-end justify-center relative group"
                                   style={{ height: `${height}px` }}
@@ -496,26 +545,34 @@ export function ConversationAnalytics() {
                                   </span>
                                   {/* Tooltip */}
                                   <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-                                    {item.formatted_month}: {item.count} recordings
+                                    {item.formatted_month}: {item.count}{" "}
+                                    recordings
                                   </div>
                                 </div>
                                 <div className="text-xs text-gray-600 text-center max-w-[60px] break-words">
-                                  {item.formatted_month?.split(' ')[0] || item.month}
+                                  {item.formatted_month?.split(" ")[0] ||
+                                    item.month}
                                 </div>
                               </div>
                             );
                           })}
                         </div>
                         <div className="text-center">
-                          <div className="text-sm font-medium text-gray-700 mb-1">Number of Recordings</div>
-                          <div className="text-xs text-gray-500">Monthly data for the last 12 months</div>
+                          <div className="text-sm font-medium text-gray-700 mb-1">
+                            Number of Recordings
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Monthly data for the last 12 months
+                          </div>
                         </div>
                       </div>
                     ) : (
                       <div className="flex items-center justify-center h-full">
                         <div className="text-center text-gray-500">
                           <Activity className="h-12 w-12 mx-auto mb-2 text-gray-300" />
-                          <p className="text-sm">No recordings found for this branch</p>
+                          <p className="text-sm">
+                            No recordings found for this branch
+                          </p>
                         </div>
                       </div>
                     )}
@@ -524,7 +581,9 @@ export function ConversationAnalytics() {
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center text-gray-500">
                       <Building2 className="h-12 w-12 mx-auto mb-2 text-gray-300" />
-                      <p className="text-sm">Select a branch to view recordings</p>
+                      <p className="text-sm">
+                        Select a branch to view recordings
+                      </p>
                     </div>
                   </div>
                 )}

@@ -243,7 +243,9 @@ export const getCityConversationsByMonth: RequestHandler = async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error("Error fetching city conversations by month:", error);
-    res.status(500).json({ error: "Failed to fetch city conversations by month" });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch city conversations by month" });
   }
 };
 
@@ -281,7 +283,9 @@ export const getBranchRecordingsByMonth: RequestHandler = async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error("Error fetching branch recordings by month:", error);
-    res.status(500).json({ error: "Failed to fetch branch recordings by month" });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch branch recordings by month" });
   }
 };
 

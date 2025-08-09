@@ -134,8 +134,11 @@ export function GoogleChart({
   // Validate data structure - ensure all rows have the same number of columns
   try {
     const columnCount = data[0]?.length || 0;
-    const validData = data.filter(row =>
-      Array.isArray(row) && row.length === columnCount && row.every(cell => cell !== undefined && cell !== null)
+    const validData = data.filter(
+      (row) =>
+        Array.isArray(row) &&
+        row.length === columnCount &&
+        row.every((cell) => cell !== undefined && cell !== null),
     );
 
     if (validData.length <= 1) {
@@ -195,13 +198,22 @@ export const ChartPresets = {
     danger: ["#EF4444", "#DC2626", "#B91C1C"],
     purple: ["#8B5CF6", "#7C3AED", "#6D28D9"],
     multi: [
-      "#0088FE", "#00C49F", "#FFBB28", "#FF8042",
-      "#8884D8", "#82CA9D", "#FFC658", "#FF7C7C"
+      "#0088FE",
+      "#00C49F",
+      "#FFBB28",
+      "#FF8042",
+      "#8884D8",
+      "#82CA9D",
+      "#FFC658",
+      "#FF7C7C",
     ],
   },
 
   // Bar chart for rankings/comparisons
-  barChart: (title: string, colors: string[] = ChartPresets.colors.primary): Partial<google.visualization.ChartOptions> => ({
+  barChart: (
+    title: string,
+    colors: string[] = ChartPresets.colors.primary,
+  ): Partial<google.visualization.ChartOptions> => ({
     title,
     colors,
     bar: { groupWidth: "75%" },
@@ -209,7 +221,10 @@ export const ChartPresets = {
   }),
 
   // Line chart for trends
-  lineChart: (title: string, colors: string[] = ChartPresets.colors.primary): Partial<google.visualization.ChartOptions> => ({
+  lineChart: (
+    title: string,
+    colors: string[] = ChartPresets.colors.primary,
+  ): Partial<google.visualization.ChartOptions> => ({
     title,
     colors,
     lineWidth: 3,
@@ -218,7 +233,10 @@ export const ChartPresets = {
   }),
 
   // Area chart for volume over time
-  areaChart: (title: string, colors: string[] = ChartPresets.colors.primary): Partial<google.visualization.ChartOptions> => ({
+  areaChart: (
+    title: string,
+    colors: string[] = ChartPresets.colors.primary,
+  ): Partial<google.visualization.ChartOptions> => ({
     title,
     colors,
     lineWidth: 3,
@@ -228,7 +246,10 @@ export const ChartPresets = {
   }),
 
   // Pie chart for distribution
-  pieChart: (title: string, colors: string[] = ChartPresets.colors.multi): Partial<google.visualization.ChartOptions> => ({
+  pieChart: (
+    title: string,
+    colors: string[] = ChartPresets.colors.multi,
+  ): Partial<google.visualization.ChartOptions> => ({
     title,
     colors,
     pieSliceText: "label",
@@ -240,7 +261,10 @@ export const ChartPresets = {
   }),
 
   // Column chart for categories
-  columnChart: (title: string, colors: string[] = ChartPresets.colors.primary): Partial<google.visualization.ChartOptions> => ({
+  columnChart: (
+    title: string,
+    colors: string[] = ChartPresets.colors.primary,
+  ): Partial<google.visualization.ChartOptions> => ({
     title,
     colors,
     bar: { groupWidth: "75%" },
