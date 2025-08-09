@@ -46,6 +46,16 @@ interface BranchMonthlyRecordings {
   count: number;
 }
 
+interface City {
+  city: string;
+}
+
+interface CityMonthlyConversations {
+  month: string;
+  formatted_month: string;
+  count: number;
+}
+
 export function ConversationAnalytics() {
   const { isAdmin } = useAuth();
   const [loading, setLoading] = useState(true);
