@@ -58,12 +58,15 @@ export function ConversationAnalytics() {
   const [customerData, setCustomerData] = useState<UniqueCustomerAnalytics[]>(
     [],
   );
+  const [availableBranches, setAvailableBranches] = useState<Branch[]>([]);
+  const [branchMonthlyData, setBranchMonthlyData] = useState<BranchMonthlyRecordings[]>([]);
 
   // UI states
   const [activeChart, setActiveChart] = useState<
     "branch" | "city" | "daily" | "customers"
   >("branch");
   const [selectedPeriod, setSelectedPeriod] = useState<string>("");
+  const [selectedBranch, setSelectedBranch] = useState<string>("");
 
   const fetchAnalyticsData = async () => {
     try {
