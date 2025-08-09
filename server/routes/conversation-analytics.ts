@@ -258,10 +258,10 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       return res.status(400).json({ error: "Branch ID is required" });
     }
 
-    const query = `
+    // First, get the actual conversation data
+    const conversationQuery = `
       SELECT
         DATE(r.start_time) as date,
-        DATE_FORMAT(r.start_time, '%M %d') as formatted_date,
         COUNT(r.id) AS count
       FROM recordings r
       LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
@@ -269,15 +269,48 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       LEFT JOIN branches b ON b.id = ldbu.branch_id
       WHERE ldbu.branch_id = ?
         AND r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
-      GROUP BY DATE(r.start_time), DATE_FORMAT(r.start_time, '%M %d')
-      ORDER BY date ASC
+      GROUP BY DATE(r.start_time)
     `;
 
-    const result = await executeQuery<{
+    const conversationData = await executeQuery<{
+      date: string;
+      count: number;
+    }>(conversationQuery, [branchId]);
+
+    // Create a map for quick lookup
+    const conversationMap = new Map();
+    conversationData.forEach(row => {
+      conversationMap.set(row.date, row.count);
+    });
+
+    // Generate all days for the last month
+    const result: Array<{
       date: string;
       formatted_date: string;
       count: number;
-    }>(query, [branchId]);
+    }> = [];
+
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+    const today = new Date();
+    const currentDate = new Date(oneMonthAgo);
+
+    while (currentDate <= today) {
+      const dateString = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      const formattedDate = currentDate.toLocaleDateString('en-US', {
+        month: 'long',
+        day: '2-digit'
+      });
+
+      result.push({
+        date: dateString,
+        formatted_date: formattedDate,
+        count: conversationMap.get(dateString) || 0
+      });
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
 
     res.json(result);
   } catch (error) {
