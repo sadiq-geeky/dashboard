@@ -289,6 +289,37 @@ export const getBranchRecordingsByMonth: RequestHandler = async (req, res) => {
   }
 };
 
+// Get conversations for all branches in the last month
+export const getAllBranchesLastMonthConversations: RequestHandler = async (req, res) => {
+  try {
+    const query = `
+      SELECT
+        ldbu.branch_id,
+        COALESCE(MAX(b.branch_address), 'Unknown Branch') as branch_name,
+        COUNT(r.id) AS count
+      FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE ldbu.branch_id IS NOT NULL
+        AND r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+      GROUP BY ldbu.branch_id, b.branch_address
+      ORDER BY count DESC
+    `;
+
+    const result = await executeQuery<{
+      branch_id: string;
+      branch_name: string;
+      count: number;
+    }>(query);
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching all branches last month conversations:", error);
+    res.status(500).json({ error: "Failed to fetch all branches last month conversations" });
+  }
+};
+
 // Get unique CNICs by month
 export const getUniqueCnicsByMonth: RequestHandler = async (req, res) => {
   try {
