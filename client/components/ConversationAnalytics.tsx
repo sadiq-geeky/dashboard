@@ -840,7 +840,7 @@ export function ConversationAnalytics() {
                                     </div>
                                   </div>
                                   <div className="text-xs text-gray-600 text-center w-7">
-                                    {item.formatted_date?.split(" ")[1] || new Date(item.date).getDate()}
+                                    {new Date(item.date).getDate()}
                                   </div>
                                 </div>
                               );
