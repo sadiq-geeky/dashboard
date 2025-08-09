@@ -382,23 +382,38 @@ export function ConversationAnalytics() {
           {activeChart === "branch" && (
             <div className="h-full w-full">
               <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Conversations by Branch
+                Monthly Recordings - {availableBranches.find(b => b.branch_id === selectedBranch)?.branch_name || "Selected Branch"}
               </h3>
               <div className="h-80">
                 <GoogleChart
-                  chartType="BarChart"
+                  chartType="ColumnChart"
                   data={getBranchChartData()}
-                  loading={loading}
+                  loading={loading || !selectedBranch}
                   options={{
-                    ...ChartPresets.barChart(""),
+                    ...ChartPresets.columnChart(""),
                     chartArea: {
-                      left: 150,
+                      left: 60,
                       top: 20,
-                      width: "70%",
-                      height: "85%",
+                      width: "85%",
+                      height: "75%",
                     },
                     hAxis: {
-                      title: "Number of Conversations",
+                      title: "Month",
+                      titleTextStyle: {
+                        fontSize: 12,
+                        fontName: "system-ui",
+                        color: "#6b7280",
+                      },
+                      textStyle: {
+                        fontSize: 10,
+                        fontName: "system-ui",
+                        color: "#6b7280",
+                      },
+                      slantedText: true,
+                      slantedTextAngle: 45,
+                    },
+                    vAxis: {
+                      title: "Number of Recordings",
                       titleTextStyle: {
                         fontSize: 12,
                         fontName: "system-ui",
@@ -411,19 +426,6 @@ export function ConversationAnalytics() {
                       },
                       gridlines: {
                         color: "#e5e7eb",
-                      },
-                    },
-                    vAxis: {
-                      title: "Branch",
-                      titleTextStyle: {
-                        fontSize: 12,
-                        fontName: "system-ui",
-                        color: "#6b7280",
-                      },
-                      textStyle: {
-                        fontSize: 10,
-                        fontName: "system-ui",
-                        color: "#6b7280",
                       },
                     },
                   }}
