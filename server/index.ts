@@ -50,6 +50,7 @@ import {
   getConversationsByCity,
   getDailyConversationsLastMonth,
   getUniqueCnicsByMonth,
+  getBranchRecordingsByMonth,
 } from "./routes/conversation-analytics";
 import { getVoiceStreamsAnalytics } from "./routes/voice-streams-analytics";
 import {
