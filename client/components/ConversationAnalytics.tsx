@@ -299,6 +299,40 @@ export function ConversationAnalytics() {
     }
   };
 
+  const fetchBranchDailyData = async (branchId: string) => {
+    if (!branchId) {
+      setBranchDailyData([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await authFetch(
+        `/api/analytics/conversations/branch/${branchId}/daily`,
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const validData = Array.isArray(data)
+          ? data.filter((item) => item && typeof item === "object")
+          : [];
+        setBranchDailyData(validData);
+      } else {
+        console.error(
+          "Failed to fetch branch daily data:",
+          response.status,
+          response.statusText,
+        );
+        setBranchDailyData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching branch daily data:", error);
+      setBranchDailyData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isAdmin()) {
       fetchAnalyticsData();
