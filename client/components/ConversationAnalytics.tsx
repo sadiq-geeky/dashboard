@@ -158,17 +158,19 @@ export function ConversationAnalytics() {
 
   const getCityChartData = () => {
     if (!cityData || cityData.length === 0) {
-      return [{ name: "No Data", count: 0 }];
+      return [["City", "Conversations"], ["No Data", 0]];
     }
 
-    return cityData
+    const chartData = [["City", "Conversations"]];
+    cityData
       .filter((item) => item?.city)
       .sort((a, b) => (b?.count || 0) - (a?.count || 0))
       .slice(0, 8)
-      .map((item) => ({
-        name: item.city || "Unknown",
-        count: item.count || 0,
-      }));
+      .forEach((item) => {
+        chartData.push([item.city || "Unknown", item.count || 0]);
+      });
+
+    return chartData;
   };
 
   const getDailyChartData = () => {
