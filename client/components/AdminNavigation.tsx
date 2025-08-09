@@ -74,6 +74,13 @@ export function AdminNavigation({ className }: AdminNavigationProps) {
       onClick: () => navigate("/complaints"),
       group: "core",
     },
+    {
+      id: "analytics-demo",
+      label: "Charts Demo",
+      icon: Presentation,
+      onClick: () => navigate("/analytics-demo"),
+      group: "core",
+    },
     // Second group: Admin management
     {
       id: "branches",
