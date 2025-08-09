@@ -76,6 +76,14 @@ export function ConversationAnalytics() {
   const [cityMonthlyData, setCityMonthlyData] = useState<
     CityMonthlyConversations[]
   >([]);
+  const [allBranchesLastMonthData, setAllBranchesLastMonthData] = useState<
+    Array<{ branch_id: string; branch_name: string; count: number }>
+  >([]);
+  const [selectedBranchForDaily, setSelectedBranchForDaily] =
+    useState<string>("");
+  const [branchDailyData, setBranchDailyData] = useState<
+    Array<{ date: string; count: number; formatted_date: string }>
+  >([]);
 
   // UI states
   const [activeChart, setActiveChart] = useState<
@@ -128,6 +136,11 @@ export function ConversationAnalytics() {
         // Set default branch to first available branch
         if (uniqueBranches.length > 0 && !selectedBranch) {
           setSelectedBranch(uniqueBranches[0].branch_id);
+        }
+
+        // Set default branch for daily tab
+        if (uniqueBranches.length > 0 && !selectedBranchForDaily) {
+          setSelectedBranchForDaily(uniqueBranches[0].branch_id);
         }
 
         // Set default period to latest month
@@ -263,6 +276,69 @@ export function ConversationAnalytics() {
     }
   };
 
+  const fetchAllBranchesLastMonthData = async () => {
+    try {
+      setLoading(true);
+      const response = await authFetch(
+        "/api/analytics/conversations/all-branches-last-month",
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const validData = Array.isArray(data)
+          ? data.filter((item) => item && typeof item === "object")
+          : [];
+        setAllBranchesLastMonthData(validData);
+      } else {
+        console.error(
+          "Failed to fetch all branches last month data:",
+          response.status,
+          response.statusText,
+        );
+        setAllBranchesLastMonthData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching all branches last month data:", error);
+      setAllBranchesLastMonthData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchBranchDailyData = async (branchId: string) => {
+    if (!branchId) {
+      setBranchDailyData([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await authFetch(
+        `/api/analytics/conversations/branch/${branchId}/daily`,
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const validData = Array.isArray(data)
+          ? data.filter((item) => item && typeof item === "object")
+          : [];
+        setBranchDailyData(validData);
+      } else {
+        console.error(
+          "Failed to fetch branch daily data:",
+          response.status,
+          response.statusText,
+        );
+        setBranchDailyData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching branch daily data:", error);
+      setBranchDailyData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isAdmin()) {
       fetchAnalyticsData();
@@ -280,6 +356,12 @@ export function ConversationAnalytics() {
       fetchCityMonthlyData(selectedCity);
     }
   }, [selectedCity, activeChart]);
+
+  useEffect(() => {
+    if (selectedBranchForDaily && activeChart === "daily") {
+      fetchBranchDailyData(selectedBranchForDaily);
+    }
+  }, [selectedBranchForDaily, activeChart]);
 
   // Prepare chart data for Google Charts - Monthly recordings for selected branch
   const getBranchChartData = () => {
@@ -593,43 +675,236 @@ export function ConversationAnalytics() {
 
           {activeChart === "city" && (
             <div className="h-full w-full">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Conversations by City
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Monthly Conversations -{" "}
+                  {availableCities.find((c) => c.city === selectedCity)?.city ||
+                    "Selected City"}
+                </h3>
+                {availableCities.length > 0 && (
+                  <div className="flex items-center space-x-2">
+                    <MapPin className="h-4 w-4 text-gray-500" />
+                    <select
+                      value={selectedCity}
+                      onChange={(e) => setSelectedCity(e.target.value)}
+                      className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    >
+                      {availableCities.map((city) => (
+                        <option key={city.city} value={city.city}>
+                          {city.city}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
               <div className="h-80">
-                <GoogleChart
-                  chartType="PieChart"
-                  data={getCityChartData()}
-                  loading={loading}
-                  options={ChartPresets.pieChart("")}
-                />
+                {selectedCity ? (
+                  <div className="w-full h-full p-4">
+                    {loading ? (
+                      <div className="flex items-center justify-center h-full">
+                        <RefreshCw className="h-6 w-6 animate-spin text-green-600 mr-2" />
+                        <span className="text-gray-600">Loading chart...</span>
+                      </div>
+                    ) : cityMonthlyData.length > 0 ? (
+                      <div className="w-full h-full">
+                        <div className="flex items-end justify-center h-64 space-x-4 mb-4">
+                          {cityMonthlyData.map((item, index) => {
+                            const maxCount = Math.max(
+                              ...cityMonthlyData.map((d) => d.count),
+                            );
+                            const height = (item.count / maxCount) * 200; // Max height 200px
+                            return (
+                              <div
+                                key={index}
+                                className="flex flex-col items-center space-y-2"
+                              >
+                                <div
+                                  className="bg-green-500 hover:bg-green-600 transition-colors duration-200 rounded-t-sm min-w-[60px] flex items-end justify-center relative group"
+                                  style={{ height: `${height}px` }}
+                                >
+                                  <span className="text-white text-xs font-medium mb-1">
+                                    {item.count}
+                                  </span>
+                                  {/* Tooltip */}
+                                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                                    {item.formatted_month}: {item.count}{" "}
+                                    conversations
+                                  </div>
+                                </div>
+                                <div className="text-xs text-gray-600 text-center max-w-[60px] break-words">
+                                  {item.formatted_month?.split(" ")[0] ||
+                                    item.month}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm font-medium text-gray-700 mb-1">
+                            Number of Conversations
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Monthly data for the last 12 months
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center text-gray-500">
+                          <Activity className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                          <p className="text-sm">
+                            No conversations found for this city
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center text-gray-500">
+                      <MapPin className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                      <p className="text-sm">
+                        Select a city to view conversations
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
           {activeChart === "daily" && (
             <div className="h-full w-full">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Daily Conversations - Last Month
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Daily Conversations -{" "}
+                  {availableBranches.find(
+                    (b) => b.branch_id === selectedBranchForDaily,
+                  )?.branch_name || "Selected Branch"}
+                </h3>
+                {availableBranches.length > 0 && (
+                  <div className="flex items-center space-x-2">
+                    <Building2 className="h-4 w-4 text-gray-500" />
+                    <select
+                      value={selectedBranchForDaily}
+                      onChange={(e) =>
+                        setSelectedBranchForDaily(e.target.value)
+                      }
+                      className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    >
+                      {availableBranches.map((branch) => (
+                        <option key={branch.branch_id} value={branch.branch_id}>
+                          {branch.branch_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
               <div className="h-80">
-                <GoogleChart
-                  chartType="LineChart"
-                  data={getDailyChartData()}
-                  loading={loading}
-                  options={{
-                    ...ChartPresets.lineChart("", ChartPresets.colors.warning),
-                    hAxis: {
-                      title: "Date",
-                      slantedText: true,
-                      slantedTextAngle: 45,
-                    },
-                    vAxis: {
-                      title: "Conversations",
-                    },
-                    legend: { position: "none" },
-                  }}
-                />
+                {selectedBranchForDaily ? (
+                  <div className="w-full h-full p-4">
+                    {loading ? (
+                      <div className="flex items-center justify-center h-full">
+                        <RefreshCw className="h-6 w-6 animate-spin text-orange-600 mr-2" />
+                        <span className="text-gray-600">Loading chart...</span>
+                      </div>
+                    ) : branchDailyData.length > 0 ? (
+                      <div className="w-full h-full">
+                        <div className="overflow-x-auto pb-4">
+                          <div
+                            className="flex items-end justify-start h-64 space-x-1 mb-4"
+                            style={{
+                              minWidth: `${branchDailyData.length * 32}px`,
+                            }}
+                          >
+                            {branchDailyData.map((item, index) => {
+                              const maxCount = Math.max(
+                                ...branchDailyData.map((d) => d.count),
+                                1, // Ensure we have at least 1 for scaling
+                              );
+                              const height =
+                                item.count > 0
+                                  ? (item.count / maxCount) * 200
+                                  : 2; // Min height 2px for zero values
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex flex-col items-center space-y-1"
+                                >
+                                  <div
+                                    className={`transition-colors duration-200 rounded-t-sm w-7 flex items-end justify-center relative group ${
+                                      item.count > 0
+                                        ? "bg-orange-500 hover:bg-orange-600"
+                                        : "bg-gray-200 hover:bg-gray-300"
+                                    }`}
+                                    style={{ height: `${height}px` }}
+                                  >
+                                    {item.count > 0 && (
+                                      <span className="text-white text-xs font-medium mb-1">
+                                        {item.count}
+                                      </span>
+                                    )}
+                                    {/* Tooltip */}
+                                    <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
+                                      {item.formatted_date}: {item.count}{" "}
+                                      conversations
+                                    </div>
+                                  </div>
+                                  <div className="text-xs text-gray-600 text-center w-7">
+                                    {new Date(item.date).getDate()}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm font-medium text-gray-700 mb-1">
+                            Number of Conversations
+                          </div>
+                          <div className="text-lg font-semibold text-gray-800 mb-1">
+                            {branchDailyData.length > 0
+                              ? new Date(
+                                  branchDailyData[0].date,
+                                ).toLocaleDateString("en-US", {
+                                  month: "long",
+                                  year: "numeric",
+                                })
+                              : new Date().toLocaleDateString("en-US", {
+                                  month: "long",
+                                  year: "numeric",
+                                })}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Daily data for the current month (
+                            {branchDailyData.length} days)
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center text-gray-500">
+                          <Activity className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                          <p className="text-sm">
+                            No conversations found for this branch in the last
+                            month
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center text-gray-500">
+                      <Building2 className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                      <p className="text-sm">
+                        Select a branch to view daily conversations
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -662,9 +937,9 @@ export function ConversationAnalytics() {
             {activeChart === "branch" &&
               "Monthly recordings for the selected branch showing recording trends over the last 12 months."}
             {activeChart === "city" &&
-              "Number of conversations associated with each city having single or multiple branches."}
+              "Monthly conversations for the selected city showing conversation trends over the last 12 months."}
             {activeChart === "daily" &&
-              "Daily conversation analytics for the last month from recordings table."}
+              "Daily conversation analytics for the selected branch showing trends over the last month."}
             {activeChart === "customers" &&
               "Number of unique customers (CNIC) per month visiting the branches."}
           </p>
