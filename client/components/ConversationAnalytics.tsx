@@ -851,8 +851,14 @@ export function ConversationAnalytics() {
                           <div className="text-sm font-medium text-gray-700 mb-1">
                             Number of Conversations
                           </div>
+                          <div className="text-lg font-semibold text-gray-800 mb-1">
+                            {branchDailyData.length > 0
+                              ? new Date(branchDailyData[0].date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+                              : new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+                            }
+                          </div>
                           <div className="text-xs text-gray-500">
-                            Daily data for the last month ({branchDailyData.length} days)
+                            Daily data for the current month ({branchDailyData.length} days)
                           </div>
                         </div>
                       </div>
