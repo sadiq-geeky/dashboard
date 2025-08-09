@@ -89,6 +89,27 @@ export function ConversationAnalytics() {
           : [];
         setBranchData(validBranchData);
 
+        // Extract unique branches for dropdown
+        const uniqueBranches = validBranchData.reduce((acc: Branch[], item: any) => {
+          if (item?.branch_id && item?.branch_name) {
+            const exists = acc.find(b => b.branch_id === item.branch_id);
+            if (!exists) {
+              acc.push({
+                branch_id: item.branch_id,
+                branch_name: item.branch_name
+              });
+            }
+          }
+          return acc;
+        }, []);
+
+        setAvailableBranches(uniqueBranches);
+
+        // Set default branch to first available branch
+        if (uniqueBranches.length > 0 && !selectedBranch) {
+          setSelectedBranch(uniqueBranches[0].branch_id);
+        }
+
         // Set default period to latest month
         const months = [
           ...new Set(
