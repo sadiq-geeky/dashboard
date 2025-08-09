@@ -158,20 +158,27 @@ export function ConversationAnalytics() {
   };
 
   const fetchBranchMonthlyData = async (branchId: string) => {
-    if (!branchId) return;
+    if (!branchId) {
+      setBranchMonthlyData([]);
+      return;
+    }
 
     try {
+      setLoading(true);
       const response = await authFetch(`/api/analytics/conversations/branch/${branchId}/monthly`);
       if (response.ok) {
         const data = await response.json();
-        setBranchMonthlyData(Array.isArray(data) ? data : []);
+        const validData = Array.isArray(data) ? data.filter(item => item && typeof item === 'object') : [];
+        setBranchMonthlyData(validData);
       } else {
-        console.error("Failed to fetch branch monthly data");
+        console.error("Failed to fetch branch monthly data:", response.status, response.statusText);
         setBranchMonthlyData([]);
       }
     } catch (error) {
       console.error("Error fetching branch monthly data:", error);
       setBranchMonthlyData([]);
+    } finally {
+      setLoading(false);
     }
   };
 
