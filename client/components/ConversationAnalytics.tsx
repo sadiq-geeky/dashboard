@@ -407,63 +407,21 @@ export function ConversationAnalytics() {
                 Daily Conversations - Last Month
               </h3>
               <div className="h-80">
-                <Chart
+                <GoogleChart
                   chartType="LineChart"
-                  width="100%"
-                  height="100%"
                   data={getDailyChartData()}
+                  loading={loading}
                   options={{
-                    title: "",
-                    backgroundColor: "transparent",
-                    chartArea: {
-                      left: 60,
-                      top: 20,
-                      width: "85%",
-                      height: "75%",
-                    },
+                    ...ChartPresets.lineChart("", ChartPresets.colors.warning),
                     hAxis: {
                       title: "Date",
-                      titleTextStyle: {
-                        fontSize: 12,
-                        fontName: "system-ui",
-                        color: "#6b7280",
-                      },
-                      textStyle: {
-                        fontSize: 10,
-                        fontName: "system-ui",
-                        color: "#6b7280",
-                      },
                       slantedText: true,
                       slantedTextAngle: 45,
-                      gridlines: {
-                        color: "#e5e7eb",
-                      },
                     },
                     vAxis: {
                       title: "Conversations",
-                      titleTextStyle: {
-                        fontSize: 12,
-                        fontName: "system-ui",
-                        color: "#6b7280",
-                      },
-                      textStyle: {
-                        fontSize: 11,
-                        fontName: "system-ui",
-                        color: "#6b7280",
-                      },
-                      gridlines: {
-                        color: "#e5e7eb",
-                      },
                     },
-                    colors: ["#F59E0B"],
-                    lineWidth: 3,
-                    pointSize: 5,
                     legend: { position: "none" },
-                    animation: {
-                      startup: true,
-                      easing: "inAndOut",
-                      duration: 800,
-                    },
                   }}
                 />
               </div>
