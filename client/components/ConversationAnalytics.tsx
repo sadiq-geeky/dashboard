@@ -379,9 +379,27 @@ export function ConversationAnalytics() {
         <div className="h-96 border border-gray-200 rounded-lg p-4 bg-white">
           {activeChart === "branch" && (
             <div className="h-full w-full">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Monthly Recordings - {availableBranches.find(b => b.branch_id === selectedBranch)?.branch_name || "Selected Branch"}
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Monthly Recordings - {availableBranches.find(b => b.branch_id === selectedBranch)?.branch_name || "Selected Branch"}
+                </h3>
+                {availableBranches.length > 0 && (
+                  <div className="flex items-center space-x-2">
+                    <Building2 className="h-4 w-4 text-gray-500" />
+                    <select
+                      value={selectedBranch}
+                      onChange={(e) => setSelectedBranch(e.target.value)}
+                      className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      {availableBranches.map((branch) => (
+                        <option key={branch.branch_id} value={branch.branch_id}>
+                          {branch.branch_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
               <div className="h-80">
                 {selectedBranch ? (
                   <div className="w-full h-full p-4">
