@@ -733,26 +733,67 @@ export function ConversationAnalytics() {
           {activeChart === "daily" && (
             <div className="h-full w-full">
               <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Daily Conversations - Last Month
+                Conversations by Branch - Last Month
               </h3>
               <div className="h-80">
-                <GoogleChart
-                  chartType="LineChart"
-                  data={getDailyChartData()}
-                  loading={loading}
-                  options={{
-                    ...ChartPresets.lineChart("", ChartPresets.colors.warning),
-                    hAxis: {
-                      title: "Date",
-                      slantedText: true,
-                      slantedTextAngle: 45,
-                    },
-                    vAxis: {
-                      title: "Conversations",
-                    },
-                    legend: { position: "none" },
-                  }}
-                />
+                {loading ? (
+                  <div className="flex items-center justify-center h-full">
+                    <RefreshCw className="h-6 w-6 animate-spin text-orange-600 mr-2" />
+                    <span className="text-gray-600">Loading chart...</span>
+                  </div>
+                ) : allBranchesLastMonthData.length > 0 ? (
+                  <div className="w-full h-full p-4">
+                    <div className="overflow-x-auto">
+                      <div className="flex items-end justify-start h-64 space-x-1 mb-4 min-w-max">
+                        {allBranchesLastMonthData.map((item, index) => {
+                          const maxCount = Math.max(
+                            ...allBranchesLastMonthData.map((d) => d.count),
+                          );
+                          const height = maxCount > 0 ? (item.count / maxCount) * 200 : 0; // Max height 200px
+                          return (
+                            <div
+                              key={index}
+                              className="flex flex-col items-center space-y-2"
+                            >
+                              <div
+                                className="bg-orange-500 hover:bg-orange-600 transition-colors duration-200 rounded-t-sm w-6 flex items-end justify-center relative group"
+                                style={{ height: `${Math.max(height, 4)}px` }}
+                              >
+                                <span className="text-white text-xs font-medium mb-1 transform -rotate-90 origin-center">
+                                  {item.count}
+                                </span>
+                                {/* Tooltip */}
+                                <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
+                                  {item.branch_name}: {item.count} conversations
+                                </div>
+                              </div>
+                              <div className="text-xs text-gray-600 text-center w-6 break-words transform -rotate-45 origin-top">
+                                {item.branch_name?.split(" ")[0] || `B${index + 1}`}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm font-medium text-gray-700 mb-1">
+                        Number of Conversations
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        All branches - Last month data ({allBranchesLastMonthData.length} branches)
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center text-gray-500">
+                      <Activity className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                      <p className="text-sm">
+                        No conversations found for the last month
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
