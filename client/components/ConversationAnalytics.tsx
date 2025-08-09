@@ -417,51 +417,29 @@ export function ConversationAnalytics() {
               </h3>
               <div className="h-80">
                 {selectedBranch ? (
-                  <GoogleChart
-                    chartType="ColumnChart"
-                    data={getBranchChartData()}
-                    loading={loading}
-                    options={{
-                    ...ChartPresets.columnChart(""),
-                    chartArea: {
-                      left: 60,
-                      top: 20,
-                      width: "85%",
-                      height: "75%",
-                    },
-                    hAxis: {
-                      title: "Month",
-                      titleTextStyle: {
-                        fontSize: 12,
-                        fontName: "system-ui",
-                        color: "#6b7280",
-                      },
-                      textStyle: {
-                        fontSize: 10,
-                        fontName: "system-ui",
-                        color: "#6b7280",
-                      },
-                      slantedText: true,
-                      slantedTextAngle: 45,
-                    },
-                    vAxis: {
-                      title: "Number of Recordings",
-                      titleTextStyle: {
-                        fontSize: 12,
-                        fontName: "system-ui",
-                        color: "#6b7280",
-                      },
-                      textStyle: {
-                        fontSize: 11,
-                        fontName: "system-ui",
-                        color: "#6b7280",
-                      },
-                      gridlines: {
-                        color: "#e5e7eb",
-                      },
-                    },
-                    }}
-                  />
+                  <div className="p-4 bg-gray-50 rounded">
+                    <h4 className="font-medium mb-2">Debug Info:</h4>
+                    <div className="text-xs space-y-2">
+                      <div>
+                        <strong>Selected Branch ID:</strong> {selectedBranch}
+                      </div>
+                      <div>
+                        <strong>Raw Data:</strong>
+                        <pre className="bg-white p-2 rounded mt-1 overflow-auto max-h-32">
+                          {JSON.stringify(branchMonthlyData, null, 2)}
+                        </pre>
+                      </div>
+                      <div>
+                        <strong>Chart Data:</strong>
+                        <pre className="bg-white p-2 rounded mt-1 overflow-auto max-h-32">
+                          {JSON.stringify(getBranchChartData(), null, 2)}
+                        </pre>
+                      </div>
+                      <div>
+                        <strong>Loading:</strong> {loading ? "Yes" : "No"}
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center text-gray-500">
