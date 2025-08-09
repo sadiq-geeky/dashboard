@@ -399,36 +399,53 @@ export function ConversationAnalytics() {
               </h3>
               <div className="h-80">
                 {selectedBranch ? (
-                  <GoogleChart
-                    chartType="ColumnChart"
-                    data={getBranchChartData()}
-                    loading={loading}
-                    options={{
-                      backgroundColor: "transparent",
-                      chartArea: {
-                        left: 60,
-                        top: 20,
-                        width: "85%",
-                        height: "75%",
-                      },
-                      hAxis: {
-                        title: "Month",
-                        slantedText: true,
-                        slantedTextAngle: 45,
-                      },
-                      vAxis: {
-                        title: "Number of Recordings",
-                        minValue: 0,
-                      },
-                      colors: ["#3B82F6"],
-                      legend: { position: "none" },
-                      animation: {
-                        startup: true,
-                        easing: "inAndOut",
-                        duration: 500,
-                      },
-                    }}
-                  />
+                  <div className="w-full h-full p-4">
+                    {loading ? (
+                      <div className="flex items-center justify-center h-full">
+                        <RefreshCw className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+                        <span className="text-gray-600">Loading chart...</span>
+                      </div>
+                    ) : branchMonthlyData.length > 0 ? (
+                      <div className="w-full h-full">
+                        <div className="flex items-end justify-center h-64 space-x-4 mb-4">
+                          {branchMonthlyData.map((item, index) => {
+                            const maxCount = Math.max(...branchMonthlyData.map(d => d.count));
+                            const height = (item.count / maxCount) * 200; // Max height 200px
+                            return (
+                              <div key={index} className="flex flex-col items-center space-y-2">
+                                <div
+                                  className="bg-blue-500 hover:bg-blue-600 transition-colors duration-200 rounded-t-sm min-w-[60px] flex items-end justify-center relative group"
+                                  style={{ height: `${height}px` }}
+                                >
+                                  <span className="text-white text-xs font-medium mb-1">
+                                    {item.count}
+                                  </span>
+                                  {/* Tooltip */}
+                                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                                    {item.formatted_month}: {item.count} recordings
+                                  </div>
+                                </div>
+                                <div className="text-xs text-gray-600 text-center max-w-[60px] break-words">
+                                  {item.formatted_month?.split(' ')[0] || item.month}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm font-medium text-gray-700 mb-1">Number of Recordings</div>
+                          <div className="text-xs text-gray-500">Monthly data for the last 12 months</div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center text-gray-500">
+                          <Activity className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                          <p className="text-sm">No recordings found for this branch</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center text-gray-500">
