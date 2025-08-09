@@ -35,6 +35,17 @@ interface UniqueCustomerAnalytics {
   unique_cnic_count: number;
 }
 
+interface Branch {
+  branch_id: string;
+  branch_name: string;
+}
+
+interface BranchMonthlyRecordings {
+  month: string;
+  formatted_month: string;
+  count: number;
+}
+
 export function ConversationAnalytics() {
   const { isAdmin } = useAuth();
   const [loading, setLoading] = useState(true);
