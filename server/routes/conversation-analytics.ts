@@ -258,7 +258,7 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       return res.status(400).json({ error: "Branch ID is required" });
     }
 
-    // First, get the actual conversation data
+    // First, get the actual conversation data for the current month
     const conversationQuery = `
       SELECT
         DATE(r.start_time) as date,
@@ -268,7 +268,8 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       LEFT JOIN branches b ON b.id = ldbu.branch_id
       WHERE ldbu.branch_id = ?
-        AND r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+        AND YEAR(r.start_time) = YEAR(CURDATE())
+        AND MONTH(r.start_time) = MONTH(CURDATE())
       GROUP BY DATE(r.start_time)
     `;
 
@@ -283,20 +284,26 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       conversationMap.set(row.date, row.count);
     });
 
-    // Generate all days for the last month
+    // Generate all days for the current month (from 1st to last day)
     const result: Array<{
       date: string;
       formatted_date: string;
       count: number;
     }> = [];
 
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth(); // 0-based (0 = January)
 
-    const today = new Date();
-    const currentDate = new Date(oneMonthAgo);
+    // Get the first day of the current month
+    const firstDay = new Date(currentYear, currentMonth, 1);
 
-    while (currentDate <= today) {
+    // Get the last day of the current month
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+
+    const currentDate = new Date(firstDay);
+
+    while (currentDate <= lastDay) {
       const dateString = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD format
       const formattedDate = currentDate.toLocaleDateString('en-US', {
         month: 'long',
