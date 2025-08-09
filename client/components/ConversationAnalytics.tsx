@@ -209,31 +209,24 @@ export function ConversationAnalytics() {
   // Prepare chart data for Google Charts - Monthly recordings for selected branch
   const getBranchChartData = () => {
     try {
-      console.log("getBranchChartData called, branchMonthlyData:", branchMonthlyData);
-
       if (!branchMonthlyData || !Array.isArray(branchMonthlyData) || branchMonthlyData.length === 0) {
-        console.log("No valid branch monthly data available");
         return [["Month", "Recordings"], ["No Data", 0]];
       }
 
       const chartData: (string | number)[][] = [["Month", "Recordings"]];
 
-      const validItems = branchMonthlyData.filter(item => item && item.month);
-      console.log("Valid items after filtering:", validItems);
-
-      validItems
+      branchMonthlyData
+        .filter(item => item && item.month) // Filter out any null/undefined items
         .sort((a, b) => (a.month || "").localeCompare(b.month || ""))
         .forEach((item) => {
           const monthLabel = item.formatted_month || item.month || "Unknown";
           const count = typeof item.count === 'number' ? item.count : 0;
-          console.log("Adding chart row:", [monthLabel, count]);
           chartData.push([monthLabel, count]);
         });
 
-      console.log("Final chart data:", chartData);
       return chartData;
     } catch (error) {
-      console.error("Error preparing branch chart data:", error, branchMonthlyData);
+      console.error("Error preparing branch chart data:", error);
       return [["Month", "Recordings"], ["Error", 0]];
     }
   };
