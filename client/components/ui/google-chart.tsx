@@ -160,17 +160,29 @@ export function GoogleChart({
     );
   }
 
-  return (
-    <div className={cn("w-full h-full", className)}>
-      <Chart
-        chartType={chartType}
-        width={width}
-        height={height}
-        data={data}
-        options={mergedOptions}
-      />
-    </div>
-  );
+  try {
+    return (
+      <div className={cn("w-full h-full", className)}>
+        <Chart
+          chartType={chartType}
+          width={width}
+          height={height}
+          data={data}
+          options={mergedOptions}
+        />
+      </div>
+    );
+  } catch (chartError) {
+    console.error("Google Charts rendering error:", chartError);
+    return (
+      <div className={cn("flex items-center justify-center", className)}>
+        <div className="text-center text-red-500">
+          <div className="text-sm font-medium">Chart rendering failed</div>
+          <div className="text-xs mt-1">Please try refreshing the page</div>
+        </div>
+      </div>
+    );
+  }
 }
 
 // Predefined chart configurations for common use cases
