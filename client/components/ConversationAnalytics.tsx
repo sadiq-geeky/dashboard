@@ -593,16 +593,101 @@ export function ConversationAnalytics() {
 
           {activeChart === "city" && (
             <div className="h-full w-full">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Conversations by City
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Monthly Conversations -{" "}
+                  {availableCities.find((c) => c.city === selectedCity)
+                    ?.city || "Selected City"}
+                </h3>
+                {availableCities.length > 0 && (
+                  <div className="flex items-center space-x-2">
+                    <MapPin className="h-4 w-4 text-gray-500" />
+                    <select
+                      value={selectedCity}
+                      onChange={(e) => setSelectedCity(e.target.value)}
+                      className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    >
+                      {availableCities.map((city) => (
+                        <option key={city.city} value={city.city}>
+                          {city.city}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
               <div className="h-80">
-                <GoogleChart
-                  chartType="PieChart"
-                  data={getCityChartData()}
-                  loading={loading}
-                  options={ChartPresets.pieChart("")}
-                />
+                {selectedCity ? (
+                  <div className="w-full h-full p-4">
+                    {loading ? (
+                      <div className="flex items-center justify-center h-full">
+                        <RefreshCw className="h-6 w-6 animate-spin text-green-600 mr-2" />
+                        <span className="text-gray-600">Loading chart...</span>
+                      </div>
+                    ) : cityMonthlyData.length > 0 ? (
+                      <div className="w-full h-full">
+                        <div className="flex items-end justify-center h-64 space-x-4 mb-4">
+                          {cityMonthlyData.map((item, index) => {
+                            const maxCount = Math.max(
+                              ...cityMonthlyData.map((d) => d.count),
+                            );
+                            const height = (item.count / maxCount) * 200; // Max height 200px
+                            return (
+                              <div
+                                key={index}
+                                className="flex flex-col items-center space-y-2"
+                              >
+                                <div
+                                  className="bg-green-500 hover:bg-green-600 transition-colors duration-200 rounded-t-sm min-w-[60px] flex items-end justify-center relative group"
+                                  style={{ height: `${height}px` }}
+                                >
+                                  <span className="text-white text-xs font-medium mb-1">
+                                    {item.count}
+                                  </span>
+                                  {/* Tooltip */}
+                                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                                    {item.formatted_month}: {item.count}{" "}
+                                    conversations
+                                  </div>
+                                </div>
+                                <div className="text-xs text-gray-600 text-center max-w-[60px] break-words">
+                                  {item.formatted_month?.split(" ")[0] ||
+                                    item.month}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm font-medium text-gray-700 mb-1">
+                            Number of Conversations
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Monthly data for the last 12 months
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center text-gray-500">
+                          <Activity className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                          <p className="text-sm">
+                            No conversations found for this city
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center text-gray-500">
+                      <MapPin className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                      <p className="text-sm">
+                        Select a city to view conversations
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
