@@ -137,6 +137,11 @@ export function ConversationAnalytics() {
           setSelectedBranch(uniqueBranches[0].branch_id);
         }
 
+        // Set default branch for daily tab
+        if (uniqueBranches.length > 0 && !selectedBranchForDaily) {
+          setSelectedBranchForDaily(uniqueBranches[0].branch_id);
+        }
+
         // Set default period to latest month
         const months = [
           ...new Set(
