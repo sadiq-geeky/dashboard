@@ -128,29 +128,32 @@ export function ConversationAnalytics() {
     }
   }, [isAdmin]);
 
-  // Prepare chart data for Recharts
+  // Prepare chart data for Google Charts
   const getBranchChartData = () => {
     if (!branchData || branchData.length === 0 || !selectedPeriod) {
-      return [{ name: "No Data", count: 0 }];
+      return [["Branch", "Conversations"], ["No Data", 0]];
     }
 
     const filtered = branchData.filter(
       (item) => item?.month === selectedPeriod,
     );
     if (filtered.length === 0) {
-      return [{ name: "No Data", count: 0 }];
+      return [["Branch", "Conversations"], ["No Data", 0]];
     }
 
-    return filtered
+    const chartData = [["Branch", "Conversations"]];
+    filtered
       .sort((a, b) => (b?.count || 0) - (a?.count || 0))
       .slice(0, 10)
-      .map((item) => ({
-        name:
+      .forEach((item) => {
+        const branchName =
           item.branch_name?.length > 20
             ? item.branch_name.substring(0, 20) + "..."
-            : item.branch_name || "Unknown",
-        count: item.count || 0,
-      }));
+            : item.branch_name || "Unknown";
+        chartData.push([branchName, item.count || 0]);
+      });
+
+    return chartData;
   };
 
   const getCityChartData = () => {
