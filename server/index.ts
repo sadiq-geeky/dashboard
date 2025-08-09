@@ -53,6 +53,7 @@ import {
   getBranchRecordingsByMonth,
   getCityConversationsByMonth,
   getAllBranchesLastMonthConversations,
+  getBranchDailyConversations,
 } from "./routes/conversation-analytics";
 import { getVoiceStreamsAnalytics } from "./routes/voice-streams-analytics";
 import {
