@@ -469,8 +469,6 @@ export function ConversationAnalytics() {
     return item?.unique_cnic_count || 0;
   };
 
-
-
   if (loading) {
     return (
       <div className="bg-white rounded-lg shadow p-6">
@@ -590,15 +588,19 @@ export function ConversationAnalytics() {
                         className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       >
                         {availableBranches.map((branch) => (
-                          <option key={branch.branch_id} value={branch.branch_id}>
+                          <option
+                            key={branch.branch_id}
+                            value={branch.branch_id}
+                          >
                             {branch.branch_name}
                           </option>
                         ))}
                       </select>
                     ) : (
                       <span className="text-sm font-medium text-gray-700">
-                        {availableBranches.find((b) => b.branch_id === selectedBranch)
-                          ?.branch_name || "Your Branch"}
+                        {availableBranches.find(
+                          (b) => b.branch_id === selectedBranch,
+                        )?.branch_name || "Your Branch"}
                       </span>
                     )}
                   </div>
@@ -705,8 +707,8 @@ export function ConversationAnalytics() {
                       </select>
                     ) : (
                       <span className="text-sm font-medium text-gray-700">
-                        {availableCities.find((c) => c.city === selectedCity)?.city ||
-                          "Your City"}
+                        {availableCities.find((c) => c.city === selectedCity)
+                          ?.city || "Your City"}
                       </span>
                     )}
                   </div>
@@ -809,7 +811,10 @@ export function ConversationAnalytics() {
                         className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       >
                         {availableBranches.map((branch) => (
-                          <option key={branch.branch_id} value={branch.branch_id}>
+                          <option
+                            key={branch.branch_id}
+                            value={branch.branch_id}
+                          >
                             {branch.branch_name}
                           </option>
                         ))}
