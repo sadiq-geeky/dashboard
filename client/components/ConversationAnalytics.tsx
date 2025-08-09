@@ -252,6 +252,12 @@ export function ConversationAnalytics() {
     }
   }, [selectedBranch, activeChart]);
 
+  useEffect(() => {
+    if (selectedCity && activeChart === "city") {
+      fetchCityMonthlyData(selectedCity);
+    }
+  }, [selectedCity, activeChart]);
+
   // Prepare chart data for Google Charts - Monthly recordings for selected branch
   const getBranchChartData = () => {
     try {
