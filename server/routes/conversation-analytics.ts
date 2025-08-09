@@ -249,6 +249,45 @@ export const getCityConversationsByMonth: RequestHandler = async (req, res) => {
   }
 };
 
+// Get daily conversations for a specific branch in the last month
+export const getBranchDailyConversations: RequestHandler = async (req, res) => {
+  try {
+    const { branchId } = req.params;
+
+    if (!branchId) {
+      return res.status(400).json({ error: "Branch ID is required" });
+    }
+
+    const query = `
+      SELECT
+        DATE(r.start_time) as date,
+        DATE_FORMAT(r.start_time, '%M %d') as formatted_date,
+        COUNT(r.id) AS count
+      FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE ldbu.branch_id = ?
+        AND r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+      GROUP BY DATE(r.start_time), DATE_FORMAT(r.start_time, '%M %d')
+      ORDER BY date ASC
+    `;
+
+    const result = await executeQuery<{
+      date: string;
+      formatted_date: string;
+      count: number;
+    }>(query, [branchId]);
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching branch daily conversations:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to fetch branch daily conversations" });
+  }
+};
+
 // Get recordings per month for a specific branch
 export const getBranchRecordingsByMonth: RequestHandler = async (req, res) => {
   try {
