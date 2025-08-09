@@ -12,6 +12,7 @@ export interface User {
   role: "admin" | "manager" | "user";
   branch_id: string | null;
   branch_city: string | null;
+  branch_name: string | null;
   emp_name: string | null;
   phone_no: string | null;
   email_id: string | null;
