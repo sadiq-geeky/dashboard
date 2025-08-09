@@ -283,21 +283,29 @@ export function ConversationAnalytics() {
     }
   };
 
+  // Prepare chart data for Google Charts - Monthly conversations for selected city
   const getCityChartData = () => {
-    if (!cityData || cityData.length === 0) {
-      return [["City", "Conversations"], ["No Data", 0]];
+    try {
+      if (!cityMonthlyData || !Array.isArray(cityMonthlyData) || cityMonthlyData.length === 0) {
+        return [["Month", "Conversations"], ["No Data", 0]];
+      }
+
+      const chartData: (string | number)[][] = [["Month", "Conversations"]];
+
+      cityMonthlyData
+        .filter(item => item && item.month) // Filter out any null/undefined items
+        .sort((a, b) => (a.month || "").localeCompare(b.month || ""))
+        .forEach((item) => {
+          const monthLabel = item.formatted_month || item.month || "Unknown";
+          const count = typeof item.count === 'number' ? item.count : 0;
+          chartData.push([monthLabel, count]);
+        });
+
+      return chartData;
+    } catch (error) {
+      console.error("Error preparing city chart data:", error);
+      return [["Month", "Conversations"], ["Error", 0]];
     }
-
-    const chartData = [["City", "Conversations"]];
-    cityData
-      .filter((item) => item?.city)
-      .sort((a, b) => (b?.count || 0) - (a?.count || 0))
-      .slice(0, 8)
-      .forEach((item) => {
-        chartData.push([item.city || "Unknown", item.count || 0]);
-      });
-
-    return chartData;
   };
 
   const getDailyChartData = () => {
