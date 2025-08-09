@@ -338,14 +338,12 @@ export function ConversationAnalytics() {
                 Conversations by Branch
               </h3>
               <div className="h-80">
-                <Chart
+                <GoogleChart
                   chartType="BarChart"
-                  width="100%"
-                  height="100%"
                   data={getBranchChartData()}
+                  loading={loading}
                   options={{
-                    title: "",
-                    backgroundColor: "transparent",
+                    ...ChartPresets.barChart(""),
                     chartArea: {
                       left: 150,
                       top: 20,
@@ -380,13 +378,6 @@ export function ConversationAnalytics() {
                         fontName: "system-ui",
                         color: "#6b7280",
                       },
-                    },
-                    colors: ["#3B82F6"],
-                    legend: { position: "none" },
-                    animation: {
-                      startup: true,
-                      easing: "inAndOut",
-                      duration: 800,
                     },
                   }}
                 />
