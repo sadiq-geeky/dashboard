@@ -1096,19 +1096,102 @@ export function ConversationAnalytics() {
 
           {activeChart === "customers" && (
             <div className="h-full w-full">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Unique Customers This Month
+              <h3 className="text-lg font-medium text-gray-900 mb-6">
+                Customer Analytics
               </h3>
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <div className="text-6xl font-bold text-purple-600 mb-2">
-                    {getCustomerValue()}
+
+              <div className="space-y-6">
+                {/* Customer Statistics */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-purple-50 rounded-lg p-6 text-center">
+                    <div className="text-4xl font-bold text-purple-600 mb-2">
+                      {getCustomerValue()}
+                    </div>
+                    <div className="text-lg text-gray-700 font-medium">
+                      Unique Customers
+                    </div>
+                    <div className="text-sm text-gray-500 mt-1">
+                      With valid CNIC this month
+                    </div>
                   </div>
-                  <div className="text-lg text-gray-600">
-                    Unique Customers (CNIC)
+
+                  <div className="bg-orange-50 rounded-lg p-6 text-center">
+                    <div className="text-4xl font-bold text-orange-600 mb-2">
+                      {getWalkInValue()}
+                    </div>
+                    <div className="text-lg text-gray-700 font-medium">
+                      Walk-in Customers
+                    </div>
+                    <div className="text-sm text-gray-500 mt-1">
+                      Without CNIC this month
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-500 mt-2">
-                    Current Month
+                </div>
+
+                {/* Charts */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Customers by City Chart */}
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <h4 className="text-md font-medium text-gray-900 mb-4">
+                      Unique Customers by City
+                    </h4>
+                    <div className="h-64">
+                      {customersByCityData.length > 0 ? (
+                        <GoogleChart
+                          chartType="BarChart"
+                          data={getCustomersByCityChartData()}
+                          options={{
+                            ...ChartPresets.barChart(""),
+                            colors: ChartPresets.colors.success,
+                            hAxis: { title: "Number of Customers" },
+                            vAxis: { title: "City" },
+                            legend: { position: "none" },
+                            chartArea: { width: "70%", height: "75%" },
+                          }}
+                          height="100%"
+                          width="100%"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <div className="text-center text-gray-400">
+                            <Users className="h-8 w-8 mx-auto mb-2" />
+                            <p className="text-xs">No customer data</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Customers by Branch Chart */}
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <h4 className="text-md font-medium text-gray-900 mb-4">
+                      Unique Customers by Branch
+                    </h4>
+                    <div className="h-64">
+                      {customersByBranchData.length > 0 ? (
+                        <GoogleChart
+                          chartType="BarChart"
+                          data={getCustomersByBranchChartData()}
+                          options={{
+                            ...ChartPresets.barChart(""),
+                            colors: ChartPresets.colors.primary,
+                            hAxis: { title: "Number of Customers" },
+                            vAxis: { title: "Branch" },
+                            legend: { position: "none" },
+                            chartArea: { width: "70%", height: "75%" },
+                          }}
+                          height="100%"
+                          width="100%"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <div className="text-center text-gray-400">
+                            <Building2 className="h-8 w-8 mx-auto mb-2" />
+                            <p className="text-xs">No customer data</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
