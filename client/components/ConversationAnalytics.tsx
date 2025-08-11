@@ -996,7 +996,7 @@ export function ConversationAnalytics() {
         <div className="mt-4 p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">
             {activeChart === "branch" &&
-              "Monthly recordings for the selected branch showing recording trends over the last 12 months."}
+              "Monthly recordings breakdown for each branch shown as pie charts displaying the distribution of recordings over the last 12 months."}
             {activeChart === "city" &&
               "Monthly conversations for the selected city showing conversation trends over the last 12 months."}
             {activeChart === "daily" &&
