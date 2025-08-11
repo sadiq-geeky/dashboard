@@ -258,7 +258,9 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       return res.status(400).json({ error: "Branch ID is required" });
     }
 
-    console.log(`getBranchDailyConversations called with branchId: ${branchId}`);
+    console.log(
+      `getBranchDailyConversations called with branchId: ${branchId}`,
+    );
 
     // Debug: Check if there are ANY recordings for this branch
     const totalRecordingsQuery = `
@@ -268,7 +270,9 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
       WHERE ldbu.branch_id = ?
     `;
-    const totalRecordings = await executeQuery(totalRecordingsQuery, [branchId]);
+    const totalRecordings = await executeQuery(totalRecordingsQuery, [
+      branchId,
+    ]);
     console.log(`Total recordings for branch ${branchId}:`, totalRecordings);
 
     // First, get the actual conversation data for the current month
@@ -291,7 +295,10 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       count: number;
     }>(conversationQuery, [branchId]);
 
-    console.log(`Branch daily conversations for branch ${branchId}:`, conversationData);
+    console.log(
+      `Branch daily conversations for branch ${branchId}:`,
+      conversationData,
+    );
 
     // Create a map for quick lookup
     const conversationMap = new Map();
@@ -336,7 +343,7 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
-    console.log('Final result being returned:', result);
+    console.log("Final result being returned:", result);
 
     res.json(result);
   } catch (error) {
