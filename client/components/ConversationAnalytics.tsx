@@ -94,8 +94,12 @@ export function ConversationAnalytics() {
     [],
   );
   const [walkInData, setWalkInData] = useState<WalkInCustomers | null>(null);
-  const [customersByCityData, setCustomersByCityData] = useState<CustomersByCity[]>([]);
-  const [customersByBranchData, setCustomersByBranchData] = useState<CustomersByBranch[]>([]);
+  const [customersByCityData, setCustomersByCityData] = useState<
+    CustomersByCity[]
+  >([]);
+  const [customersByBranchData, setCustomersByBranchData] = useState<
+    CustomersByBranch[]
+  >([]);
   const [availableBranches, setAvailableBranches] = useState<Branch[]>([]);
   const [branchMonthlyData, setBranchMonthlyData] = useState<
     BranchMonthlyRecordings[]
@@ -133,7 +137,15 @@ export function ConversationAnalytics() {
       setError(null);
 
       // Fetch all analytics data in parallel
-      const [branchRes, cityRes, dailyRes, customerRes, walkInRes, customersByCityRes, customersByBranchRes] = await Promise.all([
+      const [
+        branchRes,
+        cityRes,
+        dailyRes,
+        customerRes,
+        walkInRes,
+        customersByCityRes,
+        customersByBranchRes,
+      ] = await Promise.all([
         authFetch("/api/analytics/conversations/branch-monthly"),
         authFetch("/api/analytics/conversations/city"),
         authFetch("/api/analytics/conversations/daily"),
@@ -256,7 +268,9 @@ export function ConversationAnalytics() {
       // Process customers by branch data
       if (customersByBranchRes.ok) {
         const customersByBranchAnalytics = await customersByBranchRes.json();
-        const validCustomersByBranchData = Array.isArray(customersByBranchAnalytics)
+        const validCustomersByBranchData = Array.isArray(
+          customersByBranchAnalytics,
+        )
           ? customersByBranchAnalytics
           : [];
         setCustomersByBranchData(validCustomersByBranchData);
@@ -807,7 +821,8 @@ export function ConversationAnalytics() {
                   Monthly Recordings by Branch
                 </h3>
                 <div className="text-sm text-gray-500">
-                  {availableBranches.length} Branch{availableBranches.length !== 1 ? "es" : ""}
+                  {availableBranches.length} Branch
+                  {availableBranches.length !== 1 ? "es" : ""}
                 </div>
               </div>
 
@@ -821,10 +836,17 @@ export function ConversationAnalytics() {
                   {availableBranches.map((branch) => {
                     const pieData = getBranchPieChartData(branch.branch_id);
                     const branchData = allBranchesMonthlyData[branch.branch_id];
-                    const totalRecordings = branchData?.reduce((sum, item) => sum + (item.count || 0), 0) || 0;
+                    const totalRecordings =
+                      branchData?.reduce(
+                        (sum, item) => sum + (item.count || 0),
+                        0,
+                      ) || 0;
 
                     return (
-                      <div key={branch.branch_id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                      <div
+                        key={branch.branch_id}
+                        className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+                      >
                         <div className="mb-3">
                           <h4 className="font-medium text-gray-900 text-sm mb-1">
                             {branch.branch_name}
@@ -841,7 +863,10 @@ export function ConversationAnalytics() {
                               data={pieData}
                               options={{
                                 ...ChartPresets.pieChart(""),
-                                legend: { position: "bottom", textStyle: { fontSize: 10 } },
+                                legend: {
+                                  position: "bottom",
+                                  textStyle: { fontSize: 10 },
+                                },
                                 pieSliceTextStyle: { fontSize: 9 },
                                 chartArea: { width: "90%", height: "70%" },
                                 backgroundColor: "transparent",
@@ -880,7 +905,8 @@ export function ConversationAnalytics() {
                   Monthly Conversations by City
                 </h3>
                 <div className="text-sm text-gray-500">
-                  {availableCities.length} Cit{availableCities.length !== 1 ? "ies" : "y"}
+                  {availableCities.length} Cit
+                  {availableCities.length !== 1 ? "ies" : "y"}
                 </div>
               </div>
 
@@ -894,10 +920,17 @@ export function ConversationAnalytics() {
                   {availableCities.map((city) => {
                     const pieData = getCityPieChartData(city.city);
                     const cityData = allCitiesMonthlyData[city.city];
-                    const totalConversations = cityData?.reduce((sum, item) => sum + (item.count || 0), 0) || 0;
+                    const totalConversations =
+                      cityData?.reduce(
+                        (sum, item) => sum + (item.count || 0),
+                        0,
+                      ) || 0;
 
                     return (
-                      <div key={city.city} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                      <div
+                        key={city.city}
+                        className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+                      >
                         <div className="mb-3">
                           <h4 className="font-medium text-gray-900 text-sm mb-1">
                             {city.city}
@@ -914,7 +947,10 @@ export function ConversationAnalytics() {
                               data={pieData}
                               options={{
                                 ...ChartPresets.pieChart(""),
-                                legend: { position: "bottom", textStyle: { fontSize: 10 } },
+                                legend: {
+                                  position: "bottom",
+                                  textStyle: { fontSize: 10 },
+                                },
                                 pieSliceTextStyle: { fontSize: 9 },
                                 chartArea: { width: "90%", height: "70%" },
                                 backgroundColor: "transparent",
@@ -1156,8 +1192,8 @@ export function ConversationAnalytics() {
                             />
                             <YAxis fontSize={12} />
                             <Tooltip
-                              formatter={(value) => [`${value} Customers`, '']}
-                              labelStyle={{ color: '#374151' }}
+                              formatter={(value) => [`${value} Customers`, ""]}
+                              labelStyle={{ color: "#374151" }}
                             />
                             <Bar
                               dataKey="customers"
@@ -1204,8 +1240,8 @@ export function ConversationAnalytics() {
                             />
                             <YAxis fontSize={12} />
                             <Tooltip
-                              formatter={(value) => [`${value} Customers`, '']}
-                              labelStyle={{ color: '#374151' }}
+                              formatter={(value) => [`${value} Customers`, ""]}
+                              labelStyle={{ color: "#374151" }}
                             />
                             <Bar
                               dataKey="customers"

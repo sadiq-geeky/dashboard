@@ -582,7 +582,9 @@ export const getUniqueCustomersByBranch: RequestHandler = async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error("Error fetching unique customers by branch:", error);
-    res.status(500).json({ error: "Failed to fetch unique customers by branch" });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch unique customers by branch" });
   }
 };
 
