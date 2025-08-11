@@ -84,6 +84,9 @@ export function ConversationAnalytics() {
   const [customerData, setCustomerData] = useState<UniqueCustomerAnalytics[]>(
     [],
   );
+  const [walkInData, setWalkInData] = useState<WalkInCustomers | null>(null);
+  const [customersByCityData, setCustomersByCityData] = useState<CustomersByCity[]>([]);
+  const [customersByBranchData, setCustomersByBranchData] = useState<CustomersByBranch[]>([]);
   const [availableBranches, setAvailableBranches] = useState<Branch[]>([]);
   const [branchMonthlyData, setBranchMonthlyData] = useState<
     BranchMonthlyRecordings[]
