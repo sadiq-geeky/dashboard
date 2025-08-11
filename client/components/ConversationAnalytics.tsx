@@ -3,6 +3,15 @@ import { authFetch } from "@/lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import { GoogleChart, ChartPresets } from "./ui/google-chart";
 import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import {
   RefreshCw,
   BarChart3,
   Building2,
