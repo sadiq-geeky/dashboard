@@ -406,6 +406,12 @@ export function ConversationAnalytics() {
     }
   }, [selectedBranchForDaily, activeChart]);
 
+  useEffect(() => {
+    if (activeChart === "branch" && availableBranches.length > 0) {
+      fetchAllBranchesMonthlyData();
+    }
+  }, [activeChart, availableBranches]);
+
   // Prepare chart data for Google Charts - Monthly recordings for selected branch
   const getBranchChartData = () => {
     try {
