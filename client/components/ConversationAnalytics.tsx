@@ -650,12 +650,54 @@ export function ConversationAnalytics() {
     return chartData;
   };
 
+  const getCustomersByCityChartData = () => {
+    if (!customersByCityData || customersByCityData.length === 0) {
+      return [
+        ["City", "Unique Customers"],
+        ["No Data", 0],
+      ];
+    }
+
+    const chartData: (string | number)[][] = [["City", "Unique Customers"]];
+    customersByCityData
+      .filter((item) => item?.city)
+      .sort((a, b) => (b.unique_customers || 0) - (a.unique_customers || 0))
+      .forEach((item) => {
+        chartData.push([item.city, item.unique_customers || 0]);
+      });
+
+    return chartData;
+  };
+
+  const getCustomersByBranchChartData = () => {
+    if (!customersByBranchData || customersByBranchData.length === 0) {
+      return [
+        ["Branch", "Unique Customers"],
+        ["No Data", 0],
+      ];
+    }
+
+    const chartData: (string | number)[][] = [["Branch", "Unique Customers"]];
+    customersByBranchData
+      .filter((item) => item?.branch_name)
+      .sort((a, b) => (b.unique_customers || 0) - (a.unique_customers || 0))
+      .forEach((item) => {
+        chartData.push([item.branch_name, item.unique_customers || 0]);
+      });
+
+    return chartData;
+  };
+
   const getCustomerValue = () => {
     if (!customerData || customerData.length === 0) {
       return 0;
     }
     const item = customerData[0];
     return item?.unique_cnic_count || 0;
+  };
+
+  const getWalkInValue = () => {
+    return walkInData?.walkin_count || 0;
   };
 
   if (loading) {
