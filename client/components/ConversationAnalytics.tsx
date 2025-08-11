@@ -124,11 +124,14 @@ export function ConversationAnalytics() {
       setError(null);
 
       // Fetch all analytics data in parallel
-      const [branchRes, cityRes, dailyRes, customerRes] = await Promise.all([
+      const [branchRes, cityRes, dailyRes, customerRes, walkInRes, customersByCityRes, customersByBranchRes] = await Promise.all([
         authFetch("/api/analytics/conversations/branch-monthly"),
         authFetch("/api/analytics/conversations/city"),
         authFetch("/api/analytics/conversations/daily"),
         authFetch("/api/analytics/conversations/cnic"),
+        authFetch("/api/analytics/conversations/walkin-customers"),
+        authFetch("/api/analytics/conversations/customers-by-city"),
+        authFetch("/api/analytics/conversations/customers-by-branch"),
       ]);
 
       // Process branch data
