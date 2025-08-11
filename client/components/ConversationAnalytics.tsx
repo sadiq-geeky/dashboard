@@ -1209,7 +1209,7 @@ export function ConversationAnalytics() {
             {activeChart === "daily" &&
               "Daily conversation analytics for the selected branch showing trends over the last month."}
             {activeChart === "customers" &&
-              "Number of unique customers (CNIC) per month visiting the branches."}
+              "Customer analytics showing unique customers with valid CNICs, walk-in customers without CNICs, and customer distribution across cities and branches."}
           </p>
         </div>
       </div>
