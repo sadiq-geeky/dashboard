@@ -54,6 +54,9 @@ import {
   getCityConversationsByMonth,
   getAllBranchesLastMonthConversations,
   getBranchDailyConversations,
+  getWalkInCustomers,
+  getUniqueCustomersByCity,
+  getUniqueCustomersByBranch,
 } from "./routes/conversation-analytics";
 import { getVoiceStreamsAnalytics } from "./routes/voice-streams-analytics";
 import {
@@ -242,6 +245,24 @@ export function createServer() {
     "/api/analytics/conversations/branch/:branchId/daily",
     authenticate,
     getBranchDailyConversations,
+  );
+  app.get(
+    "/api/analytics/conversations/walkin-customers",
+    authenticate,
+    addBranchFilter(),
+    getWalkInCustomers,
+  );
+  app.get(
+    "/api/analytics/conversations/customers-by-city",
+    authenticate,
+    addBranchFilter(),
+    getUniqueCustomersByCity,
+  );
+  app.get(
+    "/api/analytics/conversations/customers-by-branch",
+    authenticate,
+    addBranchFilter(),
+    getUniqueCustomersByBranch,
   );
   app.get(
     "/api/analytics/branch-monthly-trend",

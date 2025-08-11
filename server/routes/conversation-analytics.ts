@@ -258,6 +258,23 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       return res.status(400).json({ error: "Branch ID is required" });
     }
 
+    console.log(
+      `getBranchDailyConversations called with branchId: ${branchId}`,
+    );
+
+    // Debug: Check if there are ANY recordings for this branch
+    const totalRecordingsQuery = `
+      SELECT COUNT(*) as total
+      FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      WHERE ldbu.branch_id = ?
+    `;
+    const totalRecordings = await executeQuery(totalRecordingsQuery, [
+      branchId,
+    ]);
+    console.log(`Total recordings for branch ${branchId}:`, totalRecordings);
+
     // First, get the actual conversation data for the current month
     const conversationQuery = `
       SELECT
@@ -278,10 +295,17 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       count: number;
     }>(conversationQuery, [branchId]);
 
+    console.log(
+      `Branch daily conversations for branch ${branchId}:`,
+      conversationData,
+    );
+
     // Create a map for quick lookup
     const conversationMap = new Map();
     conversationData.forEach((row) => {
-      conversationMap.set(row.date, row.count);
+      // Convert Date object to YYYY-MM-DD string for consistent lookup
+      const dateString = new Date(row.date).toISOString().split("T")[0];
+      conversationMap.set(dateString, row.count);
     });
 
     // Generate all days for the current month (from 1st to last day)
@@ -318,6 +342,8 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
 
       currentDate.setDate(currentDate.getDate() + 1);
     }
+
+    console.log("Final result being returned:", result);
 
     res.json(result);
   } catch (error) {
@@ -440,6 +466,125 @@ export const getUniqueCnicsByMonth: RequestHandler = async (req, res) => {
   } catch (error) {
     console.error("Error fetching unique CNICs by month:", error);
     res.status(500).json({ error: "Failed to fetch unique CNICs by month" });
+  }
+};
+
+// Get walk-in customers (customers with CNIC 'XXXXXXXXXXXXX')
+export const getWalkInCustomers: RequestHandler = async (req, res) => {
+  try {
+    // Get branch filter from middleware
+    const branchFilter = (req as any).branchFilter;
+    const branchFilterCondition = branchFilter
+      ? `AND ldbu.branch_id = '${branchFilter.value}'`
+      : "";
+
+    const query = `
+      SELECT
+        COUNT(DISTINCT r.id) AS walkin_count
+      FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+        AND (r.cnic = 'XXXXXXXXXXXXX' OR r.cnic IS NULL OR r.cnic = '')
+        ${branchFilterCondition}
+    `;
+
+    const result = await executeQuery<{
+      walkin_count: number;
+    }>(query);
+
+    const response = {
+      month: new Date().toISOString().slice(0, 7), // Current month
+      walkin_count: result[0]?.walkin_count || 0,
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error("Error fetching walk-in customers:", error);
+    res.status(500).json({ error: "Failed to fetch walk-in customers" });
+  }
+};
+
+// Get unique customers by city
+export const getUniqueCustomersByCity: RequestHandler = async (req, res) => {
+  try {
+    // Get branch filter from middleware
+    const branchFilter = (req as any).branchFilter;
+    const branchFilterCondition = branchFilter
+      ? `AND ldbu.branch_id = '${branchFilter.value}'`
+      : "";
+
+    const query = `
+      SELECT
+        b.branch_city as city,
+        COUNT(DISTINCT REPLACE(r.cnic, '-', '')) AS unique_customers
+      FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE b.branch_city IS NOT NULL
+        AND r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+        AND r.cnic IS NOT NULL
+        AND r.cnic != ''
+        AND r.cnic != 'XXXXXXXXXXXXX'
+        ${branchFilterCondition}
+      GROUP BY b.branch_city
+      ORDER BY unique_customers DESC
+    `;
+
+    const result = await executeQuery<{
+      city: string;
+      unique_customers: number;
+    }>(query);
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching unique customers by city:", error);
+    res.status(500).json({ error: "Failed to fetch unique customers by city" });
+  }
+};
+
+// Get unique customers by branch
+export const getUniqueCustomersByBranch: RequestHandler = async (req, res) => {
+  try {
+    // Get branch filter from middleware
+    const branchFilter = (req as any).branchFilter;
+    const branchFilterCondition = branchFilter
+      ? `AND ldbu.branch_id = '${branchFilter.value}'`
+      : "";
+
+    const query = `
+      SELECT
+        ldbu.branch_id,
+        COALESCE(MAX(b.branch_address), 'Unknown Branch') as branch_name,
+        COUNT(DISTINCT REPLACE(r.cnic, '-', '')) AS unique_customers
+      FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      LEFT JOIN branches b ON b.id = ldbu.branch_id
+      WHERE ldbu.branch_id IS NOT NULL
+        AND r.start_time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+        AND r.cnic IS NOT NULL
+        AND r.cnic != ''
+        AND r.cnic != 'XXXXXXXXXXXXX'
+        ${branchFilterCondition}
+      GROUP BY ldbu.branch_id
+      ORDER BY unique_customers DESC
+    `;
+
+    const result = await executeQuery<{
+      branch_id: string;
+      branch_name: string;
+      unique_customers: number;
+    }>(query);
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching unique customers by branch:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to fetch unique customers by branch" });
   }
 };
 

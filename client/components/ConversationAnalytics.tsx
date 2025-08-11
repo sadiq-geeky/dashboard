@@ -3,6 +3,15 @@ import { authFetch } from "@/lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import { GoogleChart, ChartPresets } from "./ui/google-chart";
 import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import {
   RefreshCw,
   BarChart3,
   Building2,
@@ -33,6 +42,22 @@ interface DailyAnalytics {
 interface UniqueCustomerAnalytics {
   month: string;
   unique_cnic_count: number;
+}
+
+interface WalkInCustomers {
+  month: string;
+  walkin_count: number;
+}
+
+interface CustomersByCity {
+  city: string;
+  unique_customers: number;
+}
+
+interface CustomersByBranch {
+  branch_id: string;
+  branch_name: string;
+  unique_customers: number;
 }
 
 interface Branch {
@@ -68,10 +93,23 @@ export function ConversationAnalytics() {
   const [customerData, setCustomerData] = useState<UniqueCustomerAnalytics[]>(
     [],
   );
+  const [walkInData, setWalkInData] = useState<WalkInCustomers | null>(null);
+  const [customersByCityData, setCustomersByCityData] = useState<
+    CustomersByCity[]
+  >([]);
+  const [customersByBranchData, setCustomersByBranchData] = useState<
+    CustomersByBranch[]
+  >([]);
   const [availableBranches, setAvailableBranches] = useState<Branch[]>([]);
   const [branchMonthlyData, setBranchMonthlyData] = useState<
     BranchMonthlyRecordings[]
   >([]);
+  const [allBranchesMonthlyData, setAllBranchesMonthlyData] = useState<
+    Record<string, BranchMonthlyRecordings[]>
+  >({});
+  const [allCitiesMonthlyData, setAllCitiesMonthlyData] = useState<
+    Record<string, CityMonthlyConversations[]>
+  >({});
   const [availableCities, setAvailableCities] = useState<City[]>([]);
   const [cityMonthlyData, setCityMonthlyData] = useState<
     CityMonthlyConversations[]
@@ -99,11 +137,22 @@ export function ConversationAnalytics() {
       setError(null);
 
       // Fetch all analytics data in parallel
-      const [branchRes, cityRes, dailyRes, customerRes] = await Promise.all([
+      const [
+        branchRes,
+        cityRes,
+        dailyRes,
+        customerRes,
+        walkInRes,
+        customersByCityRes,
+        customersByBranchRes,
+      ] = await Promise.all([
         authFetch("/api/analytics/conversations/branch-monthly"),
         authFetch("/api/analytics/conversations/city"),
         authFetch("/api/analytics/conversations/daily"),
         authFetch("/api/analytics/conversations/cnic"),
+        authFetch("/api/analytics/conversations/walkin-customers"),
+        authFetch("/api/analytics/conversations/customers-by-city"),
+        authFetch("/api/analytics/conversations/customers-by-branch"),
       ]);
 
       // Process branch data
@@ -200,6 +249,32 @@ export function ConversationAnalytics() {
             : [];
         setCustomerData(validCustomerData.filter((item) => item != null));
       }
+
+      // Process walk-in customers data
+      if (walkInRes.ok) {
+        const walkInAnalytics = await walkInRes.json();
+        setWalkInData(walkInAnalytics);
+      }
+
+      // Process customers by city data
+      if (customersByCityRes.ok) {
+        const customersByCityAnalytics = await customersByCityRes.json();
+        const validCustomersByCityData = Array.isArray(customersByCityAnalytics)
+          ? customersByCityAnalytics
+          : [];
+        setCustomersByCityData(validCustomersByCityData);
+      }
+
+      // Process customers by branch data
+      if (customersByBranchRes.ok) {
+        const customersByBranchAnalytics = await customersByBranchRes.json();
+        const validCustomersByBranchData = Array.isArray(
+          customersByBranchAnalytics,
+        )
+          ? customersByBranchAnalytics
+          : [];
+        setCustomersByBranchData(validCustomersByBranchData);
+      }
     } catch (err) {
       console.error("Error fetching analytics:", err);
       setError("Failed to load analytics data");
@@ -237,6 +312,84 @@ export function ConversationAnalytics() {
     } catch (error) {
       console.error("Error fetching branch monthly data:", error);
       setBranchMonthlyData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAllBranchesMonthlyData = async () => {
+    if (!availableBranches.length) return;
+
+    try {
+      setLoading(true);
+
+      // Fetch monthly data for all branches in parallel
+      const promises = availableBranches.map(async (branch) => {
+        const response = await authFetch(
+          `/api/analytics/conversations/branch/${branch.branch_id}/monthly`,
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const validData = Array.isArray(data)
+            ? data.filter((item) => item && typeof item === "object")
+            : [];
+          return { branchId: branch.branch_id, data: validData };
+        }
+        return { branchId: branch.branch_id, data: [] };
+      });
+
+      const results = await Promise.all(promises);
+
+      // Convert array to object for easy lookup
+      const branchDataMap: Record<string, BranchMonthlyRecordings[]> = {};
+      results.forEach(({ branchId, data }) => {
+        branchDataMap[branchId] = data;
+      });
+
+      setAllBranchesMonthlyData(branchDataMap);
+    } catch (error) {
+      console.error("Error fetching all branches monthly data:", error);
+      setAllBranchesMonthlyData({});
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAllCitiesMonthlyData = async () => {
+    if (!availableCities.length) return;
+
+    try {
+      setLoading(true);
+
+      // Fetch monthly data for all cities in parallel
+      const promises = availableCities.map(async (city) => {
+        const response = await authFetch(
+          `/api/analytics/conversations/city/${encodeURIComponent(city.city)}/monthly`,
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const validData = Array.isArray(data)
+            ? data.filter((item) => item && typeof item === "object")
+            : [];
+          return { cityName: city.city, data: validData };
+        }
+        return { cityName: city.city, data: [] };
+      });
+
+      const results = await Promise.all(promises);
+
+      // Convert array to object for easy lookup
+      const cityDataMap: Record<string, CityMonthlyConversations[]> = {};
+      results.forEach(({ cityName, data }) => {
+        cityDataMap[cityName] = data;
+      });
+
+      setAllCitiesMonthlyData(cityDataMap);
+    } catch (error) {
+      console.error("Error fetching all cities monthly data:", error);
+      setAllCitiesMonthlyData({});
     } finally {
       setLoading(false);
     }
@@ -313,15 +466,18 @@ export function ConversationAnalytics() {
 
     try {
       setLoading(true);
+      console.log("Fetching daily data for branch ID:", branchId);
       const response = await authFetch(
         `/api/analytics/conversations/branch/${branchId}/daily`,
       );
 
       if (response.ok) {
         const data = await response.json();
+        console.log("Branch daily data response:", data);
         const validData = Array.isArray(data)
           ? data.filter((item) => item && typeof item === "object")
           : [];
+        console.log("Processed branch daily data:", validData);
         setBranchDailyData(validData);
       } else {
         console.error(
@@ -360,6 +516,18 @@ export function ConversationAnalytics() {
       fetchBranchDailyData(selectedBranchForDaily);
     }
   }, [selectedBranchForDaily, activeChart]);
+
+  useEffect(() => {
+    if (activeChart === "branch" && availableBranches.length > 0) {
+      fetchAllBranchesMonthlyData();
+    }
+  }, [activeChart, availableBranches]);
+
+  useEffect(() => {
+    if (activeChart === "city" && availableCities.length > 0) {
+      fetchAllCitiesMonthlyData();
+    }
+  }, [activeChart, availableCities]);
 
   // Prepare chart data for Google Charts - Monthly recordings for selected branch
   const getBranchChartData = () => {
@@ -432,7 +600,7 @@ export function ConversationAnalytics() {
   };
 
   const getDailyChartData = () => {
-    if (!dailyData || dailyData.length === 0) {
+    if (!branchDailyData || branchDailyData.length === 0) {
       return [
         ["Date", "Conversations"],
         ["No Data", 0],
@@ -440,7 +608,7 @@ export function ConversationAnalytics() {
     }
 
     const chartData = [["Date", "Conversations"]];
-    dailyData
+    branchDailyData
       .filter((item) => item?.date)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .forEach((item) => {
@@ -461,12 +629,88 @@ export function ConversationAnalytics() {
     return chartData;
   };
 
+  const getBranchPieChartData = (branchId: string) => {
+    const monthlyData = allBranchesMonthlyData[branchId];
+    if (!monthlyData || monthlyData.length === 0) {
+      return [
+        ["Month", "Recordings"],
+        ["No Data", 0],
+      ];
+    }
+
+    const chartData: (string | number)[][] = [["Month", "Recordings"]];
+    monthlyData
+      .filter((item) => item && item.month)
+      .sort((a, b) => (a.month || "").localeCompare(b.month || ""))
+      .forEach((item) => {
+        const monthLabel = item.formatted_month || item.month || "Unknown";
+        const count = typeof item.count === "number" ? item.count : 0;
+        chartData.push([monthLabel, count]);
+      });
+
+    return chartData;
+  };
+
+  const getCityPieChartData = (cityName: string) => {
+    const monthlyData = allCitiesMonthlyData[cityName];
+    if (!monthlyData || monthlyData.length === 0) {
+      return [
+        ["Month", "Conversations"],
+        ["No Data", 0],
+      ];
+    }
+
+    const chartData: (string | number)[][] = [["Month", "Conversations"]];
+    monthlyData
+      .filter((item) => item && item.month)
+      .sort((a, b) => (a.month || "").localeCompare(b.month || ""))
+      .forEach((item) => {
+        const monthLabel = item.formatted_month || item.month || "Unknown";
+        const count = typeof item.count === "number" ? item.count : 0;
+        chartData.push([monthLabel, count]);
+      });
+
+    return chartData;
+  };
+
+  const getCustomersByCityChartData = () => {
+    if (!customersByCityData || customersByCityData.length === 0) {
+      return [];
+    }
+
+    return customersByCityData
+      .filter((item) => item?.city)
+      .sort((a, b) => (b.unique_customers || 0) - (a.unique_customers || 0))
+      .map((item) => ({
+        name: item.city,
+        customers: item.unique_customers || 0,
+      }));
+  };
+
+  const getCustomersByBranchChartData = () => {
+    if (!customersByBranchData || customersByBranchData.length === 0) {
+      return [];
+    }
+
+    return customersByBranchData
+      .filter((item) => item?.branch_name)
+      .sort((a, b) => (b.unique_customers || 0) - (a.unique_customers || 0))
+      .map((item) => ({
+        name: item.branch_name,
+        customers: item.unique_customers || 0,
+      }));
+  };
+
   const getCustomerValue = () => {
     if (!customerData || customerData.length === 0) {
       return 0;
     }
     const item = customerData[0];
     return item?.unique_cnic_count || 0;
+  };
+
+  const getWalkInValue = () => {
+    return walkInData?.walkin_count || 0;
   };
 
   if (loading) {
@@ -569,224 +813,173 @@ export function ConversationAnalytics() {
         </div>
 
         {/* Chart Display */}
-        <div className="h-96 border border-gray-200 rounded-lg p-4 bg-white">
+        <div className="min-h-96 border border-gray-200 rounded-lg p-4 bg-white">
           {activeChart === "branch" && (
             <div className="h-full w-full">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-medium text-gray-900">
-                  Monthly Recordings -{" "}
-                  {availableBranches.find((b) => b.branch_id === selectedBranch)
-                    ?.branch_name || "Selected Branch"}
+                  Monthly Recordings by Branch
                 </h3>
-                {availableBranches.length > 0 && (
-                  <div className="flex items-center space-x-2">
-                    <Building2 className="h-4 w-4 text-gray-500" />
-                    {isAdmin() ? (
-                      <select
-                        value={selectedBranch}
-                        onChange={(e) => setSelectedBranch(e.target.value)}
-                        className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                <div className="text-sm text-gray-500">
+                  {availableBranches.length} Branch
+                  {availableBranches.length !== 1 ? "es" : ""}
+                </div>
+              </div>
+
+              {loading ? (
+                <div className="flex items-center justify-center min-h-80">
+                  <RefreshCw className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+                  <span className="text-gray-600">Loading charts...</span>
+                </div>
+              ) : availableBranches.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {availableBranches.map((branch) => {
+                    const pieData = getBranchPieChartData(branch.branch_id);
+                    const branchData = allBranchesMonthlyData[branch.branch_id];
+                    const totalRecordings =
+                      branchData?.reduce(
+                        (sum, item) => sum + (item.count || 0),
+                        0,
+                      ) || 0;
+
+                    return (
+                      <div
+                        key={branch.branch_id}
+                        className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
                       >
-                        {availableBranches.map((branch) => (
-                          <option
-                            key={branch.branch_id}
-                            value={branch.branch_id}
-                          >
+                        <div className="mb-3">
+                          <h4 className="font-medium text-gray-900 text-sm mb-1">
                             {branch.branch_name}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <span className="text-sm font-medium text-gray-700">
-                        {availableBranches.find(
-                          (b) => b.branch_id === selectedBranch,
-                        )?.branch_name || "Your Branch"}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className="h-80">
-                {selectedBranch ? (
-                  <div className="w-full h-full p-4">
-                    {loading ? (
-                      <div className="flex items-center justify-center h-full">
-                        <RefreshCw className="h-6 w-6 animate-spin text-blue-600 mr-2" />
-                        <span className="text-gray-600">Loading chart...</span>
-                      </div>
-                    ) : branchMonthlyData.length > 0 ? (
-                      <div className="w-full h-full">
-                        <div className="flex items-end justify-center h-64 space-x-4 mb-4">
-                          {branchMonthlyData.map((item, index) => {
-                            const maxCount = Math.max(
-                              ...branchMonthlyData.map((d) => d.count),
-                            );
-                            const height = (item.count / maxCount) * 200; // Max height 200px
-                            return (
-                              <div
-                                key={index}
-                                className="flex flex-col items-center space-y-2"
-                              >
-                                <div
-                                  className="bg-blue-500 hover:bg-blue-600 transition-colors duration-200 rounded-t-sm min-w-[60px] flex items-end justify-center relative group"
-                                  style={{ height: `${height}px` }}
-                                >
-                                  <span className="text-white text-xs font-medium mb-1">
-                                    {item.count}
-                                  </span>
-                                  {/* Tooltip */}
-                                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-                                    {item.formatted_month}: {item.count}{" "}
-                                    recordings
-                                  </div>
-                                </div>
-                                <div className="text-xs text-gray-600 text-center max-w-[60px] break-words">
-                                  {item.formatted_month?.split(" ")[0] ||
-                                    item.month}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <div className="text-center">
-                          <div className="text-sm font-medium text-gray-700 mb-1">
-                            Number of Recordings
-                          </div>
+                          </h4>
                           <div className="text-xs text-gray-500">
-                            Monthly data for the last 12 months
+                            Total: {totalRecordings} recordings
                           </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <div className="text-center text-gray-500">
-                          <Activity className="h-12 w-12 mx-auto mb-2 text-gray-300" />
-                          <p className="text-sm">
-                            No recordings found for this branch
-                          </p>
+
+                        <div className="h-48">
+                          {branchData && branchData.length > 0 ? (
+                            <GoogleChart
+                              chartType="PieChart"
+                              data={pieData}
+                              options={{
+                                ...ChartPresets.pieChart(""),
+                                legend: {
+                                  position: "bottom",
+                                  textStyle: { fontSize: 10 },
+                                },
+                                pieSliceTextStyle: { fontSize: 9 },
+                                chartArea: { width: "90%", height: "70%" },
+                                backgroundColor: "transparent",
+                              }}
+                              height="100%"
+                              width="100%"
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center h-full">
+                              <div className="text-center text-gray-400">
+                                <Activity className="h-8 w-8 mx-auto mb-2" />
+                                <p className="text-xs">No data</p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    )}
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center min-h-80">
+                  <div className="text-center text-gray-500">
+                    <Building2 className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                    <p className="text-sm">No branches available</p>
                   </div>
-                ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center text-gray-500">
-                      <Building2 className="h-12 w-12 mx-auto mb-2 text-gray-300" />
-                      <p className="text-sm">
-                        Select a branch to view recordings
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
 
           {activeChart === "city" && (
             <div className="h-full w-full">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-medium text-gray-900">
-                  Monthly Conversations -{" "}
-                  {availableCities.find((c) => c.city === selectedCity)?.city ||
-                    "Selected City"}
+                  Monthly Conversations by City
                 </h3>
-                {availableCities.length > 0 && (
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="h-4 w-4 text-gray-500" />
-                    {isAdmin() ? (
-                      <select
-                        value={selectedCity}
-                        onChange={(e) => setSelectedCity(e.target.value)}
-                        className="border border-gray-300 rounded-md px-3 py-1 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                <div className="text-sm text-gray-500">
+                  {availableCities.length} Cit
+                  {availableCities.length !== 1 ? "ies" : "y"}
+                </div>
+              </div>
+
+              {loading ? (
+                <div className="flex items-center justify-center min-h-80">
+                  <RefreshCw className="h-6 w-6 animate-spin text-green-600 mr-2" />
+                  <span className="text-gray-600">Loading charts...</span>
+                </div>
+              ) : availableCities.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {availableCities.map((city) => {
+                    const pieData = getCityPieChartData(city.city);
+                    const cityData = allCitiesMonthlyData[city.city];
+                    const totalConversations =
+                      cityData?.reduce(
+                        (sum, item) => sum + (item.count || 0),
+                        0,
+                      ) || 0;
+
+                    return (
+                      <div
+                        key={city.city}
+                        className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
                       >
-                        {availableCities.map((city) => (
-                          <option key={city.city} value={city.city}>
+                        <div className="mb-3">
+                          <h4 className="font-medium text-gray-900 text-sm mb-1">
                             {city.city}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <span className="text-sm font-medium text-gray-700">
-                        {availableCities.find((c) => c.city === selectedCity)
-                          ?.city || "Your City"}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className="h-80">
-                {selectedCity ? (
-                  <div className="w-full h-full p-4">
-                    {loading ? (
-                      <div className="flex items-center justify-center h-full">
-                        <RefreshCw className="h-6 w-6 animate-spin text-green-600 mr-2" />
-                        <span className="text-gray-600">Loading chart...</span>
-                      </div>
-                    ) : cityMonthlyData.length > 0 ? (
-                      <div className="w-full h-full">
-                        <div className="flex items-end justify-center h-64 space-x-4 mb-4">
-                          {cityMonthlyData.map((item, index) => {
-                            const maxCount = Math.max(
-                              ...cityMonthlyData.map((d) => d.count),
-                            );
-                            const height = (item.count / maxCount) * 200; // Max height 200px
-                            return (
-                              <div
-                                key={index}
-                                className="flex flex-col items-center space-y-2"
-                              >
-                                <div
-                                  className="bg-green-500 hover:bg-green-600 transition-colors duration-200 rounded-t-sm min-w-[60px] flex items-end justify-center relative group"
-                                  style={{ height: `${height}px` }}
-                                >
-                                  <span className="text-white text-xs font-medium mb-1">
-                                    {item.count}
-                                  </span>
-                                  {/* Tooltip */}
-                                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-                                    {item.formatted_month}: {item.count}{" "}
-                                    conversations
-                                  </div>
-                                </div>
-                                <div className="text-xs text-gray-600 text-center max-w-[60px] break-words">
-                                  {item.formatted_month?.split(" ")[0] ||
-                                    item.month}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <div className="text-center">
-                          <div className="text-sm font-medium text-gray-700 mb-1">
-                            Number of Conversations
-                          </div>
+                          </h4>
                           <div className="text-xs text-gray-500">
-                            Monthly data for the last 12 months
+                            Total: {totalConversations} conversations
                           </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <div className="text-center text-gray-500">
-                          <Activity className="h-12 w-12 mx-auto mb-2 text-gray-300" />
-                          <p className="text-sm">
-                            No conversations found for this city
-                          </p>
+
+                        <div className="h-48">
+                          {cityData && cityData.length > 0 ? (
+                            <GoogleChart
+                              chartType="PieChart"
+                              data={pieData}
+                              options={{
+                                ...ChartPresets.pieChart(""),
+                                legend: {
+                                  position: "bottom",
+                                  textStyle: { fontSize: 10 },
+                                },
+                                pieSliceTextStyle: { fontSize: 9 },
+                                chartArea: { width: "90%", height: "70%" },
+                                backgroundColor: "transparent",
+                                colors: ChartPresets.colors.success,
+                              }}
+                              height="100%"
+                              width="100%"
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center h-full">
+                              <div className="text-center text-gray-400">
+                                <MapPin className="h-8 w-8 mx-auto mb-2" />
+                                <p className="text-xs">No data</p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    )}
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center min-h-80">
+                  <div className="text-center text-gray-500">
+                    <MapPin className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                    <p className="text-sm">No cities available</p>
                   </div>
-                ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-center text-gray-500">
-                      <MapPin className="h-12 w-12 mx-auto mb-2 text-gray-300" />
-                      <p className="text-sm">
-                        Select a city to view conversations
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -829,7 +1022,7 @@ export function ConversationAnalytics() {
                   </div>
                 )}
               </div>
-              <div className="h-80">
+              <div className="min-h-80">
                 {selectedBranchForDaily ? (
                   <div className="w-full h-full p-4">
                     {loading ? (
@@ -938,19 +1131,134 @@ export function ConversationAnalytics() {
 
           {activeChart === "customers" && (
             <div className="h-full w-full">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Unique Customers This Month
+              <h3 className="text-lg font-medium text-gray-900 mb-6">
+                Customer Analytics
               </h3>
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <div className="text-6xl font-bold text-purple-600 mb-2">
-                    {getCustomerValue()}
+
+              <div className="space-y-6">
+                {/* Customer Statistics */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-purple-50 rounded-lg p-6 text-center">
+                    <div className="text-4xl font-bold text-purple-600 mb-2">
+                      {getCustomerValue()}
+                    </div>
+                    <div className="text-lg text-gray-700 font-medium">
+                      Unique Customers
+                    </div>
+                    <div className="text-sm text-gray-500 mt-1">
+                      With valid CNIC this month
+                    </div>
                   </div>
-                  <div className="text-lg text-gray-600">
-                    Unique Customers (CNIC)
+
+                  <div className="bg-orange-50 rounded-lg p-6 text-center">
+                    <div className="text-4xl font-bold text-orange-600 mb-2">
+                      {getWalkInValue()}
+                    </div>
+                    <div className="text-lg text-gray-700 font-medium">
+                      Walk-in Customers
+                    </div>
+                    <div className="text-sm text-gray-500 mt-1">
+                      Without CNIC this month
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-500 mt-2">
-                    Current Month
+                </div>
+
+                {/* Charts */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Customers by City Chart */}
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <h4 className="text-md font-medium text-gray-900 mb-4">
+                      Unique Customers by City
+                    </h4>
+                    <div className="h-64">
+                      {customersByCityData.length > 0 ? (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={getCustomersByCityChartData()}
+                            margin={{
+                              top: 5,
+                              right: 30,
+                              left: 20,
+                              bottom: 5,
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis
+                              dataKey="name"
+                              angle={-45}
+                              textAnchor="end"
+                              height={80}
+                              fontSize={12}
+                            />
+                            <YAxis fontSize={12} />
+                            <Tooltip
+                              formatter={(value) => [`${value} Customers`, ""]}
+                              labelStyle={{ color: "#374151" }}
+                            />
+                            <Bar
+                              dataKey="customers"
+                              fill="#10B981"
+                              radius={[2, 2, 0, 0]}
+                            />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <div className="text-center text-gray-400">
+                            <Users className="h-8 w-8 mx-auto mb-2" />
+                            <p className="text-xs">No customer data</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Customers by Branch Chart */}
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <h4 className="text-md font-medium text-gray-900 mb-4">
+                      Unique Customers by Branch
+                    </h4>
+                    <div className="h-64">
+                      {customersByBranchData.length > 0 ? (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={getCustomersByBranchChartData()}
+                            margin={{
+                              top: 5,
+                              right: 30,
+                              left: 20,
+                              bottom: 5,
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis
+                              dataKey="name"
+                              angle={-45}
+                              textAnchor="end"
+                              height={80}
+                              fontSize={12}
+                            />
+                            <YAxis fontSize={12} />
+                            <Tooltip
+                              formatter={(value) => [`${value} Customers`, ""]}
+                              labelStyle={{ color: "#374151" }}
+                            />
+                            <Bar
+                              dataKey="customers"
+                              fill="#3B82F6"
+                              radius={[2, 2, 0, 0]}
+                            />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <div className="text-center text-gray-400">
+                            <Building2 className="h-8 w-8 mx-auto mb-2" />
+                            <p className="text-xs">No customer data</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -962,13 +1270,13 @@ export function ConversationAnalytics() {
         <div className="mt-4 p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">
             {activeChart === "branch" &&
-              "Monthly recordings for the selected branch showing recording trends over the last 12 months."}
+              "Monthly recordings breakdown for each branch shown as pie charts displaying the distribution of recordings over the last 12 months."}
             {activeChart === "city" &&
-              "Monthly conversations for the selected city showing conversation trends over the last 12 months."}
+              "Monthly conversations breakdown for each city shown as pie charts displaying the distribution of conversations over the last 12 months."}
             {activeChart === "daily" &&
               "Daily conversation analytics for the selected branch showing trends over the last month."}
             {activeChart === "customers" &&
-              "Number of unique customers (CNIC) per month visiting the branches."}
+              "Customer analytics showing unique customers with valid CNICs, walk-in customers without CNICs, and customer distribution across cities and branches."}
           </p>
         </div>
       </div>
