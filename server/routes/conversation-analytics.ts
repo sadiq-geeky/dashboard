@@ -334,6 +334,8 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
+    console.log('Final result being returned:', result);
+
     res.json(result);
   } catch (error) {
     console.error("Error fetching branch daily conversations:", error);
