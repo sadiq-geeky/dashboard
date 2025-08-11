@@ -278,6 +278,8 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       count: number;
     }>(conversationQuery, [branchId]);
 
+    console.log(`Branch daily conversations for branch ${branchId}:`, conversationData);
+
     // Create a map for quick lookup
     const conversationMap = new Map();
     conversationData.forEach((row) => {
