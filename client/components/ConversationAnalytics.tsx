@@ -885,7 +885,7 @@ export function ConversationAnalytics() {
               </div>
 
               {loading ? (
-                <div className="flex items-center justify-center h-80">
+                <div className="flex items-center justify-center min-h-80">
                   <RefreshCw className="h-6 w-6 animate-spin text-green-600 mr-2" />
                   <span className="text-gray-600">Loading charts...</span>
                 </div>
