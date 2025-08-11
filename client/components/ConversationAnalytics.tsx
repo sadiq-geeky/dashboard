@@ -890,7 +890,7 @@ export function ConversationAnalytics() {
                   <span className="text-gray-600">Loading charts...</span>
                 </div>
               ) : availableCities.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-96 overflow-y-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {availableCities.map((city) => {
                     const pieData = getCityPieChartData(city.city);
                     const cityData = allCitiesMonthlyData[city.city];
