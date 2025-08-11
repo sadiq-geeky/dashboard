@@ -661,40 +661,30 @@ export function ConversationAnalytics() {
 
   const getCustomersByCityChartData = () => {
     if (!customersByCityData || customersByCityData.length === 0) {
-      return [
-        ["City", "Unique Customers"],
-        ["No Data", 0],
-      ];
+      return [];
     }
 
-    const chartData: (string | number)[][] = [["City", "Unique Customers"]];
-    customersByCityData
+    return customersByCityData
       .filter((item) => item?.city)
       .sort((a, b) => (b.unique_customers || 0) - (a.unique_customers || 0))
-      .forEach((item) => {
-        chartData.push([item.city, item.unique_customers || 0]);
-      });
-
-    return chartData;
+      .map((item) => ({
+        name: item.city,
+        customers: item.unique_customers || 0,
+      }));
   };
 
   const getCustomersByBranchChartData = () => {
     if (!customersByBranchData || customersByBranchData.length === 0) {
-      return [
-        ["Branch", "Unique Customers"],
-        ["No Data", 0],
-      ];
+      return [];
     }
 
-    const chartData: (string | number)[][] = [["Branch", "Unique Customers"]];
-    customersByBranchData
+    return customersByBranchData
       .filter((item) => item?.branch_name)
       .sort((a, b) => (b.unique_customers || 0) - (a.unique_customers || 0))
-      .forEach((item) => {
-        chartData.push([item.branch_name, item.unique_customers || 0]);
-      });
-
-    return chartData;
+      .map((item) => ({
+        name: item.branch_name,
+        customers: item.unique_customers || 0,
+      }));
   };
 
   const getCustomerValue = () => {
