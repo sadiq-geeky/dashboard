@@ -319,9 +319,11 @@ export function ConversationAnalytics() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log("Branch daily data response:", data);
         const validData = Array.isArray(data)
           ? data.filter((item) => item && typeof item === "object")
           : [];
+        console.log("Processed branch daily data:", validData);
         setBranchDailyData(validData);
       } else {
         console.error(
