@@ -228,6 +228,30 @@ export function ConversationAnalytics() {
             : [];
         setCustomerData(validCustomerData.filter((item) => item != null));
       }
+
+      // Process walk-in customers data
+      if (walkInRes.ok) {
+        const walkInAnalytics = await walkInRes.json();
+        setWalkInData(walkInAnalytics);
+      }
+
+      // Process customers by city data
+      if (customersByCityRes.ok) {
+        const customersByCityAnalytics = await customersByCityRes.json();
+        const validCustomersByCityData = Array.isArray(customersByCityAnalytics)
+          ? customersByCityAnalytics
+          : [];
+        setCustomersByCityData(validCustomersByCityData);
+      }
+
+      // Process customers by branch data
+      if (customersByBranchRes.ok) {
+        const customersByBranchAnalytics = await customersByBranchRes.json();
+        const validCustomersByBranchData = Array.isArray(customersByBranchAnalytics)
+          ? customersByBranchAnalytics
+          : [];
+        setCustomersByBranchData(validCustomersByBranchData);
+      }
     } catch (err) {
       console.error("Error fetching analytics:", err);
       setError("Failed to load analytics data");
