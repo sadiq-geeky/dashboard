@@ -313,6 +313,7 @@ export function ConversationAnalytics() {
 
     try {
       setLoading(true);
+      console.log("Fetching daily data for branch ID:", branchId);
       const response = await authFetch(
         `/api/analytics/conversations/branch/${branchId}/daily`,
       );
