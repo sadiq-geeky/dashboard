@@ -1156,7 +1156,7 @@ export function ConversationAnalytics() {
                             />
                             <YAxis fontSize={12} />
                             <Tooltip
-                              formatter={[(value) => [value, 'Customers']]}
+                              formatter={(value) => [`${value} Customers`, '']}
                               labelStyle={{ color: '#374151' }}
                             />
                             <Bar
