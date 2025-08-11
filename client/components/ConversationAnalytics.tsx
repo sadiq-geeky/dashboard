@@ -35,6 +35,22 @@ interface UniqueCustomerAnalytics {
   unique_cnic_count: number;
 }
 
+interface WalkInCustomers {
+  month: string;
+  walkin_count: number;
+}
+
+interface CustomersByCity {
+  city: string;
+  unique_customers: number;
+}
+
+interface CustomersByBranch {
+  branch_id: string;
+  branch_name: string;
+  unique_customers: number;
+}
+
 interface Branch {
   branch_id: string;
   branch_name: string;
