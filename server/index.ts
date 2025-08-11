@@ -247,6 +247,24 @@ export function createServer() {
     getBranchDailyConversations,
   );
   app.get(
+    "/api/analytics/conversations/walkin-customers",
+    authenticate,
+    addBranchFilter(),
+    getWalkInCustomers,
+  );
+  app.get(
+    "/api/analytics/conversations/customers-by-city",
+    authenticate,
+    addBranchFilter(),
+    getUniqueCustomersByCity,
+  );
+  app.get(
+    "/api/analytics/conversations/customers-by-branch",
+    authenticate,
+    addBranchFilter(),
+    getUniqueCustomersByBranch,
+  );
+  app.get(
     "/api/analytics/branch-monthly-trend",
     authenticate,
     addBranchFilter(),
