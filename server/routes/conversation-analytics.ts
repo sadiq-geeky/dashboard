@@ -258,6 +258,8 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
       return res.status(400).json({ error: "Branch ID is required" });
     }
 
+    console.log(`getBranchDailyConversations called with branchId: ${branchId}`);
+
     // First, get the actual conversation data for the current month
     const conversationQuery = `
       SELECT
