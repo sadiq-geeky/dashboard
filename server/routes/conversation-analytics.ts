@@ -296,7 +296,9 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
     // Create a map for quick lookup
     const conversationMap = new Map();
     conversationData.forEach((row) => {
-      conversationMap.set(row.date, row.count);
+      // Convert Date object to YYYY-MM-DD string for consistent lookup
+      const dateString = new Date(row.date).toISOString().split("T")[0];
+      conversationMap.set(dateString, row.count);
     });
 
     // Generate all days for the current month (from 1st to last day)
