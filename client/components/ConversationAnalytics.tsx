@@ -432,7 +432,7 @@ export function ConversationAnalytics() {
   };
 
   const getDailyChartData = () => {
-    if (!dailyData || dailyData.length === 0) {
+    if (!branchDailyData || branchDailyData.length === 0) {
       return [
         ["Date", "Conversations"],
         ["No Data", 0],
@@ -440,7 +440,7 @@ export function ConversationAnalytics() {
     }
 
     const chartData = [["Date", "Conversations"]];
-    dailyData
+    branchDailyData
       .filter((item) => item?.date)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .forEach((item) => {
