@@ -799,7 +799,7 @@ export function ConversationAnalytics() {
         </div>
 
         {/* Chart Display */}
-        <div className="h-96 border border-gray-200 rounded-lg p-4 bg-white">
+        <div className="min-h-96 border border-gray-200 rounded-lg p-4 bg-white">
           {activeChart === "branch" && (
             <div className="h-full w-full">
               <div className="flex items-center justify-between mb-6">
