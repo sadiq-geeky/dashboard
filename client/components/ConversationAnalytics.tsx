@@ -287,6 +287,45 @@ export function ConversationAnalytics() {
     }
   };
 
+  const fetchAllCitiesMonthlyData = async () => {
+    if (!availableCities.length) return;
+
+    try {
+      setLoading(true);
+
+      // Fetch monthly data for all cities in parallel
+      const promises = availableCities.map(async (city) => {
+        const response = await authFetch(
+          `/api/analytics/conversations/city/${encodeURIComponent(city.city)}/monthly`,
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const validData = Array.isArray(data)
+            ? data.filter((item) => item && typeof item === "object")
+            : [];
+          return { cityName: city.city, data: validData };
+        }
+        return { cityName: city.city, data: [] };
+      });
+
+      const results = await Promise.all(promises);
+
+      // Convert array to object for easy lookup
+      const cityDataMap: Record<string, CityMonthlyConversations[]> = {};
+      results.forEach(({ cityName, data }) => {
+        cityDataMap[cityName] = data;
+      });
+
+      setAllCitiesMonthlyData(cityDataMap);
+    } catch (error) {
+      console.error("Error fetching all cities monthly data:", error);
+      setAllCitiesMonthlyData({});
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchCityMonthlyData = async (cityName: string) => {
     if (!cityName) {
       setCityMonthlyData([]);
