@@ -863,7 +863,7 @@ export function ConversationAnalytics() {
                   })}
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-80">
+                <div className="flex items-center justify-center min-h-80">
                   <div className="text-center text-gray-500">
                     <Building2 className="h-12 w-12 mx-auto mb-2 text-gray-300" />
                     <p className="text-sm">No branches available</p>
