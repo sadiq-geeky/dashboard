@@ -245,6 +245,45 @@ export function ConversationAnalytics() {
     }
   };
 
+  const fetchAllBranchesMonthlyData = async () => {
+    if (!availableBranches.length) return;
+
+    try {
+      setLoading(true);
+
+      // Fetch monthly data for all branches in parallel
+      const promises = availableBranches.map(async (branch) => {
+        const response = await authFetch(
+          `/api/analytics/conversations/branch/${branch.branch_id}/monthly`,
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const validData = Array.isArray(data)
+            ? data.filter((item) => item && typeof item === "object")
+            : [];
+          return { branchId: branch.branch_id, data: validData };
+        }
+        return { branchId: branch.branch_id, data: [] };
+      });
+
+      const results = await Promise.all(promises);
+
+      // Convert array to object for easy lookup
+      const branchDataMap: Record<string, BranchMonthlyRecordings[]> = {};
+      results.forEach(({ branchId, data }) => {
+        branchDataMap[branchId] = data;
+      });
+
+      setAllBranchesMonthlyData(branchDataMap);
+    } catch (error) {
+      console.error("Error fetching all branches monthly data:", error);
+      setAllBranchesMonthlyData({});
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchCityMonthlyData = async (cityName: string) => {
     if (!cityName) {
       setCityMonthlyData([]);
