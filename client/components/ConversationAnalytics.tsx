@@ -986,7 +986,7 @@ export function ConversationAnalytics() {
                   </div>
                 )}
               </div>
-              <div className="h-80">
+              <div className="min-h-80">
                 {selectedBranchForDaily ? (
                   <div className="w-full h-full p-4">
                     {loading ? (
