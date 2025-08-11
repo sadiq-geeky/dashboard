@@ -54,6 +54,9 @@ import {
   getCityConversationsByMonth,
   getAllBranchesLastMonthConversations,
   getBranchDailyConversations,
+  getWalkInCustomers,
+  getUniqueCustomersByCity,
+  getUniqueCustomersByBranch,
 } from "./routes/conversation-analytics";
 import { getVoiceStreamsAnalytics } from "./routes/voice-streams-analytics";
 import {
