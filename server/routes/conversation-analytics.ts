@@ -260,6 +260,17 @@ export const getBranchDailyConversations: RequestHandler = async (req, res) => {
 
     console.log(`getBranchDailyConversations called with branchId: ${branchId}`);
 
+    // Debug: Check if there are ANY recordings for this branch
+    const totalRecordingsQuery = `
+      SELECT COUNT(*) as total
+      FROM recordings r
+      LEFT JOIN devices d ON d.device_mac = r.mac_address OR d.ip_address = r.ip_address
+      LEFT JOIN link_device_branch_user ldbu ON ldbu.device_id = d.id
+      WHERE ldbu.branch_id = ?
+    `;
+    const totalRecordings = await executeQuery(totalRecordingsQuery, [branchId]);
+    console.log(`Total recordings for branch ${branchId}:`, totalRecordings);
+
     // First, get the actual conversation data for the current month
     const conversationQuery = `
       SELECT
