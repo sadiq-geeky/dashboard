@@ -1136,20 +1136,36 @@ export function ConversationAnalytics() {
                     </h4>
                     <div className="h-64">
                       {customersByCityData.length > 0 ? (
-                        <GoogleChart
-                          chartType="BarChart"
-                          data={getCustomersByCityChartData()}
-                          options={{
-                            ...ChartPresets.barChart(""),
-                            colors: ChartPresets.colors.success,
-                            hAxis: { title: "Number of Customers" },
-                            vAxis: { title: "City" },
-                            legend: { position: "none" },
-                            chartArea: { width: "70%", height: "75%" },
-                          }}
-                          height="100%"
-                          width="100%"
-                        />
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={getCustomersByCityChartData()}
+                            margin={{
+                              top: 5,
+                              right: 30,
+                              left: 20,
+                              bottom: 5,
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis
+                              dataKey="name"
+                              angle={-45}
+                              textAnchor="end"
+                              height={80}
+                              fontSize={12}
+                            />
+                            <YAxis fontSize={12} />
+                            <Tooltip
+                              formatter={[(value) => [value, 'Customers']]}
+                              labelStyle={{ color: '#374151' }}
+                            />
+                            <Bar
+                              dataKey="customers"
+                              fill="#10B981"
+                              radius={[2, 2, 0, 0]}
+                            />
+                          </BarChart>
+                        </ResponsiveContainer>
                       ) : (
                         <div className="flex items-center justify-center h-full">
                           <div className="text-center text-gray-400">
@@ -1168,20 +1184,36 @@ export function ConversationAnalytics() {
                     </h4>
                     <div className="h-64">
                       {customersByBranchData.length > 0 ? (
-                        <GoogleChart
-                          chartType="BarChart"
-                          data={getCustomersByBranchChartData()}
-                          options={{
-                            ...ChartPresets.barChart(""),
-                            colors: ChartPresets.colors.primary,
-                            hAxis: { title: "Number of Customers" },
-                            vAxis: { title: "Branch" },
-                            legend: { position: "none" },
-                            chartArea: { width: "70%", height: "75%" },
-                          }}
-                          height="100%"
-                          width="100%"
-                        />
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={getCustomersByBranchChartData()}
+                            margin={{
+                              top: 5,
+                              right: 30,
+                              left: 20,
+                              bottom: 5,
+                            }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis
+                              dataKey="name"
+                              angle={-45}
+                              textAnchor="end"
+                              height={80}
+                              fontSize={12}
+                            />
+                            <YAxis fontSize={12} />
+                            <Tooltip
+                              formatter={[(value) => [value, 'Customers']]}
+                              labelStyle={{ color: '#374151' }}
+                            />
+                            <Bar
+                              dataKey="customers"
+                              fill="#3B82F6"
+                              radius={[2, 2, 0, 0]}
+                            />
+                          </BarChart>
+                        </ResponsiveContainer>
                       ) : (
                         <div className="flex items-center justify-center h-full">
                           <div className="text-center text-gray-400">
