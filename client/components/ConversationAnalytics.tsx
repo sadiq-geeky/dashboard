@@ -72,6 +72,9 @@ export function ConversationAnalytics() {
   const [branchMonthlyData, setBranchMonthlyData] = useState<
     BranchMonthlyRecordings[]
   >([]);
+  const [allBranchesMonthlyData, setAllBranchesMonthlyData] = useState<
+    Record<string, BranchMonthlyRecordings[]>
+  >({});
   const [availableCities, setAvailableCities] = useState<City[]>([]);
   const [cityMonthlyData, setCityMonthlyData] = useState<
     CityMonthlyConversations[]
