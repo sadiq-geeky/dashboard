@@ -512,6 +512,28 @@ export function ConversationAnalytics() {
     return chartData;
   };
 
+  const getBranchPieChartData = (branchId: string) => {
+    const monthlyData = allBranchesMonthlyData[branchId];
+    if (!monthlyData || monthlyData.length === 0) {
+      return [
+        ["Month", "Recordings"],
+        ["No Data", 0],
+      ];
+    }
+
+    const chartData: (string | number)[][] = [["Month", "Recordings"]];
+    monthlyData
+      .filter((item) => item && item.month)
+      .sort((a, b) => (a.month || "").localeCompare(b.month || ""))
+      .forEach((item) => {
+        const monthLabel = item.formatted_month || item.month || "Unknown";
+        const count = typeof item.count === "number" ? item.count : 0;
+        chartData.push([monthLabel, count]);
+      });
+
+    return chartData;
+  };
+
   const getCustomerValue = () => {
     if (!customerData || customerData.length === 0) {
       return 0;
